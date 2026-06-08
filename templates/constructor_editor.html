@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Конструктор вариантов ЕГЭ</title>
+    <link rel="icon" type="image/png" href="/static/favicon.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            right: -20%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(147, 51, 234, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: -1;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -30%;
+            left: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(219, 39, 119, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: -1;
+            animation: float 25s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            50% {
+                transform: translate(50px, 30px);
+            }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+
+        .header p {
+            color: #888;
+            font-size: 1.2em;
+        }
+
+        .nav-back {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a855f7;
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-back:hover {
+            background: rgba(168, 85, 247, 0.1);
+            border-color: #a855f7;
+        }
+
+        .constructor-layout {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .right-column {
+            position: sticky;
+            top: 40px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            border-color: rgba(168, 85, 247, 0.3);
+            box-shadow: 0 8px 32px rgba(168, 85, 247, 0.1);
+        }
+
+        .card h2 {
+            color: #e0e0e0;
+            font-size: 1.5em;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #a855f7;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #e0e0e0;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #a855f7;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .task-type-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .task-type-btn {
+            padding: 25px 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #888;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .task-type-btn.active {
+            border-color: #a855f7;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%);
+            color: #e0e0e0;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e0e0e0;
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.9em;
+            margin-left: 5px;
+        }
+
+        .paragraph-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .paragraph-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .paragraph-number {
+            color: #a855f7;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .image-item {
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .file-upload-area {
+            background: rgba(168, 85, 247, 0.05);
+            border: 1px dashed rgba(168, 85, 247, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .file-upload-area:hover {
+            border-color: #a855f7;
+            background: rgba(168, 85, 247, 0.1);
+        }
+
+        .file-upload-label {
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            transition: 0.3s;
+            color: #e0e0e0;
+        }
+
+        .file-upload-label:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .file-upload-area input[type="file"] {
+            display: none;
+        }
+
+        #selected-file-display {
+            margin-top: 10px;
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 1024px) {
+            .constructor-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .right-column {
+                position: static;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="/admin" class="nav-back">← Админ-панель</a>
+            <h1>🛠️ Конструктор вариантов</h1>
+            <p>Создание и редактирование вариантов ЕГЭ</p>
+        </div>
+
+        <div class="constructor-layout">
+            <!-- ЛЕВАЯ КОЛОНКА: Формы -->
+            <div class="left-column">
+                <!-- Импорт -->
+                <div class="card" style="text-align: center; border-color: #a855f7;">
+                    <h2>📂 Импорт существующего варианта</h2>
+                    <p style="color: #888; margin-bottom: 15px;">Загрузите JSON файл, чтобы отредактировать готовый
+                        вариант</p>
+                    <label class="btn btn-secondary" style="cursor: pointer;">
+                        Выбрать файл .json
+                        <input type="file" id="import-file" accept=".json" onchange="importVariant(this)">
+                    </label>
+                </div>
+
+                <!-- Информация о варианте -->
+                <div class="card">
+                    <h2>📦 Информация о варианте</h2>
+                    <div class="form-group">
+                        <label>Название варианта:</label>
+                        <input type="text" id="variant-title" placeholder="Введите название" value="Пробный вариант">
+                    </div>
+                </div>
+
+                <!-- Форма добавления задания -->
+                <div class="card">
+                    <h2 id="form-title">➕ Добавить задание</h2>
+                    <input type="hidden" id="edit-index" value="-1">
+
+                    <div class="form-group">
+                        <label>Номер задания:</label>
+                        <input type="number" id="task-id" value="1" min="1">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Заголовок:</label>
+                        <input type="text" id="task-title" placeholder="Задание №1">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Тип ответа:</label>
+                        <div class="task-type-selector">
+                            <div class="task-type-btn active" onclick="selectTaskType('single')">1️⃣ Один</div>
+                            <div class="task-type-btn" onclick="selectTaskType('double')">2️⃣ Два</div>
+                            <div class="task-type-btn" onclick="selectTaskType('grid')">📊 Таблица</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Описание (абзацы):</label>
+                        <div id="paragraphs-container">
+                            <!-- Абзацы добавляются динамически -->
+                        </div>
+                        <button class="btn btn-secondary btn-sm" onclick="addParagraph()" style="margin-top: 10px;">➕
+                            Добавить абзац</button>
+                    </div>
+
+                    <!-- БЛОК: ФАЙЛ К ЗАДАНИЮ -->
+                    <div class="file-upload-area">
+                        <label class="file-upload-label">
+                            Прикрепить файл к заданию
+                            <input type="file" id="task-file-input" onchange="handleFileSelect(this)">
+                        </label>
+                        <div id="selected-file-display">Файл не выбран</div>
+                    </div>
+
+                    <div id="answer-fields">
+                        <div class="form-group">
+                            <label>Правильный ответ:</label>
+                            <input type="text" id="correct-answer" placeholder="Введите ответ">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="saveTask()" style="width: 100%; margin-top: 20px;"
+                        id="save-btn">
+                        ✅ Добавить задание
+                    </button>
+                    <button class="btn btn-secondary" onclick="resetForm()"
+                        style="width: 100%; margin-top: 10px; display: none;" id="cancel-btn">
+                        Отмена
+                    </button>
+                </div>
+            </div>
+
+            <!-- ПРАВАЯ КОЛОНКА: Список заданий -->
+            <div class="right-column">
+                <div class="card">
+                    <h2>📋 Список заданий (<span id="task-count">0</span>)</h2>
+                    <div id="tasks-list" style="min-height: 50px;">
+                        <p style="color: #666; text-align: center;">Нет заданий</p>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn btn-primary" onclick="downloadJSON()" style="flex: 1;">💾 Скачать JSON</button>
+                    <button class="btn btn-danger" onclick="clearAll()" style="flex: 1;">🗑️ Очистить всё</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let variantData = { title: "Пробный вариант", tasks: [] };
+        let currentTaskType = 'single';
+        let paragraphCount = 0;
+        let currentTaskFile = null;
+
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', () => {
+            addParagraph(); // Добавляем первый пустой абзац
+        });
+
+        // === ИМПОРТ ФАЙЛА ===
+        function importVariant(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const json = JSON.parse(e.target.result);
+                    if (json.title) document.getElementById('variant-title').value = json.title;
+                    if (Array.isArray(json.tasks)) {
+                        variantData = json;
+                        renderTasksList();
+                        alert('✅ Вариант успешно загружен!');
+                    }
+                } catch (err) {
+                    alert('❌ Ошибка чтения файла: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+            input.value = '';
+        }
+
+        // === РЕНДЕР СПИСКА ЗАДАНИЙ ===
+        function renderTasksList() {
+            const container = document.getElementById('tasks-list');
+            const countSpan = document.getElementById('task-count');
+            variantData.tasks.sort((a, b) => a.id - b.id);
+            countSpan.textContent = variantData.tasks.length;
+
+            if (variantData.tasks.length === 0) {
+                container.innerHTML = '<p style="color: #666; text-align: center;">Нет заданий</p>';
+                return;
+            }
+
+            container.innerHTML = variantData.tasks.map((task, index) => `
+            <div class="task-item">
+                <div>
+                    <strong style="color: #a855f7;">№${task.id}</strong> ${task.title}
+                    <span style="color: #666; font-size: 0.9em; margin-left: 10px;">
+                        (${task.answer_grid ? 'Таблица' : (task.answers ? '2 ответа' : '1 ответ')})
+                        ${task.file ? '📎' : ''}
+                    </span>
+                </div>
+                <div>
+                    <button class="btn btn-secondary btn-sm" onclick="editTask(${index})">✏️</button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteTask(${index})"></button>
+                </div>
+            </div>
+        `).join('');
+        }
+
+        // === ОБРАБОТКА ВЫБОРА ФАЙЛА ===
+        function handleFileSelect(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                // Сохраняем имя файла как путь
+                currentTaskFile = {
+                    path: file.name,
+                    name: file.name.split('.').slice(0, -1).join('.'), // Убираем расширение для имени
+                    description: file.name
+                };
+                document.getElementById('selected-file-display').innerHTML = `✅ Выбран: <strong>${file.name}</strong>`;
+                document.getElementById('selected-file-display').style.color = '#4ade80';
+            } else {
+                currentTaskFile = null;
+                document.getElementById('selected-file-display').textContent = 'Файл не выбран';
+                document.getElementById('selected-file-display').style.color = '#888';
+            }
+        }
+
+        // === ДОБАВЛЕНИЕ АБЗАЦА ===
+        function addParagraph() {
+            const container = document.getElementById('paragraphs-container');
+            const div = document.createElement('div');
+            div.className = 'paragraph-item';
+            div.innerHTML = `
+            <div class="paragraph-header">
+                <span class="paragraph-number">Абзац</span>
+                <button class="btn btn-danger btn-sm" onclick="this.closest('.paragraph-item').remove()">❌ Удалить</button>
+            </div>
+            <textarea placeholder="Введите текст абзаца..." class="para-text" style="width: 100%; min-height: 80px; margin-bottom: 10px;"></textarea>
+            <button class="btn btn-secondary btn-sm" onclick="addImageToParagraph(this)">📷 Картинка</button>
+            <div class="images-container" style="margin-top: 10px;"></div>
+        `;
+            container.appendChild(div);
+        }
+
+        // === ДОБАВЛЕНИЕ КАРТИНКИ ===
+        function addImageToParagraph(btn) {
+            const container = btn.nextElementSibling; // div.images-container
+            const div = document.createElement('div');
+            div.className = 'image-item';
+
+            // Создаем select для размера
+            const selectHtml = `
+            <select class="img-size-select" style="background:#333; color:#fff; border:1px solid #555; border-radius:4px; padding:4px;">
+                <option value="img-small">Маленький</option>
+                <option value="img-medium" selected>Средний</option>
+                <option value="img-large">Большой</option>
+            </select>
+        `;
+
+            div.innerHTML = `
+            <div style="display:flex; gap:10px; align-items:center;">
+                <span style="font-size:0.9em;">📷 Картинка</span>
+                ${selectHtml}
+                <input type="file" accept="image/*" onchange="this.parentElement.dataset.filename=this.files[0].name; this.parentElement.querySelector('.img-name').textContent=' ✅ ' + this.files[0].name;" style="font-size:0.8em; color:#888;">
+                <span class="img-name" style="color:#4ade80; font-size:0.8em;"></span>
+            </div>
+            <button onclick="this.parentElement.remove()" style="background:none; border:none; color:#ef4444; cursor:pointer; font-size:1.2em;">❌</button>
+        `;
+            container.appendChild(div);
+        }
+
+        // === СОХРАНЕНИЕ ЗАДАНИЯ ===
+        function saveTask() {
+            const taskId = parseInt(document.getElementById('task-id').value);
+            const title = document.getElementById('task-title').value;
+            const editIndex = parseInt(document.getElementById('edit-index').value);
+
+            const description = [];
+            const images = [];
+
+            // Собираем данные абзацев
+            document.querySelectorAll('.paragraph-item').forEach((item, index) => {
+                const textarea = item.querySelector('.para-text');
+                if (textarea && textarea.value.trim()) {
+                    description.push(textarea.value.trim());
+                }
+                // Собираем картинки из этого абзаца
+                item.querySelectorAll('.image-item').forEach(imgItem => {
+                    const fileInput = imgItem.querySelector('input[type="file"]');
+                    if (fileInput && fileInput.files[0]) {
+                        const sizeSelect = imgItem.querySelector('.img-size-select');
+                        images.push({
+                            path: fileInput.files[0].name,
+                            after_paragraph: index,
+                            size: sizeSelect ? sizeSelect.value : 'img-medium'
+                        });
+                    }
+                });
+            });
+
+            let taskData = {
+                id: taskId,
+                title: title,
+                description: description,
+                images: images,
+                file: currentTaskFile // Теперь тут объект {path, name, description}
+            };
+
+            if (currentTaskType === 'single') {
+                taskData.correct_answer = document.getElementById('correct-answer').value;
+            } else if (currentTaskType === 'double') {
+                taskData.answers = [
+                    document.getElementById('answer-1').value,
+                    document.getElementById('answer-2').value
+                ];
+            } else if (currentTaskType === 'grid') {
+                const rows = parseInt(document.getElementById('grid-rows').value) || 1;
+                const cols = parseInt(document.getElementById('grid-cols').value) || 1;
+                taskData.answer_grid = { rows, cols, answers: [] };
+                for (let i = 0; i < rows; i++) {
+                    const row = [];
+                    document.querySelectorAll(`.grid-answer[data-row="${i}"]`).forEach(input => row.push(input.value));
+                    taskData.answer_grid.answers.push(row);
+                }
+            }
+
+            if (editIndex >= 0) {
+                variantData.tasks[editIndex] = taskData;
+                resetForm();
+            } else {
+                variantData.tasks.push(taskData);
+                document.getElementById('task-id').value = taskId + 1;
+                document.getElementById('task-title').value = `Задание №${taskId + 1}`;
+            }
+            renderTasksList();
+            clearFormFields();
+        }
+
+        // === РЕДАКТИРОВАНИЕ ===
+        function editTask(index) {
+            const task = variantData.tasks[index];
+            document.getElementById('edit-index').value = index;
+            document.getElementById('task-id').value = task.id;
+            document.getElementById('task-title').value = task.title;
+
+            // Восстанавливаем файл
+            if (task.file) {
+                currentTaskFile = task.file;
+                document.getElementById('selected-file-display').innerHTML = `✅ Выбран: <strong>${task.file.path}</strong>`;
+                document.getElementById('selected-file-display').style.color = '#4ade80';
+            } else {
+                currentTaskFile = null;
+                document.getElementById('selected-file-display').textContent = 'Файл не выбран';
+                document.getElementById('selected-file-display').style.color = '#888';
+                document.getElementById('task-file-input').value = '';
+            }
+
+            const container = document.getElementById('paragraphs-container');
+            container.innerHTML = '';
+
+            if (task.description && task.description.length > 0) {
+                task.description.forEach((text, idx) => {
+                    addParagraph();
+                    const textareas = container.querySelectorAll('.para-text');
+                    if (textareas[idx]) textareas[idx].value = text;
+
+                    // Восстанавливаем картинки
+                    if (task.images) {
+                        const taskImages = task.images.filter(img => img.after_paragraph === idx);
+                        taskImages.forEach(img => {
+                            const imgContainer = textareas[idx].parentElement.querySelector('.images-container');
+                            const imgDiv = document.createElement('div');
+                            imgDiv.className = 'image-item';
+                            imgDiv.dataset.filename = img.path;
+                            imgDiv.innerHTML = `
+                            <div style="display:flex; gap:10px; align-items:center;">
+                                <span style="font-size:0.9em;">📷 Картинка</span>
+                                <select class="img-size-select" style="background:#333; color:#fff; border:1px solid #555; border-radius:4px; padding:4px;">
+                                    <option value="img-small" ${img.size === 'img-small' ? 'selected' : ''}>Маленький</option>
+                                    <option value="img-medium" ${img.size === 'img-medium' ? 'selected' : ''}>Средний</option>
+                                    <option value="img-large" ${img.size === 'img-large' ? 'selected' : ''}>Большой</option>
+                                </select>
+                                <input type="file" accept="image/*" style="display:none;">
+                                <span class="img-name" style="color:#4ade80; font-size:0.8em;">✅ ${img.path}</span>
+                            </div>
+                            <button onclick="this.parentElement.remove()" style="background:none; border:none; color:#ef4444; cursor:pointer; font-size:1.2em;"></button>
+                        `;
+                            imgContainer.appendChild(imgDiv);
+                        });
+                    }
+                });
+            } else {
+                addParagraph();
+            }
+
+            // Восстанавливаем тип ответа
+            if (task.answer_grid) selectTaskType('grid');
+            else if (task.answers) selectTaskType('double');
+            else selectTaskType('single');
+
+            if (currentTaskType === 'single') {
+                document.getElementById('correct-answer').value = task.correct_answer || '';
+            } else if (currentTaskType === 'double') {
+                document.getElementById('answer-1').value = (task.answers && task.answers[0]) || '';
+                document.getElementById('answer-2').value = (task.answers && task.answers[1]) || '';
+            } else if (currentTaskType === 'grid' && task.answer_grid) {
+                document.getElementById('grid-rows').value = task.answer_grid.rows;
+                document.getElementById('grid-cols').value = task.answer_grid.cols;
+                updateGridFields();
+                setTimeout(() => {
+                    task.answer_grid.answers.forEach((row, rIdx) => {
+                        row.forEach((val, cIdx) => {
+                            const input = document.querySelector(`.grid-answer[data-row="${rIdx}"][data-col="${cIdx}"]`);
+                            if (input) input.value = val;
+                        });
+                    });
+                }, 100);
+            }
+
+            document.getElementById('form-title').textContent = `✏️ Редактирование задания №${task.id}`;
+            document.getElementById('save-btn').textContent = '💾 Сохранить изменения';
+            document.getElementById('cancel-btn').style.display = 'block';
+            document.getElementById('form-title').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function deleteTask(index) {
+            if (confirm('Удалить задание?')) {
+                variantData.tasks.splice(index, 1);
+                renderTasksList();
+            }
+        }
+
+        function selectTaskType(type) {
+            currentTaskType = type;
+            document.querySelectorAll('.task-type-btn').forEach(b => b.classList.remove('active'));
+            event.target.closest('.task-type-btn').classList.add('active');
+
+            const container = document.getElementById('answer-fields');
+            if (type === 'single') {
+                container.innerHTML = `<div class="form-group"><label>Ответ:</label><input type="text" id="correct-answer"></div>`;
+            } else if (type === 'double') {
+                container.innerHTML = `<div class="form-group"><label>Ответ 1:</label><input type="text" id="answer-1"></div><div class="form-group"><label>Ответ 2:</label><input type="text" id="answer-2"></div>`;
+            } else if (type === 'grid') {
+                container.innerHTML = `<div style="display:flex; gap:10px"><input type="number" id="grid-rows" value="1" min="1" max="10" placeholder="Строки" onchange="updateGridFields()"><input type="number" id="grid-cols" value="1" min="1" max="10" placeholder="Столбцы" onchange="updateGridFields()"></div><div id="grid-answers-container"></div>`;
+                updateGridFields();
+            }
+        }
+
+        function updateGridFields() {
+            const rows = parseInt(document.getElementById('grid-rows').value) || 1;
+            const cols = parseInt(document.getElementById('grid-cols').value) || 1;
+            const container = document.getElementById('grid-answers-container');
+            container.innerHTML = '';
+            for (let i = 0; i < rows; i++) {
+                const rowDiv = document.createElement('div');
+                rowDiv.style.cssText = 'display:flex; gap:5px; margin-top:5px;';
+                for (let j = 0; j < cols; j++) {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'grid-answer';
+                    input.dataset.row = i;
+                    input.dataset.col = j;
+                    input.placeholder = `R${i + 1}C${j + 1}`;
+                    input.style.cssText = 'flex:1; padding:8px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:6px; color:#e0e0e0;';
+                    rowDiv.appendChild(input);
+                }
+                container.appendChild(rowDiv);
+            }
+        }
+
+        function resetForm() {
+            clearFormFields();
+            document.getElementById('edit-index').value = "-1";
+            document.getElementById('form-title').textContent = "➕ Добавить задание";
+            document.getElementById('save-btn').textContent = "✅ Добавить задание";
+            document.getElementById('cancel-btn').style.display = 'none';
+        }
+
+        function clearFormFields() {
+            document.getElementById('task-title').value = '';
+            document.getElementById('correct-answer').value = '';
+            document.getElementById('paragraphs-container').innerHTML = '';
+            addParagraph();
+            paragraphCount = 0;
+            currentTaskFile = null;
+            document.getElementById('selected-file-display').textContent = 'Файл не выбран';
+            document.getElementById('selected-file-display').style.color = '#888';
+            document.getElementById('task-file-input').value = '';
+            selectTaskType('single');
+        }
+
+        function clearAll() {
+            if (confirm('Удалить все задания?')) {
+                variantData.tasks = [];
+                renderTasksList();
+            }
+        }
+
+        function downloadJSON() {
+            variantData.title = document.getElementById('variant-title').value;
+            const blob = new Blob([JSON.stringify(variantData, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `variant_${new Date().getTime()}.json`;
+            a.click();
+        }
+    </script>
+</body>
+
+</html>

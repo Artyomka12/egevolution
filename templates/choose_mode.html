@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Выбор режима | Вариант {{ variant_num }}</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 10% 20%, #0f172a 0%, #020617 90%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Эффект фоновой сети (точки) */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(rgba(56, 189, 248, 0.2) 1px, transparent 1px),
+                radial-gradient(rgba(56, 189, 248, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px, 30px 30px;
+            background-position: 0 0, 15px 15px;
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 900px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Навигация */
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #38bdf8;
+            text-decoration: none;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 8px;
+            margin-bottom: 40px;
+            transition: 0.3s;
+            backdrop-filter: blur(5px);
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .nav-back:hover {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: #38bdf8;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+            transform: translateX(-5px);
+        }
+
+        /* Логотип и Заголовок */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .main-logo {
+            width: 60px;
+            height: auto;
+            filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.6));
+            animation: floatArrow 3s ease-in-out infinite;
+        }
+
+        @keyframes floatArrow {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .variant-title {
+            font-size: 2.5em;
+            font-weight: 800;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        .page-subtitle {
+            color: #94a3b8;
+            font-size: 1.2em;
+            margin-bottom: 50px;
+        }
+
+        /* Сетка режимов */
+        .modes-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+        }
+
+        /* Карточка режима */
+        .mode-card {
+            position: relative;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-decoration: none;
+            color: white;
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .mode-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .mode-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(56, 189, 248, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(56, 189, 248, 0.1);
+        }
+
+        .mode-card:hover::before {
+            opacity: 1;
+        }
+
+        .mode-icon {
+            font-size: 4em;
+            margin-bottom: 25px;
+            filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.4));
+        }
+
+        .mode-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 15px;
+        }
+
+        .mode-desc {
+            color: #94a3b8;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .modes-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .variant-title {
+                font-size: 1.8em;
+            }
+
+            .main-logo {
+                width: 40px;
+            }
+
+            .logo-container {
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="/variants" class="nav-back">← Назад к вариантам</a>
+
+        <!-- Заголовок с логотипом -->
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='favicon.png') }}" alt="Логотип" class="main-logo">
+            <h1 class="variant-title">Вариант {{ variant_num }}</h1>
+        </div>
+
+        <p class="page-subtitle">Выберите режим решения:</p>
+
+        <div class="modes-grid">
+            <!-- Обычный режим -->
+            <a href="/tasks/{{ variant_num }}" class="mode-card">
+                <span class="mode-icon">📋</span>
+                <h2 class="mode-title">Обычный режим</h2>
+                <p class="mode-desc">Простой интерфейс с проверкой ответов в реальном времени</p>
+            </a>
+
+            <!-- Режим экзамена -->
+            <a href="/exam/{{ variant_num }}" class="mode-card">
+                <span class="mode-icon">🎓</span>
+                <h2 class="mode-title">Режим экзамена</h2>
+                <p class="mode-desc">Интерфейс как на реальном ЕГЭ с таймером и навигацией</p>
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>

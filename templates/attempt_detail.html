@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детали попытки | ЕГЭволюция</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 10% 20%, #0f172a 0%, #020617 90%);
+            color: #e2e8f0;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #38bdf8;
+            text-decoration: none;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 8px;
+            margin-bottom: 30px;
+            transition: 0.3s;
+        }
+
+        .nav-back:hover {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: #38bdf8;
+            transform: translateX(-5px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            color: #38bdf8;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px 30px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #38bdf8;
+        }
+
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.9em;
+        }
+
+        .tasks-table {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: grid;
+            grid-template-columns: 1fr 2fr 2fr 1fr;
+            gap: 20px;
+            padding: 20px 30px;
+            background: rgba(56, 189, 248, 0.1);
+            border-bottom: 2px solid rgba(56, 189, 248, 0.2);
+            font-weight: 600;
+            color: #38bdf8;
+        }
+
+        .task-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr 2fr 1fr;
+            gap: 20px;
+            padding: 20px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+        }
+
+        .task-row:hover {
+            background: rgba(56, 189, 248, 0.05);
+        }
+
+        .task-row:last-child {
+            border-bottom: none;
+        }
+
+        .task-num {
+            font-weight: 600;
+            color: #818cf8;
+            display: flex;
+            align-items: center;
+        }
+
+        .answer-cell {
+            font-family: 'Courier New', monospace;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            word-break: break-all;
+        }
+
+        .correct-answer {
+            color: #4ade80;
+        }
+
+        .user-answer {
+            color: #e2e8f0;
+        }
+
+        .user-answer.not-answered {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .points {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            font-weight: bold;
+        }
+
+        .points.positive {
+            color: #4ade80;
+        }
+
+        .points.zero {
+            color: #64748b;
+        }
+
+        @media (max-width: 768px) {
+
+            .table-header,
+            .task-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .table-header {
+                display: none;
+            }
+
+            .task-row {
+                padding: 15px 20px;
+            }
+
+            .task-num::before {
+                content: "Задание: ";
+                color: #94a3b8;
+            }
+
+            .answer-label {
+                display: inline;
+                color: #94a3b8;
+                margin-right: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        {% if target_user_id %}
+        <!-- Кнопка назад для админа -->
+        <a href="/admin/user/{{ target_user_id }}" class="nav-back" style="margin-bottom: 20px;">
+            ← Назад к статистике пользователя
+        </a>
+        {% else %}
+        <!-- Кнопка назад для обычного пользователя -->
+        <a href="/stats" class="nav-back" style="margin-bottom: 20px;">
+            ← Назад к статистике
+        </a>
+        {% endif %}
+
+        <div class="header">
+            <h1>📊 Вариант {{ variant_num }}</h1>
+        </div>
+
+        <!-- Общая инфо -->
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value">{{ info.date }}</div>
+                <div class="stat-label">Дата</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">{{ info.score }} / {{ info.total_tasks }}</div>
+                <div class="stat-label">Первичный балл</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">{{ info.secondary_score }}</div>
+                <div class="stat-label">Тестовый балл</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">{{ info.time_spent }}</div>
+                <div class="stat-label">Затрачено времени</div>
+            </div>
+        </div>
+
+        <!-- Таблица заданий -->
+        <div class="tasks-table">
+            <div class="table-header">
+                <div>Задание №</div>
+                <div>Твой ответ</div>
+                <div>Правильный ответ</div>
+                <div style="text-align: right;">Балл</div>
+            </div>
+
+            {% for item in tasks %}
+            <div class="task-row">
+                <div class="task-num">{{ item.task_data.id }}</div>
+
+                <div class="answer-cell user-answer {% if item.user_answer is none %}not-answered{% endif %}">
+                    {% if item.user_answer %}
+                    {% if item.user_answer is iterable and item.user_answer is not string %}
+                    {% if item.user_answer[0] is iterable and item.user_answer[0] is not string %}
+                    {% for row in item.user_answer %}{{ row | join('') }} {% endfor %}
+                    {% else %}
+                    {{ item.user_answer | join(', ') }}
+                    {% endif %}
+                    {% else %}
+                    {{ item.user_answer }}
+                    {% endif %}
+                    {% else %}
+                    Не решено
+                    {% endif %}
+                </div>
+
+                <div class="answer-cell correct-answer">
+                    {% if item.task_data.answer_grid %}
+                    {% for row in item.task_data.answer_grid.answers %}{{ row | join('') }} {% endfor %}
+                    {% elif item.task_data.answers %}
+                    {{ item.task_data.answers | join(', ') }}
+                    {% else %}
+                    {{ item.task_data.correct_answer }}
+                    {% endif %}
+                </div>
+
+                <div class="points {% if item.points > 0 %}positive{% else %}zero{% endif %}">
+                    +{{ item.points }} балла
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+
+</html>

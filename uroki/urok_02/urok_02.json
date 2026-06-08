@@ -1,0 +1,24 @@
+{
+    "title": "Системы счисления",
+    "theory": {
+        "description": [
+            "Система счисления — это способ записи чисел...",
+            "Двоичная система использует цифры 0 и 1."
+        ],
+        "images": [
+            { "path": "binary_table.png", "after_paragraph": 1 }
+        ]
+    },
+    "practice": {
+        "tasks": [
+            {
+                "description": ["Переведите число 10 в двоичную систему."],
+                "correct_answer": "1010"
+            },
+            {
+                "description": ["Сложите 101 + 11"],
+                "answer_grid": { "rows": 1, "cols": 1, "answers": [["1000"]] }
+            }
+        ]
+    }
+}

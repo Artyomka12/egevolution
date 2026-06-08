@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Теория | ЕГЭволюция</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 10% 20%, #0f172a 0%, #020617 90%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 40px 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Эффект фоновой сети (точки) */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(rgba(56, 189, 248, 0.2) 1px, transparent 1px),
+                radial-gradient(rgba(56, 189, 248, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px, 30px 30px;
+            background-position: 0 0, 15px 15px;
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Навигация */
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #38bdf8;
+            text-decoration: none;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 8px;
+            margin-bottom: 30px;
+            transition: 0.3s;
+            backdrop-filter: blur(5px);
+            font-size: 0.9em;
+        }
+
+        .nav-back:hover {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: #38bdf8;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+            transform: translateX(-5px);
+        }
+
+        /* Заголовок с логотипом */
+        .header-section {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .main-logo {
+            width: 70px;
+            height: auto;
+            filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.6));
+            animation: floatArrow 3s ease-in-out infinite;
+        }
+
+        @keyframes floatArrow {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .main-title {
+            font-size: 2.5em;
+            font-weight: 700;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 1.1em;
+            margin-top: 10px;
+        }
+
+        /* Карточка со списком */
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card-title1 {
+            text-align: center;
+            color: #fff;
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        /* Список заданий (вертикальный) */
+        .tasks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Стили кнопок */
+        .task-link {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 12px;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .task-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, #38bdf8, #818cf8);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .task-link:hover {
+            background: rgba(56, 189, 248, 0.1);
+            border-color: rgba(56, 189, 248, 0.5);
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(56, 189, 248, 0.2);
+        }
+
+        .task-link:hover::before {
+            opacity: 1;
+        }
+
+        /* Левая часть: Номер и Название */
+        .task-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .task-num {
+            font-size: 1.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(129, 140, 248, 0.2));
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        .task-name {
+            font-size: 1.1em;
+            font-weight: 500;
+            color: #e2e8f0;
+        }
+
+        /* Правая часть: Прогресс */
+        .task-progress {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.9em;
+        }
+
+        /* Индикаторы статуса */
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            box-shadow: 0 0 8px currentColor;
+        }
+
+        .status-dot.not_started {
+            background: #64748b;
+            color: #64748b;
+        }
+
+        .status-dot.in_progress {
+            background: #fbbf24;
+            color: #fbbf24;
+        }
+
+        .status-dot.completed {
+            background: #4ade80;
+            color: #4ade80;
+        }
+
+        .lock-icon {
+            font-size: 1em;
+            opacity: 0.7;
+        }
+
+        .lock-icon.locked {
+            color: #f87171;
+        }
+
+        .lock-icon.unlocked {
+            color: #38bdf8;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 600px) {
+            .main-title {
+                font-size: 1.8em;
+            }
+
+            .task-link {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .task-progress {
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="/" class="nav-back">
+            <span>←</span> На главную
+        </a>
+
+        <!-- Заголовок с логотипом -->
+        <div class="header-section">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='favicon.png') }}" alt="Логотип" class="main-logo">
+                <h1 class="main-title">Теория по заданиям ЕГЭ</h1>
+            </div>
+            <p class="subtitle">Выберите номер задания для изучения теории</p>
+        </div>
+
+        <!-- Список заданий -->
+        <div class="card">
+            <h2 class="card-title1">Список заданий</h2>
+            <div class="tasks-list">
+                {% for task in tasks %}
+                <a href="/theory/{{ task.num }}" class="task-link">
+                    <!-- Левая часть: Номер и Название -->
+                    <div class="task-info">
+                        <div class="task-num">{{ task.num }}</div>
+                        <div class="task-name">{{ task.title }}</div>
+                    </div>
+
+                    <!-- Правая часть: Замок и Прогресс -->
+                    <div class="task-progress">
+                        <!-- Замок -->
+                        {% if task.is_unlocked %}
+                        <span class="lock-icon unlocked">🔓</span>
+                        {% else %}
+                        <span class="lock-icon locked">🔒</span>
+                        {% endif %}
+
+                        <!-- Точка статуса -->
+                        <div class="status-dot {{ task.status }}"></div>
+
+                        <!-- Счетчик -->
+                        <span>{{ task.correct_tasks }} / {{ task.total_tasks }}</span>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

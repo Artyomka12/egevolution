@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Решение варианта | ЕГЭволюция</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 40px 20px 120px 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Заголовок варианта */
+        .variant-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .variant-header h1 {
+            font-size: 2em;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .change-variant {
+            padding: 10px 20px;
+            background: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            transition: all 0.3s;
+        }
+
+        .change-variant:hover {
+            background: rgba(56, 189, 248, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Карточка задания */
+        .task-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .task-card h2 {
+            color: #fff;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .task-description {
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .task-description p {
+            margin-bottom: 15px;
+            text-indent: 20px;
+        }
+
+        /* Изображения */
+        .task-image {
+            display: block;
+            margin: 20px auto;
+            border-radius: 12px;
+            max-width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Файл для скачивания */
+        .file-download {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(56, 189, 248, 0.05);
+            border-radius: 12px;
+            border-left: 4px solid #38bdf8;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .file-download:hover {
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        .file-link {
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .file-link:hover {
+            text-decoration: underline;
+        }
+
+        /* ТАБЛИЦА ДЛЯ ВВОДА ОТВЕТОВ */
+        .answer-grid-container {
+            margin: 25px 0;
+        }
+
+        .answer-grid-table {
+            border-collapse: separate;
+            border-spacing: 12px;
+            margin: 20px 0;
+        }
+
+        .answer-grid-table td {
+            padding: 0;
+        }
+
+        .grid-input {
+            width: 140px;
+            height: 50px;
+            padding: 0 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 16px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .grid-input:focus {
+            outline: none;
+            border-color: #38bdf8;
+            background: rgba(56, 189, 248, 0.1);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+        }
+
+        .grid-input.success {
+            border-color: #4ade80;
+            background: rgba(74, 222, 128, 0.1);
+            color: #4ade80;
+        }
+
+        .grid-input.error {
+            border-color: #f87171;
+            background: rgba(248, 113, 113, 0.1);
+            color: #f87171;
+        }
+
+        /* Поля для двух ответов */
+        .answers-group {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .answer-field {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .answer-field input {
+            width: 100%;
+            height: 50px;
+            padding: 0 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .answer-field input:focus {
+            outline: none;
+            border-color: #38bdf8;
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        .answer-field input.success {
+            border-color: #4ade80;
+            background: rgba(74, 222, 128, 0.1);
+            color: #4ade80;
+        }
+
+        .answer-field input.error {
+            border-color: #f87171;
+            background: rgba(248, 113, 113, 0.1);
+            color: #f87171;
+        }
+
+        /* Одно поле ввода */
+        .input-group {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            align-items: stretch;
+        }
+
+        .input-group input {
+            flex: 1;
+            height: 50px;
+            padding: 0 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #38bdf8;
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        .input-group input.success {
+            border-color: #4ade80;
+            background: rgba(74, 222, 128, 0.1);
+            color: #4ade80;
+        }
+
+        .input-group input.error {
+            border-color: #f87171;
+            background: rgba(248, 113, 113, 0.1);
+            color: #f87171;
+        }
+
+        /* Кнопка проверки */
+        .check-button {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+            color: #0f172a;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .check-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(56, 189, 248, 0.4);
+        }
+
+        /* ТАЙМЕР */
+        #timer-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid rgba(56, 189, 248, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            width: 200px;
+        }
+
+        .timer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .timer-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+
+        #timer-display {
+            font-size: 24px;
+            font-weight: bold;
+            color: #38bdf8;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            margin: 10px 0;
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .timer-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-reset {
+            background: rgba(248, 113, 113, 0.2);
+            color: #f87171;
+            border: 1px solid rgba(248, 113, 113, 0.3);
+        }
+
+        .btn-reset:hover {
+            background: rgba(248, 113, 113, 0.3);
+        }
+
+        .btn-finish {
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            color: #0f172a;
+            border: none;
+        }
+
+        .btn-finish:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.4);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .variant-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            #timer-container {
+                top: auto;
+                bottom: 20px;
+                right: 20px;
+                left: 20px;
+                min-width: auto;
+            }
+
+            .answers-group {
+                flex-direction: column;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .answer-grid-table {
+                border-spacing: 8px;
+            }
+
+            .grid-input {
+                width: 100px;
+                height: 45px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ТАЙМЕР -->
+    <div id="timer-container"
+        style="position: fixed; top: 20px; right: 20px; width: 140px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); padding: 12px; border-radius: 12px; border: 2px solid rgba(56, 189, 248, 0.3); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); z-index: 1000; text-align: center;">
+        <div style="font-size: 14px; color: #94a3b8; margin-bottom: 5px;">⏱️ Время</div>
+        <div id="timer-display"
+            style="font-size: 24px; font-weight: bold; color: #38bdf8; font-family: 'Courier New', monospace; text-shadow: 0 0 10px rgba(56, 189, 248, 0.5); margin: 5px 0;">
+            03:55:00</div>
+        <button onclick="resetTimer()"
+            style="width: 100%; padding: 8px; background: rgba(248, 113, 113, 0.2); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3); border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; margin-bottom: 8px; transition: 0.3s;">
+            🔄 Сброс
+        </button>
+        <button onclick="finishVariant()"
+            style="width: 100%; padding: 8px; background: linear-gradient(135deg, #38bdf8, #818cf8); color: #0f172a; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; transition: 0.3s;">
+            ✅ Завершить
+        </button>
+    </div>
+    <div class="container">
+        <!-- Заголовок -->
+        <div class="variant-header">
+            <h1>📝 Вариант {{ variant_num }}</h1>
+            <a href="/variants" class="change-variant">🔄 Выбрать другой</a>
+        </div>
+        <!-- Задания -->
+        {% for task in tasks %}
+        <div class="task-card" id="task-{{ task.id }}">
+            <h2>{{ task.title }}</h2>
+            <!-- Описание -->
+            {% for paragraph in task.description %}
+            <div class="task-description">
+                <p>{{ paragraph }}</p>
+            </div>
+            <!-- Картинки после абзаца -->
+            {% if task.images %}
+            {% set current_paragraph_index = loop.index0 %}
+            {% for image in task.images %}
+            {% if image.after_paragraph == current_paragraph_index %}
+            <img src="{{ url_for('variant_images', variant_num=variant_num, filename=image.path) }}"
+                alt="{{ image.alt or task.title }}" class="task-image {{ image.size or 'img-medium' }}">
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+            {% endfor %}
+            <!-- Файл для скачивания -->
+            {% if task.file %}
+            <div class="file-download">
+                <div style="font-size: 40px;">📄</div>
+                <div style="flex: 1;">
+                    <a href="{{ url_for('variant_files', variant_num=variant_num, filename=task.file.path) }}" download
+                        class="file-link">
+                        {{ task.file.name }}
+                    </a>
+                    {% if task.file.description %}
+                    <p style="margin: 5px 0 0 0; color: #94a3b8; font-size: 14px;">
+                        {{ task.file.description }}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            <!-- Форма проверки -->
+            <form action="/check/{{ variant_num }}/{{ task.id }}" method="POST" id="check-form-{{ task.id }}">
+                {% if task.answer_grid %}
+                <!-- Таблица ответов (для заданий 26-27) -->
+                <div class="answer-grid-container">
+                    <table class="answer-grid-table">
+                        {% for row in range(task.answer_grid.rows) %}
+                        <tr>
+                            {% for col in range(task.answer_grid.cols) %}
+                            <td>
+                                <input type="text" name="answer_{{ row }}_{{ col }}"
+                                    id="answer-{{ task.id }}-{{ row }}-{{ col }}" class="grid-input" autocomplete="off"
+                                    maxlength="30" required>
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                <button type="submit" class="check-button">Проверить таблицу</button>
+                {% elif task.answers and task.answers|length == 2 %}
+                <!-- Два поля ввода -->
+                <div class="answers-group">
+                    <div class="answer-field">
+                        <input type="text" name="answer1" id="answer1-input-{{ task.id }}" placeholder="Ответ 1"
+                            maxlength="30" required autocomplete="off">
+                    </div>
+                    <div class="answer-field">
+                        <input type="text" name="answer2" id="answer2-input-{{ task.id }}" placeholder="Ответ 2"
+                            maxlength="30" required autocomplete="off">
+                    </div>
+                </div>
+                <button type="submit" class="check-button">Проверить ответы</button>
+                {% else %}
+                <!-- Одно поле ввода -->
+                <div class="input-group">
+                    <input type="text" name="answer" id="answer-input-{{ task.id }}" placeholder="Введите ответ..."
+                        maxlength="30" required autocomplete="off">
+                    <button type="submit" class="check-button">Проверить</button>
+                </div>
+                {% endif %}
+            </form>
+        </div>
+        {% if not loop.last %}
+        <div
+            style="height: 2px; background: linear-gradient(to right, transparent, rgba(56, 189, 248, 0.2), transparent); margin: 30px 0;">
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    <script>
+        // === ТАЙМЕР ===
+        let timerInterval;
+        let timeRemaining = 3 * 3600 + 55 * 60;
+        const TIMER_STORAGE_KEY = 'ege_timer_variant_{{ variant_num }}';
+
+        function loadTimerFromStorage() {
+            const saved = localStorage.getItem(TIMER_STORAGE_KEY);
+            if (saved) {
+                timeRemaining = parseInt(saved);
+            }
+        }
+
+        function saveTimerToStorage() {
+            localStorage.setItem(TIMER_STORAGE_KEY, timeRemaining.toString());
+        }
+
+        function formatTime(seconds) {
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = seconds % 60;
+            return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        function updateTimerDisplay() {
+            const display = document.getElementById('timer-display');
+            if (display) {
+                display.textContent = formatTime(timeRemaining);
+                saveTimerToStorage();
+            }
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                if (timeRemaining > 0) {
+                    timeRemaining--;
+                    updateTimerDisplay();
+                } else {
+                    clearInterval(timerInterval);
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            if (confirm('⚠️ Сбросить таймер на 3:55:00?')) {
+                timeRemaining = 3 * 3600 + 55 * 60;
+                updateTimerDisplay();
+                saveTimerToStorage();
+            }
+        }
+
+        // === ГЛАВНАЯ ФУНКЦИЯ ЗАВЕРШЕНИЯ (ИСПРАВЛЕНА) ===
+        async function finishVariant() {
+            if (confirm('⚠️ Вы уверены, что хотите завершить вариант?')) {
+                const answers = {};
+                const forms = document.querySelectorAll('form[id^="check-form-"]');
+
+                forms.forEach(form => {
+                    const taskId = form.id.replace('check-form-', '');
+                    const inputs = form.querySelectorAll('input[type="text"]');
+                    const table = form.querySelector('.answer-grid-table');
+
+                    if (table) {
+                        const rows = table.querySelectorAll('tr');
+                        const gridAnswers = [];
+                        rows.forEach(row => {
+                            const rowInputs = row.querySelectorAll('input');
+                            const rowValues = [];
+                            rowInputs.forEach(input => {
+                                rowValues.push(input.value.trim());
+                            });
+                            gridAnswers.push(rowValues);
+                        });
+                        answers[taskId] = gridAnswers;
+                    } else if (inputs.length === 2) {
+                        answers[taskId] = [inputs[0].value.trim(), inputs[1].value.trim()];
+                    } else if (inputs.length === 1) {
+                        answers[taskId] = inputs[0].value.trim();
+                    }
+                });
+
+                const totalTime = 3 * 3600 + 55 * 60;
+                const timeSpent = totalTime - timeRemaining;
+
+                // ✅ Сначала отправляем данные на сервер для сохранения в БД
+                try {
+                    const response = await fetch(`/save_results/{{ variant_num }}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            answers: answers,
+                            time_spent: formatTime(timeSpent)
+                        })
+                    });
+
+                    if (response.ok) {
+                        // Если сервер подтвердил сохранение, тогда сохраняем локально для страницы результатов
+                        localStorage.setItem(`variant_{{ variant_num }}_answers`, JSON.stringify(answers));
+                        localStorage.setItem(`variant_{{ variant_num }}_time`, timeSpent.toString());
+                        window.location.href = `/results/{{ variant_num }}`;
+                    } else {
+                        alert('Ошибка при сохранении результатов на сервере.');
+                    }
+                } catch (error) {
+                    console.error('Ошибка сети:', error);
+                    alert('Ошибка сети. Проверьте подключение.');
+                }
+            }
+        }
+
+        // === ПРОВЕРКА ФОРМ ===
+        function setupFormCheck(formId, taskId, hasGrid = false) {
+            const form = document.getElementById(formId);
+            if (!form) return;
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const formData = new FormData(form);
+
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (hasGrid) {
+                            const gridResults = data.grid_results;
+                            const rows = gridResults.length;
+                            const cols = gridResults[0].length;
+                            for (let i = 0; i < rows; i++) {
+                                for (let j = 0; j < cols; j++) {
+                                    const input = document.getElementById(`answer-${taskId}-${i}-${j}`);
+                                    if (input) {
+                                        input.classList.remove('success', 'error');
+                                        if (gridResults[i][j]) {
+                                            input.classList.add('success');
+                                        } else {
+                                            input.classList.add('error');
+                                        }
+                                    }
+                                }
+                            }
+                        } else if (data.answer1_correct !== undefined) {
+                            const input1 = document.getElementById(`answer1-input-${taskId}`);
+                            const input2 = document.getElementById(`answer2-input-${taskId}`);
+                            if (input1) {
+                                input1.classList.remove('success', 'error');
+                                input1.classList.add(data.answer1_correct ? 'success' : 'error');
+                            }
+                            if (input2) {
+                                input2.classList.remove('success', 'error');
+                                input2.classList.add(data.answer2_correct ? 'success' : 'error');
+                            }
+                        } else {
+                            const input = document.getElementById(`answer-input-${taskId}`);
+                            if (input) {
+                                input.classList.remove('success', 'error');
+                                input.classList.add(data.correct ? 'success' : 'error');
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Ошибка:', error);
+                        if (hasGrid) {
+                            const inputs = form.querySelectorAll('.grid-input');
+                            inputs.forEach(input => input.classList.add('error'));
+                        }
+                    });
+            });
+        }
+
+        // === ИНИЦИАЛИЗАЦИЯ ===
+        document.addEventListener('DOMContentLoaded', function () {
+            loadTimerFromStorage();
+            updateTimerDisplay();
+            startTimer();
+
+            const tasks = {{ tasks | tojson
+        }};
+
+        tasks.forEach(task => {
+            const formId = `check-form-${task.id}`;
+            if (task.answer_grid) {
+                setupFormCheck(formId, task.id, true);
+            } else if (task.answers && task.answers.length === 2) {
+                setupFormCheck(formId, task.id, false);
+            } else {
+                setupFormCheck(formId, task.id, false);
+            }
+        });
+});
+    </script>
+</body>
+
+</html>

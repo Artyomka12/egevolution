@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель | ЕГЭ Информатика</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <style>
+        /* Тёмная тема как в профиле */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #ef4444, #f59e0b);
+            /* Красно-золотой градиент */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-back {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #e0e0e0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Таблица */
+        .users-table-container {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        th {
+            color: #a855f7;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 1px;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge-admin {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-delete:hover {
+            background: rgba(239, 68, 68, 0.4);
+        }
+
+        .flash-msg {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .success {
+            background: rgba(40, 167, 69, 0.2);
+            color: #4ade80;
+            border: 1px solid #28a745;
+        }
+
+        .error {
+            background: rgba(220, 53, 69, 0.2);
+            color: #f87171;
+            border: 1px solid #dc3545;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="/profile" class="btn-back">← Вернуться в профиль</a>
+            <h1>👑 Админ-панель</h1>
+            <div style="color: #666;">Админ: {{ current_user.username }}</div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash-msg {{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <div class="users-table-container">
+            <h2 style="margin-bottom: 20px; color: #fff;">Список пользователей</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Имя / Логин</th>
+                        <th>Дата регистрации</th>
+                        <th>Роль</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>#{{ user.id }}</td>
+                        <td>
+                            <div style="font-weight: bold;">{{ user.name or 'Без имени' }}</div>
+                            <div style="font-size: 0.85em; color: #888;">@{{ user.username }}</div>
+                        </td>
+                        <td>{{ user.created_at[:10] }}</td>
+                        <td>
+                            {% if user.is_admin == 1 %}
+                            <span class="badge-admin">Админ</span>
+                            {% else %}
+                            <span style="color: #888;">Пользователь</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.id != current_user.id %}
+                            <div style="display: flex; gap: 5px;">
+                                <!-- Кнопка просмотра -->
+                                <a href="/admin/user/{{ user.id }}"
+                                    style="padding: 5px 10px; background: rgba(0, 123, 255, 0.2); color: #007bff; border: 1px solid rgba(0, 123, 255, 0.3); border-radius: 6px; text-decoration: none; font-size: 0.9em;">
+                                    👁️ Просмотр
+                                </a>
+                                <!-- Кнопка удаления -->
+                                <form action="/admin/delete_user/{{ user.id }}" method="POST" style="display: inline;">
+                                    <button type="submit" class="btn-delete"
+                                        onclick="return confirm('Удалить пользователя {{ user.username }}?')">
+                                        🗑️ Удалить
+                                    </button>
+                                </form>
+                            </div>
+                            {% else %}
+                            <span style="color: #444; font-size: 0.8em;">Это вы</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- СЕКЦИЯ КОНСТРУКТОРА ВАРИАНТОВ -->
+        <div style="margin-top: 40px; text-align: center;">
+            <a href="/constructor_editor" style="background: linear-gradient(135deg, #fd7e14 0%, #feca57 100%); 
+                  color: white; 
+                  padding: 30px 60px; 
+                  border-radius: 15px; 
+                  text-decoration: none; 
+                  display: inline-block;
+                  font-size: 1.5em;
+                  font-weight: bold;
+                  transition: all 0.3s;
+                  box-shadow: 0 10px 25px rgba(253, 126, 20, 0.3);">
+                <span style="font-size: 1.5em; margin-right: 15px;">🛠️</span> Открыть редактор вариантов
+            </a>
+        </div>
+
+    </div>
+    </div>
+</body>
+
+</html>

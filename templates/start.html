@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EGEvolution</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Глубокий темный фон с синим оттенком */
+            background: radial-gradient(circle at 10% 20%, #0f172a 0%, #020617 90%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 40px 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Эффект фоновой сети (точки) */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(rgba(56, 189, 248, 0.2) 1px, transparent 1px),
+                radial-gradient(rgba(56, 189, 248, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px, 30px 30px;
+            background-position: 0 0, 15px 15px;
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* === Кнопки профиля === */
+        .user-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-bottom: 40px;
+        }
+
+        .action-link {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            padding: 10px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            color: #38bdf8;
+            transition: all 0.3s;
+        }
+
+        .action-link:hover {
+            background: rgba(56, 189, 248, 0.15);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+        }
+
+        .action-link.logout {
+            color: #f87171;
+            border-color: rgba(248, 113, 113, 0.2);
+        }
+
+        .action-link.logout:hover {
+            background: rgba(248, 113, 113, 0.15);
+            box-shadow: 0 0 15px rgba(248, 113, 113, 0.3);
+        }
+
+        /* === Заголовок === */
+        .main-title {
+            text-align: center;
+            font-size: 3.5em;
+            font-weight: 800;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 1.2em;
+            margin-bottom: 60px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            /* Расстояние между иконкой и текстом */
+            margin-bottom: 15px;
+        }
+
+        .main-logo {
+            width: 70px;
+            /* Размер иконки */
+            height: auto;
+            /* Неоновое свечение */
+            filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.6));
+            /* Анимация парения */
+            animation: floatArrow 3s ease-in-out infinite;
+        }
+
+        @keyframes floatArrow {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* === Сетка меню === */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 60px;
+        }
+
+        .menu-card {
+            position: relative;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 35px 25px;
+            text-decoration: none;
+            color: white;
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        /* Эффект свечения при наведении */
+        .menu-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(56, 189, 248, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(56, 189, 248, 0.1);
+        }
+
+        .menu-card:hover::before {
+            opacity: 1;
+        }
+
+        .menu-card .icon {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.4));
+        }
+
+        .menu-card h2 {
+            font-size: 1.4em;
+            margin-bottom: 10px;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .menu-card p {
+            color: #94a3b8;
+            font-size: 0.95em;
+        }
+
+        /* === Секции (Варианты, Новости) === */
+        .section-block {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 2em;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-title span {
+            font-size: 1.2em;
+        }
+
+        /* Карточки новых вариантов */
+        .new-variant-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            text-decoration: none;
+            color: white;
+            transition: 0.3s;
+        }
+
+        .new-variant-card:hover {
+            border-color: #818cf8;
+            background: rgba(0, 0, 0, 0.5);
+            transform: translateX(5px);
+        }
+
+        .new-variant-info h3 {
+            font-size: 1.3em;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        .new-variant-info p {
+            color: #94a3b8;
+        }
+
+        .new-variant-date {
+            text-align: right;
+            min-width: 120px;
+        }
+
+        .date-label {
+            font-size: 0.8em;
+            color: #64748b;
+            display: block;
+        }
+
+        .date-value {
+            font-size: 0.9em;
+            color: #e2e8f0;
+            font-weight: bold;
+        }
+
+        .badge-new {
+            background: rgba(56, 189, 248, 0.2);
+            color: #38bdf8;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.75em;
+            margin-left: 8px;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        /* Новости */
+        .news-item {
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 3px solid #38bdf8;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .news-item.important {
+            border-left-color: #f87171;
+        }
+
+        .news-date {
+            font-size: 0.85em;
+            color: #64748b;
+            margin-bottom: 5px;
+        }
+
+        .news-title-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .news-description {
+            color: #94a3b8;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        /* === Блок с контактами и соцсетями === */
+        .contacts-section {
+            width: 100%;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 50px;
+        }
+
+        .contacts-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .contacts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .contacts-column {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 30px;
+        }
+
+        .contacts-title {
+            color: #fff;
+            font-size: 1.5em;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        .contacts-list,
+        .social-links {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .contact-link,
+        .social-link {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            text-decoration: none;
+            color: #e0e0e0;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .contact-link:hover,
+        .social-link:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(168, 85, 247, 0.3);
+            transform: translateX(5px);
+            color: #fff;
+        }
+
+        .contact-icon,
+        .social-icon {
+            font-size: 1.5em;
+        }
+
+        .contact-text,
+        .social-text {
+            font-size: 1em;
+            font-weight: 500;
+        }
+
+        .contacts-phone {
+            text-align: center;
+            padding: 30px;
+            background: rgba(168, 85, 247, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+        }
+
+        .phone-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #a855f7;
+            margin-bottom: 5px;
+        }
+
+        .phone-text {
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .contacts-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .contacts-section {
+                padding: 40px 15px;
+            }
+
+            .phone-number {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Кнопки действий -->
+        <div class="user-actions">
+            {% if session.get('user_id') %}
+            <a href="/profile" class="action-link">👤 Профиль</a>
+            <a href="/logout" class="action-link logout">🚪 Выйти</a>
+            {% else %}
+            <a href="/login" class="action-link">🔐 Войти</a>
+            <a href="/register" class="action-link">📝 Регистрация</a>
+            {% endif %}
+        </div>
+
+        <!-- Заголовок -->
+        <div class="header-section">
+            <!-- Обертка для логотипа и текста -->
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='favicon.png') }}" alt="Логотип" class="main-logo">
+                <h1 class="main-title">ЕГЭволюция</h1>
+            </div>
+            <p class="subtitle">Платформа для подготовки к экзамену по информатике</p>
+        </div>
+
+        <!-- Сетка меню -->
+        <div class="menu-grid">
+            <a href="/preparation" class="menu-card">
+                <span class="icon">🚀</span>
+                <h2>Начальная подготовка</h2>
+                <p>Базовые уроки и разбор тем</p>
+            </a>
+            <a href="/theory" class="menu-card">
+                <span class="icon">📚</span>
+                <h2>Изучить теорию</h2>
+                <p>Справочные материалы</p>
+            </a>
+            <a href="/variants" class="menu-card">
+                <span class="icon">📝</span>
+                <h2>Решать задания</h2>
+                <p>Практика с проверкой</p>
+            </a>
+            <a href="/stats" class="menu-card">
+                <span class="icon">📊</span>
+                <h2>Статистика</h2>
+                <p>Прогресс и история</p>
+            </a>
+        </div>
+
+        <!-- Новые варианты -->
+        <div class="section-block">
+            <h2 class="section-title">🔥 Новые варианты</h2>
+            <div class="new-variants-list">
+                <a href="/tasks/3" class="new-variant-card">
+                    <div class="new-variant-info">
+                        <h3>Вариант 3 <span class="badge-new">НОВИНКА</span></h3>
+                        <p>27 заданий с разбором</p>
+                    </div>
+                    <div class="new-variant-date">
+                        <span class="date-label">Опубликовано</span>
+                        <span class="date-value">20.05.2026</span>
+                    </div>
+                </a>
+                <a href="/tasks/4" class="new-variant-card">
+                    <div class="new-variant-info">
+                        <h3>Вариант 4 <span class="badge-new">НОВИНКА</span></h3>
+                        <p>27 заданий с разбором</p>
+                    </div>
+                    <div class="new-variant-date">
+                        <span class="date-label">Опубликовано</span>
+                        <span class="date-value">18.05.2026</span>
+                    </div>
+                </a>
+                <a href="/tasks/5" class="new-variant-card">
+                    <div class="new-variant-info">
+                        <h3>Вариант 5 <span class="badge-new">НОВИНКА</span></h3>
+                        <p>27 заданий с разбором</p>
+                    </div>
+                    <div class="new-variant-date">
+                        <span class="date-label">Опубликовано</span>
+                        <span class="date-value">15.05.2026</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Новости -->
+        <div class="section-block">
+            <h2 class="section-title">📰 Новости</h2>
+            <div class="news-feed">
+                <div class="news-item important">
+                    <div class="news-date">20 мая 2026</div>
+                    <div class="news-title-text">Добавлена статистика решений</div>
+                    <div class="news-description">Теперь вы можете отслеживать свой прогресс в разделе "Моя статистика".
+                    </div>
+                </div>
+                <div class="news-item">
+                    <div class="news-date">18 мая 2026</div>
+                    <div class="news-title-text">Добавлены новые варианты 3-5</div>
+                    <div class="news-description">В разделе выбора вариантов появились три новых тренировочных варианта.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Разделительная линия -->
+    <div class="divider"></div>
+
+    <!-- Блок с контактами и соцсетями -->
+    <div class="contacts-section">
+        <div class="container contacts-container">
+            <div class="contacts-grid">
+                <!-- Левая колонка - Контакты -->
+                <div class="contacts-column">
+                    <h3 class="contacts-title">📞 Связаться </h3>
+                    <div class="contacts-list">
+                        <a href="https://t.me/Tyomkinss" target="_blank" class="contact-link">
+                            <span class="contact-icon">✈️</span>
+                            <span class="contact-text">Telegram</span>
+                        </a>
+                        <a href="https://max.ru/u/f9LHodD0cOIojiO0gNWRLNP_as6P10M9ij53KQDQmY0CRLnpzpAaW07gVTg"
+                            target="_blank" class="contact-link">
+                            <span class="contact-icon">💬</span>
+                            <span class="contact-text">MAX</span>
+                        </a>
+                        <a href="https://vk.com/tyomik.fedoseev" target="_blank" class="contact-link">
+                            <span class="contact-icon">📱</span>
+                            <span class="contact-text">ВКонтакте</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Правая колонка - Социальные сети -->
+                <div class="contacts-column">
+                    <h3 class="contacts-title">📱 Соцсети</h3>
+                    <div class="social-links">
+                        <a href="https://www.tiktok.com/@top_gg012?_r=1&_t=ZS-96vdB0LxIbU" target="_blank"
+                            class="social-link">
+                            <span class="social-icon">🎵</span>
+                            <span class="social-text">TikTok</span>
+                        </a>
+                        <a href="https://instagram.com/tyoma_lch" target="_blank" class="social-link">
+                            <span class="social-icon">📷</span>
+                            <span class="social-text">Instagram</span>
+                        </a>
+                        <a href="https://t.me/+OyPoOPO3uc9lMjE6" target="_blank" class="social-link">
+                            <span class="social-icon">✈️</span>
+                            <span class="social-text">Telegram канал</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Нижняя часть с телефоном -->
+            <div class="contacts-phone">
+                <div class="phone-number">📞 8 960 836-58-37</div>
+                <div class="phone-number">📱 8 996 363-68-84</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

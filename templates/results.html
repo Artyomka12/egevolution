@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Результаты варианта {{ variant_num }} | ЕГЭволюция</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 10% 20%, #0f172a 0%, #020617 90%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 40px 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Эффект фоновой сети (точки) */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(rgba(56, 189, 248, 0.2) 1px, transparent 1px),
+                radial-gradient(rgba(56, 189, 248, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px, 30px 30px;
+            background-position: 0 0, 15px 15px;
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Навигация */
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #38bdf8;
+            text-decoration: none;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 8px;
+            margin-bottom: 30px;
+            transition: 0.3s;
+            backdrop-filter: blur(5px);
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .nav-back:hover {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: #38bdf8;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+            transform: translateX(-5px);
+        }
+
+        /* === ЗАГОЛОВОК С ИКОНКОЙ === */
+        .results-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .main-logo {
+            width: 70px;
+            height: auto;
+            filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.6));
+            animation: floatArrow 3s ease-in-out infinite;
+        }
+
+        @keyframes floatArrow {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .results-header h1 {
+            font-size: 2.8em;
+            font-weight: 800;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+
+        /* Карточки с баллами */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 35px 20px;
+            text-align: center;
+            transition: 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(56, 189, 248, 0.4);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(56, 189, 248, 0.1);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.15), transparent 70%);
+            transform: translate(-50%, -50%) scale(0);
+            transition: 0.5s ease;
+            border-radius: 50%;
+        }
+
+        .stat-card:hover::before {
+            transform: translate(-50%, -50%) scale(1.5);
+        }
+
+        .stat-value {
+            font-size: 3em;
+            font-weight: 800;
+            background: linear-gradient(to bottom, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-label {
+            color: #94a3b8;
+            font-size: 1.1em;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Таблица результатов */
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .results-table th {
+            text-align: left;
+            padding: 15px;
+            color: #38bdf8;
+            font-weight: 600;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .results-table td {
+            padding: 15px;
+            color: #e2e8f0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.95em;
+        }
+
+        .results-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .results-table tr:hover td {
+            background: rgba(56, 189, 248, 0.05);
+        }
+
+        /* Бейджи ответов */
+        .answer-cell {
+            font-family: 'Courier New', monospace;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 6px 12px;
+            border-radius: 8px;
+            display: inline-block;
+            min-width: 50px;
+            font-size: 14px;
+        }
+
+        .answer-cell.correct {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .answer-cell.partial {
+            background: rgba(234, 179, 8, 0.15);
+            color: #facc15;
+            border: 1px solid rgba(234, 179, 8, 0.3);
+        }
+
+        .answer-cell.incorrect {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .answer-cell.empty {
+            background: rgba(100, 116, 139, 0.15);
+            color: #94a3b8;
+            border: 1px solid rgba(100, 116, 139, 0.3);
+            font-style: italic;
+        }
+
+        /* Кнопки */
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+            color: #0f172a;
+            box-shadow: 0 5px 15px rgba(56, 189, 248, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(56, 189, 248, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: #cbd5e1;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .results-header h1 {
+                font-size: 2em;
+            }
+
+            .main-logo {
+                width: 50px;
+            }
+
+            .results-table {
+                font-size: 0.85em;
+            }
+
+            .results-table th,
+            .results-table td {
+                padding: 10px 8px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="/variants" class="nav-back">← Назад к выбору вариантов</a>
+        <!-- Заголовок с иконкой -->
+        <div class="results-header">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='favicon.png') }}" alt="Логотип" class="main-logo">
+                <h1>📊 Результаты варианта {{ variant_num }}</h1>
+            </div>
+            <p class="subtitle">Вариант завершён!</p>
+        </div>
+        <!-- Блоки с результатами -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="primary-score">0 / 29</div>
+                <div class="stat-label">Первичных баллов</div>
+            </div>
+            <div class="stat-card secondary">
+                <div class="stat-value" id="secondary-score">0</div>
+                <div class="stat-label">Баллов из 100</div>
+            </div>
+        </div>
+        <!-- Таблица подробных результатов -->
+        <div class="card">
+            <h2 class="card-title">📋 Подробные результаты</h2>
+            <div style="overflow-x: auto;">
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%;">№ Задания</th>
+                            <th style="width: 37.5%;">Ваш ответ</th>
+                            <th style="width: 37.5%;">Правильный ответ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-body">
+                        <!-- Заполняется через JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Кнопки навигации -->
+        <div class="buttons">
+            <a href="/" class="btn btn-secondary">🏠 Вернуться на главную</a>
+            <a href="/variants" class="btn btn-primary">📝 Решить другой вариант</a>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tasks = {{ tasks | tojson
+        }};
+        const variantNum = {{ variant_num }};
+        // Читаем ответы из localStorage (они уже были отправлены на сервер из reshenie.html)
+        const savedAnswers = localStorage.getItem(`variant_${variantNum}_answers`);
+        let totalPoints = 0;
+        const resultsBody = document.getElementById('results-body');
+
+        // Функция подсчета баллов за задание
+        function calculatePoints(task, userAnswer) {
+            if (!userAnswer) return 0; // Если нет ответа - 0 баллов
+
+            const taskId = task.id;
+            // Логика для заданий 26 и 27 (таблица)
+            if (taskId === 26 || taskId === 27) {
+                if (!task.answer_grid) return 0;
+                const correctGrid = task.answer_grid.answers;
+                const correctVals = correctGrid.flat().filter(a => a && a.trim());
+                let userVals = [];
+                if (Array.isArray(userAnswer)) {
+                    userAnswer.forEach(row => {
+                        if (Array.isArray(row)) row.forEach(v => { if (v && v.trim()) userVals.push(v.trim()) });
+                        else if (row && row.trim()) userVals.push(row.trim());
+                    });
+                }
+                if (userVals.length === 0) return 0;
+                if (JSON.stringify(userVals) === JSON.stringify(correctVals)) return 2;
+                let matches = 0;
+                for (let i = 0; i < correctVals.length; i++) {
+                    if (i < userVals.length && userVals[i] === correctVals[i]) matches++;
+                }
+                if (matches > 0) return 1;
+                if (userVals.length === correctVals.length) {
+                    const sortedUser = [...userVals].sort().join('|');
+                    const sortedCorrect = [...correctVals].sort().join('|');
+                    if (sortedUser === sortedCorrect) return 1;
+                }
+                return 0;
+            }
+            // Логика для остальных заданий (1 балл)
+            else {
+                let isCorrect = false;
+                if (task.answer_grid) {
+                    const correctVals = task.answer_grid.answers.flat().filter(a => a && a.trim());
+                    const userVals = (Array.isArray(userAnswer) ? userAnswer.flat() : []).filter(a => a && a.trim());
+                    isCorrect = JSON.stringify(userVals) === JSON.stringify(correctVals);
+                } else if (task.answers && task.answers.length === 2) {
+                    if (Array.isArray(userAnswer) && userAnswer.length === 2) {
+                        isCorrect = userAnswer.every((u, i) => u.trim().toLowerCase() === task.answers[i].trim().toLowerCase());
+                    }
+                } else {
+                    if (typeof userAnswer === 'string' && userAnswer.trim()) {
+                        isCorrect = userAnswer.trim().toLowerCase() === (task.correct_answer || '').trim().toLowerCase();
+                    }
+                }
+                return isCorrect ? 1 : 0;
+            }
+        }
+
+        if (savedAnswers) {
+            try {
+                const answers = JSON.parse(savedAnswers);
+                tasks.forEach(task => {
+                    const taskId = task.id.toString();
+                    const userAnswer = answers[taskId];
+                    const points = calculatePoints(task, userAnswer);
+                    totalPoints += points;
+
+                    let statusClass = 'empty';
+                    let userAnswerDisplay = '—';
+                    let isAnswered = false;
+
+                    if (userAnswer) {
+                        isAnswered = true;
+                        if (Array.isArray(userAnswer)) {
+                            const flat = userAnswer.flat().filter(a => a && a.trim());
+                            if (flat.length > 0) {
+                                userAnswerDisplay = flat.join(', ');
+                                const maxP = (task.id === 26 || task.id === 27) ? 2 : 1;
+                                statusClass = points === maxP ? 'correct' : (points > 0 ? 'partial' : 'incorrect');
+                            } else {
+                                isAnswered = false; // Массив пустой
+                            }
+                        } else if (typeof userAnswer === 'string' && userAnswer.trim()) {
+                            userAnswerDisplay = userAnswer.trim();
+                            statusClass = points > 0 ? 'correct' : 'incorrect';
+                        } else {
+                            isAnswered = false; // Строка пустая
+                        }
+                    }
+
+                    let correctAnswerDisplay = '';
+                    if (task.answer_grid) {
+                        correctAnswerDisplay = task.answer_grid.answers.flat().filter(a => a && a.trim()).join(', ');
+                    } else if (task.answers && task.answers.length === 2) {
+                        correctAnswerDisplay = task.answers.join(', ');
+                    } else {
+                        correctAnswerDisplay = task.correct_answer || '—';
+                    }
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+<td><strong>${task.title}</strong></td>
+<td>
+<span class="answer-cell ${statusClass}">${userAnswerDisplay}</span>
+${isAnswered ? `<span style="color:#4ade80; font-weight:bold; margin-left:5px;">(+${points})</span>` : ''}
+</td>
+<td><span class="answer-cell correct">${correctAnswerDisplay}</span></td>
+`;
+                    resultsBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Ошибка при обработке ответов:', error);
+            }
+        } else {
+            // Если ответов нет вообще - показываем все задания как нерешенные
+            tasks.forEach(task => {
+                let correctAnswerDisplay = '';
+                if (task.answer_grid) correctAnswerDisplay = task.answer_grid.answers.flat().filter(a => a && a.trim()).join(', ');
+                else if (task.answers && task.answers.length === 2) correctAnswerDisplay = task.answers.join(', ');
+                else correctAnswerDisplay = task.correct_answer || '—';
+                const row = document.createElement('tr');
+                row.innerHTML = `
+<td><strong>${task.title}</strong></td>
+<td><span class="answer-cell empty">Не решено</span></td>
+<td><span class="answer-cell correct">${correctAnswerDisplay}</span></td>
+`;
+                resultsBody.appendChild(row);
+            });
+        }
+
+        // Таблица перевода баллов
+        const PRIMARY_TO_SECONDARY = {
+            0: 0, 1: 7, 2: 14, 3: 20, 4: 27, 5: 34, 6: 40, 7: 43, 8: 46, 9: 48,
+            10: 51, 11: 54, 12: 56, 13: 59, 14: 62, 15: 64, 16: 67, 17: 70, 18: 72, 19: 75,
+            20: 78, 21: 80, 22: 83, 23: 85, 24: 88, 25: 90, 26: 93, 27: 95, 28: 98, 29: 100
+        };
+        const secondaryScore = (totalPoints in PRIMARY_TO_SECONDARY) ? PRIMARY_TO_SECONDARY[totalPoints] : 100;
+        document.getElementById('primary-score').textContent = `${totalPoints} / 29`;
+        document.getElementById('secondary-score').textContent = secondaryScore;
+
+        // Очищаем localStorage после показа результатов
+        localStorage.removeItem(`variant_${variantNum}_answers`);
+        localStorage.removeItem(`variant_${variantNum}_time`);
+});
+    </script>
+</body>
+
+</html>

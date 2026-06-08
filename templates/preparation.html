@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Начальная подготовка | EGEvolution</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 10% 20%, #0f172a 0%, #020617 90%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 40px 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Эффект фоновой сети (точки) */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(rgba(56, 189, 248, 0.2) 1px, transparent 1px),
+                radial-gradient(rgba(56, 189, 248, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px, 30px 30px;
+            background-position: 0 0, 15px 15px;
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Навигация */
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #38bdf8;
+            text-decoration: none;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 8px;
+            margin-bottom: 30px;
+            transition: 0.3s;
+            backdrop-filter: blur(5px);
+            font-size: 0.9em;
+        }
+
+        .nav-back:hover {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: #38bdf8;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+        }
+
+        /* Заголовок и Логотип */
+        .header-section {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .main-logo {
+            width: 70px;
+            height: auto;
+            filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.6));
+            animation: floatArrow 3s ease-in-out infinite;
+        }
+
+        @keyframes floatArrow {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .header-section h1 {
+            font-size: 3em;
+            font-weight: 700;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            letter-spacing: -1px;
+        }
+
+        .header-section p {
+            color: #94a3b8;
+            font-size: 1.1em;
+            margin-top: 10px;
+        }
+
+        /* Сетка уроков */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 30px;
+        }
+
+        /* Стеклянная карточка */
+        .module-card {
+            position: relative;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 30px;
+            text-decoration: none;
+            color: white;
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+
+        /* Эффект свечения при наведении */
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(56, 189, 248, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(56, 189, 248, 0.1);
+        }
+
+        .module-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Содержимое карточки */
+        .card-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .module-icon {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(129, 140, 248, 0.2));
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .module-title {
+            font-size: 1.4em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .module-desc {
+            color: #94a3b8;
+            font-size: 0.95em;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        /* Блок прогресса и статуса */
+        .card-footer {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85em;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            box-shadow: 0 0 8px currentColor;
+        }
+
+        .status-not_started .status-dot {
+            background: #64748b;
+            color: #64748b;
+        }
+
+        .status-in_progress .status-dot {
+            background: #fbbf24;
+            color: #fbbf24;
+        }
+
+        .status-completed .status-dot {
+            background: #4ade80;
+            color: #4ade80;
+        }
+
+        .lock-icon {
+            font-size: 1.2em;
+            opacity: 0.7;
+        }
+
+        .lock-icon.locked {
+            color: #f87171;
+        }
+
+        .lock-icon.unlocked {
+            color: #38bdf8;
+        }
+
+        .progress-text {
+            font-size: 0.9em;
+            color: #cbd5e1;
+            font-weight: bold;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 600px) {
+            .header-section h1 {
+                font-size: 2em;
+            }
+
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .main-logo {
+                width: 50px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="/" class="nav-back">
+            <span>←</span> На главную
+        </a>
+
+        <div class="header-section">
+            <!-- Контейнер с логотипом и заголовком -->
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='favicon.png') }}" alt="Логотип" class="main-logo">
+                <h1>Начальная подготовка</h1>
+            </div>
+            <p>Выбери тему и начни изучение с базовых основ</p>
+        </div>
+
+        <div class="modules-grid">
+            {% for lesson in lessons %}
+            <a href="/preparation/{{ lesson.id }}" class="module-card">
+                <div class="card-content">
+                    <div class="module-icon">🧠</div>
+                    <div class="module-title">{{ lesson.title }}</div>
+                    <div class="module-desc">{{ lesson.description }}</div>
+                </div>
+
+                <div class="card-footer">
+                    <!-- Индикатор статуса -->
+                    <div class="status-badge status-{{ lesson.status }}">
+                        <div class="status-dot"></div>
+                        {% if lesson.status == 'completed' %} Завершено
+                        {% elif lesson.status == 'in_progress' %} В процессе
+                        {% else %} Не начато
+                        {% endif %}
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <!-- Счетчик -->
+                        <span class="progress-text">{{ lesson.correct_tasks }} / {{ lesson.total_tasks }}</span>
+                        <!-- Замок -->
+                        {% if lesson.is_unlocked %}
+                        <span class="lock-icon unlocked" title="Доступ открыт">🔓</span>
+                        {% else %}
+                        <span class="lock-icon locked" title="Нет доступа">🔒</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+
+</html>

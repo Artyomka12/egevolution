@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ЕГЭ Информатика | Вариант {{ variant_num }}</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1e1e1e;
+            color: #fff;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Шапка */
+        .exam-header {
+            background: #2b3a6e;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #1a1a1a;
+        }
+
+        .exam-info {
+            display: flex;
+            gap: 30px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .exam-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn-finish {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-finish:hover {
+            background: #c82333;
+        }
+
+        .timer {
+            background: #1a1a1a;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 16px;
+        }
+
+        /* Основной контейнер */
+        .exam-container {
+            display: flex;
+            height: calc(100vh - 70px);
+        }
+
+        /* Левая панель с навигацией */
+        .task-nav {
+            width: 85px;
+            background: #2d2d2d;
+            border-right: 2px solid #1a1a1a;
+            overflow-y: auto;
+            padding: 10px 5px;
+        }
+
+        .nav-title {
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .progress-counter {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #28a745;
+            text-align: center;
+        }
+
+        .task-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .task-btn {
+            background: #3d3d3d;
+            color: white;
+            border: none;
+            padding: 10px 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            font-size: 13px;
+            min-width: 35px;
+        }
+
+        .task-btn:hover {
+            background: #4d4d4d;
+        }
+
+        .task-btn.active {
+            background: #007bff;
+        }
+
+        .task-btn.answered {
+            background: #28a745;
+        }
+
+        /* Основная область */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Задание - контейнер */
+        .task-content {
+            flex: 1;
+            overflow-y: auto;
+            background: #252525;
+        }
+
+        .task-view {
+            display: none;
+            height: 100%;
+        }
+
+        .task-view.active {
+            display: flex;
+        }
+
+        /* Разделение на текст и ответ */
+        .task-split {
+            display: flex;
+            height: 100%;
+        }
+
+        .task-text {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .task-answer-panel {
+            width: 400px;
+            background: #2d2d2d;
+            border-left: 2px solid #1a1a1a;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .task-header {
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #3d3d3d;
+        }
+
+        .task-description {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .task-description p {
+            margin-bottom: 15px;
+        }
+
+        .task-image {
+            max-width: 100%;
+            border-radius: 5px;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Панель ответа */
+        .answer-panel-header {
+            background: #2b3a6e;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            border-bottom: 2px solid #1a1a1a;
+        }
+
+        .answer-panel-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        /* Таблица ответов */
+        .answer-grid-container {
+            margin: 20px 0;
+        }
+
+        .answer-grid-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .answer-grid-table th,
+        .answer-grid-table td {
+            border: 1px solid #3d3d3d;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .answer-grid-table th {
+            background: #2b3a6e;
+            font-weight: bold;
+        }
+
+        .grid-input {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #3d3d3d;
+            border-radius: 5px;
+            background: #1e1e1e;
+            color: white;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .grid-input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .grid-input.success {
+            border-color: #28a745;
+            background-color: #1a4a2e;
+        }
+
+        .grid-input.error {
+            border-color: #dc3545;
+            background-color: #4a1a1a;
+        }
+
+        /* Два поля ввода */
+        .answers-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .answer-field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .answer-field input {
+            padding: 10px;
+            border: 2px solid #3d3d3d;
+            border-radius: 5px;
+            background: #1e1e1e;
+            color: white;
+            font-size: 14px;
+        }
+
+        .answer-field input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        /* Кнопки в панели ответа */
+        .answer-panel-buttons {
+            padding: 20px;
+            border-top: 2px solid #1a1a1a;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-save {
+            flex: 1;
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .btn-save:hover {
+            background: #218838;
+        }
+
+        .btn-clear {
+            background: transparent;
+            color: #dc3545;
+            border: 2px solid #dc3545;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-clear:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* Нижняя навигация */
+        .task-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 30px;
+            background: #2d2d2d;
+            border-top: 2px solid #1a1a1a;
+            gap: 15px;
+        }
+
+        /* Левая часть навигации */
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Правая часть навигации */
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Кнопки навигации */
+        .nav-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .nav-btn:hover {
+            background: #0056b3;
+        }
+
+        .nav-btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+        }
+
+        /* Поле ответа для обычных заданий */
+        .answer-input {
+            width: 200px;
+            padding: 8px 12px;
+            font-size: 14px;
+            border: 2px solid #3d3d3d;
+            border-radius: 5px;
+            background: #1e1e1e;
+            color: white;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        /* Кнопка сохранения в навигации */
+        .btn-save-nav {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .btn-save-nav:hover {
+            background: #218838;
+        }
+
+        /* Файл задания */
+        .task-file-link {
+            background: #3d3d3d;
+            color: #007bff;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+
+        .task-file-link:hover {
+            background: #4d4d4d;
+            color: #0099ff;
+        }
+
+        /* Скроллбар */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Шапка -->
+    <div class="exam-header">
+        <div class="exam-info">
+            <span>КИМ № {{ variant_num }}14534</span>
+            <span>БР № {{ variant_num }}32503195017</span>
+        </div>
+        <div class="exam-actions">
+            <div class="timer" id="timer">03:55:00</div>
+            <button class="btn-finish" onclick="finishExam()">Завершить экзамен досрочно</button>
+        </div>
+    </div>
+
+    <!-- Основной контейнер -->
+    <div class="exam-container">
+        <!-- Левая панель -->
+        <div class="task-nav">
+            <div class="nav-title">Дано ответов</div>
+            <div class="progress-counter" id="progress">0/{{ tasks|length }}</div>
+            <div class="task-buttons">
+                {% for task in tasks %}
+                <button class="task-btn {% if loop.first %}active{% endif %}" onclick="showTask({{ task.id }})"
+                    id="btn-task-{{ task.id }}">
+                    {{ task.id }}
+                </button>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Основной контент -->
+        <div class="main-content">
+            <!-- Задания -->
+            <div class="task-content" id="task-content">
+                {% for task in tasks %}
+                <div class="task-view {% if loop.first %}active{% endif %}" id="task-view-{{ task.id }}">
+
+                    <!-- Проверка: задание с таблицей или несколькими ответами -->
+                    {% if task.answer_grid or (task.answers and task.answers|length == 2) %}
+                    <!-- Разделённый layout -->
+                    <div class="task-split">
+                        <!-- Текст задания -->
+                        <div class="task-text">
+                            <div class="task-header">{{ task.title }}</div>
+                            <div class="task-description">
+                                {% for paragraph in task.description %}
+                                <p>{{ paragraph }}</p>
+
+                                {% if task.images %}
+                                {% set current_paragraph_index = loop.index0 %}
+                                {% for image in task.images %}
+                                {% if image.after_paragraph == current_paragraph_index %}
+                                <img src="{{ url_for('variant_images', variant_num=variant_num, filename=image.path) }}"
+                                    alt="{{ image.alt or task.title }}"
+                                    class="task-image {{ image.size or 'img-medium' }}">
+                                {% endif %}
+                                {% endfor %}
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Панель ответа -->
+                        <div class="task-answer-panel">
+                            <div class="answer-panel-header">
+                                Введите свой ответ в поля таблицы
+                            </div>
+                            <div class="answer-panel-content">
+                                {% if task.answer_grid %}
+                                <!-- Таблица ответов -->
+                                <div class="answer-grid-container">
+                                    <table class="answer-grid-table">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                {% for col in range(task.answer_grid.cols) %}
+                                                <th>{{ col + 1 }}</th>
+                                                {% endfor %}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for row in range(task.answer_grid.rows) %}
+                                            <tr>
+                                                <th>{{ row + 1 }}</th>
+                                                {% for col in range(task.answer_grid.cols) %}
+                                                <td>
+                                                    <input type="text" class="grid-input" maxlength="30"
+                                                        id="answer-{{ task.id }}-{{ row }}-{{ col }}"
+                                                        data-task="{{ task.id }}" data-row="{{ row }}"
+                                                        data-col="{{ col }}" autocomplete="off">
+                                                </td>
+                                                {% endfor %}
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% elif task.answers and task.answers|length == 2 %}
+                                <!-- Два поля ввода (без подписей) -->
+                                <div class="answers-group">
+                                    <div class="answer-field">
+                                        <input type="text" id="answer1-{{ task.id }}" class="answer-field-input"
+                                            maxlength="30" data-task="{{ task.id }}" data-index="0" autocomplete="off">
+                                    </div>
+                                    <div class="answer-field">
+                                        <input type="text" id="answer2-{{ task.id }}" class="answer-field-input"
+                                            maxlength="30" data-task="{{ task.id }}" data-index="1" autocomplete="off">
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="answer-panel-buttons">
+                                <button class="btn-clear" onclick="clearAnswer({{ task.id }})">Очистить</button>
+                                <button class="btn-save" onclick="saveAnswer({{ task.id }})">Сохранить ответ</button>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <!-- Обычное задание (один ответ) -->
+                    <div class="task-text" style="height: 100%; overflow-y: auto; padding: 30px;">
+                        <div class="task-header">{{ task.title }}</div>
+                        <div class="task-description">
+                            {% for paragraph in task.description %}
+                            <p>{{ paragraph }}</p>
+
+                            {% if task.images %}
+                            {% set current_paragraph_index = loop.index0 %}
+                            {% for image in task.images %}
+                            {% if image.after_paragraph == current_paragraph_index %}
+                            <img src="{{ url_for('variant_images', variant_num=variant_num, filename=image.path) }}"
+                                alt="{{ image.alt or task.title }}" class="task-image {{ image.size or 'img-medium' }}">
+                            {% endif %}
+                            {% endfor %}
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Нижняя навигация -->
+            <div class="task-navigation">
+                <!-- Левая часть: Кнопка Назад + Файл -->
+                <div class="nav-left">
+                    <button class="nav-btn" onclick="prevTask()" id="btn-prev">
+                        ← Назад
+                    </button>
+
+                    <!-- Файл задания (будет показан через JS если есть) -->
+                    <a href="#" class="task-file-link" id="task-file-link" style="display: none;">
+                        📄 <span id="task-file-name">Файл</span>
+                    </a>
+                </div>
+
+                <!-- Правая часть: Поле ввода + Кнопка Сохранить + Кнопка Вперёд -->
+                <div class="nav-right">
+                    <input type="text" class="answer-input" id="answer-input" placeholder="Введите ответ..."
+                        maxlength="30" style="display: none;" autocomplete="off">
+                    <button class="btn-save-nav" onclick="saveSimpleAnswer()" style="display: none;" id="btn-save-nav">
+                        Сохранить
+                    </button>
+                    <button class="nav-btn" onclick="nextTask()" id="btn-next">
+                        Вперед →
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tasks = {{ tasks | tojson }};
+        const variantNum = {{ variant_num }};
+        let currentTaskIndex = 0;
+        let answers = {};
+        let timeRemaining = 3 * 3600 + 55 * 60;
+        let timerInterval;
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function () {
+            localStorage.removeItem(`exam_${variantNum}_answers`);
+            localStorage.removeItem(`exam_${variantNum}_time`);
+            answers = {};
+
+            startTimer();
+            updateNavigation();
+            updateProgress();
+            updateAnswerPanel();
+            updateFileLink();
+        });
+
+        // Показ задания
+        function showTask(taskId) {
+            // Скрываем все задания
+            document.querySelectorAll('.task-view').forEach(view => {
+                view.classList.remove('active');
+            });
+
+            // Показываем нужное
+            document.getElementById(`task-view-${taskId}`).classList.add('active');
+
+            // Обновляем активную кнопку
+            document.querySelectorAll('.task-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(`btn-task-${taskId}`).classList.add('active');
+
+            // Загружаем текущий индекс
+            currentTaskIndex = tasks.findIndex(t => t.id === taskId);
+
+            updateNavigation();
+            updateAnswerPanel();
+            updateFileLink();
+            loadAnswerToPanel(taskId);
+        }
+
+        // Обновление панели ответа (показать/скрыть поле в навигации)
+        function updateAnswerPanel() {
+            const currentTask = tasks[currentTaskIndex];
+            const simpleInput = document.getElementById('answer-input');
+            const simpleBtn = document.getElementById('btn-save-nav');
+
+            // Если задание с таблицей или двумя ответами - скрываем поле в навигации
+            if (currentTask.answer_grid || (currentTask.answers && currentTask.answers.length === 2)) {
+                simpleInput.style.display = 'none';
+                simpleBtn.style.display = 'none';
+            } else {
+                simpleInput.style.display = 'block';
+                simpleBtn.style.display = 'block';
+                // Загружаем ответ для обычного задания
+                simpleInput.value = answers[currentTask.id] || '';
+            }
+        }
+
+        // Обновление ссылки на файл
+        function updateFileLink() {
+            const currentTask = tasks[currentTaskIndex];
+            const fileLink = document.getElementById('task-file-link');
+            const fileName = document.getElementById('task-file-name');
+
+            if (currentTask && currentTask.file) {
+                fileLink.href = currentTask.file.url || `{{ url_for('variant_files', variant_num=variant_num, filename='FILE') }}`.replace('FILE', currentTask.file.path);
+                fileName.textContent = currentTask.file.name;
+                fileLink.style.display = 'flex';
+            } else {
+                fileLink.style.display = 'none';
+            }
+        }
+
+        // Загрузка ответа в панель
+        function loadAnswerToPanel(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            const savedAnswer = answers[taskId];
+
+            if (!savedAnswer) return;
+
+            if (task.answer_grid && Array.isArray(savedAnswer)) {
+                // Таблица
+                savedAnswer.forEach((row, rowIndex) => {
+                    if (Array.isArray(row)) {
+                        row.forEach((val, colIndex) => {
+                            const input = document.getElementById(`answer-${taskId}-${rowIndex}-${colIndex}`);
+                            if (input) input.value = val;
+                        });
+                    }
+                });
+            } else if (task.answers && task.answers.length === 2 && Array.isArray(savedAnswer)) {
+                // Два поля
+                const input1 = document.getElementById(`answer1-${taskId}`);
+                const input2 = document.getElementById(`answer2-${taskId}`);
+                if (input1) input1.value = savedAnswer[0] || '';
+                if (input2) input2.value = savedAnswer[1] || '';
+            }
+        }
+
+        // Сохранение ответа (таблица/два поля)
+        function saveAnswer(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            let answer = null;
+
+            if (task.answer_grid) {
+                // Таблица
+                const rows = task.answer_grid.rows;
+                const cols = task.answer_grid.cols;
+                answer = [];
+
+                for (let i = 0; i < rows; i++) {
+                    const row = [];
+                    for (let j = 0; j < cols; j++) {
+                        const input = document.getElementById(`answer-${taskId}-${i}-${j}`);
+                        row.push(input ? input.value.trim() : '');
+                    }
+                    answer.push(row);
+                }
+            } else if (task.answers && task.answers.length === 2) {
+                // Два поля
+                const input1 = document.getElementById(`answer1-${taskId}`);
+                const input2 = document.getElementById(`answer2-${taskId}`);
+                answer = [
+                    input1 ? input1.value.trim() : '',
+                    input2 ? input2.value.trim() : ''
+                ];
+            }
+
+            if (answer) {
+                answers[taskId] = answer;
+                localStorage.setItem(`variant_${variantNum}_answers`, JSON.stringify(answers));
+
+                // Отмечаем как отвеченное
+                document.getElementById(`btn-task-${taskId}`).classList.add('answered');
+                updateProgress();
+
+                showNotification('Ответ сохранен!');
+            }
+        }
+
+        // Сохранение ответа (обычное задание)
+        function saveSimpleAnswer() {
+            const taskId = tasks[currentTaskIndex].id;
+            const answer = document.getElementById('answer-input').value.trim();
+
+            if (answer) {
+                answers[taskId] = answer;
+                localStorage.setItem(`variant_${variantNum}_answers`, JSON.stringify(answers));
+
+                document.getElementById(`btn-task-${taskId}`).classList.add('answered');
+                updateProgress();
+
+                showNotification('Ответ сохранен!');
+            }
+        }
+
+        // Очистка ответа
+        function clearAnswer(taskId) {
+            if (confirm('Очистить все поля ответа?')) {
+                const task = tasks.find(t => t.id === taskId);
+
+                if (task.answer_grid) {
+                    const rows = task.answer_grid.rows;
+                    const cols = task.answer_grid.cols;
+                    for (let i = 0; i < rows; i++) {
+                        for (let j = 0; j < cols; j++) {
+                            const input = document.getElementById(`answer-${taskId}-${i}-${j}`);
+                            if (input) input.value = '';
+                        }
+                    }
+                } else if (task.answers && task.answers.length === 2) {
+                    const input1 = document.getElementById(`answer1-${taskId}`);
+                    const input2 = document.getElementById(`answer2-${taskId}`);
+                    if (input1) input1.value = '';
+                    if (input2) input2.value = '';
+                }
+
+                delete answers[taskId];
+                localStorage.setItem(`variant_${variantNum}_answers`, JSON.stringify(answers));
+                document.getElementById(`btn-task-${taskId}`).classList.remove('answered');
+                updateProgress();
+            }
+        }
+
+        // Навигация
+        function prevTask() {
+            if (currentTaskIndex > 0) {
+                showTask(tasks[currentTaskIndex - 1].id);
+            }
+        }
+
+        function nextTask() {
+            if (currentTaskIndex < tasks.length - 1) {
+                showTask(tasks[currentTaskIndex + 1].id);
+            }
+        }
+
+        function updateNavigation() {
+            document.getElementById('btn-prev').disabled = currentTaskIndex === 0;
+            document.getElementById('btn-next').disabled = currentTaskIndex === tasks.length - 1;
+        }
+
+        // Прогресс
+        function updateProgress() {
+            const answered = Object.keys(answers).length;
+            document.getElementById('progress').textContent = `${answered}/${tasks.length}`;
+        }
+
+        // Таймер
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                if (timeRemaining > 0) {
+                    timeRemaining--;
+                    updateTimerDisplay();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const h = Math.floor(timeRemaining / 3600);
+            const m = Math.floor((timeRemaining % 3600) / 60);
+            const s = timeRemaining % 60;
+            document.getElementById('timer').textContent =
+                `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        // Форматирование времени
+        function formatTime(seconds) {
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = seconds % 60;
+            return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        // Завершение экзамена
+        function finishExam() {
+            if (confirm('⚠️ Вы уверены, что хотите завершить экзамен?')) {
+                const timeSpent = formatTime(3 * 3600 + 55 * 60 - timeRemaining);
+
+                // ✅ Отправляем на сервер для сохранения в БД
+                fetch(`/finish_exam/${variantNum}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        answers: answers,
+                        time_spent: timeSpent
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Сохраняем локально для страницы результатов
+                            localStorage.setItem(`variant_${variantNum}_answers`, JSON.stringify(answers));
+                            localStorage.setItem(`variant_${variantNum}_time`, timeSpent);
+                            window.location.href = data.redirect || `/results/${variantNum}`;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Ошибка:', error);
+                        // Даже при ошибке переходим на страницу результатов
+                        localStorage.setItem(`variant_${variantNum}_answers`, JSON.stringify(answers));
+                        localStorage.setItem(`variant_${variantNum}_time`, timeSpent);
+                        window.location.href = `/results/${variantNum}`;
+                    });
+            }
+        }
+
+        // Уведомление
+        function showNotification(message) {
+            const div = document.createElement('div');
+            div.textContent = message;
+            div.style.cssText = `
+                position: fixed;
+                bottom: 100px;
+                right: 30px;
+                background: #28a745;
+                color: white;
+                padding: 15px 25px;
+                border-radius: 5px;
+                z-index: 1000;
+                animation: slideIn 0.3s ease;
+            `;
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 2000);
+        }
+
+        // Горячие клавиши
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowLeft') prevTask();
+            if (e.key === 'ArrowRight') nextTask();
+            if (e.ctrlKey && e.key === 'Enter') {
+                const currentTask = tasks[currentTaskIndex];
+                if (currentTask.answer_grid || (currentTask.answers && currentTask.answers.length === 2)) {
+                    saveAnswer(currentTask.id);
+                } else {
+                    saveSimpleAnswer();
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

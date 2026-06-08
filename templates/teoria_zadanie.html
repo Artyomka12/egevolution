@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Теория: Задание {{ task_num }} | ЕГЭволюция</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 10% 20%, #0f172a 0%, #020617 90%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 40px 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Эффект фоновой сети (точки) */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(rgba(56, 189, 248, 0.2) 1px, transparent 1px),
+                radial-gradient(rgba(56, 189, 248, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px, 30px 30px;
+            background-position: 0 0, 15px 15px;
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Навигация */
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #38bdf8;
+            text-decoration: none;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 8px;
+            margin-bottom: 30px;
+            transition: 0.3s;
+            backdrop-filter: blur(5px);
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .nav-back:hover {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: #38bdf8;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+            transform: translateX(-5px);
+        }
+
+        /* Заголовок */
+        .page-header {
+            margin-bottom: 40px;
+        }
+
+        .page-header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            color: #94a3b8;
+            font-size: 1.1em;
+        }
+
+        /* Стеклянные карточки */
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h2 {
+            color: #38bdf8;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Теория */
+        .theory-content p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+            color: #cbd5e1;
+            text-indent: 20px;
+        }
+
+        /* Размеры изображений из JSON */
+        .theory-content img,
+        .task-description img {
+            display: block;
+            margin: 20px auto;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .img-small {
+            max-width: 250px !important;
+        }
+
+        .img-medium {
+            max-width: 350px !important;
+        }
+
+        .img-large {
+            max-width: 500px !important;
+        }
+
+        /* Видео */
+        video {
+            width: 100%;
+            border-radius: 12px;
+            margin-top: 15px;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Практические задания */
+        .task-block {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(56, 189, 248, 0.15);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .task-title {
+            color: #818cf8;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+
+        .task-description p {
+            color: #cbd5e1;
+            margin-bottom: 15px;
+            line-height: 1.6;
+            text-indent: 20px;
+        }
+
+        /* Поля ввода */
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            margin-bottom: 10px;
+            transition: 0.3s;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #38bdf8;
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 5px;
+            margin: 15px 0;
+        }
+
+        td {
+            padding: 5px;
+        }
+
+        .grid-input {
+            width: 100%;
+            padding: 8px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: #38bdf8;
+        }
+
+        /* Кнопка проверки */
+        .check-button {
+            padding: 10px 25px;
+            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+            color: #0f172a;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+            margin-top: 10px;
+        }
+
+        .check-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
+        }
+
+        /* Сообщение результата */
+        .result-msg {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            display: none;
+            font-weight: 600;
+        }
+
+        .result-success {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .result-error {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* Панель прогресса */
+        .task-progress-panel {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .task-square {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-weight: bold;
+            color: #94a3b8;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: 0.3s;
+        }
+
+        .task-square.attempted {
+            border-color: #f87171;
+            color: #f87171;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .task-square.correct {
+            border-color: #4ade80;
+            color: #4ade80;
+            background: rgba(34, 197, 94, 0.1);
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
+        }
+
+        /* Состояние "Нет теории" */
+        .no-theory {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+        }
+
+        .no-theory h2 {
+            color: #f87171;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .page-header h1 {
+                font-size: 1.8em;
+            }
+
+            .task-progress-panel {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="/theory" class="nav-back"><span>←</span> Назад к теории</a>
+
+        <div class="page-header">
+            {% if theory %}
+            <h1>📖 Задание №{{ task_num }}: {{ theory.title }}</h1>
+            {% else %}
+            <h1>📖 Задание №{{ task_num }}</h1>
+            {% endif %}
+            <p>Изучи материал и выполни практические задания</p>
+        </div>
+
+        {% if theory %}
+        <!-- ПАНЕЛЬ ПРОГРЕССА -->
+        {% if theory.practice and theory.practice.tasks %}
+        <div class="task-progress-panel">
+            {% for task in theory.practice.tasks %}
+            <div class="task-square" id="task-square-{{ loop.index }}">{{ loop.index }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- ТЕОРИЯ -->
+        <div class="card">
+            <h2>📚 Теоретический материал</h2>
+            {% if theory.theory %}
+            <div class="theory-content">
+                {% for paragraph in theory.theory.description %}
+                <p>{{ paragraph | safe }}</p>
+                {% if theory.theory.images %}
+                {% set current_paragraph_index = loop.index0 %}
+                {% for image in theory.theory.images %}
+                {% if image.after_paragraph == current_paragraph_index %}
+                <img src="{{ url_for('theory_images', task_num=task_num, filename=image.path) }}"
+                    alt="{{ image.alt or 'Изображение' }}" class="{{ image.size or 'img-medium' }}">
+                {% endif %}
+                {% endfor %}
+                {% endif %}
+                {% endfor %}
+                <!-- Картинки без привязки к абзацу -->
+                {% for image in theory.theory.images %}
+                {% if image.after_paragraph is not defined %}
+                <img src="{{ url_for('theory_images', task_num=task_num, filename=image.path) }}"
+                    alt="{{ image.alt or 'Изображение' }}" class="{{ image.size or 'img-medium' }}">
+                {% endif %}
+                {% endfor %}
+            </div>
+            {% else %}
+            <p style="text-align:center; color:#64748b;">Теоретический материал в разработке...</p>
+            {% endif %}
+        </div>
+
+        <!-- ВИДЕО -->
+        {% if theory.video %}
+        <div class="card">
+            <h2> Видео разбор</h2>
+            <!-- ✅ Исправление: отключено скачивание и правая кнопка мыши -->
+            <video controls controlsList="nodownload" oncontextmenu="return false;">
+                <source src="{{ url_for('theory_videos', task_num=task_num, filename=theory.video.path) }}"
+                    type="video/mp4">
+                Ваш браузер не поддерживает видео.
+            </video>
+            {% if theory.video.title %}<h3 style="margin-top:15px; color:#e2e8f0;">{{ theory.video.title }}</h3>{% endif
+            %}
+        </div>
+        {% endif %}
+
+        <!-- ПРАКТИКА -->
+        {% if theory.practice and theory.practice.tasks %}
+        <div class="card">
+            <h2> Практические задания</h2>
+            {% if theory.practice.description %}
+            <p style="margin-bottom:20px; color:#cbd5e1;">{{ theory.practice.description }}</p>
+            {% endif %}
+
+            {% for task in theory.practice.tasks %}
+            <div class="task-block">
+                <div class="task-title">{{ task.title or 'Задание ' + loop.index|string }}</div>
+
+                {% if task.description %}
+                <div class="task-description">
+                    {% for paragraph in task.description %}
+                    <p>{{ paragraph | safe }}</p>
+                    {% if task.images %}
+                    {% set current_para_index = loop.index0 %}
+                    {% for image in task.images %}
+                    {% if image.after_paragraph == current_para_index %}
+                    <img src="{{ url_for('theory_images', task_num=task_num, filename=image.path) }}"
+                        alt="{{ image.alt or 'Изображение' }}" class="{{ image.size or 'img-medium' }}">
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- 🔥 БЛОК ДЛЯ ФАЙЛА ЗАДАНИЯ (Добавлено) -->
+                {% if task.file %}
+                <div
+                    style="margin: 20px 0; padding: 15px; background: rgba(168, 85, 247, 0.1); border-radius: 12px; border-left: 4px solid #a855f7;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="font-size: 40px;">📄</div>
+                        <div style="flex: 1;">
+                            <a href="{{ url_for('theory_files', task_num=task_num, filename=task.file.path) }}" download
+                                class="file-link"
+                                style="color: #e2e8f0; font-weight: bold; text-decoration: none; font-size: 1.1em;">
+                                {{ task.file.name }}
+                            </a>
+                            {% if task.file.description %}
+                            <p style="margin: 5px 0 0 0; color: #94a3b8; font-size: 0.9em;">
+                                {{ task.file.description }}
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                <!-- Конец блока файла -->
+
+                <!-- Форма проверки -->
+                <form onsubmit="checkPracticeTask(event, {{ task_num }}, {{ loop.index }})" style="margin-top: 20px;">
+                    {% if task.answer_grid %}
+                    <table>
+                        {% for row in range(task.answer_grid.rows) %}
+                        <tr>
+                            {% for col in range(task.answer_grid.cols) %}
+                            <td>
+                                <input type="text"
+                                    id="practice-grid-{{ task_num }}-{{ loop.parent.loop.index }}-{{ row }}-{{ col }}"
+                                    placeholder="R{{ row+1 }}C{{ col+1 }}" class="grid-input" autocomplete="off"
+                                    maxlength="30">
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    <button type="submit" class="check-button">Проверить</button>
+
+                    {% elif task.answers and task.answers|length == 2 %}
+                    <div style="display:flex; flex-direction:column; gap:10px; margin:15px 0;">
+                        <input type="text" id="practice-answer-{{ task_num }}-{{ loop.index }}-0" placeholder="Ответ 1"
+                            autocomplete="off" maxlength="30">
+                        <input type="text" id="practice-answer-{{ task_num }}-{{ loop.index }}-1" placeholder="Ответ 2"
+                            autocomplete="off" maxlength="30">
+                    </div>
+                    <button type="submit" class="check-button">Проверить</button>
+
+                    {% else %}
+                    <div style="display:flex; gap:10px; margin:15px 0;">
+                        <input type="text" id="practice-answer-{{ task_num }}-{{ loop.index }}-0"
+                            placeholder="Введите ответ..." style="flex:1;" autocomplete="off" maxlength="30">
+                        <button type="submit" class="check-button">Проверить</button>
+                    </div>
+                    {% endif %}
+                </form>
+
+                <div id="practice-result-{{ task_num }}-{{ loop.index }}" class="result-msg"></div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% else %}
+        <div class="card">
+            <div class="no-theory">
+                <h2> Материалы в разработке</h2>
+                <p>Теория для задания №{{ task_num }} скоро появится!</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // Инициализация прогресса
+        const progressData = {{ task_progress | tojson }};
+        for (const [idx, data] of Object.entries(progressData)) {
+            const sq = document.getElementById(`task-square-${idx}`);
+            if (sq) {
+                if (data.attempts > 0) sq.classList.add('attempted');
+                if (data.is_correct == 1) sq.classList.add('correct');
+            }
+        }
+
+        function checkPracticeTask(event, taskNum, taskIndex) {
+            event.preventDefault();
+            const form = event.target;
+            const resultDiv = document.getElementById(`practice-result-${taskNum}-${taskIndex}`);
+            const sq = document.getElementById(`task-square-${taskIndex}`);
+
+            let answer = null;
+            const inputs = form.querySelectorAll('input[type="text"]');
+
+            if (inputs.length > 1 && !form.querySelector('table')) {
+                answer = Array.from(inputs).map(input => input.value.trim());
+            } else if (form.querySelector('table')) {
+                const rows = form.querySelectorAll('tr');
+                answer = [];
+                rows.forEach(row => {
+                    const rowData = [];
+                    row.querySelectorAll('input').forEach(input => rowData.push(input.value.trim()));
+                    answer.push(rowData);
+                });
+            } else {
+                answer = inputs[0].value.trim();
+            }
+
+            fetch('/check_theory_answer', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    task_num: taskNum,
+                    practice_task_id: taskIndex,
+                    answer: answer
+                })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.correct) {
+                        resultDiv.className = 'result-msg result-success';
+                        resultDiv.innerHTML = '<strong>✅ Верно!</strong> Отличная работа!';
+                    } else {
+                        resultDiv.className = 'result-msg result-error';
+                        resultDiv.innerHTML = '<strong>❌ Неверно.</strong> Проверь выделенные поля.';
+                    }
+
+                    if (sq) {
+                        sq.classList.add('attempted');
+                        if (data.is_correct == 1) sq.classList.add('correct');
+                        else sq.classList.remove('correct');
+                    }
+                    resultDiv.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    resultDiv.className = 'result-msg result-error';
+                    resultDiv.innerHTML = '❌ Ошибка соединения';
+                    resultDiv.style.display = 'block';
+                });
+        }
+    </script>
+</body>
+
+</html>

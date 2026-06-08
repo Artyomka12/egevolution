@@ -1,0 +1,24 @@
+# Создай файл .gitignore
+@"
+# Видеофайлы
+*.mp4
+*.avi
+*.mov
+*.mkv
+
+# База данных
+users.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Загруженные файлы
+static/uploads/*
+!static/uploads/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+"@ | Out-File -FilePath ".gitignore" -Encoding utf8
