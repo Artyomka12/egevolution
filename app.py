@@ -89,35 +89,38 @@ def get_next_task_id(task_num):
 # === ФИЛЬТР ДЛЯ ОБРАБОТКИ ИНДЕКСОВ ===
 @app.template_filter("replace_markers")
 def replace_markers(text):
-    """Заменяет маркеры и сохраняет HTML теги"""
     if not text:
         return ""
 
-    # Если текст уже содержит HTML теги <sup>, <sub>, <b>, <i> - просто возвращаем как безопасный HTML
-    if "<sup>" in text or "<sub>" in text or "<b>" in text or "<i>" in text:
-        return markupsafe.Markup(text)
+    # Разрешённые теги в обоих форматах: (HTML-тег, BBCode-маркер, плейсхолдер)
+    ALLOWED = [
+        ("<sup>",  "[sup]",  "___SUP___"),
+        ("</sup>", "[/sup]", "___END_SUP___"),
+        ("<sub>",  "[sub]",  "___SUB___"),
+        ("</sub>", "[/sub]", "___END_SUB___"),
+        ("<b>",    "[b]",    "___B___"),
+        ("</b>",   "[/b]",   "___END_B___"),
+        ("<i>",    "[i]",    "___I___"),
+        ("</i>",   "[/i]",   "___END_I___"),
+    ]
 
-    # Если есть маркеры [sup], [sub] и т.д. - заменяем их
-    if "[sup]" in text or "[sub]" in text or "[b]" in text or "[i]" in text:
-        # 1. Сначала заменяем маркеры на временные плейсхолдеры
-        text = text.replace("[sup]", "___SUP___").replace("[/sup]", "___END_SUP___")
-        text = text.replace("[sub]", "___SUB___").replace("[/sub]", "___END_SUB___")
-        text = text.replace("[b]", "___B___").replace("[/b]", "___END_B___")
-        text = text.replace("[i]", "___I___").replace("[/i]", "___END_I___")
+    has_markup = any(html in text or bbcode in text for html, bbcode, _ in ALLOWED)
+    if not has_markup:
+        return markupsafe.Markup(markupsafe.escape(text))
 
-        # 2. Экранируем остальной HTML для безопасности
-        text = markupsafe.escape(text)
+    # Шаг 1: оба формата → плейсхолдеры (до экранирования)
+    for html_tag, bbcode_tag, placeholder in ALLOWED:
+        text = text.replace(html_tag, placeholder)
+        text = text.replace(bbcode_tag, placeholder)
 
-        # 3. Заменяем плейсхолдеры на реальные HTML теги
-        text = text.replace("___SUP___", "<sup>").replace("___END_SUP___", "</sup>")
-        text = text.replace("___SUB___", "<sub>").replace("___END_SUB___", "</sub>")
-        text = text.replace("___B___", "<b>").replace("___END_B___", "</b>")
-        text = text.replace("___I___", "<i>").replace("___END_I___", "</i>")
+    # Шаг 2: экранируем весь оставшийся HTML (script, img, onerror и т.д.)
+    text = str(markupsafe.escape(text))
 
-        return markupsafe.Markup(text)
+    # Шаг 3: восстанавливаем только разрешённые теги из плейсхолдеров
+    for html_tag, _, placeholder in ALLOWED:
+        text = text.replace(placeholder, html_tag)
 
-    # Если ничего нет - просто экранируем и возвращаем
-    return markupsafe.Markup(markupsafe.escape(text))
+    return markupsafe.Markup(text)
 
 
 # === БАЗА ДАННЫХ ===
