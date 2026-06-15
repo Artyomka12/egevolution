@@ -437,7 +437,10 @@
         <div class="user-actions">
             {% if session.get('user_id') %}
             <a href="/profile" class="action-link">👤 Профиль</a>
-            <a href="/logout" class="action-link logout">🚪 Выйти</a>
+            <form method="POST" action="{{ url_for('logout') }}" style="display:contents">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="action-link logout" style="font:inherit;cursor:pointer">🚪 Выйти</button>
+            </form>
             {% else %}
             <a href="/login" class="action-link">🔐 Войти</a>
             <a href="/register" class="action-link">📝 Регистрация</a>

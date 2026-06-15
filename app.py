@@ -317,7 +317,7 @@ def register():
     return render_template("register.html")
 
 
-@app.route("/logout")
+@app.route("/logout", methods=["POST"])
 def logout():
     session.clear()
     return redirect(url_for("login"))
@@ -1969,6 +1969,14 @@ def api_save_variant_from_base():
     if "user_id" not in session:
         return jsonify({"error": "Unauthorized"}), 401
 
+    db = get_db()
+    current_user = db.execute(
+        "SELECT is_admin FROM users WHERE id = ?", (session["user_id"],)
+    ).fetchone()
+    db.close()
+    if not current_user or current_user["is_admin"] != 1:
+        return jsonify({"error": "Forbidden"}), 403
+
     data = request.json
     variant_title = data.get("title", "Новый вариант")
     tasks_refs = data.get(
@@ -2046,6 +2054,14 @@ def api_variant_preview():
     """API: предпросмотр варианта (подтягивает задачи из базы)"""
     if "user_id" not in session:
         return jsonify({"error": "Unauthorized"}), 401
+
+    db = get_db()
+    current_user = db.execute(
+        "SELECT is_admin FROM users WHERE id = ?", (session["user_id"],)
+    ).fetchone()
+    db.close()
+    if not current_user or current_user["is_admin"] != 1:
+        return jsonify({"error": "Forbidden"}), 403
 
     data = request.json
     tasks_refs = data.get("tasks", {})

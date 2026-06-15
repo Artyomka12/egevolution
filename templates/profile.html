@@ -325,7 +325,10 @@
                 <img src="{{ url_for('static', filename='favicon.png') }}" alt="Логотип" class="profile-logo">
                 <h1 class="page-title">Мой профиль</h1>
             </div>
-            <a href="/logout" class="nav-btn logout">Выйти</a>
+            <form method="POST" action="{{ url_for('logout') }}" style="display:contents">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="nav-btn logout" style="font:inherit;cursor:pointer">Выйти</button>
+            </form>
         </div>
 
         <!-- Карточка профиля -->
