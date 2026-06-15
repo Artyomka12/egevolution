@@ -16,13 +16,25 @@ import sqlite3
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Проверяем наличие всех обязательных переменных окружения
+_REQUIRED_ENV = ["SECRET_KEY", "SITE_PASSWORD", "ADMIN_USERNAME", "ADMIN_PASSWORD"]
+_missing_env = [v for v in _REQUIRED_ENV if not os.environ.get(v)]
+if _missing_env:
+    raise RuntimeError(
+        f"Отсутствуют обязательные переменные окружения: {', '.join(_missing_env)}\n"
+        "Скопируйте .env.example в .env и заполните значения."
+    )
 
 app = Flask(__name__)
-app.secret_key = "13524867Artyom"
+app.secret_key = os.environ["SECRET_KEY"]
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-SITE_PASSWORD = "0123456789"  # <-- Установите свой пароль
+SITE_PASSWORD = os.environ["SITE_PASSWORD"]
 
 VARIANTS_FOLDER = os.path.join(basedir, "variants")
 PREPARATION_FOLDER = os.path.join(basedir, "uroki")
@@ -199,8 +211,8 @@ def init_db():
 
     if not admin_exists:
         # Если админа нет, создаем его
-        admin_username = "Artemiy"
-        admin_password = "Artyom_12"
+        admin_username = os.environ["ADMIN_USERNAME"]
+        admin_password = os.environ["ADMIN_PASSWORD"]
 
         hashed_pw = generate_password_hash(admin_password)
 
