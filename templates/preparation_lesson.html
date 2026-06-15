@@ -354,7 +354,7 @@
             <h2>📚 Теоретический материал</h2>
             <div class="theory-content">
                 {% for para in lesson.theory.description %}
-                <p>{{ para | safe }}</p>
+                <p>{{ para | replace_markers }}</p>
                 {% if lesson.theory.images %}
                 {% set p_idx = loop.index0 %}
                 {% for img in lesson.theory.images %}
@@ -387,7 +387,7 @@
                 <div class="task-title">Задание {{ loop.index }}</div>
                 {% if task.description %}
                 {% for para in task.description %}
-                <p style="margin-bottom: 10px; text-indent: 20px; color: #cbd5e1;">{{ para | safe }}</p>
+                <p style="margin-bottom: 10px; text-indent: 20px; color: #cbd5e1;">{{ para | replace_markers }}</p>
                 {% if task.images %}
                 {% set t_idx = loop.index0 %}
                 {% for img in task.images %}

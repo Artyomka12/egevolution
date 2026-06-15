@@ -199,6 +199,134 @@ FormData-запрос (`/check/`) уже защищён через hidden input 
 
 ---
 
+### v1.2.2 — Исправление Stored XSS в admin_panel.html
+
+**Дата:** 2026-06-15
+
+Проведён аудит XSS и небезопасного рендеринга. Найдено 3 проблемы. Исправлена критическая (#1).
+
+#### XSS-1 (КРИТИЧЕСКИЙ): Stored XSS через имя пользователя в onclick
+- **Проблема:** `admin_panel.html`, строка 193:
+  ```
+  onclick="return confirm('Удалить пользователя {{ user.username }}?')"
+  ```
+  `username` попадал в тело JavaScript-строкового литерала. Jinja2 экранирует `'` в `&#39;`,
+  но HTML-парсер декодирует `&#39;` обратно в `'` до передачи в JS-движок. Любой пользователь
+  мог зарегистрироваться с именем `'); alert(document.cookie);//` и получить выполнение
+  произвольного JS в браузере администратора при открытии `/admin`.
+- **Исправление:** `username` перенесён в `data-username` атрибут кнопки.
+  JS читает значение через `this.dataset.username` — как строку данных, а не как код:
+  ```html
+  <button data-username="{{ user.username }}"
+          onclick="return confirm('Удалить пользователя ' + this.dataset.username + '?')">
+  ```
+  Строковая конкатенация `+` не выполняет код. Payload отображается как текст в диалоге.
+- **Файл:** `templates/admin_panel.html`, строка 193
+
+**Не исправлено (отложено на следующий этап):**
+- XSS-3 (СРЕДНИЙ): `| safe` в `preparation_lesson.html` (строки 357, 390) —
+  рендерит описания уроков без экранирования. Источник — admin-controlled lesson JSON.
+
+---
+
+### v1.2.3 — Безопасный replace_markers (XSS-2)
+
+**Дата:** 2026-06-15
+
+#### XSS-2 (ВЫСОКИЙ): уязвимая ветка в replace_markers
+- **Проблема:** `app.py`, строки 97–98 (было):
+  ```python
+  if "<sup>" in text or "<sub>" in text or "<b>" in text or "<i>" in text:
+      return markupsafe.Markup(text)   # текст не экранировался
+  ```
+  Если строка содержала хотя бы один из четырёх разрешённых тегов (`<sup>`, `<sub>`,
+  `<b>`, `<i>`), весь текст целиком помечался как доверенный HTML без экранирования.
+  Любой другой тег в той же строке (`<script>`, `<img onerror=...>`, `<iframe>`)
+  передавался браузеру как сырой HTML. Источник данных — task/theory JSON,
+  редактируемый администратором.
+
+- **Исправление:** Уязвимая ветка удалена. Обе старые ветки (сырые HTML-теги и
+  BBCode-маркеры `[sup]` / `[sub]` / `[b]` / `[i]`) объединены в единый безопасный
+  pipeline:
+  1. Все вхождения обоих форматов (`<sup>`, `[sup]` и т.д.) заменяются на нейтральные
+     плейсхолдеры `___SUP___` и т.п. — до экранирования.
+  2. `str(markupsafe.escape(text))` экранирует весь оставшийся HTML (`<script>`,
+     `<img>`, `onerror`, `<iframe>` и любые другие теги и атрибуты).
+  3. Только плейсхолдеры из whitelist восстанавливаются в HTML-теги.
+     `str()` перед `.replace()` обязателен: замена на объекте `Markup` автоматически
+     экранировала бы HTML-строки при подстановке.
+  - **Whitelist:** `sup`, `sub`, `b`, `i` (открывающие и закрывающие).
+  - **Файл:** `app.py`, функция `replace_markers`
+
+- **Проверка (12 тестов):**
+
+| Входная строка | Результат до | Результат после |
+|---|---|---|
+| `4<sup>2020</sup>` (task_14) | `4<sup>2020</sup>` ✅ | `4<sup>2020</sup>` ✅ |
+| `x<sup>2</sup>` (task_15) | `x<sup>2</sup>` ✅ | `x<sup>2</sup>` ✅ |
+| `<b>Пример</b>` (theory_26) | `<b>Пример</b>` ✅ | `<b>Пример</b>` ✅ |
+| `<i>код</i>` (theory_26) | `<i>код</i>` ✅ | `<i>код</i>` ✅ |
+| `[sup]2[/sup]` (BBCode) | `<sup>2</sup>` ✅ | `<sup>2</sup>` ✅ |
+| `<sup>1</sup><script>alert(1)</script>` | ❌ XSS | `<sup>1</sup>&lt;script&gt;…` ✅ |
+| `<img src=x onerror=alert(1)>` | ❌ XSS | `&lt;img src=x onerror=alert(1)&gt;` ✅ |
+| `<b>текст</b><img src=x onerror=alert(1)>` | ❌ XSS | `<b>текст</b>&lt;img…&gt;` ✅ |
+
+  Регрессий нет: в реальных JSON-файлах используются только теги из whitelist.
+  Сканирование 27 tasks.json и 4 theory.json не выявило нежелательных тегов.
+
+---
+
+### v1.2.4 — Исправление XSS-3 (preparation_lesson.html)
+
+**Дата:** 2026-06-15
+
+#### XSS-3 (СРЕДНИЙ): `| safe` в preparation_lesson.html
+
+- **Проблема:** Строки 357 и 390 шаблона `preparation_lesson.html` использовали
+  фильтр `| safe` для рендеринга описаний из `urok_XX.json`:
+  ```jinja
+  {{ para | safe }}   {# theory.description #}
+  {{ para | safe }}   {# practice.tasks[].description #}
+  ```
+  Любой тег в lesson JSON (`<script>`, `<img onerror=...>`, `<svg onload=...>`,
+  `<iframe>`) передавался браузеру без экранирования. Изменить содержимое уроков
+  можно только через файловую систему сервера — эксплойт требует серверного доступа,
+  поэтому приоритет ниже XSS-1 и XSS-2, но уязвимость реальная.
+
+- **Исправление:** Оба `| safe` заменены на `| replace_markers` (уже исправленный
+  в v1.2.3 whitelist-pipeline для `sup`/`sub`/`b`/`i`):
+  ```jinja
+  {{ para | replace_markers }}   {# строка 357, theory.description #}
+  {{ para | replace_markers }}   {# строка 390, practice.tasks[].description #}
+  ```
+  - `<b>`, `<i>`, `<sup>`, `<sub>` — сохраняются (входят в whitelist).
+  - `<script>`, `<img>`, `<iframe>`, `<svg>`, атрибуты `onerror`/`onload` и любые
+    другие теги — экранируются в `&lt;...&gt;`.
+  - **Файл:** `templates/preparation_lesson.html`
+
+- **Проверка реального контента (urok_01.json):**
+
+| Строка | Вход | Выход |
+|---|---|---|
+| theory[0] | `<b>Система счисления</b> — …` | `<b>Система счисления</b> — …` ✅ |
+| theory[1] | `… <b>позиционные</b> и <b>непозиционные</b>…` | теги `<b>` сохранены ✅ |
+| theory[2] | `<b>Основание…</b> — это…` | `<b>` сохранён ✅ |
+| theory[3–5] | plain text | без изменений ✅ |
+| practice[0–3] | plain text | без изменений ✅ |
+
+- **XSS-векторы (6 проверок):**
+
+| Вектор | Выход |
+|---|---|
+| `<script>alert(document.cookie)</script>` | `&lt;script&gt;…&lt;/script&gt;` ✅ |
+| `<img src=x onerror=alert(1)>` | `&lt;img src=x onerror=alert(1)&gt;` ✅ |
+| `<b>bold</b><script>alert(1)</script>` | `<b>bold</b>&lt;script&gt;…` ✅ |
+| `<iframe src="evil.com">` | `&lt;iframe src=…&gt;` ✅ |
+| `<b>bold</b><img src=x onerror=fetch(…)>` | `<b>bold</b>&lt;img…&gt;` ✅ |
+| `<svg onload=alert(1)>` | `&lt;svg onload=alert(1)&gt;` ✅ |
+
+---
+
 ## Проведённые проверки
 
 | Проверка | Результат | Дата |
@@ -217,6 +345,11 @@ FormData-запрос (`/check/`) уже защищён через hidden input 
 | Проверка is_admin в /api/variants/save | Добавлена, 403 для обычных пользователей | 2026-06-15 |
 | Проверка is_admin в /api/variant/preview | Добавлена, 403 для обычных пользователей | 2026-06-15 |
 | Перевод /logout на POST | GET→POST, CSRF-формы в 2 шаблонах | 2026-06-15 |
+| Аудит XSS и небезопасного рендеринга | Найдено 3 проблемы, критическая (#1) исправлена | 2026-06-15 |
+| Stored XSS в admin_panel.html | data-атрибут вместо JS-литерала, payload не выполняется | 2026-06-15 |
+| Сканирование task/theory JSON на нежелательные теги | 27 tasks.json + 4 theory.json; только whitelist-теги, 0 нарушений | 2026-06-15 |
+| XSS-2: replace_markers (app.py) | Whitelist-pipeline; script/img/iframe/onerror экранируются; 12/12 тестов | 2026-06-15 |
+| XSS-3: `\| safe` в preparation_lesson.html | Заменён на `\| replace_markers`; 6/6 XSS-векторов экранированы; регрессий нет | 2026-06-15 |
 
 ---
 
@@ -235,7 +368,9 @@ FormData-запрос (`/check/`) уже защищён через hidden input 
 | Утечка ответов через /api/variant/preview | ✅ Устранено (is_admin на /api/variant/preview) |
 | CSRF принудительного выхода (logout) | ✅ Устранено (GET→POST, CSRF-форма) |
 | SQL-инъекции | Не аудировалось (следующий этап) |
-| XSS | Частично: найдено 2 использования `\| safe` в `preparation_lesson.html` (строки 357, 390); данные из lesson.json, не пользовательский ввод — риск низкий, требует проверки при аудите |
+| XSS (Stored) в admin_panel.html | ✅ Устранено (data-атрибут, v1.2.2) |
+| XSS в replace_markers (app.py) | ✅ Устранено (whitelist-pipeline, v1.2.3) |
+| XSS через `\| safe` в preparation_lesson | ✅ Устранено (`\| replace_markers`, v1.2.4) |
 | Загрузка файлов (аватары) | Частично: проверка расширения, нет проверки MIME |
 | Нет ограничения сохранений результатов | P3 — отложено (/save_results, /finish_exam) |
 | /clear_stats без явного auth-guard | P3 — отложено |
@@ -244,10 +379,16 @@ FormData-запрос (`/check/`) уже защищён через hidden input 
 
 ## Текущий этап
 
-Завершён: **Аудит прав доступа v1.2.1** (P1/P2 проблемы).
+Завершён: **XSS-аудит (v1.2.2 → v1.2.4)** — все три найденные XSS-проблемы закрыты.
 
-Исправлено всего по уровням: P0 — 4, P1 — 4 (включая 3 из v1.2.0 + /api/variants/save), P2 — 2.
+| # | Проблема | Файл | Статус |
+|---|---|---|---|
+| XSS-1 | Stored XSS через `username` в `onclick` JS-литерале | `admin_panel.html` | ✅ v1.2.2 |
+| XSS-2 | `replace_markers` возвращал `Markup(text)` без экранирования | `app.py` | ✅ v1.2.3 |
+| XSS-3 | `\| safe` в рендеринге lesson JSON | `preparation_lesson.html` | ✅ v1.2.4 |
 
-Следующий этап (на выбор):
-- **Безопасность P3** — clear_stats, save_results/finish_exam, аудит SQL-инъекций, XSS, MIME аватаров
+Исправлено всего по уровням: P0 — 4, P1 — 4, P2 — 2, XSS — 3.
+
+**Сессия завершена.** Следующий этап — на выбор:
+- **Безопасность P3** — clear_stats, save_results/finish_exam, аудит SQL-инъекций, MIME аватаров, CSP-заголовки
 - **Технический долг (Stage 3)** — унификация логики подсчёта баллов, централизованное управление соединениями БД, логирование

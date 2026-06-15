@@ -109,6 +109,11 @@
 
 - [x] Аудит прав доступа к API-маршрутам — исправлены `/api/variants/save` и `/api/variant/preview` (добавлена проверка is_admin, 403 для обычных пользователей)
 - [x] CSRF при выходе — `GET /logout` переведён на `POST`, CSRF-формы добавлены в `start.html` и `profile.html`
+- [x] Stored XSS #1 (критический) — `admin_panel.html:193`: `username` вынесен из JS-литерала в `data-username` атрибут, читается через `this.dataset.username`
+- [x] XSS-2 (высокий) — `replace_markers` в `app.py`: уязвимая ветка `Markup(text)` удалена; реализован whitelist-pipeline (placeholder → escape → restore) для `sup`/`sub`/`b`/`i`; `script`/`img`/`iframe`/`onerror` и любые другие теги теперь экранируются; 12/12 тестов прошли, регрессий в реальном контенте нет.
+- [x] XSS-3 (средний) — `| safe` в `preparation_lesson.html:357,390` заменён на `| replace_markers`; `<b>` в urok_01.json сохраняется; `script`/`img`/`iframe`/`svg`/`onerror` экранируются; 6/6 XSS-векторов безопасны; регрессий нет.
+
+**XSS-аудит закрыт: XSS-1 ✅ XSS-2 ✅ XSS-3 ✅**
 
 ### Ожидает выполнения
 
@@ -125,7 +130,6 @@
 #### Остальное
 
 - [ ] Полный аудит SQL-запросов на параметризацию
-- [ ] Аудит XSS (поиск `| safe`, прямого вывода пользовательских данных)
 - [ ] Rate limiting на `/login` и `/register`
 - [ ] Проверка загрузки файлов (MIME, размер, имя файла)
 - [ ] Content Security Policy (CSP) заголовки
