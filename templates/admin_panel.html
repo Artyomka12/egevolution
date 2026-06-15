@@ -190,7 +190,8 @@
                                 <form action="/admin/delete_user/{{ user.id }}" method="POST" style="display: inline;">
                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <button type="submit" class="btn-delete"
-                                        onclick="return confirm('Удалить пользователя {{ user.username }}?')">
+                                        data-username="{{ user.username }}"
+                                        onclick="return confirm('Удалить пользователя ' + this.dataset.username + '?')">
                                         🗑️ Удалить
                                     </button>
                                 </form>
