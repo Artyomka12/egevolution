@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if task %}Редактирование{% else %}Добавление{% endif %} задачи №{{ task_num }}</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            color: #a855f7;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: #e0e0e0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .form-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #a855f7;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #e0e0e0;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #a855f7;
+        }
+
+        .answer-type-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .answer-type-btn {
+            flex: 1;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .answer-type-btn.active {
+            border-color: #a855f7;
+            background: rgba(168, 85, 247, 0.15);
+        }
+
+        .grid-inputs {
+            display: grid;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .grid-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .grid-row input {
+            flex: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="/admin/tasks/{{ task_num }}" class="btn btn-secondary">← Назад</a>
+            <h1>{% if task %}✏️ Редактирование задачи №{{ task.id }}{% else %}➕ Добавление задачи{% endif %}</h1>
+            <div></div>
+        </div>
+
+        <form method="POST">
+            <input type="hidden" name="answer_type" id="answer_type" value="single">
+            {% if not task %}
+            <div class="form-card">
+                <div class="form-group">
+                    <label>ID задачи:</label>
+                    <input type="number" name="task_id" value="{{ next_id }}" min="1" required>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="form-card">
+                <div class="form-group">
+                    <label>Сложность:</label>
+                    <select name="difficulty">
+                        <option value="easy" {% if task and task.difficulty=='easy' %}selected{% endif %}>🟢 Лёгкое
+                        </option>
+                        <option value="medium" {% if not task or task.difficulty=='medium' %}selected{% endif %}> 🟡
+                            Среднее</option>
+                        <option value="hard" {% if task and task.difficulty=='hard' %}selected{% endif %}>🔴 Сложное
+                        </option>
+                        <option value="grave" {% if task and task.difficulty=='grave' %}selected{% endif %}>⚫ Гроб
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-card">
+                <h3 style="margin-bottom: 20px; color: #a855f7;">Описание задачи</h3>
+                <div id="description-container">
+                    {% if task %}
+                    {% for para in task.description %}
+                    <div class="form-group">
+                        <label>Абзац {{ loop.index }}:</label>
+                        <textarea name="description" rows="4">{{ para }}</textarea>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="form-group">
+                        <label>Абзац 1:</label>
+                        <textarea name="description" rows="4"></textarea>
+                    </div>
+                    {% endif %}
+                </div>
+                <button type="button" class="btn btn-secondary" onclick="addParagraph()">➕ Добавить абзац</button>
+            </div>
+
+            <div class="form-card">
+                <h3 style="margin-bottom: 20px; color: #a855f7;">Тип ответа</h3>
+                <div class="answer-type-selector">
+                    <div class="answer-type-btn {% if not task or (not task.answer_grid and not task.answers) %}active{% endif %}"
+                        onclick="selectAnswerType('single')">
+                        1️⃣ Один ответ
+                    </div>
+                    <div class="answer-type-btn {% if task and task.answers %}active{% endif %}"
+                        onclick="selectAnswerType('double')">
+                        2️⃣ Два ответа
+                    </div>
+                    <div class="answer-type-btn {% if task and task.answer_grid %}active{% endif %}"
+                        onclick="selectAnswerType('grid')">
+                        📊 Таблица
+                    </div>
+                </div>
+
+                <div id="answer-single" {% if task and (task.answer_grid or task.answers) %}style="display:none;" {%
+                    endif %}>
+                    <div class="form-group">
+                        <label>Правильный ответ:</label>
+                        <input type="text" name="correct_answer"
+                            value="{{ task.correct_answer if task and not task.answer_grid and not task.answers else '' }}">
+                    </div>
+                </div>
+
+                <div id="answer-double" {% if not task or not task.answers %}style="display:none;" {% endif %}>
+                    <div class="form-group">
+                        <label>Ответ 1:</label>
+                        <input type="text" name="answers"
+                            value="{{ task.answers[0] if task and task.answers else '' }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Ответ 2:</label>
+                        <input type="text" name="answers"
+                            value="{{ task.answers[1] if task and task.answers and task.answers|length > 1 else '' }}">
+                    </div>
+                </div>
+
+                <div id="answer-grid" {% if not task or not task.answer_grid %}style="display:none;" {% endif %}>
+                    <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label>Строки:</label>
+                            <input type="number" id="grid-rows" name="answer_grid_rows"
+                                value="{{ task.answer_grid.rows if task and task.answer_grid else 1 }}" min="1" max="10"
+                                onchange="updateGrid()">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Столбцы:</label>
+                            <input type="number" id="grid-cols" name="answer_grid_cols"
+                                value="{{ task.answer_grid.cols if task and task.answer_grid else 1 }}" min="1" max="10"
+                                onchange="updateGrid()">
+                        </div>
+                    </div>
+                    <div id="grid-container" class="grid-inputs"></div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 15px; justify-content: flex-end;">
+                <a href="/admin/tasks/{{ task_num }}" class="btn btn-secondary">Отмена</a>
+                <button type="submit" class="btn btn-primary">💾 Сохранить</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function addParagraph() {
+            const container = document.getElementById('description-container');
+            const count = container.children.length + 1;
+            const div = document.createElement('div');
+            div.className = 'form-group';
+            div.innerHTML = `
+                <label>Абзац ${count}:</label>
+                <textarea name="description" rows="4"></textarea>
+                <button type="button" class="btn btn-secondary" style="margin-top: 10px;" onclick="this.parentElement.remove()"> Удалить</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function selectAnswerType(type) {
+            document.querySelectorAll('.answer-type-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // ✅ ВАЖНО: Обновляем скрытое поле
+            document.getElementById('answer_type').value = type;
+
+            document.getElementById('answer-single').style.display = type === 'single' ? 'block' : 'none';
+            document.getElementById('answer-double').style.display = type === 'double' ? 'block' : 'none';
+            document.getElementById('answer-grid').style.display = type === 'grid' ? 'block' : 'none';
+
+            if (type === 'grid') {
+                updateGrid();
+            }
+        }
+
+        function updateGrid() {
+            const rows = parseInt(document.getElementById('grid-rows').value) || 1;
+            const cols = parseInt(document.getElementById('grid-cols').value) || 1;
+            const container = document.getElementById('grid-container');
+            container.innerHTML = '';
+
+            for (let i = 0; i < rows; i++) {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'grid-row';
+                for (let j = 0; j < cols; j++) {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.name = 'answer_grid_answers';
+                    input.placeholder = `R${i + 1}C${j + 1}`;
+                    rowDiv.appendChild(input);
+                }
+                container.appendChild(rowDiv);
+            }
+        }
+
+        // Инициализация типа ответа при редактировании
+        document.addEventListener('DOMContentLoaded', function () {
+            const task = {{ task | tojson if task else 'null'
+        }};
+        if (task) {
+            if (task.answer_grid) {
+                document.getElementById('answer_type').value = 'grid';
+            } else if (task.answers) {
+                document.getElementById('answer_type').value = 'double';
+            } else {
+                document.getElementById('answer_type').value = 'single';
+            }
+        }
+        if (document.getElementById('answer-grid').style.display !== 'none') {
+            updateGrid();
+        }
+});
+    </script>
+</body>
+
+</html>

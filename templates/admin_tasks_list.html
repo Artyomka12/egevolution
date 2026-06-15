@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление базой заданий | Админ-панель</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-back {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #e0e0e0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .tasks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .task-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            transition: 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: #e0e0e0;
+        }
+
+        .task-card:hover {
+            border-color: #a855f7;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(168, 85, 247, 0.2);
+        }
+
+        .task-num {
+            font-size: 2em;
+            font-weight: bold;
+            color: #a855f7;
+            margin-bottom: 10px;
+        }
+
+        .task-count {
+            color: #888;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="/admin" class="btn-back">← Назад в админ-панель</a>
+            <h1> Управление базой заданий</h1>
+            <div></div>
+        </div>
+        <div class="tasks-grid">
+            {% for item in tasks_info %}
+            <a href="/admin/tasks/{{ item.num }}" class="task-card">
+                <div class="task-num">№{{ item.num }}</div>
+                <div class="task-count">
+                    {% if item.count > 0 %}
+                    {{ item.count }} {{ 'задача' if item.count == 1 else ('задачи' if item.count < 5 else 'задач' ) }}
+                        {% else %} Нет задач {% endif %} </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+
+</html>

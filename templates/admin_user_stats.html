@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Статистика пользователя | Админ-панель</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <style>
+        /* Стили из админ-панели */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #ef4444, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-back {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #e0e0e0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .user-info-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #a855f7;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .history-table-container {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 20px;
+            overflow-x: auto;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        th {
+            color: #a855f7;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Кликабельные строки истории */
+        .history-table tbody tr {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .history-table tbody tr:hover td {
+            background: rgba(168, 85, 247, 0.15);
+        }
+
+        /* Стили для секций прогресса */
+        .section-title {
+            color: #fff;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="/admin" class="btn-back">← Назад к списку</a>
+            <h1>📊 Статистика пользователя</h1>
+            <div></div> <!-- Пустой блок для выравнивания -->
+        </div>
+        <div class="user-info-card">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 15px;">
+                <!-- Аватарка -->
+                <img src="{{ url_for('static', filename='uploads/avatars/' + target_user.avatar) }}" alt="Аватар"
+                    style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #a855f7; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);">
+                <!-- Информация -->
+                <div style="text-align: left;">
+                    <h2 style="font-size: 2em; margin: 0 0 5px 0;">{{ target_user.name or target_user.username }}</h2>
+                    <p style="color: #888; font-size: 1.2em; margin: 0;">@{{ target_user.username }}</p>
+                </div>
+            </div>
+            <p style="color: #666; margin-top: 10px;">ID: #{{ target_user.id }} | Регистрация: {{
+                target_user.created_at[:10] }}</p>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-value">{{ stats.total_variants }}</div>
+                <div class="stat-label">Решено вариантов</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">{{ stats.best_score }}</div>
+                <div class="stat-label">Лучший балл</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">{{ stats.average_score }}</div>
+                <div class="stat-label">Средний балл</div>
+            </div>
+        </div>
+        <!-- История решений (кликабельная) -->
+        <div class="history-table-container">
+            <h3 class="section-title">📅 История решений</h3>
+            {% if stats.variants_history %}
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Вариант</th>
+                        <th>Результат</th>
+                        <th>Баллов</th>
+                        <th>Время</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for attempt in stats.variants_history %}
+                    <tr onclick="window.location.href='/admin/user/{{ target_user.id }}/attempt/{{ attempt.id }}'">
+                        <td>{{ attempt.date }}</td>
+                        <td>№{{ attempt.variant_num }}</td>
+                        <td>{{ attempt.score }} / {{ attempt.total_tasks }}</td>
+                        <td>{{ attempt.percentage }}</td>
+                        <td>{{ attempt.time_spent }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p style="text-align: center; color: #666;">У пользователя пока нет решённых вариантов.</p>
+            {% endif %}
+        </div>
+        <!-- Прогресс по урокам -->
+        <div class="history-table-container">
+            <h3 class="section-title">📚 Прогресс по урокам</h3>
+            {% if lesson_stats %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Название урока</th>
+                        <th>Прогресс</th>
+                        <th>Статус</th>
+                        <th>Доступ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for lesson in lesson_stats %}
+                    <tr>
+                        <td>#{{ lesson.id }}</td>
+                        <td>{{ lesson.title }}</td>
+                        <td>{{ lesson.correct }} / {{ lesson.total }}</td>
+                        <td>
+                            {% if lesson.status == 'completed' %}
+                            <span style="color: #28a745; font-weight: bold;">✅ Завершен</span>
+                            {% elif lesson.status == 'in_progress' %}
+                            <span style="color: #ffc107; font-weight: bold;">⏳ В процессе</span>
+                            {% else %}
+                            <span style="color: #666;">Не начат</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <!-- ЗАМОЧЕК -->
+                            <form action="/admin/user/{{ target_user.id }}/toggle_lesson/{{ lesson.id }}" method="POST"
+                                style="display: inline;">
+                                <button type="submit"
+                                    style="background: none; border: none; cursor: pointer; font-size: 1.2em;"
+                                    title="{{ 'Открыть доступ' if lesson.is_unlocked == 0 else 'Закрыть доступ' }}">
+                                    {% if lesson.is_unlocked == 1 %}
+                                    🔓
+                                    {% else %}
+                                    🔒
+                                    {% endif %}
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p style="text-align: center; color: #666;">Нет данных по урокам.</p>
+            {% endif %}
+        </div>
+        <!-- Прогресс по теории -->
+        <div class="history-table-container">
+            <h3 class="section-title">📖 Прогресс по теории</h3>
+            {% if theory_stats %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>Задание</th>
+                        <th>Решено</th>
+                        <th>Статус</th>
+                        <th>Доступ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in theory_stats %}
+                    <tr>
+                        <td>{{ task.num }}</td>
+                        <td>{{ task.title }}</td>
+                        <td>{{ task.correct }} / {{ task.total }}</td>
+                        <td>
+                            {% if task.status == 'completed' %}
+                            <span style="color: #28a745; font-weight: bold;">✅ Изучено</span>
+                            {% elif task.status == 'in_progress' %}
+                            <span style="color: #ffc107; font-weight: bold;">⏳ В процессе</span>
+                            {% else %}
+                            <span style="color: #666;">Не начато</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <!-- ЗАМОЧЕК -->
+                            <form action="/admin/user/{{ target_user.id }}/toggle_theory/{{ task.num }}" method="POST"
+                                style="display: inline;">
+                                <button type="submit"
+                                    style="background: none; border: none; cursor: pointer; font-size: 1.2em;"
+                                    title="{{ 'Открыть доступ' if task.is_unlocked == 0 else 'Закрыть доступ' }}">
+                                    {% if task.is_unlocked == 1 %}
+                                    🔓
+                                    {% else %}
+                                    🔒
+                                    {% endif %}
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p style="text-align: center; color: #666;">Нет данных по теории.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+
+</html>

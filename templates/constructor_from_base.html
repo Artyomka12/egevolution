@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Конструктор вариантов из базы | ЕГЭволюция</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #888;
+            font-size: 1.1em;
+        }
+
+        .nav-back {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a855f7;
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        .nav-back:hover {
+            background: rgba(168, 85, 247, 0.1);
+            border-color: #a855f7;
+        }
+
+        .constructor-layout {
+            display: grid;
+            grid-template-columns: 1fr 450px;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .right-column {
+            position: sticky;
+            top: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 25px;
+        }
+
+        .card h2 {
+            color: #e0e0e0;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #a855f7;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #e0e0e0;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #a855f7;
+        }
+
+        .task-numbers-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .task-num-btn {
+            padding: 12px 5px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #888;
+            cursor: pointer;
+            text-align: center;
+            transition: 0.3s;
+            font-size: 0.9em;
+        }
+
+        .task-num-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .task-num-btn.active {
+            border-color: #a855f7;
+            background: rgba(168, 85, 247, 0.2);
+            color: #e0e0e0;
+        }
+
+        .task-num-btn.filled {
+            border-color: #4ade80;
+            background: rgba(74, 222, 128, 0.15);
+            color: #4ade80;
+        }
+
+        .filters-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-chip {
+            padding: 6px 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: 0.3s;
+            color: #888;
+        }
+
+        .filter-chip:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .filter-chip.active {
+            border-color: #a855f7;
+            background: rgba(168, 85, 247, 0.2);
+            color: #e0e0e0;
+        }
+
+        .task-from-base-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .task-from-base-item:hover {
+            border-color: #a855f7;
+            background: rgba(168, 85, 247, 0.05);
+        }
+
+        .task-from-base-item.selected {
+            border-color: #4ade80;
+            background: rgba(74, 222, 128, 0.1);
+        }
+
+        .task-from-base-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .task-from-base-id {
+            color: #a855f7;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .diff-badge {
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.75em;
+            font-weight: 600;
+        }
+
+        .diff-easy {
+            background: rgba(74, 222, 128, 0.15);
+            color: #4ade80;
+        }
+
+        .diff-medium {
+            background: rgba(250, 204, 21, 0.15);
+            color: #facc15;
+        }
+
+        .diff-hard {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+
+        .diff-grave {
+            background: rgba(168, 85, 247, 0.15);
+            color: #a855f7;
+        }
+
+        .task-from-base-preview {
+            color: #888;
+            font-size: 0.85em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .variant-summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            margin-bottom: 6px;
+            font-size: 0.9em;
+        }
+
+        .variant-summary-item .pos {
+            color: #a855f7;
+            font-weight: bold;
+            min-width: 30px;
+        }
+
+        .variant-summary-item .task-info {
+            flex: 1;
+            color: #888;
+            font-size: 0.85em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin: 0 10px;
+        }
+
+        .variant-summary-item .remove-btn {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 1.1em;
+        }
+
+        .progress-bar-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            height: 8px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #a855f7, #ec4899);
+            transition: width 0.3s;
+            border-radius: 10px;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #888;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(168, 85, 247, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e0e0e0;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .empty-state h3 {
+            color: #888;
+            margin-bottom: 10px;
+        }
+
+        .flash-msg {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .success {
+            background: rgba(40, 167, 69, 0.2);
+            color: #4ade80;
+            border: 1px solid #28a745;
+        }
+
+        .error {
+            background: rgba(220, 53, 69, 0.2);
+            color: #f87171;
+            border: 1px solid #dc3545;
+        }
+
+        @media (max-width: 1024px) {
+            .constructor-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .right-column {
+                position: static;
+            }
+
+            .task-numbers-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="/admin" class="nav-back">← Админ-панель</a>
+            <h1>🛠️ Конструктор вариантов из базы</h1>
+            <p>Создавай варианты, выбирая задачи из готовой базы</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash-msg {{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <div class="constructor-layout">
+            <!-- ЛЕВАЯ КОЛОНКА -->
+            <div class="left-column">
+                <!-- Информация о варианте -->
+                <div class="card">
+                    <h2>📦 Информация о варианте</h2>
+                    <div class="form-group">
+                        <label>Название варианта:</label>
+                        <input type="text" id="variant-title" placeholder="Например: Пробный вариант №6"
+                            value="Пробный вариант">
+                    </div>
+                </div>
+
+                <!-- Выбор номера задания -->
+                <div class="card">
+                    <h2> Выбери номер задания</h2>
+                    <div class="task-numbers-grid" id="task-numbers-grid">
+                        <!-- Генерируется JS -->
+                    </div>
+                    <div id="current-task-info" style="color: #888; text-align: center; margin-top: 10px;">
+                        Выбери номер задания, чтобы увидеть доступные задачи
+                    </div>
+                </div>
+
+                <!-- Список задач из базы -->
+                <div class="card" id="tasks-from-base-card" style="display: none;">
+                    <h2>📚 Задачи из базы для задания №<span id="current-task-num-display"></span></h2>
+
+                    <div class="filters-row">
+                        <div class="filter-chip active" data-diff="all" onclick="filterTasks('all', this)">Все</div>
+                        <div class="filter-chip" data-diff="easy" onclick="filterTasks('easy', this)">🟢 Лёгкие</div>
+                        <div class="filter-chip" data-diff="medium" onclick="filterTasks('medium', this)">🟡 Средние
+                        </div>
+                        <div class="filter-chip" data-diff="hard" onclick="filterTasks('hard', this)">🔴 Сложные</div>
+                        <div class="filter-chip" data-diff="grave" onclick="filterTasks('grave', this)">⚫ Гроб</div>
+                    </div>
+
+                    <div id="tasks-from-base-list">
+                        <!-- Загружается через API -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ПРАВАЯ КОЛОНКА: Сводка варианта -->
+            <div class="right-column">
+                <div class="card">
+                    <h2>📝 Состав варианта</h2>
+
+                    <div class="progress-text">
+                        Заполнено: <strong id="filled-count">0</strong> из 27
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+                    </div>
+
+                    <div id="variant-summary-list" style="max-height: 500px; overflow-y: auto;">
+                        <div class="empty-state">
+                            <h3>Пока пусто</h3>
+                            <p>Выбирай задачи слева, чтобы собрать вариант</p>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+                        <button class="btn btn-primary" id="save-variant-btn" onclick="saveVariant()" disabled>
+                            💾 Сохранить вариант
+                        </button>
+                        <button class="btn btn-secondary" onclick="clearVariant()">
+                            🗑️ Очистить всё
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let variantTasks = {};  // { "1": {task_id: 5}, "2": {task_id: 3}, ... }
+        let currentTaskNum = null;
+        let currentFilter = 'all';
+        let availableTasks = [];
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTaskNumbersGrid();
+        });
+
+        // Рендер сетки номеров заданий
+        function renderTaskNumbersGrid() {
+            const grid = document.getElementById('task-numbers-grid');
+            grid.innerHTML = '';
+            for (let i = 1; i <= 27; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'task-num-btn';
+                btn.textContent = i;
+                btn.dataset.num = i;
+                btn.onclick = () => selectTaskNumber(i);
+                grid.appendChild(btn);
+            }
+            updateTaskNumbersVisual();
+        }
+
+        // Обновление визуального состояния кнопок номеров
+        function updateTaskNumbersVisual() {
+            document.querySelectorAll('.task-num-btn').forEach(btn => {
+                const num = parseInt(btn.dataset.num);
+                btn.classList.remove('active', 'filled');
+                if (variantTasks[num]) {
+                    btn.classList.add('filled');
+                }
+                if (num === currentTaskNum) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // Выбор номера задания
+        function selectTaskNumber(num) {
+            currentTaskNum = num;
+            document.getElementById('current-task-num-display').textContent = num;
+            document.getElementById('tasks-from-base-card').style.display = 'block';
+            document.getElementById('current-task-info').textContent = `Загружаю задачи для задания №${num}...`;
+
+            updateTaskNumbersVisual();
+            loadTasksFromBase(num);
+        }
+
+        // Загрузка задач из базы через API
+        function loadTasksFromBase(taskNum) {
+            const url = `/api/tasks/${taskNum}` + (currentFilter !== 'all' ? `?difficulty=${currentFilter}` : '');
+
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    availableTasks = data.tasks || [];
+                    renderTasksFromBase();
+                    if (availableTasks.length === 0) {
+                        document.getElementById('current-task-info').textContent = `Для задания №${taskNum} нет задач${currentFilter !== 'all' ? ' с такой сложностью' : ''}`;
+                    } else {
+                        document.getElementById('current-task-info').textContent = `Найдено задач: ${availableTasks.length}`;
+                    }
+                })
+                .catch(err => {
+                    console.error('Error loading tasks:', err);
+                    document.getElementById('current-task-info').textContent = 'Ошибка загрузки задач';
+                });
+        }
+
+        // Фильтрация задач
+        function filterTasks(difficulty, btn) {
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = difficulty;
+            if (currentTaskNum) {
+                loadTasksFromBase(currentTaskNum);
+            }
+        }
+
+        // Рендер списка задач из базы
+        function renderTasksFromBase() {
+            const container = document.getElementById('tasks-from-base-list');
+            if (availableTasks.length === 0) {
+                container.innerHTML = '<div class="empty-state"><h3>Нет задач</h3><p>Добавь задачи через "Управление базой заданий"</p></div>';
+                return;
+            }
+
+            container.innerHTML = availableTasks.map(task => {
+                const isSelected = variantTasks[currentTaskNum] && variantTasks[currentTaskNum].task_id === task.id;
+                const diff = task.difficulty || 'medium';
+                const diffLabels = { easy: ' Лёгкое', medium: ' Среднее', hard: '🔴 Сложное', grave: '⚫ Гроб' };
+                const preview = (task.description || []).join(' ').substring(0, 100);
+
+                return `
+            <div class="task-from-base-item ${isSelected ? 'selected' : ''}" onclick="selectTask(${task.id})">
+                <div class="task-from-base-header">
+                    <span class="task-from-base-id">Задача №${task.id}</span>
+                    <span class="diff-badge diff-${diff}">${diffLabels[diff] || diff}</span>
+                </div>
+                <div class="task-from-base-preview">${preview}${preview.length >= 100 ? '...' : ''}</div>
+                ${isSelected ? '<div style="color: #4ade80; font-size: 0.8em; margin-top: 5px;">✅ Выбрана для варианта</div>' : ''}
+            </div>
+        `;
+            }).join('');
+        }
+
+        // Выбор задачи для варианта
+        function selectTask(taskId) {
+            if (!currentTaskNum) return;
+
+            // Если эта задача уже выбрана — снимаем выбор
+            if (variantTasks[currentTaskNum] && variantTasks[currentTaskNum].task_id === taskId) {
+                delete variantTasks[currentTaskNum];
+            } else {
+                variantTasks[currentTaskNum] = { task_id: taskId };
+            }
+
+            updateTaskNumbersVisual();
+            renderTasksFromBase();
+            renderVariantSummary();
+        }
+
+        // Рендер сводки варианта
+        function renderVariantSummary() {
+            const container = document.getElementById('variant-summary-list');
+            const filledCount = Object.keys(variantTasks).length;
+
+            document.getElementById('filled-count').textContent = filledCount;
+            document.getElementById('progress-bar').style.width = `${(filledCount / 27) * 100}%`;
+            document.getElementById('save-variant-btn').disabled = filledCount < 27;
+
+            if (filledCount === 0) {
+                container.innerHTML = '<div class="empty-state"><h3>Пока пусто</h3><p>Выбирай задачи слева</p></div>';
+                return;
+            }
+
+            container.innerHTML = '';
+            for (let i = 1; i <= 27; i++) {
+                const item = document.createElement('div');
+                item.className = 'variant-summary-item';
+
+                if (variantTasks[i]) {
+                    item.innerHTML = `
+                <span class="pos">№${i}</span>
+                <span class="task-info">Задача #${variantTasks[i].task_id}</span>
+                <button class="remove-btn" onclick="removeTask(${i})">✕</button>
+            `;
+                } else {
+                    item.innerHTML = `
+                <span class="pos" style="color: #666;">№${i}</span>
+                <span class="task-info" style="color: #555;">Не выбрано</span>
+                <span style="color: #555; font-size: 0.9em;">—</span>
+            `;
+                }
+                container.appendChild(item);
+            }
+        }
+
+        // Удалить задачу из варианта
+        function removeTask(position) {
+            delete variantTasks[position];
+            updateTaskNumbersVisual();
+            if (currentTaskNum === position) {
+                renderTasksFromBase();
+            }
+            renderVariantSummary();
+        }
+
+        // Очистить весь вариант
+        function clearVariant() {
+            if (confirm('Очистить весь вариант? Все выбранные задачи будут удалены.')) {
+                variantTasks = {};
+                updateTaskNumbersVisual();
+                renderTasksFromBase();
+                renderVariantSummary();
+            }
+        }
+
+        // Сохранить вариант
+        function saveVariant() {
+            const title = document.getElementById('variant-title').value.trim();
+            if (!title) {
+                alert('Введи название варианта!');
+                return;
+            }
+            if (Object.keys(variantTasks).length < 27) {
+                alert('Заполни все 27 заданий!');
+                return;
+            }
+
+            if (!confirm(`Сохранить вариант "${title}"?`)) return;
+
+            fetch('/api/variants/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    title: title,
+                    tasks: variantTasks
+                })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(`✅ ${data.message}\nНомер варианта: ${data.variant_num}`);
+                        // Сброс
+                        variantTasks = {};
+                        document.getElementById('variant-title').value = 'Пробный вариант';
+                        updateTaskNumbersVisual();
+                        renderVariantSummary();
+                    } else {
+                        alert('❌ Ошибка: ' + (data.error || 'Неизвестная ошибка'));
+                    }
+                })
+                .catch(err => {
+                    console.error('Error saving variant:', err);
+                    alert(' Ошибка сети');
+                });
+        }
+    </script>
+</body>
+
+</html>

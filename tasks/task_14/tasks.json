@@ -1,0 +1,15 @@
+{
+ "task_num": 14,
+ "tasks": [
+  {
+   "id": 1,
+   "description": [
+    "Сколько единиц содержится в двоичной записи значения выражения: 4<sup>2020</sup> + 2<sup>2017</sup> – 15?"
+   ],
+   "images": [],
+   "file": null,
+   "difficulty": "medium",
+   "correct_answer": "2015"
+  }
+ ]
+}

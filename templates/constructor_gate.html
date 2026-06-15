@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Выбор конструктора | ЕГЭволюция</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+
+        .header p {
+            color: #888;
+            font-size: 1.2em;
+        }
+
+        .constructor-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .constructor-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 40px 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: #e0e0e0;
+        }
+
+        .constructor-card:hover {
+            border-color: #a855f7;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.2);
+        }
+
+        .constructor-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .constructor-card h2 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .constructor-card p {
+            color: #888;
+            font-size: 1em;
+            line-height: 1.6;
+        }
+
+        .btn-back {
+            display: inline-block;
+            padding: 12px 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #e0e0e0;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .back-container {
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .constructor-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛠️ Выбор конструктора</h1>
+            <p>Выберите тип контента для создания или редактирования</p>
+        </div>
+
+        <div class="constructor-grid">
+            <!-- Конструктор вариантов -->
+            <a href="/constructor_editor" class="constructor-card">
+                <div class="constructor-icon">📝</div>
+                <h2>Создание вариантов</h2>
+                <p>Создавайте и редактируйте варианты заданий ЕГЭ с вопросами, ответами и файлами</p>
+            </a>
+
+            <!-- Конструктор теории -->
+            <a href="/constructor_theory" class="constructor-card">
+                <div class="constructor-icon">📚</div>
+                <h2>Создание теории</h2>
+                <p>Создавайте теоретические материалы по каждому заданию с практикой и видео</p>
+            </a>
+        </div>
+
+        <div class="back-container">
+            <a href="/admin" class="btn-back">← Вернуться в админ-панель</a>
+        </div>
+    </div>
+</body>
+
+</html>
