@@ -66,6 +66,9 @@
 - [ ] `admin_task_form.html` — форма без `action`, принимает текущий URL.
   Проверить корректность редиректов после сохранения задачи.
 
+- [x] `attempt_detail.html` — шаблон создан, маршруты `/stats/attempt/<attempt_id>`
+  и `/admin/user/<user_id>/attempt/<attempt_id>` работают. Задача выполнена.
+
 ---
 
 ## Известные проблемы

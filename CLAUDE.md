@@ -131,6 +131,21 @@ webpl with base/
 `uroki/urok_XX/lesson.json` — подготовительный урок.
 Доступ управляется через таблицу `user_lesson_access` (админ открывает/закрывает).
 
+### Система сложности задач (DIFFICULTY_INFO)
+
+Каждая задача в `tasks.json` может иметь поле `"difficulty"` с одним из четырёх значений:
+
+| Ключ | Метка | Цвет |
+|---|---|---|
+| `easy` | Лёгкое | зелёный `#4ade80` |
+| `medium` | Среднее | жёлтый `#facc15` |
+| `hard` | Сложное | красный `#ef4444` |
+| `grave` | Гроб | фиолетовый `#a855f7` |
+
+Словарь `DIFFICULTY_INFO` в `app.py` содержит эти значения и используется
+при отображении задач в базе и статистике. Если поле отсутствует — задача
+считается `medium` по умолчанию.
+
 ---
 
 ## База данных (users.db)
@@ -183,7 +198,10 @@ webpl with base/
 | `GET /preparation` | Список уроков |
 | `GET /preparation/<lesson_id>` | Урок |
 | `POST /check_lesson_task` | Проверка ответа урока |
+| `GET /tasks` | Публичный список 27 номеров заданий с базы |
+| `GET /tasks/<task_num>` | Просмотр задач из базы по номеру задания |
 | `GET /stats` | Личная статистика |
+| `GET /stats/attempt/<attempt_id>` | Детальная статистика конкретной попытки |
 | `POST /clear_stats` | Очистка статистики |
 | `GET /profile` | Профиль |
 | `POST /profile/upload_avatar` | Загрузка аватара |
@@ -193,11 +211,13 @@ webpl with base/
 |---|---|
 | `GET /admin` | Панель администратора |
 | `POST /admin/delete_user/<user_id>` | Удаление пользователя |
-| `GET /admin/tasks` | Список заданий в базе |
+| `GET /admin/tasks` | Список всех номеров заданий в базе |
+| `GET /admin/tasks/<task_num>` | Список задач конкретного номера |
 | `GET/POST /admin/tasks/<task_num>/add` | Добавление задачи |
 | `GET/POST /admin/tasks/<task_num>/edit/<task_id>` | Редактирование задачи |
 | `POST /admin/tasks/<task_num>/delete/<task_id>` | Удаление задачи |
 | `GET /admin/user/<user_id>` | Статистика пользователя |
+| `GET /admin/user/<user_id>/attempt/<attempt_id>` | Просмотр попытки пользователя |
 | `POST /admin/user/<user_id>/toggle_lesson/<lesson_id>` | Доступ к уроку |
 | `POST /admin/user/<user_id>/toggle_theory/<task_num>` | Доступ к теории |
 
@@ -208,10 +228,24 @@ webpl with base/
 | `GET /api/theory/<task_num>` | Данные теории (JSON) |
 | `POST /api/theory/save` | Сохранение теории (JSON) |
 | `POST /api/variants/save` | Сохранение нового варианта (JSON) |
+| `POST /api/variant/preview` | Предпросмотр варианта (JSON; не используется в шаблонах) |
 | `GET /constructor_gate` | Выбор типа конструктора |
 | `GET /constructor_from_base` | Конструктор из базы задач |
 | `GET /constructor_theory` | Редактор теории |
 | `GET /constructor_editor` | Редактор варианта |
+
+### Файловые маршруты (раздача статики контента)
+| Маршрут | Источник |
+|---|---|
+| `GET /task_images/<task_num>/<filename>` | `tasks/task_XX/images/` |
+| `GET /task_files/<task_num>/<filename>` | `tasks/task_XX/` |
+| `GET /variant_images/<variant_num>/<filename>` | `variants/variant_XX/images/` |
+| `GET /variant_files/<variant_num>/<filename>` | `variants/variant_XX/` |
+| `GET /theory_images/<task_num>/<filename>` | `theory/task_XX/images/` |
+| `GET /theory_videos/<task_num>/<filename>` | `theory/task_XX/videos/` |
+| `GET /theory_files/<task_num>/<filename>` | `theory/task_XX/` |
+| `GET /preparation_images/<lesson_id>/<filename>` | `uroki/urok_XX/images/` |
+| `GET /preparation_videos/<lesson_id>/<filename>` | `uroki/urok_XX/` |
 
 ---
 
