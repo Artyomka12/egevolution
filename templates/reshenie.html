@@ -463,6 +463,7 @@
             {% endif %}
             <!-- Форма проверки -->
             <form action="/check/{{ variant_num }}/{{ task.id }}" method="POST" id="check-form-{{ task.id }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 {% if task.answer_grid %}
                 <!-- Таблица ответов (для заданий 26-27) -->
                 <div class="answer-grid-container">
@@ -599,7 +600,7 @@
                 try {
                     const response = await fetch(`/save_results/{{ variant_num }}`, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token() }}' },
                         body: JSON.stringify({
                             answers: answers,
                             time_spent: formatTime(timeSpent)

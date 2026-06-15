@@ -486,6 +486,7 @@
 
                 <!-- Форма проверки -->
                 <form onsubmit="checkPracticeTask(event, {{ task_num }}, {{ loop.index }})" style="margin-top: 20px;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     {% if task.answer_grid %}
                     <table>
                         {% for row in range(task.answer_grid.rows) %}
@@ -573,7 +574,7 @@
 
             fetch('/check_theory_answer', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token() }}' },
                 body: JSON.stringify({
                     task_num: taskNum,
                     practice_task_id: taskIndex,

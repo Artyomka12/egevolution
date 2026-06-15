@@ -17,6 +17,7 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
+from flask_wtf.csrf import CSRFProtect, CSRFError
 
 load_dotenv()
 
@@ -31,6 +32,18 @@ if _missing_env:
 
 app = Flask(__name__)
 app.secret_key = os.environ["SECRET_KEY"]
+# WTF_CSRF_SECRET_KEY опционален — если не задан, используется SECRET_KEY
+app.config["WTF_CSRF_SECRET_KEY"] = os.environ.get("WTF_CSRF_SECRET_KEY") or os.environ["SECRET_KEY"]
+
+csrf = CSRFProtect(app)
+
+
+@app.errorhandler(CSRFError)
+def handle_csrf_error(e):
+    if request.is_json:
+        return jsonify({"error": "CSRF validation failed", "message": e.description}), 400
+    return render_template("csrf_error.html", reason=e.description), 400
+
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 

@@ -464,7 +464,7 @@
 
             fetch('/check_lesson_task', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token() }}' },
                 body: JSON.stringify({
                     lesson_id: {{ lesson_id }},
                 task_id: taskId,

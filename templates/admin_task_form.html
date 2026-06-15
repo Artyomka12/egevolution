@@ -148,6 +148,7 @@
         </div>
 
         <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="hidden" name="answer_type" id="answer_type" value="single">
             {% if not task %}
             <div class="form-card">

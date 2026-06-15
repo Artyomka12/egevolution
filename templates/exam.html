@@ -890,7 +890,7 @@
                 // ✅ Отправляем на сервер для сохранения в БД
                 fetch(`/finish_exam/${variantNum}`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token() }}' },
                     body: JSON.stringify({
                         answers: answers,
                         time_spent: timeSpent

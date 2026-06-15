@@ -682,7 +682,7 @@
 
             fetch('/api/variants/save', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token() }}' },
                 body: JSON.stringify({
                     title: title,
                     tasks: variantTasks

@@ -447,7 +447,7 @@
 
             fetch('/api/theory/save', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token() }}' },
                 body: JSON.stringify(theoryData)
             })
                 .then(res => res.json())

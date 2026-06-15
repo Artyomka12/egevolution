@@ -240,6 +240,7 @@
                             <!-- ЗАМОЧЕК -->
                             <form action="/admin/user/{{ target_user.id }}/toggle_lesson/{{ lesson.id }}" method="POST"
                                 style="display: inline;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <button type="submit"
                                     style="background: none; border: none; cursor: pointer; font-size: 1.2em;"
                                     title="{{ 'Открыть доступ' if lesson.is_unlocked == 0 else 'Закрыть доступ' }}">
@@ -292,6 +293,7 @@
                             <!-- ЗАМОЧЕК -->
                             <form action="/admin/user/{{ target_user.id }}/toggle_theory/{{ task.num }}" method="POST"
                                 style="display: inline;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <button type="submit"
                                     style="background: none; border: none; cursor: pointer; font-size: 1.2em;"
                                     title="{{ 'Открыть доступ' if task.is_unlocked == 0 else 'Закрыть доступ' }}">

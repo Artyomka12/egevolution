@@ -342,6 +342,7 @@
 
             <!-- ✅ ИСПРАВЛЕННАЯ ФОРМА -->
             <form action="/profile/upload_avatar" method="POST" enctype="multipart/form-data" id="upload-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <!-- Скрытый инпут для файла -->
                 <input type="file" name="avatar" id="avatar-upload" accept="image/*" onchange="this.form.submit()"
                     style="display: none;">
