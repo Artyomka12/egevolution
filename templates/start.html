@@ -2090,44 +2090,6 @@
 
         </section>
 
-        <!-- ПРОГРЕСС — только для авторизованных -->
-        {% if session.get('user_id') %}
-        <section class="progress-section">
-            <div class="progress-header">
-                <span class="progress-header-title">📈 Ваш прогресс</span>
-                <a href="/stats" class="progress-more-link">Подробная статистика →</a>
-            </div>
-            <div class="progress-cards">
-                <div class="progress-card">
-                    <div class="progress-num">145</div>
-                    <div class="progress-label">Решено задач</div>
-                </div>
-                <div class="progress-card">
-                    <div class="progress-num">9 / 27</div>
-                    <div class="progress-label">Изучено тем</div>
-                </div>
-                <div class="progress-card">
-                    <div class="progress-num">90</div>
-                    <div class="progress-label">Лучший результат, баллов</div>
-                </div>
-            </div>
-        </section>
-        {% endif %}
-
-        <!-- ГОСТЕВОЙ БЛОК — только для неавторизованных -->
-        {% if not session.get('user_id') %}
-        <section class="guest-cta-section">
-            <div class="guest-cta-card">
-                <h2 class="guest-cta-title">Начните подготовку уже сегодня</h2>
-                <p class="guest-cta-desc">Создайте аккаунт и отслеживайте результаты, прогресс и историю решений.</p>
-                <div class="guest-cta-buttons">
-                    <a href="/register" class="hero-btn hero-btn-primary">Регистрация</a>
-                    <a href="/login" class="hero-btn hero-btn-secondary">Войти</a>
-                </div>
-            </div>
-        </section>
-        {% endif %}
-
         <!-- С ЧЕГО НАЧАТЬ -->
         <section class="start-section">
             <div class="section-heading">
@@ -2387,6 +2349,44 @@
                 </a>
             </div>
         </section>
+
+        <!-- ПРОГРЕСС — только для авторизованных -->
+        {% if session.get('user_id') %}
+        <section class="progress-section">
+            <div class="progress-header">
+                <span class="progress-header-title">📈 Ваш прогресс</span>
+                <a href="/stats" class="progress-more-link">Подробная статистика →</a>
+            </div>
+            <div class="progress-cards">
+                <div class="progress-card">
+                    <div class="progress-num">145</div>
+                    <div class="progress-label">Решено задач</div>
+                </div>
+                <div class="progress-card">
+                    <div class="progress-num">9 / 27</div>
+                    <div class="progress-label">Изучено тем</div>
+                </div>
+                <div class="progress-card">
+                    <div class="progress-num">90</div>
+                    <div class="progress-label">Лучший результат, баллов</div>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- ГОСТЕВОЙ БЛОК — только для неавторизованных -->
+        {% if not session.get('user_id') %}
+        <section class="guest-cta-section">
+            <div class="guest-cta-card">
+                <h2 class="guest-cta-title">Начните подготовку уже сегодня</h2>
+                <p class="guest-cta-desc">Создайте аккаунт и отслеживайте результаты, прогресс и историю решений.</p>
+                <div class="guest-cta-buttons">
+                    <a href="/register" class="hero-btn hero-btn-primary">Регистрация</a>
+                    <a href="/login" class="hero-btn hero-btn-secondary">Войти</a>
+                </div>
+            </div>
+        </section>
+        {% endif %}
 
         <!-- ЧТО НОВОГО НА ПЛАТФОРМЕ -->
         <div class="section-block">
