@@ -136,6 +136,32 @@
         .grid-row input {
             flex: 1;
         }
+
+        .fmt-toolbar {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 6px;
+        }
+
+        .fmt-btn {
+            padding: 3px 10px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 5px;
+            color: #e0e0e0;
+            cursor: pointer;
+            font-size: 13px;
+            line-height: 1.5;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .fmt-btn:hover {
+            background: rgba(168, 85, 247, 0.25);
+            border-color: #a855f7;
+        }
+
+        .fmt-btn-b { font-weight: bold; }
+        .fmt-btn-i { font-style: italic; }
     </style>
 </head>
 
@@ -261,17 +287,65 @@
     </div>
 
     <script>
+        function formatText(textarea, tag) {
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const val = textarea.value;
+            const open = `<${tag}>`;
+            const close = `</${tag}>`;
+            if (start === end) {
+                textarea.value = val.slice(0, start) + open + close + val.slice(end);
+                const pos = start + open.length;
+                textarea.setSelectionRange(pos, pos);
+            } else {
+                const selected = val.slice(start, end);
+                textarea.value = val.slice(0, start) + open + selected + close + val.slice(end);
+                textarea.setSelectionRange(start, start + open.length + selected.length + close.length);
+            }
+            textarea.focus();
+        }
+
+        function createToolbar(textarea) {
+            const toolbar = document.createElement('div');
+            toolbar.className = 'fmt-toolbar';
+            [
+                { label: 'B',  tag: 'b',   cls: 'fmt-btn-b', title: 'Жирный' },
+                { label: 'I',  tag: 'i',   cls: 'fmt-btn-i', title: 'Курсив' },
+                { label: 'xⁿ', tag: 'sup', cls: '',          title: 'Верхний индекс' },
+                { label: 'x₁', tag: 'sub', cls: '',          title: 'Нижний индекс' },
+            ].forEach(({ label, tag, cls, title }) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'fmt-btn' + (cls ? ' ' + cls : '');
+                btn.textContent = label;
+                btn.title = title;
+                btn.addEventListener('click', () => formatText(textarea, tag));
+                toolbar.appendChild(btn);
+            });
+            textarea.parentNode.insertBefore(toolbar, textarea);
+        }
+
         function addParagraph() {
             const container = document.getElementById('description-container');
-            const count = container.children.length + 1;
+            const count = container.querySelectorAll('textarea[name="description"]').length + 1;
             const div = document.createElement('div');
             div.className = 'form-group';
-            div.innerHTML = `
-                <label>Абзац ${count}:</label>
-                <textarea name="description" rows="4"></textarea>
-                <button type="button" class="btn btn-secondary" style="margin-top: 10px;" onclick="this.parentElement.remove()"> Удалить</button>
-            `;
+            const label = document.createElement('label');
+            label.textContent = `Абзац ${count}:`;
+            const textarea = document.createElement('textarea');
+            textarea.name = 'description';
+            textarea.rows = 4;
+            const deleteBtn = document.createElement('button');
+            deleteBtn.type = 'button';
+            deleteBtn.className = 'btn btn-secondary';
+            deleteBtn.style.marginTop = '10px';
+            deleteBtn.textContent = 'Удалить';
+            deleteBtn.addEventListener('click', () => div.remove());
+            div.appendChild(label);
+            div.appendChild(textarea);
+            div.appendChild(deleteBtn);
             container.appendChild(div);
+            createToolbar(textarea);
         }
 
         function selectAnswerType(type) {
@@ -326,6 +400,7 @@
         if (document.getElementById('answer-grid').style.display !== 'none') {
             updateGrid();
         }
+        document.querySelectorAll('#description-container textarea[name="description"]').forEach(createToolbar);
 });
     </script>
 </body>
