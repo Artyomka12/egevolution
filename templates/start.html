@@ -277,7 +277,7 @@
 
         .hero-desc {
             font-size: 0.95em;
-            color: #64748b;
+            color: #94a3b8;
             max-width: 420px;
             margin-bottom: 36px;
             line-height: 1.65;
@@ -500,7 +500,7 @@
         .hero-mini-stat-label {
             display: block;
             font-size: 0.74em;
-            color: #64748b;
+            color: #94a3b8;
             font-weight: 500;
         }
 
@@ -565,7 +565,7 @@
 
         .progress-label {
             font-size: 0.82em;
-            color: #64748b;
+            color: #94a3b8;
             font-weight: 500;
         }
 
@@ -594,7 +594,7 @@
 
         .guest-cta-desc {
             font-size: 0.95em;
-            color: #64748b;
+            color: #94a3b8;
             max-width: 440px;
             margin: 0 auto 28px;
             line-height: 1.65;
@@ -641,7 +641,7 @@
 
         .stat-label {
             font-size: 0.78em;
-            color: #64748b;
+            color: #94a3b8;
             font-weight: 500;
         }
 
@@ -667,7 +667,7 @@
 
         .section-heading p {
             font-size: 0.95em;
-            color: #64748b;
+            color: #94a3b8;
             line-height: 1.6;
         }
 
@@ -724,7 +724,7 @@
 
         .start-card-desc {
             font-size: 0.88em;
-            color: #64748b;
+            color: #94a3b8;
             line-height: 1.62;
             flex: 1;
         }
@@ -1038,6 +1038,21 @@
         }
 
         /* ============================================================
+           ИНТЕРАКТИВНАЯ ЗОНА
+        ============================================================ */
+        .interactive-zone {
+            border-top: 1px solid rgba(255, 255, 255, 0.07);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+            background: rgba(255, 255, 255, 0.018);
+            padding: 64px 0;
+            margin-bottom: 72px;
+        }
+
+        .interactive-zone .roadmap-section {
+            margin-bottom: 0;
+        }
+
+        /* ============================================================
            МАРШРУТ ПОДГОТОВКИ
         ============================================================ */
         .roadmap-section {
@@ -1113,7 +1128,7 @@
 
         .roadmap-step-desc {
             font-size: 0.83em;
-            color: #64748b;
+            color: #94a3b8;
             line-height: 1.55;
         }
 
@@ -1174,7 +1189,7 @@
 
         .advantage-item-desc {
             font-size: 0.84em;
-            color: #64748b;
+            color: #94a3b8;
             line-height: 1.58;
         }
 
@@ -1198,7 +1213,7 @@
 
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 12px;
         }
 
@@ -1234,7 +1249,7 @@
 
         .feature-desc {
             font-size: 0.84em;
-            color: #64748b;
+            color: #94a3b8;
             line-height: 1.5;
         }
 
@@ -1291,7 +1306,7 @@
 
         .update-desc {
             font-size: 0.82em;
-            color: #64748b;
+            color: #94a3b8;
             line-height: 1.52;
         }
 
@@ -1330,7 +1345,7 @@
         }
 
         .new-variant-info p {
-            color: #64748b;
+            color: #94a3b8;
             font-size: 0.82em;
         }
 
@@ -1347,7 +1362,7 @@
 
         .date-value {
             font-size: 0.82em;
-            color: #64748b;
+            color: #94a3b8;
             font-weight: 500;
         }
 
@@ -1391,7 +1406,7 @@
         }
 
         .news-description {
-            color: #64748b;
+            color: #94a3b8;
             font-size: 0.82em;
             line-height: 1.55;
         }
@@ -1424,7 +1439,7 @@
         .footer-name {
             font-size: 0.9em;
             font-weight: 700;
-            color: #64748b;
+            color: #94a3b8;
         }
 
         .footer-tagline {
@@ -1532,10 +1547,6 @@
 
             .hero-right {
                 display: none;
-            }
-
-            .features-grid {
-                grid-template-columns: repeat(2, 1fr);
             }
 
             .start-flow {
@@ -1773,6 +1784,11 @@
             }
 
             /* Межблочные отступы */
+            .interactive-zone {
+                padding: 44px 0;
+                margin-bottom: 48px;
+            }
+
             .start-section,
             .minitask-section,
             .calculator-section,
@@ -2110,6 +2126,9 @@
             </div>
         </section>
 
+        <!-- ИНТЕРАКТИВНАЯ ЗОНА: мини-задача + калькулятор + маршрут -->
+        <div class="interactive-zone">
+
         <!-- МИНИ-ЗАДАЧА -->
         <section class="minitask-section">
             <div class="section-heading">
@@ -2236,6 +2255,8 @@
             </div>
         </section>
 
+        </div><!-- /.interactive-zone -->
+
         <!-- ПРЕИМУЩЕСТВА -->
         <section class="advantages-section">
             <div class="section-heading">
@@ -2279,6 +2300,11 @@
         <section class="features-section">
             <h2 class="features-heading">Что есть на платформе</h2>
             <div class="features-grid">
+                <a href="/preparation" class="feature-card">
+                    <span class="feature-icon">🚀</span>
+                    <div class="feature-title">Начальная подготовка</div>
+                    <div class="feature-desc">Базовые уроки и изучение тем с нуля</div>
+                </a>
                 <a href="/theory" class="feature-card">
                     <span class="feature-icon">📚</span>
                     <div class="feature-title">Теория</div>
@@ -2293,16 +2319,6 @@
                     <span class="feature-icon">🎯</span>
                     <div class="feature-title">База заданий</div>
                     <div class="feature-desc">Практика по каждому номеру ЕГЭ отдельно</div>
-                </a>
-                <a href="/preparation" class="feature-card">
-                    <span class="feature-icon">🚀</span>
-                    <div class="feature-title">Начальная подготовка</div>
-                    <div class="feature-desc">Базовые уроки и изучение тем с нуля</div>
-                </a>
-                <a href="/stats" class="feature-card">
-                    <span class="feature-icon">📊</span>
-                    <div class="feature-title">Статистика</div>
-                    <div class="feature-desc">Отслеживание прогресса и истории решений</div>
                 </a>
             </div>
         </section>
