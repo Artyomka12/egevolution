@@ -5,12 +5,11 @@
 **Дата последнего обновления:** 2026-06-16
 **Ветка:** main
 **Версия:** v1.4.0
-**Статус:** в разработке — расширенный редактор задач (Этап 1 ✅ Этап 2 ✅ Этап 3 ⏳)
+**Статус:** выполнен — расширенный редактор задач (Этап 1 ✅ Этап 2 ✅ Этап 3 ✅)
 
 Аудит безопасности завершён в v1.3.0. D-1, D-2, D-3 закрыты.
-В v1.4.0 добавляется расширенный редактор задач в админке:
-Этап 1 (форматирование текста) и Этап 2 (загрузка изображений) выполнены.
-Этап 3 (прикрепление файлов) — следующий.
+v1.4.0 — расширенный редактор задач в админке: все три этапа завершены.
+Этап 1 (форматирование текста), Этап 2 (загрузка изображений), Этап 3 (прикрепление файлов) — выполнены.
 
 ---
 
@@ -568,9 +567,20 @@ FormData-запрос (`/check/`) уже защищён через hidden input 
   файл удаляется с диска и запись убирается из JSON при сохранении
 - Селектор "После абзаца" обновляется автоматически при добавлении/удалении абзацев
 
-**Отображение** — без изменений шаблонов (уже поддерживали `images[]`):
-- `tasks_view.html` — прямой `task_images` по `task_num`
+**Отображение:**
+- `tasks_view.html` — прямой `task_images` по `task_num`; CSS-классы `img-small/img-medium/img-large` уже были определены
 - `reshenie.html`, `exam.html` — `task_images` по `_source_task_num` (новый формат) или `variant_images` (старый)
+
+**Баг после выпуска — исправлен:** CSS-классы `img-small`, `img-medium`, `img-large` отсутствовали
+в `reshenie.html` и `exam.html`. Класс прописывался в атрибуте `class=""` корректно,
+но без CSS-правила браузер применял только базовый `max-width: 100%` — все три размера
+выглядели одинаково. Исправление: добавлены три правила в оба шаблона рядом с `.task-image`:
+```css
+.img-small  { max-width: 250px !important; }
+.img-medium { max-width: 350px !important; }
+.img-large  { max-width: 500px !important; }
+```
+Теперь `img-small/img-medium/img-large` работают единообразно во всех трёх шаблонах.
 
 **Безопасность загрузки:**
 - `allowed_file()` — whitelist расширений: `png`, `jpg`, `jpeg`, `gif`; `svg`/`html`/`txt` отклоняются
@@ -592,11 +602,62 @@ FormData-запрос (`/check/`) уже защищён через hidden input 
 |---|---|
 | `app.py` | `import time`; `MAX_CONTENT_LENGTH`; `_IMAGE_MAGIC`, `is_valid_image()`, `save_task_image()`; обновлены `admin_task_add()` и `admin_task_edit()` |
 | `templates/admin_task_form.html` | `enctype`; CSS для `.img-card`, `.new-img-block`; секция "Изображения"; JS: `addImageBlock()`, `markDeleteImage()`, `updateParagraphSelectors()` |
+| `templates/reshenie.html` | Добавлены `.img-small`, `.img-medium`, `.img-large` рядом с `.task-image` |
+| `templates/exam.html` | Добавлены `.img-small`, `.img-medium`, `.img-large` рядом с `.task-image` |
 
-#### Этап 3 — Прикрепление файлов ⏳
+#### Этап 3 — Прикрепление файлов ✅
 
-Запланировано: поддержка файловых вложений (`xlsx`, `db`, `csv`, `zip`) в задачах,
-исправление маршрутизации `_source_task_num` в `reshenie.html` для файлов.
+Добавлена полная поддержка файловых вложений в редакторе задач: прикрепление при создании,
+замена и удаление при редактировании, скачивание во всех шаблонах отображения.
+
+**Что добавлено:**
+
+- Файлы сохраняются в `tasks/task_XX/files/` — директория создаётся автоматически
+- Имя файла: `f{task_num}_{task_id}_{timestamp}_{secure_filename}` — уникальность гарантирована timestamp
+- Поле `file` в `tasks.json`: `{"path": "...", "name": "...", "description": "..."}`
+  - `name` — отображаемое название (fallback: оригинальное имя файла)
+  - `description` — необязательный пояснительный текст
+- Один файл на задачу (замена, а не накопление)
+- UI: карточка текущего файла с кнопкой "× Удалить", блок загрузки нового файла
+- `markDeleteTaskFile()` — помечает удаление визуально и добавляет `delete_task_file=1` в форму,
+  одновременно показывает блок загрузки нового файла
+
+**Whitelist расширений** (`ALLOWED_FILE_EXTENSIONS`):
+`xlsx`, `xls`, `csv`, `txt`, `zip`, `db`, `sqlite`, `ods`, `odt`
+— `.exe`, `.html`, `.php`, `.py` и прочие отклоняются с flash-ошибкой
+
+**Логика замены файла (без orphaned files):**
+- Новый файл загружается → старый удаляется с диска ДО сохранения нового
+- Кнопка "Удалить" → `_delete_task_file_from_disk` → `task["file"] = None`
+- Нет действий → `task["file"]` остаётся без изменений
+
+**Маршрутизация скачивания — исправлена для всех шаблонов:**
+
+| Шаблон | Логика | Было |
+|---|---|---|
+| `tasks_view.html` | `task_files` + `task_num` из маршрута | Уже корректно |
+| `reshenie.html` | `{% if task._source_task_num is defined %}` → `task_files`, иначе → `variant_files` | Всегда `variant_files` |
+| `exam.html` (JS) | `currentTask._source_task_num !== undefined` → `/task_files/${num}/...`, иначе → `variant_files` | Всегда `variant_files` |
+
+**Безопасность загрузки файлов:**
+- Whitelist расширений (см. выше); `secure_filename()` применяется
+- Path traversal при удалении: `"/" in path or "\\" in path` → ранний `return`; `(FileNotFoundError, OSError)` поглощается
+- Файлы не выходят за пределы `tasks/task_XX/files/` — `task_num` из `<int:task_num>` маршрута
+- Magic bytes не применяется (слишком разные форматы) — только расширение
+
+**Наблюдение (не исправлено, отдельная задача):**
+`admin_task_delete` при удалении задачи из базы не удаляет связанные файлы и изображения с диска.
+Orphaned-файлы остаются в `tasks/task_XX/files/` и `tasks/task_XX/images/`.
+Это существующий паттерн — аналогично для изображений с момента Этапа 2.
+
+**Изменённые файлы:**
+
+| Файл | Что добавлено |
+|---|---|
+| `app.py` | `ALLOWED_FILE_EXTENSIONS`; `allowed_task_file()`, `save_task_file()`, `_delete_task_file_from_disk()`; обновлены `admin_task_add()` и `admin_task_edit()` |
+| `templates/admin_task_form.html` | CSS `.file-card`, `.file-card-info`; секция "Прикреплённый файл" (existing-file-card + new-file-block); JS `markDeleteTaskFile()` |
+| `templates/reshenie.html` | `_source_task_num is defined` → `task_files` вместо жёсткого `variant_files` |
+| `templates/exam.html` | JS `updateFileLink()`: `_source_task_num` → `/task_files/${num}/...` вместо жёсткого `variant_files` |
 
 ---
 
@@ -630,6 +691,9 @@ FormData-запрос (`/check/`) уже защищён через hidden input 
 | D-3: str(e) в admin-only маршрутах | Generic-сообщения в /api/theory/save и /api/variants/save; `str(e)` не возвращается | 2026-06-16 |
 | v1.4.0 Этап 1: форматирование текста | Панель B/I/sup/sub в admin_task_form.html; кнопки type=button; toolbars на новых абзацах | 2026-06-16 |
 | v1.4.0 Этап 2: изображения в задачах | Загрузка в tasks/task_XX/images/; extension + magic bytes; orphaned files fix; path traversal fix | 2026-06-16 |
+| v1.4.0 Этап 2: баг размеров изображений | img-small/img-medium/img-large не работали в reshenie.html и exam.html — CSS-правила отсутствовали; добавлены в оба шаблона | 2026-06-16 |
+| v1.4.0 Этап 3: прикрепление файлов | Whitelist xlsx/xls/csv/txt/zip/db/sqlite/ods/odt; save/delete/replace; path traversal protection; 21/21 сценариев OK | 2026-06-16 |
+| v1.4.0 Этап 3: маршрутизация скачивания | reshenie.html и exam.html: `_source_task_num` → task_files vs variant_files; tasks_view.html уже был корректен | 2026-06-16 |
 
 ---
 
@@ -655,6 +719,9 @@ FormData-запрос (`/check/`) уже защищён через hidden input 
 | Загрузка изображений задач (admin) | ✅ Устранено: extension + magic bytes + secure_filename + 5 МБ лимит (v1.4.0) |
 | Orphaned files при дублировании task_id | ✅ Устранено: duplicate-check до сохранения файлов (v1.4.0) |
 | Path traversal в delete_image | ✅ Устранено: safe_to_delete = to_delete & existing_paths (v1.4.0) |
+| Загрузка task-файлов (admin) | ✅ Устранено: whitelist расширений + secure_filename + path traversal check (v1.4.0) |
+| Orphaned task-файлы при замене | ✅ Устранено: старый файл удаляется перед сохранением нового (v1.4.0) |
+| Orphaned files при удалении задачи (admin_task_delete) | ⏳ Не исправлено: файлы/изображения остаются на диске — отдельная задача |
 | /clear_stats без явного auth-guard | ✅ Устранено (v1.2.5) |
 | /clear_stats раскрывал str(e) в ответе | ✅ Устранено (generic-сообщение, v1.2.5) |
 | /clear_stats не очищал user_task_answers | ✅ Устранено (double DELETE, v1.2.5) |
@@ -666,20 +733,24 @@ FormData-запрос (`/check/`) уже защищён через hidden input 
 
 ## Текущий этап
 
-**В разработке: расширенный редактор задач (v1.4.0, 2026-06-16)**
+**Выполнено: расширенный редактор задач (v1.4.0, 2026-06-16)**
 
 | Этап | Описание | Статус |
 |---|---|---|
 | Этап 1 | Форматирование текста (B/I/sup/sub) | ✅ Выполнен |
 | Этап 2 | Загрузка изображений в задачи | ✅ Выполнен |
-| Этап 3 | Прикрепление файлов (xlsx, db, csv) | ⏳ Следующий |
+| Этап 3 | Прикрепление файлов (xlsx, db, csv и др.) | ✅ Выполнен |
 
-**Что сделано в v1.4.0 на текущий момент:**
-- Панель форматирования в редакторе задач
+**Что сделано в v1.4.0:**
+- Панель форматирования в редакторе задач (B/I/sup/sub)
 - Загрузка, хранение и удаление изображений через админку
 - Автоматическое заполнение `images[]` в `tasks.json`
-- Проверка extension + magic bytes + secure_filename
-- Устранены orphaned files и path traversal в delete
+- Проверка extension + magic bytes + secure_filename для изображений
+- Устранены orphaned files при дублировании task_id и path traversal в delete_image
+- CSS-классы `img-small/img-medium/img-large` добавлены в `reshenie.html` и `exam.html`
+- Прикрепление файлов к задачам (`xlsx`, `xls`, `csv`, `txt`, `zip`, `db`, `sqlite`, `ods`, `odt`)
+- Orphaned-файлы при замене устранены (старый удаляется до сохранения нового)
+- Маршрутизация скачивания исправлена в `reshenie.html` и `exam.html` (`_source_task_num`)
 
 **Аудит безопасности (v1.3.0, итог):**
 
@@ -695,4 +766,4 @@ FormData-запрос (`/check/`) уже защищён через hidden input 
 | P3 Этап 2 (double-submit) | ⏳ Отложено |
 | Rate limiting, MIME аватаров, CSP | ⏳ Отложено |
 
-**Следующий шаг:** v1.4.0 Этап 3 — прикрепление файлов к задачам
+**Следующий шаг:** наполнение базы задач для заданий 11–27 или P3 Этап 2 (double-submit защита)
