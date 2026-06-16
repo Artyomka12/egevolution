@@ -2,7 +2,7 @@
 
 ## Текущее состояние проекта
 
-**Дата последнего обновления:** 2026-06-15
+**Дата последнего обновления:** 2026-06-16
 **Ветка:** main
 **Статус:** активная разработка, платформа в продакшене на egevolution.ru
 
@@ -327,6 +327,72 @@ FormData-запрос (`/check/`) уже защищён через hidden input 
 
 ---
 
+### v1.2.5 — P3-аудит Этап 1: auth-guard и валидация variant_num
+
+**Дата:** 2026-06-16
+
+Устранены три низкорисковые проблемы, выявленные в P3-аудите маршрутов `clear_stats`,
+`save_results`, `finish_exam`. Double-submit защита отложена отдельным этапом (P3 Этап 2).
+
+#### P3-A: Раскрытие внутренних ошибок в /clear_stats (LOW)
+- **Проблема:** `except Exception as e` возвращал `str(e)` в JSON-ответе, раскрывая
+  имена ключей сессии или сообщения SQLite.
+- **Исправление:** `str(e)` заменён на generic-строку `"Не удалось очистить статистику"`.
+  Исключение поглощается (`except Exception` без аргумента).
+- **Файл:** `app.py`, маршрут `/clear_stats`
+
+#### P3-B: Неполная очистка — осиротевшие записи в user_task_answers (LOW)
+- **Проблема:** `/clear_stats` удалял только строки из `user_results`.
+  `user_task_answers` не имеет FK-каскада на `user_results`, поэтому детальные
+  ответы пользователя оставались в БД после очистки статистики.
+- **Исправление:** Перед DELETE из `user_results` добавлен DELETE из `user_task_answers`
+  по `user_id`. Порядок: сначала детали, потом заголовки.
+- **Файл:** `app.py`, маршрут `/clear_stats`
+
+#### P3-C + P3-F + P3-G: Явные auth-guard во всех трёх маршрутах (VERY LOW)
+- **Проблема:** Все три маршрута опирались исключительно на `before_request` для
+  проверки авторизации. В `clear_stats` отсутствующий `user_id` в сессии попадал
+  в `try/except` и раскрывался через `str(e)`. В `finish_exam` — `session["user_id"]`
+  передавался прямо в аргумент функции без переменной, что затрудняло отладку.
+- **Исправление:**
+  - Добавлен явный `if "user_id" not in session: return jsonify(...), 401` в начало
+    каждого из трёх маршрутов.
+  - `user_id = session["user_id"]` вынесен в переменную в `finish_exam` (было прямо
+    в аргументе вызова `save_user_result`).
+- **Файлы:** `app.py`, маршруты `/clear_stats`, `/save_results`, `/finish_exam`
+
+#### P3-E: Нет валидации variant_num → мусорные записи (LOW)
+- **Проблема:** `load_tasks()` для несуществующего варианта возвращает `[]`.
+  Обработчики не проверяли результат и сохраняли строку `score=0` в `user_results`
+  для любого `variant_num`, включая несуществующие (например, `variant_num=9999`).
+- **Исправление:** После `load_tasks(variant_num)` добавлена проверка:
+  `if not tasks: return jsonify({"success": False, "error": "Вариант не найден"}), 404`
+- **Файлы:** `app.py`, маршруты `/save_results`, `/finish_exam`
+
+**Формат успешных ответов не изменился:**
+- `save_results`: `{"success": true, "message": "Результаты сохранены!"}` — 200
+- `finish_exam`: `{"success": true, "redirect": "/results/<n>"}` — 200
+- `clear_stats`: `{"success": true, "message": "Ваша статистика очищена"}` — 200
+
+**Проверка (11 тестов, Flask test client):**
+
+| Сценарий | Маршрут | Ожидание | Результат |
+|---|---|---|---|
+| Неавторизованный (before_request) | все три | 302 → /login | ✅ 302 |
+| Inner guard без сессии | clear_stats | 401 JSON | ✅ 401 |
+| Inner guard без сессии | save_results | 401 JSON | ✅ 401 |
+| Inner guard без сессии | finish_exam | 401 JSON | ✅ 401 |
+| variant_num=9999 | save_results | 404 JSON | ✅ 404 |
+| variant_num=9999 | finish_exam | 404 JSON | ✅ 404 |
+| variant_num=1, формат ответа | save_results | 200 `{success, message}` | ✅ 200 |
+| variant_num=1, формат ответа | finish_exam | 200 `{success, redirect}` | ✅ 200 |
+
+**Не исправлено (P3 Этап 2 — отложено):**
+- Double-submit: `/save_results` и `/finish_exam` по-прежнему принимают неограниченное
+  число вызовов и создают новую строку в `user_results` при каждом запросе.
+
+---
+
 ## Проведённые проверки
 
 | Проверка | Результат | Дата |
@@ -350,6 +416,7 @@ FormData-запрос (`/check/`) уже защищён через hidden input 
 | Сканирование task/theory JSON на нежелательные теги | 27 tasks.json + 4 theory.json; только whitelist-теги, 0 нарушений | 2026-06-15 |
 | XSS-2: replace_markers (app.py) | Whitelist-pipeline; script/img/iframe/onerror экранируются; 12/12 тестов | 2026-06-15 |
 | XSS-3: `\| safe` в preparation_lesson.html | Заменён на `\| replace_markers`; 6/6 XSS-векторов экранированы; регрессий нет | 2026-06-15 |
+| P3-аудит Этап 1: auth-guard и variant_num | `/clear_stats`, `/save_results`, `/finish_exam` — guard, очистка user_task_answers, 404 для несуществующих вариантов; 11/11 тестов | 2026-06-16 |
 
 ---
 
@@ -372,23 +439,30 @@ FormData-запрос (`/check/`) уже защищён через hidden input 
 | XSS в replace_markers (app.py) | ✅ Устранено (whitelist-pipeline, v1.2.3) |
 | XSS через `\| safe` в preparation_lesson | ✅ Устранено (`\| replace_markers`, v1.2.4) |
 | Загрузка файлов (аватары) | Частично: проверка расширения, нет проверки MIME |
-| Нет ограничения сохранений результатов | P3 — отложено (/save_results, /finish_exam) |
-| /clear_stats без явного auth-guard | P3 — отложено |
+| /clear_stats без явного auth-guard | ✅ Устранено (v1.2.5) |
+| /clear_stats раскрывал str(e) в ответе | ✅ Устранено (generic-сообщение, v1.2.5) |
+| /clear_stats не очищал user_task_answers | ✅ Устранено (double DELETE, v1.2.5) |
+| /save_results и /finish_exam без auth-guard | ✅ Устранено (v1.2.5) |
+| /save_results и /finish_exam принимали несуществующий variant_num | ✅ Устранено (404, v1.2.5) |
+| Нет ограничения сохранений результатов | P3 Этап 2 — отложено (/save_results, /finish_exam) |
 
 ---
 
 ## Текущий этап
 
-Завершён: **XSS-аудит (v1.2.2 → v1.2.4)** — все три найденные XSS-проблемы закрыты.
+Завершён: **P3-аудит Этап 1 (v1.2.5)** — низкорисковые проблемы трёх маршрутов закрыты.
 
-| # | Проблема | Файл | Статус |
+| # | Проблема | Маршрут | Статус |
 |---|---|---|---|
-| XSS-1 | Stored XSS через `username` в `onclick` JS-литерале | `admin_panel.html` | ✅ v1.2.2 |
-| XSS-2 | `replace_markers` возвращал `Markup(text)` без экранирования | `app.py` | ✅ v1.2.3 |
-| XSS-3 | `\| safe` в рендеринге lesson JSON | `preparation_lesson.html` | ✅ v1.2.4 |
+| P3-A | `str(e)` в ответе пользователю | `/clear_stats` | ✅ v1.2.5 |
+| P3-B | Осиротевшие записи в `user_task_answers` | `/clear_stats` | ✅ v1.2.5 |
+| P3-C/F/G | Нет явного auth-guard в теле функции | все три | ✅ v1.2.5 |
+| P3-E | Нет валидации `variant_num` (мусорные записи) | `/save_results`, `/finish_exam` | ✅ v1.2.5 |
+| P3-D | Double-submit (неограниченное число сохранений) | `/save_results`, `/finish_exam` | ⏳ Этап 2 |
 
-Исправлено всего по уровням: P0 — 4, P1 — 4, P2 — 2, XSS — 3.
+Исправлено всего по уровням: P0 — 4, P1 — 4, P2 — 2, XSS — 3, P3 (Этап 1) — 4.
 
-**Сессия завершена.** Следующий этап — на выбор:
-- **Безопасность P3** — clear_stats, save_results/finish_exam, аудит SQL-инъекций, MIME аватаров, CSP-заголовки
-- **Технический долг (Stage 3)** — унификация логики подсчёта баллов, централизованное управление соединениями БД, логирование
+**Следующий этап — на выбор:**
+- **P3 Этап 2** — double-submit защита для `/save_results` и `/finish_exam`
+- **Аудит SQL-инъекций** — проверить все запросы в `app.py` на параметризацию
+- **Технический долг (Stage 3)** — унификация логики баллов, управление соединениями БД, логирование

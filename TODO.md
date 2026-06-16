@@ -117,15 +117,21 @@
 
 ### Ожидает выполнения
 
-#### P3 — Низкий приоритет (из аудита прав доступа 2026-06-15)
+#### P3 Этап 1 — выполнено (2026-06-16)
 
-- [ ] **`POST /clear_stats`** — нет явного `if "user_id" not in session` в теле функции
-  (полагается на `before_request`); `except Exception as e` возвращает текст ошибки в ответе.
-  Добавить явную проверку и убрать `str(e)` из ответа.
+- [x] **`POST /clear_stats`** — добавлен явный auth-guard (`if "user_id" not in session → 401`);
+  `str(e)` заменён на generic-сообщение; добавлен DELETE из `user_task_answers` перед
+  DELETE из `user_results` (устранены осиротевшие записи).
 
-- [ ] **`POST /save_results/<variant_num>`** и **`POST /finish_exam/<variant_num>`** —
-  нет ограничения на количество сохранений. Пользователь может вызвать эндпоинты
-  вручную произвольное число раз для любого `variant_num`.
+- [x] **`POST /save_results/<variant_num>`** и **`POST /finish_exam/<variant_num>`** —
+  добавлен явный auth-guard; добавлена проверка `if not tasks → 404` для несуществующих
+  вариантов; в `finish_exam` `user_id` вынесен в переменную.
+
+#### P3 Этап 2 — ожидает выполнения
+
+- [ ] **Double-submit защита** для `/save_results` и `/finish_exam` —
+  пользователь может вызвать эндпоинты произвольное число раз, каждый вызов
+  создаёт новую строку в `user_results` и `user_task_answers`.
 
 #### Остальное
 
