@@ -2156,9 +2156,14 @@ def delete_user(user_id):
     if user_id == session["user_id"]:
         flash("❌ Нельзя удалить самого себя", "error")
     else:
-        db.execute("DELETE FROM users WHERE id = ?", (user_id,))
-        # Удаляем также статистику этого пользователя
+        # Удаляем все данные пользователя: сначала дочерние таблицы, затем users
+        db.execute("DELETE FROM user_task_answers WHERE user_id = ?", (user_id,))
         db.execute("DELETE FROM user_results WHERE user_id = ?", (user_id,))
+        db.execute("DELETE FROM user_lesson_progress WHERE user_id = ?", (user_id,))
+        db.execute("DELETE FROM user_theory_progress WHERE user_id = ?", (user_id,))
+        db.execute("DELETE FROM user_lesson_access WHERE user_id = ?", (user_id,))
+        db.execute("DELETE FROM user_theory_access WHERE user_id = ?", (user_id,))
+        db.execute("DELETE FROM users WHERE id = ?", (user_id,))
         flash("✅ Пользователь удален", "success")
 
     db.commit()
