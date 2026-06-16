@@ -124,19 +124,20 @@
         }
 
         .nav-dropdown-btn {
-            padding: 7px 14px;
+            padding: 7px 18px;
             border-radius: 8px;
             font-size: 0.875em;
-            font-weight: 500;
+            font-weight: 600;
             font-family: inherit;
-            color: #94a3b8;
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.09);
+            color: #cbd5e1;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             transition: color 0.18s, background 0.18s, border-color 0.18s;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
+            white-space: nowrap;
         }
 
         .nav-dropdown-btn:hover,
@@ -1053,6 +1054,121 @@
         }
 
         /* ============================================================
+           ПОСЛЕДОВАТЕЛЬНАЯ ИНТЕРАКТИВНАЯ ЗОНА: UI-элементы
+        ============================================================ */
+        .iz-progress {
+            text-align: center;
+            margin-bottom: 44px;
+        }
+
+        .iz-progress-label {
+            display: block;
+            font-size: 0.75em;
+            color: #64748b;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .iz-progress-dots {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .iz-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.12);
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        .iz-dot.iz-dot-active {
+            background: #94a3b8;
+            transform: scale(1.25);
+        }
+
+        .iz-next-btn {
+            display: block;
+            width: 100%;
+            padding: 11px;
+            margin-top: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
+            font-size: 0.9em;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: color 0.18s, background 0.18s, border-color 0.18s;
+            text-align: center;
+        }
+
+        .iz-next-btn:hover {
+            background: rgba(255, 255, 255, 0.09);
+            color: #e2e8f0;
+            border-color: rgba(255, 255, 255, 0.22);
+        }
+
+        .iz-cta {
+            text-align: center;
+            margin-top: 48px;
+            padding: 36px 24px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .iz-cta-title {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #e2e8f0;
+            margin-bottom: 10px;
+        }
+
+        .iz-cta-sub {
+            color: #94a3b8;
+            font-size: 0.92em;
+            line-height: 1.6;
+            margin-bottom: 22px;
+        }
+
+        .iz-cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .iz-cta-btn {
+            padding: 11px 28px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 0.9em;
+            font-weight: 600;
+            display: inline-block;
+            transition: opacity 0.18s, transform 0.15s;
+        }
+
+        .iz-cta-btn:hover {
+            opacity: 0.85;
+            transform: translateY(-1px);
+        }
+
+        .iz-cta-btn-tg {
+            background: linear-gradient(135deg, #229ed9, #1a8dbf);
+            color: #fff;
+        }
+
+        .iz-cta-btn-max {
+            background: rgba(255, 255, 255, 0.07);
+            color: #e2e8f0;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+        }
+
+        /* ============================================================
            МАРШРУТ ПОДГОТОВКИ
         ============================================================ */
         .roadmap-section {
@@ -1311,73 +1427,8 @@
         }
 
         /* ============================================================
-           ВАРИАНТЫ И НОВОСТИ
+           НОВОСТИ
         ============================================================ */
-        .new-variant-card {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.09);
-            border-radius: 10px;
-            padding: 13px 18px;
-            margin-bottom: 7px;
-            text-decoration: none;
-            color: white;
-            transition: border-color 0.18s, background 0.18s, transform 0.15s;
-        }
-
-        .new-variant-card:last-child {
-            margin-bottom: 0;
-        }
-
-        .new-variant-card:hover {
-            border-color: rgba(129, 140, 248, 0.3);
-            background: rgba(255, 255, 255, 0.065);
-            transform: translateX(3px);
-        }
-
-        .new-variant-info h3 {
-            font-size: 0.95em;
-            margin-bottom: 3px;
-            color: #e2e8f0;
-            font-weight: 600;
-        }
-
-        .new-variant-info p {
-            color: #94a3b8;
-            font-size: 0.82em;
-        }
-
-        .new-variant-date {
-            text-align: right;
-            min-width: 110px;
-        }
-
-        .date-label {
-            font-size: 0.74em;
-            color: #475569;
-            display: block;
-        }
-
-        .date-value {
-            font-size: 0.82em;
-            color: #94a3b8;
-            font-weight: 500;
-        }
-
-        .badge-new {
-            background: rgba(56, 189, 248, 0.1);
-            color: #38bdf8;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.67em;
-            margin-left: 7px;
-            border: 1px solid rgba(56, 189, 248, 0.18);
-            font-weight: 600;
-            letter-spacing: 0.04em;
-        }
-
         .news-item {
             padding: 0 0 2px 13px;
             margin-bottom: 18px;
@@ -1904,14 +1955,34 @@
                 padding: 14px 14px;
             }
 
-            /* Variants date */
-            .new-variant-date {
-                display: none;
-            }
-
             /* Footer */
             .footer-socials-row {
                 gap: 10px;
+            }
+
+            /* Последовательная интерактивная зона */
+            .iz-progress {
+                margin-bottom: 32px;
+            }
+
+            .iz-cta {
+                padding: 28px 0 0;
+                margin-top: 36px;
+            }
+
+            .iz-cta-title {
+                font-size: 1em;
+            }
+
+            .iz-cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .iz-cta-btn {
+                width: 100%;
+                text-align: center;
+                padding: 12px 20px;
             }
         }
     </style>
@@ -1933,7 +2004,7 @@
             <div class="nav-center">
                 <div class="nav-dropdown-wrap" id="navDropdownWrap">
                     <button class="nav-dropdown-btn" id="navDropdownBtn" type="button" onclick="toggleNavDropdown()">
-                        <span class="nav-label-desktop">Разделы</span>
+                        <span class="nav-label-desktop">Разделы платформы</span>
                         <span class="nav-label-mobile">Меню</span>
                         <span class="nav-dropdown-chevron">▾</span>
                     </button>
@@ -2129,6 +2200,16 @@
         <!-- ИНТЕРАКТИВНАЯ ЗОНА: мини-задача + калькулятор + маршрут -->
         <div class="interactive-zone">
 
+        <!-- ИНДИКАТОР ПРОГРЕССА -->
+        <div class="iz-progress" id="izProgress">
+            <span class="iz-progress-label" id="izProgressLabel">Шаг 1 из 3</span>
+            <div class="iz-progress-dots">
+                <span class="iz-dot iz-dot-active"></span>
+                <span class="iz-dot"></span>
+                <span class="iz-dot"></span>
+            </div>
+        </div>
+
         <!-- МИНИ-ЗАДАЧА -->
         <section class="minitask-section">
             <div class="section-heading">
@@ -2158,11 +2239,12 @@
                 </div>
                 <button class="minitask-check-btn" onclick="checkMiniTask()">Проверить</button>
                 <div class="minitask-result" id="minitask-result"></div>
+                <button class="iz-next-btn" id="izNextToCalc" style="display:none" onclick="goToStep2()">Оценить свою готовность →</button>
             </div>
         </section>
 
         <!-- КАЛЬКУЛЯТОР ГОТОВНОСТИ -->
-        <section class="calculator-section">
+        <section class="calculator-section" style="display:none">
             <div class="section-heading">
                 <span class="section-tag section-tag-purple">Калькулятор</span>
                 <h2>Оцените свою готовность</h2>
@@ -2193,11 +2275,12 @@
                 </div>
                 <button class="calc-btn" onclick="checkReadiness()">Показать результат</button>
                 <div class="calc-result" id="calc-result"></div>
+                <button class="iz-next-btn" id="izNextToRoadmap" style="display:none" onclick="goToStep3()">Посмотреть маршрут подготовки →</button>
             </div>
         </section>
 
         <!-- МАРШРУТ ПОДГОТОВКИ -->
-        <section class="roadmap-section">
+        <section class="roadmap-section" style="display:none">
             <div class="section-heading">
                 <h2>Маршрут подготовки к ЕГЭ</h2>
             </div>
@@ -2254,6 +2337,16 @@
                 </div>
             </div>
         </section>
+
+        <!-- CTA: БЕСПЛАТНОЕ ВВОДНОЕ ЗАНЯТИЕ -->
+        <div class="iz-cta" id="izCta" style="display:none">
+            <h3 class="iz-cta-title">Запишись на первое бесплатное вводное занятие</h3>
+            <p class="iz-cta-sub">Разберём твой уровень, составим план подготовки и ответим на вопросы.</p>
+            <div class="iz-cta-buttons">
+                <a href="https://t.me/Tyomkinss" target="_blank" class="iz-cta-btn iz-cta-btn-tg">Telegram</a>
+                <a href="https://max.ru/u/f9LHodD0cOIojiO0gNWRLNP_as6P10M9ij53KQDQmY0CRLnpzpAaW07gVTg" target="_blank" class="iz-cta-btn iz-cta-btn-max">MAX</a>
+            </div>
+        </div>
 
         </div><!-- /.interactive-zone -->
 
@@ -2342,43 +2435,6 @@
                     <div class="update-title">Безопасность платформы</div>
                     <div class="update-desc">Завершён полный аудит безопасности — данные пользователей защищены.</div>
                 </div>
-            </div>
-        </div>
-
-        <!-- НОВЫЕ ВАРИАНТЫ -->
-        <div class="section-block">
-            <h2 class="section-title">🔥 Новые варианты</h2>
-            <div class="new-variants-list">
-                <a href="/choose-mode/3" class="new-variant-card">
-                    <div class="new-variant-info">
-                        <h3>Вариант 3 <span class="badge-new">НОВИНКА</span></h3>
-                        <p>27 заданий с разбором</p>
-                    </div>
-                    <div class="new-variant-date">
-                        <span class="date-label">Опубликовано</span>
-                        <span class="date-value">20.05.2026</span>
-                    </div>
-                </a>
-                <a href="/choose-mode/4" class="new-variant-card">
-                    <div class="new-variant-info">
-                        <h3>Вариант 4 <span class="badge-new">НОВИНКА</span></h3>
-                        <p>27 заданий с разбором</p>
-                    </div>
-                    <div class="new-variant-date">
-                        <span class="date-label">Опубликовано</span>
-                        <span class="date-value">18.05.2026</span>
-                    </div>
-                </a>
-                <a href="/choose-mode/5" class="new-variant-card">
-                    <div class="new-variant-info">
-                        <h3>Вариант 5 <span class="badge-new">НОВИНКА</span></h3>
-                        <p>27 заданий с разбором</p>
-                    </div>
-                    <div class="new-variant-date">
-                        <span class="date-label">Опубликовано</span>
-                        <span class="date-value">15.05.2026</span>
-                    </div>
-                </a>
             </div>
         </div>
 
@@ -2499,6 +2555,8 @@
                 resultEl.className = 'minitask-result incorrect';
                 resultEl.innerHTML = 'Неверно ❌&nbsp;&nbsp;Правильный ответ: 8 (256 = 2<sup>8</sup>).';
             }
+
+            document.getElementById('izNextToCalc').style.display = 'block';
         }
 
         /* ================================================================
@@ -2541,6 +2599,76 @@
                 resultEl.className = 'calc-result calc-result-high';
                 resultEl.innerHTML = '<strong>Высокая готовность</strong><br>Отлично! Вы готовы к экзамену. Продолжайте поддерживать форму.';
             }
+
+            document.getElementById('izNextToRoadmap').style.display = 'block';
+        }
+
+        /* ================================================================
+           ПОСЛЕДОВАТЕЛЬНАЯ ИНТЕРАКТИВНАЯ ЗОНА
+        ================================================================ */
+        function updateIzProgress(step) {
+            document.getElementById('izProgressLabel').textContent = 'Шаг ' + step + ' из 3';
+            document.querySelectorAll('.iz-dot').forEach(function(dot, i) {
+                if (i < step) {
+                    dot.classList.add('iz-dot-active');
+                } else {
+                    dot.classList.remove('iz-dot-active');
+                }
+            });
+        }
+
+        function goToStep2() {
+            var minitask = document.querySelector('.minitask-section');
+            var calculator = document.querySelector('.calculator-section');
+
+            minitask.style.transition = 'opacity 0.25s ease';
+            minitask.style.opacity = '0';
+
+            setTimeout(function() {
+                minitask.style.display = 'none';
+
+                calculator.style.opacity = '0';
+                calculator.style.transition = 'opacity 0.25s ease';
+                calculator.style.display = 'block';
+
+                requestAnimationFrame(function() {
+                    requestAnimationFrame(function() {
+                        calculator.style.opacity = '1';
+                    });
+                });
+
+                updateIzProgress(2);
+            }, 280);
+        }
+
+        function goToStep3() {
+            var calculator = document.querySelector('.calculator-section');
+            var roadmap = document.querySelector('.roadmap-section');
+            var cta = document.getElementById('izCta');
+
+            calculator.style.transition = 'opacity 0.25s ease';
+            calculator.style.opacity = '0';
+
+            setTimeout(function() {
+                calculator.style.display = 'none';
+
+                roadmap.style.opacity = '0';
+                roadmap.style.transition = 'opacity 0.25s ease';
+                roadmap.style.display = 'block';
+
+                cta.style.opacity = '0';
+                cta.style.transition = 'opacity 0.25s ease';
+                cta.style.display = 'block';
+
+                requestAnimationFrame(function() {
+                    requestAnimationFrame(function() {
+                        roadmap.style.opacity = '1';
+                        cta.style.opacity = '1';
+                    });
+                });
+
+                updateIzProgress(3);
+            }, 280);
         }
     </script>
 
