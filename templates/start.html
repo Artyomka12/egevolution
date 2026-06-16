@@ -1042,9 +1042,6 @@
            ИНТЕРАКТИВНАЯ ЗОНА
         ============================================================ */
         .interactive-zone {
-            border-top: 1px solid rgba(255, 255, 255, 0.07);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-            background: rgba(255, 255, 255, 0.018);
             padding: 64px 0;
             margin-bottom: 72px;
         }
@@ -1116,9 +1113,13 @@
 
         .iz-cta {
             text-align: center;
-            margin-top: 48px;
-            padding: 36px 24px 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.07);
+            max-width: 580px;
+            margin: 0 auto;
+            padding: 28px 36px 32px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: none;
+            border-radius: 0 0 20px 20px;
         }
 
         .iz-cta-title {
@@ -1173,11 +1174,48 @@
         ============================================================ */
         .roadmap-section {
             margin-bottom: 72px;
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 580px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px 20px 0 0;
+            padding: 32px 36px 28px;
+        }
+
+        .iz-result-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .iz-result-check {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(74, 222, 128, 0.12);
+            border: 1.5px solid rgba(74, 222, 128, 0.3);
+            color: #4ade80;
+            font-size: 1em;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .iz-result-title {
+            font-size: 1em;
+            font-weight: 700;
+            color: #e2e8f0;
+            line-height: 1.35;
         }
 
         .roadmap {
-            max-width: 500px;
-            margin: 0 auto;
+            max-width: 100%;
         }
 
         .roadmap-step {
@@ -1965,9 +2003,15 @@
                 margin-bottom: 32px;
             }
 
+            .roadmap-section {
+                padding: 24px 20px 20px;
+                border-radius: 14px 14px 0 0;
+            }
+
             .iz-cta {
-                padding: 28px 0 0;
-                margin-top: 36px;
+                padding: 20px 20px 26px;
+                margin-top: 0;
+                border-radius: 0 0 14px 14px;
             }
 
             .iz-cta-title {
@@ -2281,8 +2325,9 @@
 
         <!-- МАРШРУТ ПОДГОТОВКИ -->
         <section class="roadmap-section" style="display:none">
-            <div class="section-heading">
-                <h2>Маршрут подготовки к ЕГЭ</h2>
+            <div class="iz-result-header">
+                <div class="iz-result-check">✓</div>
+                <div class="iz-result-title">Ваш маршрут подготовки готов</div>
             </div>
             <div class="roadmap">
                 <div class="roadmap-step">
