@@ -2,8 +2,29 @@
 
 > **v1.3.0 (2026-06-16):** аудит безопасности и целостности данных завершён.
 > D-1 ✅ D-2 ✅ D-3 ✅ · P0–P2 ✅ · XSS ✅ · SQL ✅ · P3 Этап 1 ✅
+>
+> **v1.4.0 (2026-06-16, в работе):** расширенный редактор задач.
+> Этап 1 ✅ (форматирование B/I/sup/sub) · Этап 2 ✅ (изображения) · Этап 3 ⏳ (файлы)
 
 ## Ближайшие задачи
+
+### v1.4.0 — Расширенный редактор задач
+
+- [x] **Этап 1: форматирование текста** — панель B/I/sup/sub в `admin_task_form.html`.
+  Кнопки `type="button"`, toolbar на всех абзацах (существующих и новых).
+
+- [x] **Этап 2: изображения в редакторе** — загрузка, хранение, удаление.
+  - Сохранение в `tasks/task_XX/images/` (автосоздание директории)
+  - Имя файла: `t{task_num}_{task_id}_{timestamp}_{secure_filename}`
+  - JSON `images[]`: `path`, `after_paragraph`, `size`, `alt`
+  - Проверка: extension (`allowed_file`) + magic bytes (`is_valid_image`)
+  - `MAX_CONTENT_LENGTH = 5 МБ`
+  - Исправлено: orphaned files при дублировании `task_id`
+  - Исправлено: path traversal в `delete_image` (`safe_to_delete = to_delete & existing_paths`)
+
+- [ ] **Этап 3: прикрепление файлов** — вложения `xlsx`, `db`, `csv`, `zip` к задачам.
+  Также: исправить `reshenie.html:452` — маршрутизация `_source_task_num` для файлов
+  (сейчас используется `variant_files` вместо `task_files` для задач из базы).
 
 ### Высокий приоритет
 
