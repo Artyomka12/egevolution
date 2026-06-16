@@ -13,6 +13,7 @@ import markupsafe
 import json
 import os
 import sqlite3
+import time
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
@@ -34,6 +35,7 @@ app = Flask(__name__)
 app.secret_key = os.environ["SECRET_KEY"]
 # WTF_CSRF_SECRET_KEY опционален — если не задан, используется SECRET_KEY
 app.config["WTF_CSRF_SECRET_KEY"] = os.environ.get("WTF_CSRF_SECRET_KEY") or os.environ["SECRET_KEY"]
+app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
 
 csrf = CSRFProtect(app)
 
@@ -255,6 +257,33 @@ init_db()
 
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+_IMAGE_MAGIC = [
+    b"\xff\xd8\xff",  # JPEG
+    b"\x89PNG",       # PNG
+    b"GIF8",          # GIF
+]
+
+
+def is_valid_image(stream):
+    header = stream.read(8)
+    stream.seek(0)
+    return any(header.startswith(sig) for sig in _IMAGE_MAGIC)
+
+
+def save_task_image(file, task_num, task_id, after_paragraph, size, alt):
+    img_dir = os.path.join(TASKS_FOLDER, f"task_{task_num:02d}", "images")
+    os.makedirs(img_dir, exist_ok=True)
+    safe_name = secure_filename(file.filename)
+    unique_name = f"t{task_num}_{task_id}_{int(time.time())}_{safe_name}"
+    file.save(os.path.join(img_dir, unique_name))
+    return {
+        "path": unique_name,
+        "after_paragraph": int(after_paragraph),
+        "size": size or "img-medium",
+        "alt": alt or "",
+    }
 
 
 # === ЗАЩИТА МАРШРУТОВ ===
@@ -1744,11 +1773,38 @@ def admin_task_add(task_num):
         answer_grid_cols = request.form.get("answer_grid_cols", type=int, default=1)
         answer_grid_answers = request.form.getlist("answer_grid_answers")
 
+        # Загружаем существующие задачи и проверяем дубликат task_id ДО записи файлов
+        data = load_task_base(task_num)
+        tasks = data.get("tasks", [])
+        if any(t.get("id") == task_id for t in tasks):
+            flash("⚠️ Задача с таким ID уже существует", "error")
+            return redirect(url_for("admin_task_add", task_num=task_num))
+
+        # Обрабатываем изображения
+        uploaded_images = []
+        new_image_files = request.files.getlist("new_image_file")
+        new_image_paragraphs = request.form.getlist("new_image_after_paragraph")
+        new_image_sizes = request.form.getlist("new_image_size")
+        new_image_alts = request.form.getlist("new_image_alt")
+        for i, img_file in enumerate(new_image_files):
+            if not img_file or not img_file.filename:
+                continue
+            if not allowed_file(img_file.filename):
+                flash("❌ Недопустимый формат изображения (разрешены: png, jpg, jpeg, gif)", "error")
+                return redirect(url_for("admin_task_add", task_num=task_num))
+            if not is_valid_image(img_file.stream):
+                flash("❌ Файл не является изображением", "error")
+                return redirect(url_for("admin_task_add", task_num=task_num))
+            after = int(new_image_paragraphs[i]) if i < len(new_image_paragraphs) else 0
+            size = new_image_sizes[i] if i < len(new_image_sizes) else "img-medium"
+            alt = new_image_alts[i] if i < len(new_image_alts) else ""
+            uploaded_images.append(save_task_image(img_file, task_num, task_id, after, size, alt))
+
         # Собираем задачу
         new_task = {
             "id": task_id,
             "description": [d for d in description if d.strip()],
-            "images": [],
+            "images": uploaded_images,
             "file": None,
             "difficulty": difficulty,
         }
@@ -1787,15 +1843,6 @@ def admin_task_add(task_num):
             new_task["correct_answer"] = correct_answer
             new_task.pop("answers", None)
             new_task.pop("answer_grid", None)
-
-        # Загружаем существующие задачи
-        data = load_task_base(task_num)
-        tasks = data.get("tasks", [])
-
-        # Проверяем, нет ли уже задачи с таким ID
-        if any(t.get("id") == task_id for t in tasks):
-            flash("⚠️ Задача с таким ID уже существует", "error")
-            return redirect(url_for("admin_task_add", task_num=task_num))
 
         # Добавляем новую задачу
         tasks.append(new_task)
@@ -1852,9 +1899,41 @@ def admin_task_edit(task_num, task_id):
         answer_grid_cols = request.form.get("answer_grid_cols", type=int, default=1)
         answer_grid_answers = request.form.getlist("answer_grid_answers")
 
+        # Удаляем отмеченные изображения
+        to_delete = set(request.form.getlist("delete_image"))
+        existing_paths = {img.get("path") for img in task.get("images", [])}
+        safe_to_delete = to_delete & existing_paths
+        img_dir = os.path.join(TASKS_FOLDER, f"task_{task_num:02d}", "images")
+        current_images = [img for img in task.get("images", []) if img.get("path") not in to_delete]
+        for fn in safe_to_delete:
+            try:
+                os.remove(os.path.join(img_dir, fn))
+            except (FileNotFoundError, OSError):
+                pass
+
+        # Загружаем новые изображения
+        new_image_files = request.files.getlist("new_image_file")
+        new_image_paragraphs = request.form.getlist("new_image_after_paragraph")
+        new_image_sizes = request.form.getlist("new_image_size")
+        new_image_alts = request.form.getlist("new_image_alt")
+        for i, img_file in enumerate(new_image_files):
+            if not img_file or not img_file.filename:
+                continue
+            if not allowed_file(img_file.filename):
+                flash("❌ Недопустимый формат изображения (разрешены: png, jpg, jpeg, gif)", "error")
+                return redirect(url_for("admin_task_edit", task_num=task_num, task_id=task_id))
+            if not is_valid_image(img_file.stream):
+                flash("❌ Файл не является изображением", "error")
+                return redirect(url_for("admin_task_edit", task_num=task_num, task_id=task_id))
+            after = int(new_image_paragraphs[i]) if i < len(new_image_paragraphs) else 0
+            size = new_image_sizes[i] if i < len(new_image_sizes) else "img-medium"
+            alt = new_image_alts[i] if i < len(new_image_alts) else ""
+            current_images.append(save_task_image(img_file, task_num, task_id, after, size, alt))
+
         # Обновляем задачу
         task["description"] = [d for d in description if d.strip()]
         task["difficulty"] = difficulty
+        task["images"] = current_images
 
         # Получаем тип ответа из формы
         answer_type = request.form.get("answer_type", "single")

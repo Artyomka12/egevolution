@@ -162,6 +162,47 @@
 
         .fmt-btn-b { font-weight: bold; }
         .fmt-btn-i { font-style: italic; }
+
+        .img-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .img-card-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 13px;
+            color: #aaa;
+        }
+
+        .img-card-info span:first-child {
+            color: #e0e0e0;
+            font-weight: 500;
+        }
+
+        .new-img-block {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px dashed rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+
+        .new-img-block .form-group {
+            margin-bottom: 10px;
+        }
+
+        .new-img-block .form-group:last-of-type {
+            margin-bottom: 0;
+        }
     </style>
 </head>
 
@@ -173,7 +214,7 @@
             <div></div>
         </div>
 
-        <form method="POST">
+        <form method="POST" enctype="multipart/form-data">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="hidden" name="answer_type" id="answer_type" value="single">
             {% if not task %}
@@ -219,6 +260,32 @@
                     {% endif %}
                 </div>
                 <button type="button" class="btn btn-secondary" onclick="addParagraph()">➕ Добавить абзац</button>
+            </div>
+
+            <div class="form-card">
+                <h3 style="margin-bottom: 20px; color: #a855f7;">Изображения</h3>
+
+                {% if task and task.images %}
+                <div id="existing-images">
+                    {% for image in task.images %}
+                    <div class="img-card" id="img-card-{{ loop.index0 }}">
+                        <div class="img-card-info">
+                            <span>📷 {{ image.path }}</span>
+                            <span>После абзаца {{ image.after_paragraph + 1 }}</span>
+                            <span>{{ image.size or 'img-medium' }}</span>
+                            {% if image.alt %}<span>Alt: {{ image.alt }}</span>{% endif %}
+                        </div>
+                        <button type="button" class="btn btn-secondary"
+                                onclick="markDeleteImage('{{ image.path }}', document.getElementById('img-card-{{ loop.index0 }}'))">
+                            × Удалить
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div id="new-images-container"></div>
+                <button type="button" class="btn btn-secondary" onclick="addImageBlock()">📎 Добавить изображение</button>
             </div>
 
             <div class="form-card">
@@ -340,12 +407,116 @@
             deleteBtn.className = 'btn btn-secondary';
             deleteBtn.style.marginTop = '10px';
             deleteBtn.textContent = 'Удалить';
-            deleteBtn.addEventListener('click', () => div.remove());
+            deleteBtn.addEventListener('click', () => { div.remove(); updateParagraphSelectors(); });
             div.appendChild(label);
             div.appendChild(textarea);
             div.appendChild(deleteBtn);
             container.appendChild(div);
             createToolbar(textarea);
+            updateParagraphSelectors();
+        }
+
+        function addImageBlock() {
+            const container = document.getElementById('new-images-container');
+            const paraCount = document.querySelectorAll('#description-container textarea[name="description"]').length;
+            const block = document.createElement('div');
+            block.className = 'new-img-block';
+
+            const fileGroup = document.createElement('div');
+            fileGroup.className = 'form-group';
+            const fileLabel = document.createElement('label');
+            fileLabel.textContent = 'Файл:';
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.name = 'new_image_file';
+            fileInput.accept = '.png,.jpg,.jpeg,.gif';
+            fileGroup.appendChild(fileLabel);
+            fileGroup.appendChild(fileInput);
+
+            const paraGroup = document.createElement('div');
+            paraGroup.className = 'form-group';
+            const paraLabel = document.createElement('label');
+            paraLabel.textContent = 'После абзаца:';
+            const paraSelect = document.createElement('select');
+            paraSelect.name = 'new_image_after_paragraph';
+            for (let i = 0; i < Math.max(paraCount, 1); i++) {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.textContent = `После абзаца ${i + 1}`;
+                paraSelect.appendChild(opt);
+            }
+            paraGroup.appendChild(paraLabel);
+            paraGroup.appendChild(paraSelect);
+
+            const sizeGroup = document.createElement('div');
+            sizeGroup.className = 'form-group';
+            const sizeLabel = document.createElement('label');
+            sizeLabel.textContent = 'Размер:';
+            const sizeSelect = document.createElement('select');
+            sizeSelect.name = 'new_image_size';
+            [['img-small', 'Маленький'], ['img-medium', 'Средний'], ['img-large', 'Большой']].forEach(([val, text]) => {
+                const opt = document.createElement('option');
+                opt.value = val;
+                opt.textContent = text;
+                if (val === 'img-medium') opt.selected = true;
+                sizeSelect.appendChild(opt);
+            });
+            sizeGroup.appendChild(sizeLabel);
+            sizeGroup.appendChild(sizeSelect);
+
+            const altGroup = document.createElement('div');
+            altGroup.className = 'form-group';
+            const altLabel = document.createElement('label');
+            altLabel.textContent = 'Alt-текст:';
+            const altInput = document.createElement('input');
+            altInput.type = 'text';
+            altInput.name = 'new_image_alt';
+            altInput.placeholder = 'Описание для accessibility';
+            altGroup.appendChild(altLabel);
+            altGroup.appendChild(altInput);
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'btn btn-secondary';
+            removeBtn.textContent = '× Убрать';
+            removeBtn.addEventListener('click', () => block.remove());
+
+            block.appendChild(fileGroup);
+            block.appendChild(paraGroup);
+            block.appendChild(sizeGroup);
+            block.appendChild(altGroup);
+            block.appendChild(removeBtn);
+            container.appendChild(block);
+        }
+
+        function markDeleteImage(filename, cardEl) {
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = 'delete_image';
+            hidden.value = filename;
+            document.querySelector('form').appendChild(hidden);
+            cardEl.style.opacity = '0.3';
+            cardEl.style.pointerEvents = 'none';
+            const label = document.createElement('span');
+            label.textContent = ' (будет удалено)';
+            label.style.color = '#ef4444';
+            label.style.fontSize = '12px';
+            cardEl.querySelector('.img-card-info').appendChild(label);
+        }
+
+        function updateParagraphSelectors() {
+            const paraCount = document.querySelectorAll('#description-container textarea[name="description"]').length;
+            document.querySelectorAll('select[name="new_image_after_paragraph"]').forEach(select => {
+                const currentVal = select.value;
+                select.innerHTML = '';
+                for (let i = 0; i < Math.max(paraCount, 1); i++) {
+                    const opt = document.createElement('option');
+                    opt.value = i;
+                    opt.textContent = `После абзаца ${i + 1}`;
+                    if (String(i) === currentVal) opt.selected = true;
+                    select.appendChild(opt);
+                }
+            });
         }
 
         function selectAnswerType(type) {
