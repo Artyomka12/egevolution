@@ -55,6 +55,7 @@ VARIANTS_FOLDER = os.path.join(basedir, "variants")
 PREPARATION_FOLDER = os.path.join(basedir, "uroki")
 UPLOAD_FOLDER = os.path.join(basedir, "static", "uploads", "avatars")
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
+ALLOWED_FILE_EXTENSIONS = {"xlsx", "xls", "csv", "txt", "zip", "db", "sqlite", "ods", "odt"}
 TASKS_FOLDER = os.path.join(basedir, "tasks")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
@@ -270,6 +271,33 @@ def is_valid_image(stream):
     header = stream.read(8)
     stream.seek(0)
     return any(header.startswith(sig) for sig in _IMAGE_MAGIC)
+
+
+def allowed_task_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_FILE_EXTENSIONS
+
+
+def save_task_file(file, task_num, task_id, name, description):
+    files_dir = os.path.join(TASKS_FOLDER, f"task_{task_num:02d}", "files")
+    os.makedirs(files_dir, exist_ok=True)
+    safe_name = secure_filename(file.filename)
+    unique_name = f"f{task_num}_{task_id}_{int(time.time())}_{safe_name}"
+    file.save(os.path.join(files_dir, unique_name))
+    return {
+        "path": unique_name,
+        "name": name or safe_name,
+        "description": description,
+    }
+
+
+def _delete_task_file_from_disk(task_num, path):
+    if not path or "/" in path or "\\" in path:
+        return
+    files_dir = os.path.join(TASKS_FOLDER, f"task_{task_num:02d}", "files")
+    try:
+        os.remove(os.path.join(files_dir, path))
+    except (FileNotFoundError, OSError):
+        pass
 
 
 def save_task_image(file, task_num, task_id, after_paragraph, size, alt):
@@ -1800,12 +1828,23 @@ def admin_task_add(task_num):
             alt = new_image_alts[i] if i < len(new_image_alts) else ""
             uploaded_images.append(save_task_image(img_file, task_num, task_id, after, size, alt))
 
+        # Обрабатываем прикреплённый файл
+        task_file_data = None
+        uploaded_task_file = request.files.get("task_file")
+        if uploaded_task_file and uploaded_task_file.filename:
+            if not allowed_task_file(uploaded_task_file.filename):
+                flash("❌ Недопустимый формат файла (разрешены: xlsx, xls, csv, txt, zip, db, sqlite, ods, odt)", "error")
+                return redirect(url_for("admin_task_add", task_num=task_num))
+            file_name = request.form.get("task_file_name", "").strip()
+            file_desc = request.form.get("task_file_description", "").strip()
+            task_file_data = save_task_file(uploaded_task_file, task_num, task_id, file_name, file_desc)
+
         # Собираем задачу
         new_task = {
             "id": task_id,
             "description": [d for d in description if d.strip()],
             "images": uploaded_images,
-            "file": None,
+            "file": task_file_data,
             "difficulty": difficulty,
         }
 
@@ -1929,6 +1968,27 @@ def admin_task_edit(task_num, task_id):
             size = new_image_sizes[i] if i < len(new_image_sizes) else "img-medium"
             alt = new_image_alts[i] if i < len(new_image_alts) else ""
             current_images.append(save_task_image(img_file, task_num, task_id, after, size, alt))
+
+        # Обрабатываем прикреплённый файл
+        delete_task_file_flag = request.form.get("delete_task_file") == "1"
+        uploaded_task_file = request.files.get("task_file")
+        has_new_file = bool(uploaded_task_file and uploaded_task_file.filename)
+
+        if has_new_file:
+            if not allowed_task_file(uploaded_task_file.filename):
+                flash("❌ Недопустимый формат файла (разрешены: xlsx, xls, csv, txt, zip, db, sqlite, ods, odt)", "error")
+                return redirect(url_for("admin_task_edit", task_num=task_num, task_id=task_id))
+            # Удаляем старый файл с диска перед заменой
+            if task.get("file") and task["file"].get("path"):
+                _delete_task_file_from_disk(task_num, task["file"]["path"])
+            file_name = request.form.get("task_file_name", "").strip()
+            file_desc = request.form.get("task_file_description", "").strip()
+            task["file"] = save_task_file(uploaded_task_file, task_num, task_id, file_name, file_desc)
+        elif delete_task_file_flag:
+            if task.get("file") and task["file"].get("path"):
+                _delete_task_file_from_disk(task_num, task["file"]["path"])
+            task["file"] = None
+        # Если ни delete_task_file_flag, ни новый файл — task["file"] остаётся без изменений
 
         # Обновляем задачу
         task["description"] = [d for d in description if d.strip()]

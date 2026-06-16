@@ -453,7 +453,7 @@
             <div class="file-download">
                 <div style="font-size: 40px;">📄</div>
                 <div style="flex: 1;">
-                    <a href="{{ url_for('variant_files', variant_num=variant_num, filename=task.file.path) }}" download
+                    <a href="{% if task._source_task_num is defined %}{{ url_for('task_files', task_num=task._source_task_num, filename=task.file.path) }}{% else %}{{ url_for('variant_files', variant_num=variant_num, filename=task.file.path) }}{% endif %}" download
                         class="file-link">
                         {{ task.file.name }}
                     </a>

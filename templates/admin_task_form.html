@@ -203,6 +203,31 @@
         .new-img-block .form-group:last-of-type {
             margin-bottom: 0;
         }
+
+        .file-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .file-card-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 13px;
+            color: #aaa;
+        }
+
+        .file-card-info span:first-child {
+            color: #e0e0e0;
+            font-weight: 500;
+        }
     </style>
 </head>
 
@@ -286,6 +311,43 @@
 
                 <div id="new-images-container"></div>
                 <button type="button" class="btn btn-secondary" onclick="addImageBlock()">📎 Добавить изображение</button>
+            </div>
+
+            <div class="form-card">
+                <h3 style="margin-bottom: 20px; color: #a855f7;">Прикреплённый файл</h3>
+
+                {% if task and task.file %}
+                <div class="file-card" id="existing-file-card">
+                    <div class="file-card-info">
+                        <span>📄 {{ task.file.path }}</span>
+                        {% if task.file.name %}<span>Название: {{ task.file.name }}</span>{% endif %}
+                        {% if task.file.description %}<span>Описание: {{ task.file.description }}</span>{% endif %}
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="markDeleteTaskFile()">
+                        × Удалить файл
+                    </button>
+                </div>
+                {% endif %}
+
+                <div id="new-file-block" {% if task and task.file %}style="display:none;"{% endif %}>
+                    <div class="form-group">
+                        <label>Файл:</label>
+                        <input type="file" name="task_file"
+                               accept=".xlsx,.xls,.csv,.txt,.zip,.db,.sqlite,.ods,.odt">
+                    </div>
+                    <div class="form-group">
+                        <label>Название файла:</label>
+                        <input type="text" name="task_file_name"
+                               placeholder="Исходные данные"
+                               value="{{ task.file.name if task and task.file else '' }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Описание (необязательно):</label>
+                        <input type="text" name="task_file_description"
+                               placeholder="Файл для решения задачи"
+                               value="{{ task.file.description if task and task.file else '' }}">
+                    </div>
+                </div>
             </div>
 
             <div class="form-card">
@@ -502,6 +564,25 @@
             label.style.color = '#ef4444';
             label.style.fontSize = '12px';
             cardEl.querySelector('.img-card-info').appendChild(label);
+        }
+
+        function markDeleteTaskFile() {
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = 'delete_task_file';
+            hidden.value = '1';
+            document.querySelector('form').appendChild(hidden);
+            const card = document.getElementById('existing-file-card');
+            if (card) {
+                card.style.opacity = '0.3';
+                card.style.pointerEvents = 'none';
+                const label = document.createElement('span');
+                label.textContent = ' (будет удалено)';
+                label.style.color = '#ef4444';
+                label.style.fontSize = '12px';
+                card.querySelector('.file-card-info').appendChild(label);
+            }
+            document.getElementById('new-file-block').style.display = 'block';
         }
 
         function updateParagraphSelectors() {

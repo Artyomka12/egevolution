@@ -717,7 +717,11 @@
             const fileName = document.getElementById('task-file-name');
 
             if (currentTask && currentTask.file) {
-                fileLink.href = currentTask.file.url || `{{ url_for('variant_files', variant_num=variant_num, filename='FILE') }}`.replace('FILE', currentTask.file.path);
+                if (currentTask._source_task_num !== undefined && currentTask._source_task_num !== null) {
+                    fileLink.href = `/task_files/${currentTask._source_task_num}/${currentTask.file.path}`;
+                } else {
+                    fileLink.href = `{{ url_for('variant_files', variant_num=variant_num, filename='FILE') }}`.replace('FILE', currentTask.file.path);
+                }
                 fileName.textContent = currentTask.file.name;
                 fileLink.style.display = 'flex';
             } else {
