@@ -1404,6 +1404,8 @@ def admin_view_attempt(user_id, attempt_id):
 # ✅ ИСПРАВЛЕНО: Передается len(tasks)
 @app.route("/save_results/<int:variant_num>", methods=["POST"])
 def save_results(variant_num):
+    if "user_id" not in session:
+        return jsonify({"success": False, "error": "Unauthorized"}), 401
     user_id = session["user_id"]
     data = request.json
 
@@ -1415,6 +1417,9 @@ def save_results(variant_num):
     answers_dict = {str(k): v for k, v in raw_answers.items()}
 
     tasks = load_tasks(variant_num)
+    if not tasks:
+        return jsonify({"success": False, "error": "Вариант не найден"}), 404
+
     total_points = 0
 
     # Считаем общий балл
@@ -1447,6 +1452,9 @@ def results(variant_num):
 # ✅ ИСПРАВЛЕНО: Передается len(tasks)
 @app.route("/finish_exam/<int:variant_num>", methods=["POST"])
 def finish_exam(variant_num):
+    if "user_id" not in session:
+        return jsonify({"success": False, "error": "Unauthorized"}), 401
+    user_id = session["user_id"]
     data = request.json
 
     # Получаем ответы и время
@@ -1457,6 +1465,9 @@ def finish_exam(variant_num):
     answers_dict = {str(k): v for k, v in raw_answers.items()}
 
     tasks = load_tasks(variant_num)
+    if not tasks:
+        return jsonify({"success": False, "error": "Вариант не найден"}), 404
+
     total_points = 0
 
     # Считаем общий балл
@@ -1468,7 +1479,7 @@ def finish_exam(variant_num):
 
     # Сохраняем всё в БД
     save_user_result(
-        session["user_id"],
+        user_id,
         variant_num,
         total_points,
         secondary_score,
@@ -2084,15 +2095,18 @@ def api_variant_preview():
 
 @app.route("/clear_stats", methods=["POST"])
 def clear_stats():
+    if "user_id" not in session:
+        return jsonify({"success": False, "error": "Unauthorized"}), 401
+    user_id = session["user_id"]
     try:
-        user_id = session["user_id"]
         db = get_db()
+        db.execute("DELETE FROM user_task_answers WHERE user_id = ?", (user_id,))
         db.execute("DELETE FROM user_results WHERE user_id = ?", (user_id,))
         db.commit()
         db.close()
         return jsonify({"success": True, "message": "Ваша статистика очищена"})
-    except Exception as e:
-        return jsonify({"success": False, "error": str(e)}), 500
+    except Exception:
+        return jsonify({"success": False, "error": "Не удалось очистить статистику"}), 500
 
 
 # === АДМИН ПАНЕЛЬ ===
