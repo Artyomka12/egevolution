@@ -4,12 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EGEvolution</title>
+    <title>ЕГЭволюция — Подготовка к ЕГЭ по информатике</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-
         * {
             margin: 0;
             padding: 0;
@@ -18,475 +16,1936 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            /* Глубокий темный фон с синим оттенком */
-            background: radial-gradient(circle at 10% 20%, #0f172a 0%, #020617 90%);
+            background: #111827;
             color: #e2e8f0;
             min-height: 100vh;
-            padding: 40px 20px;
             overflow-x: hidden;
-            position: relative;
         }
 
-        /* Эффект фоновой сети (точки) */
-        body::before {
-            content: '';
-            position: fixed;
+        /* ============================================================
+           NAVBAR
+        ============================================================ */
+        .navbar {
+            position: sticky;
             top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image:
-                radial-gradient(rgba(56, 189, 248, 0.2) 1px, transparent 1px),
-                radial-gradient(rgba(56, 189, 248, 0.1) 1px, transparent 1px);
-            background-size: 50px 50px, 30px 30px;
-            background-position: 0 0, 15px 15px;
-            z-index: -1;
-            opacity: 0.6;
+            z-index: 100;
+            background: rgba(17, 24, 39, 0.93);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+            padding: 0 20px;
         }
 
-        .container {
+        .navbar-inner {
+            position: relative; /* для абсолютного центрирования nav-center */
             max-width: 1200px;
             margin: 0 auto;
-        }
-
-        /* === Кнопки профиля === */
-        .user-actions {
+            height: 62px;
             display: flex;
-            gap: 15px;
-            justify-content: flex-end;
-            margin-bottom: 40px;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .action-link {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(56, 189, 248, 0.2);
-            padding: 10px 20px;
-            border-radius: 12px;
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             text-decoration: none;
-            font-weight: 600;
+        }
+
+        .navbar-logo {
+            width: 26px;
+            height: auto;
+        }
+
+        .navbar-site-title {
+            font-size: 1.05em;
+            font-weight: 700;
+            color: #e2e8f0;
+            letter-spacing: -0.2px;
+        }
+
+        .navbar-auth {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn {
+            padding: 7px 15px;
+            border-radius: 8px;
+            font-size: 0.875em;
+            font-weight: 500;
+            font-family: inherit;
+            text-decoration: none;
+            color: #94a3b8;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            transition: color 0.18s, background 0.18s, border-color 0.18s;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .nav-btn:hover {
+            color: #e2e8f0;
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(255, 255, 255, 0.16);
+        }
+
+        .nav-btn-primary {
+            background: rgba(56, 189, 248, 0.1);
             color: #38bdf8;
-            transition: all 0.3s;
+            border-color: rgba(56, 189, 248, 0.22);
         }
 
-        .action-link:hover {
-            background: rgba(56, 189, 248, 0.15);
-            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+        .nav-btn-primary:hover {
+            background: rgba(56, 189, 248, 0.18);
+            border-color: rgba(56, 189, 248, 0.38);
+            color: #7dd3fc;
         }
 
-        .action-link.logout {
-            color: #f87171;
+        .nav-btn-logout:hover {
+            color: #fca5a5;
+            background: rgba(248, 113, 113, 0.08);
             border-color: rgba(248, 113, 113, 0.2);
         }
 
-        .action-link.logout:hover {
-            background: rgba(248, 113, 113, 0.15);
-            box-shadow: 0 0 15px rgba(248, 113, 113, 0.3);
-        }
-
-        /* === Заголовок === */
-        .main-title {
-            text-align: center;
-            font-size: 3.5em;
-            font-weight: 800;
-            background: linear-gradient(to right, #38bdf8, #818cf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-            letter-spacing: -1px;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #94a3b8;
-            font-size: 1.2em;
-            margin-bottom: 60px;
-        }
-
-        .logo-container {
+        /* --- Центральное навигационное меню --- */
+        .nav-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 20px;
-            /* Расстояние между иконкой и текстом */
-            margin-bottom: 15px;
         }
 
-        .main-logo {
-            width: 70px;
-            /* Размер иконки */
-            height: auto;
-            /* Неоновое свечение */
-            filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.6));
-            /* Анимация парения */
-            animation: floatArrow 3s ease-in-out infinite;
-        }
-
-        @keyframes floatArrow {
-
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(-10px);
-            }
-        }
-
-        /* === Сетка меню === */
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-            margin-bottom: 60px;
-        }
-
-        .menu-card {
+        .nav-dropdown-wrap {
             position: relative;
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 20px;
-            padding: 35px 25px;
-            text-decoration: none;
-            color: white;
-            transition: all 0.4s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            overflow: hidden;
         }
 
-        /* Эффект свечения при наведении */
-        .menu-card::before {
+        .nav-dropdown-btn {
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 0.875em;
+            font-weight: 500;
+            font-family: inherit;
+            color: #94a3b8;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            transition: color 0.18s, background 0.18s, border-color 0.18s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .nav-dropdown-btn:hover,
+        .nav-dropdown-btn.active {
+            color: #e2e8f0;
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(255, 255, 255, 0.16);
+        }
+
+        .nav-dropdown-chevron {
+            font-size: 0.7em;
+            opacity: 0.65;
+            transition: transform 0.18s;
+            display: inline-block;
+        }
+
+        .nav-dropdown-btn.active .nav-dropdown-chevron {
+            transform: rotate(180deg);
+        }
+
+        .nav-label-mobile {
+            display: none;
+        }
+
+        .nav-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 9px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(13, 18, 34, 0.98);
+            border: 1px solid rgba(255, 255, 255, 0.11);
+            border-radius: 12px;
+            padding: 6px;
+            min-width: 236px;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            z-index: 200;
+            box-shadow: 0 10px 32px rgba(0, 0, 0, 0.42), 0 2px 8px rgba(0, 0, 0, 0.24);
+        }
+
+        .nav-dropdown.open {
+            display: block;
+        }
+
+        .nav-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #94a3b8;
+            font-size: 0.875em;
+            font-weight: 500;
+            transition: background 0.15s, color 0.15s;
+            white-space: nowrap;
+        }
+
+        .nav-dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.07);
+            color: #e2e8f0;
+        }
+
+        /* ============================================================
+           MAIN CONTENT WRAPPER
+        ============================================================ */
+        .main-wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px 80px;
+        }
+
+        /* ============================================================
+           HERO
+        ============================================================ */
+        .hero {
+            text-align: center;
+            padding: 80px 0 72px;
+            position: relative;
+        }
+
+        .hero::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 60%);
-            opacity: 0;
-            transition: opacity 0.4s ease;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 380px;
+            background: radial-gradient(ellipse at center top,
+                rgba(56, 189, 248, 0.07) 0%,
+                rgba(129, 140, 248, 0.04) 40%,
+                transparent 70%);
             pointer-events: none;
         }
 
-        .menu-card:hover {
-            transform: translateY(-8px);
-            border-color: rgba(56, 189, 248, 0.5);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(56, 189, 248, 0.1);
+        .hero > * {
+            position: relative;
         }
 
-        .menu-card:hover::before {
-            opacity: 1;
+        .hero-logo {
+            width: 60px;
+            height: auto;
+            filter: drop-shadow(0 2px 16px rgba(56, 189, 248, 0.35));
+            margin-bottom: 26px;
         }
 
-        .menu-card .icon {
-            font-size: 3.5em;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.4));
+        .hero-title {
+            font-size: 3.1em;
+            font-weight: 800;
+            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 55%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1.5px;
+            line-height: 1.12;
+            margin-bottom: 14px;
         }
 
-        .menu-card h2 {
-            font-size: 1.4em;
-            margin-bottom: 10px;
-            color: #fff;
-            font-weight: 700;
-        }
-
-        .menu-card p {
+        .hero-tagline {
+            font-size: 1.15em;
             color: #94a3b8;
-            font-size: 0.95em;
+            font-weight: 400;
+            margin-bottom: 10px;
         }
 
-        /* === Секции (Варианты, Новости) === */
+        .hero-desc {
+            font-size: 0.95em;
+            color: #64748b;
+            max-width: 460px;
+            margin: 0 auto 40px;
+            line-height: 1.65;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .hero-btn {
+            padding: 12px 28px;
+            border-radius: 10px;
+            font-size: 0.95em;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.18s, opacity 0.18s, background 0.18s,
+                        border-color 0.18s, color 0.18s;
+        }
+
+        .hero-btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: #fff;
+        }
+
+        .hero-btn-primary:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        .hero-btn-secondary {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            color: #94a3b8;
+        }
+
+        .hero-btn-secondary:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.25);
+            color: #e2e8f0;
+        }
+
+        /* ============================================================
+           ПРОГРЕСС
+        ============================================================ */
+        .progress-section {
+            margin-bottom: 64px;
+        }
+
+        .progress-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .progress-header-title {
+            font-size: 0.76em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.09em;
+            color: #64748b;
+        }
+
+        .progress-more-link {
+            font-size: 0.8em;
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.18s;
+        }
+
+        .progress-more-link:hover {
+            opacity: 0.72;
+        }
+
+        .progress-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .progress-card {
+            background: rgba(56, 189, 248, 0.05);
+            border: 1px solid rgba(56, 189, 248, 0.13);
+            border-radius: 13px;
+            padding: 24px 18px;
+            text-align: center;
+        }
+
+        .progress-num {
+            font-size: 2em;
+            font-weight: 800;
+            color: #e2e8f0;
+            letter-spacing: -0.5px;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .progress-label {
+            font-size: 0.82em;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        /* ============================================================
+           ГОСТЕВОЙ БЛОК
+        ============================================================ */
+        .guest-cta-section {
+            margin-bottom: 64px;
+        }
+
+        .guest-cta-card {
+            background: rgba(56, 189, 248, 0.04);
+            border: 1px solid rgba(56, 189, 248, 0.12);
+            border-radius: 16px;
+            padding: 44px 32px;
+            text-align: center;
+        }
+
+        .guest-cta-title {
+            font-size: 1.55em;
+            font-weight: 800;
+            color: #e2e8f0;
+            letter-spacing: -0.5px;
+            margin-bottom: 12px;
+        }
+
+        .guest-cta-desc {
+            font-size: 0.95em;
+            color: #64748b;
+            max-width: 440px;
+            margin: 0 auto 28px;
+            line-height: 1.65;
+        }
+
+        .guest-cta-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* ============================================================
+           STATS
+        ============================================================ */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 72px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.055);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px 14px;
+            text-align: center;
+        }
+
+        .stat-num {
+            font-size: 1.9em;
+            font-weight: 800;
+            color: #e2e8f0;
+            line-height: 1;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+
+        .stat-label {
+            font-size: 0.78em;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        /* ============================================================
+           С ЧЕГО НАЧАТЬ
+        ============================================================ */
+        .start-section {
+            margin-bottom: 72px;
+        }
+
+        .section-heading {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .section-heading h2 {
+            font-size: 1.7em;
+            font-weight: 800;
+            color: #e2e8f0;
+            letter-spacing: -0.5px;
+            margin-bottom: 10px;
+        }
+
+        .section-heading p {
+            font-size: 0.95em;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        .start-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .start-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 28px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .start-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.16);
+        }
+
+        .start-card-level {
+            font-size: 0.73em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .start-card-level-1 { color: #38bdf8; }
+        .start-card-level-2 { color: #818cf8; }
+        .start-card-level-3 { color: #4ade80; }
+
+        .start-card-title {
+            font-size: 1.05em;
+            font-weight: 700;
+            color: #e2e8f0;
+            line-height: 1.3;
+        }
+
+        .start-card-desc {
+            font-size: 0.88em;
+            color: #64748b;
+            line-height: 1.62;
+            flex: 1;
+        }
+
+        .start-card-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 9px;
+            text-decoration: none;
+            font-size: 0.875em;
+            font-weight: 600;
+            text-align: center;
+            transition: opacity 0.18s, transform 0.18s;
+        }
+
+        .start-card-btn:hover {
+            opacity: 0.82;
+            transform: translateY(-1px);
+        }
+
+        .start-card-btn-1 {
+            background: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.22);
+        }
+
+        .start-card-btn-2 {
+            background: rgba(129, 140, 248, 0.1);
+            color: #818cf8;
+            border: 1px solid rgba(129, 140, 248, 0.22);
+        }
+
+        .start-card-btn-3 {
+            background: rgba(74, 222, 128, 0.09);
+            color: #4ade80;
+            border: 1px solid rgba(74, 222, 128, 0.2);
+        }
+
+        /* ============================================================
+           МИНИ-ЗАДАЧА
+        ============================================================ */
+        .minitask-section {
+            margin-bottom: 72px;
+        }
+
+        .minitask-card {
+            max-width: 580px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 32px 36px;
+        }
+
+        .minitask-question {
+            font-size: 1em;
+            color: #e2e8f0;
+            font-weight: 600;
+            margin-bottom: 22px;
+            line-height: 1.55;
+        }
+
+        .minitask-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .minitask-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: border-color 0.18s, background 0.18s;
+            user-select: none;
+        }
+
+        .minitask-option:hover {
+            border-color: rgba(56, 189, 248, 0.3);
+            background: rgba(56, 189, 248, 0.05);
+        }
+
+        .minitask-option.selected {
+            border-color: rgba(56, 189, 248, 0.52);
+            background: rgba(56, 189, 248, 0.09);
+        }
+
+        .minitask-option input[type="radio"] {
+            accent-color: #38bdf8;
+            width: 15px;
+            height: 15px;
+            flex-shrink: 0;
+        }
+
+        .minitask-option-label {
+            font-size: 0.95em;
+            color: #e2e8f0;
+            font-weight: 500;
+        }
+
+        .minitask-check-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.925em;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: opacity 0.18s, transform 0.15s;
+            margin-bottom: 14px;
+        }
+
+        .minitask-check-btn:hover {
+            opacity: 0.88;
+            transform: translateY(-1px);
+        }
+
+        .minitask-result {
+            display: none;
+            padding: 13px 16px;
+            border-radius: 10px;
+            font-size: 0.9em;
+            font-weight: 500;
+            line-height: 1.55;
+        }
+
+        .minitask-result.correct {
+            background: rgba(74, 222, 128, 0.09);
+            border: 1px solid rgba(74, 222, 128, 0.22);
+            color: #86efac;
+        }
+
+        .minitask-result.incorrect {
+            background: rgba(248, 113, 113, 0.08);
+            border: 1px solid rgba(248, 113, 113, 0.2);
+            color: #fca5a5;
+        }
+
+        .minitask-result.no-answer {
+            background: rgba(250, 204, 21, 0.07);
+            border: 1px solid rgba(250, 204, 21, 0.18);
+            color: #fde68a;
+        }
+
+        /* ============================================================
+           КАЛЬКУЛЯТОР ГОТОВНОСТИ
+        ============================================================ */
+        .calculator-section {
+            margin-bottom: 72px;
+        }
+
+        .calculator-card {
+            max-width: 580px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 32px 36px;
+        }
+
+        .calc-questions {
+            margin-bottom: 24px;
+        }
+
+        .calc-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .calc-question:first-child {
+            padding-top: 0;
+        }
+
+        .calc-question:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .calc-q-text {
+            font-size: 0.92em;
+            color: #cbd5e1;
+            line-height: 1.45;
+            flex: 1;
+        }
+
+        .calc-options {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .calc-option {
+            display: flex;
+            align-items: center;
+            padding: 7px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.875em;
+            color: #94a3b8;
+            font-weight: 500;
+            transition: border-color 0.18s, background 0.18s, color 0.18s;
+            user-select: none;
+        }
+
+        .calc-option:hover {
+            border-color: rgba(255, 255, 255, 0.18);
+            color: #e2e8f0;
+        }
+
+        .calc-option.calc-selected {
+            border-color: rgba(56, 189, 248, 0.44);
+            background: rgba(56, 189, 248, 0.09);
+            color: #38bdf8;
+        }
+
+        .calc-option input[type="radio"] {
+            display: none;
+        }
+
+        .calc-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.925em;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: opacity 0.18s, transform 0.15s;
+            margin-bottom: 14px;
+        }
+
+        .calc-btn:hover {
+            opacity: 0.88;
+            transform: translateY(-1px);
+        }
+
+        .calc-result {
+            display: none;
+            padding: 14px 18px;
+            border-radius: 10px;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .calc-result-low {
+            background: rgba(248, 113, 113, 0.08);
+            border: 1px solid rgba(248, 113, 113, 0.2);
+            color: #fca5a5;
+        }
+
+        .calc-result-mid {
+            background: rgba(250, 204, 21, 0.07);
+            border: 1px solid rgba(250, 204, 21, 0.18);
+            color: #fde68a;
+        }
+
+        .calc-result-high {
+            background: rgba(74, 222, 128, 0.09);
+            border: 1px solid rgba(74, 222, 128, 0.22);
+            color: #86efac;
+        }
+
+        .calc-result-warn {
+            background: rgba(250, 204, 21, 0.07);
+            border: 1px solid rgba(250, 204, 21, 0.18);
+            color: #fde68a;
+        }
+
+        /* ============================================================
+           МАРШРУТ ПОДГОТОВКИ
+        ============================================================ */
+        .roadmap-section {
+            margin-bottom: 72px;
+        }
+
+        .roadmap {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .roadmap-step {
+            display: flex;
+            gap: 18px;
+            align-items: flex-start;
+        }
+
+        .roadmap-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .roadmap-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(56, 189, 248, 0.1);
+            border: 2px solid rgba(56, 189, 248, 0.28);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1em;
+            color: #38bdf8;
+            flex-shrink: 0;
+        }
+
+        .roadmap-circle-goal {
+            background: rgba(74, 222, 128, 0.1);
+            border-color: rgba(74, 222, 128, 0.3);
+            color: #4ade80;
+        }
+
+        .roadmap-connector {
+            width: 2px;
+            height: 36px;
+            background: linear-gradient(to bottom,
+                rgba(56, 189, 248, 0.22),
+                rgba(129, 140, 248, 0.12));
+            margin: 5px 0;
+        }
+
+        .roadmap-step:last-child .roadmap-connector {
+            display: none;
+        }
+
+        .roadmap-content {
+            padding-top: 9px;
+            padding-bottom: 28px;
+        }
+
+        .roadmap-step:last-child .roadmap-content {
+            padding-bottom: 0;
+        }
+
+        .roadmap-step-title {
+            font-size: 0.975em;
+            font-weight: 700;
+            color: #e2e8f0;
+            margin-bottom: 4px;
+        }
+
+        .roadmap-step-desc {
+            font-size: 0.83em;
+            color: #64748b;
+            line-height: 1.55;
+        }
+
+        /* ============================================================
+           ПРЕИМУЩЕСТВА
+        ============================================================ */
+        .advantages-section {
+            margin-bottom: 72px;
+        }
+
+        .advantages-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+        }
+
+        .advantage-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            border-radius: 13px;
+            padding: 26px 24px;
+            transition: background 0.18s, border-color 0.18s;
+        }
+
+        .advantage-card:hover {
+            background: rgba(255, 255, 255, 0.075);
+            border-color: rgba(255, 255, 255, 0.14);
+        }
+
+        .advantage-card-title {
+            font-size: 0.975em;
+            font-weight: 700;
+            color: #e2e8f0;
+            margin-bottom: 9px;
+        }
+
+        .advantage-card-desc {
+            font-size: 0.85em;
+            color: #64748b;
+            line-height: 1.58;
+        }
+
+        /* ============================================================
+           FEATURES
+        ============================================================ */
+        .features-section {
+            margin-bottom: 64px;
+        }
+
+        .features-heading {
+            font-size: 0.76em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.09em;
+            color: #64748b;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            border-radius: 12px;
+            padding: 24px 20px;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: background 0.18s, border-color 0.18s, transform 0.18s;
+        }
+
+        .feature-card:hover {
+            background: rgba(56, 189, 248, 0.07);
+            border-color: rgba(56, 189, 248, 0.26);
+            transform: translateY(-3px);
+        }
+
+        .feature-icon {
+            font-size: 1.7em;
+            line-height: 1;
+        }
+
+        .feature-title {
+            font-size: 0.975em;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+
+        .feature-desc {
+            font-size: 0.84em;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        /* ============================================================
+           SECTION BLOCKS
+        ============================================================ */
         .section-block {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 40px;
+            margin-bottom: 48px;
         }
 
         .section-title {
-            font-size: 2em;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 30px;
+            font-size: 0.76em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.09em;
+            color: #64748b;
+            margin-bottom: 14px;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 7px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
         }
 
-        .section-title span {
-            font-size: 1.2em;
+        /* ============================================================
+           ЧТО НОВОГО
+        ============================================================ */
+        .updates-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
         }
 
-        /* Карточки новых вариантов */
+        .update-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 20px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .update-icon {
+            font-size: 1.4em;
+            line-height: 1;
+        }
+
+        .update-title {
+            font-size: 0.9em;
+            font-weight: 700;
+            color: #e2e8f0;
+        }
+
+        .update-desc {
+            font-size: 0.82em;
+            color: #64748b;
+            line-height: 1.52;
+        }
+
+        /* ============================================================
+           ВАРИАНТЫ И НОВОСТИ
+        ============================================================ */
         .new-variant-card {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 25px;
-            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            border-radius: 10px;
+            padding: 13px 18px;
+            margin-bottom: 7px;
             text-decoration: none;
             color: white;
-            transition: 0.3s;
+            transition: border-color 0.18s, background 0.18s, transform 0.15s;
+        }
+
+        .new-variant-card:last-child {
+            margin-bottom: 0;
         }
 
         .new-variant-card:hover {
-            border-color: #818cf8;
-            background: rgba(0, 0, 0, 0.5);
-            transform: translateX(5px);
+            border-color: rgba(129, 140, 248, 0.3);
+            background: rgba(255, 255, 255, 0.065);
+            transform: translateX(3px);
         }
 
         .new-variant-info h3 {
-            font-size: 1.3em;
-            margin-bottom: 5px;
-            color: #fff;
+            font-size: 0.95em;
+            margin-bottom: 3px;
+            color: #e2e8f0;
+            font-weight: 600;
         }
 
         .new-variant-info p {
-            color: #94a3b8;
+            color: #64748b;
+            font-size: 0.82em;
         }
 
         .new-variant-date {
             text-align: right;
-            min-width: 120px;
+            min-width: 110px;
         }
 
         .date-label {
-            font-size: 0.8em;
-            color: #64748b;
+            font-size: 0.74em;
+            color: #475569;
             display: block;
         }
 
         .date-value {
-            font-size: 0.9em;
-            color: #e2e8f0;
-            font-weight: bold;
-        }
-
-        .badge-new {
-            background: rgba(56, 189, 248, 0.2);
-            color: #38bdf8;
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-size: 0.75em;
-            margin-left: 8px;
-            border: 1px solid rgba(56, 189, 248, 0.3);
-        }
-
-        /* Новости */
-        .news-item {
-            background: rgba(255, 255, 255, 0.02);
-            border-left: 3px solid #38bdf8;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-radius: 0 12px 12px 0;
-        }
-
-        .news-item.important {
-            border-left-color: #f87171;
-        }
-
-        .news-date {
-            font-size: 0.85em;
+            font-size: 0.82em;
             color: #64748b;
-            margin-bottom: 5px;
-        }
-
-        .news-title-text {
-            font-size: 1.1em;
-            font-weight: 600;
-            color: #fff;
-            margin-bottom: 8px;
-        }
-
-        .news-description {
-            color: #94a3b8;
-            font-size: 0.95em;
-            line-height: 1.5;
-        }
-
-        /* === Блок с контактами и соцсетями === */
-        .contacts-section {
-            width: 100%;
-            padding: 60px 20px;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: 50px;
-        }
-
-        .contacts-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .contacts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-
-        .contacts-column {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 30px;
-        }
-
-        .contacts-title {
-            color: #fff;
-            font-size: 1.5em;
-            margin-bottom: 25px;
-            font-weight: 600;
-        }
-
-        .contacts-list,
-        .social-links {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .contact-link,
-        .social-link {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 12px 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            text-decoration: none;
-            color: #e0e0e0;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .contact-link:hover,
-        .social-link:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(168, 85, 247, 0.3);
-            transform: translateX(5px);
-            color: #fff;
-        }
-
-        .contact-icon,
-        .social-icon {
-            font-size: 1.5em;
-        }
-
-        .contact-text,
-        .social-text {
-            font-size: 1em;
             font-weight: 500;
         }
 
-        .contacts-phone {
-            text-align: center;
-            padding: 30px;
-            background: rgba(168, 85, 247, 0.1);
-            border-radius: 12px;
-            border: 1px solid rgba(168, 85, 247, 0.2);
+        .badge-new {
+            background: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.67em;
+            margin-left: 7px;
+            border: 1px solid rgba(56, 189, 248, 0.18);
+            font-weight: 600;
+            letter-spacing: 0.04em;
         }
 
-        .phone-number {
-            font-size: 2em;
-            font-weight: bold;
-            color: #a855f7;
-            margin-bottom: 5px;
+        .news-item {
+            padding: 0 0 2px 13px;
+            margin-bottom: 18px;
+            border-left: 2px solid rgba(56, 189, 248, 0.25);
         }
 
-        .phone-text {
-            color: #888;
+        .news-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .news-item.important {
+            border-left-color: rgba(248, 113, 113, 0.38);
+        }
+
+        .news-date {
+            font-size: 0.76em;
+            color: #475569;
+            margin-bottom: 3px;
+        }
+
+        .news-title-text {
             font-size: 0.9em;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 4px;
         }
 
-        /* Адаптивность */
+        .news-description {
+            color: #64748b;
+            font-size: 0.82em;
+            line-height: 1.55;
+        }
+
+        /* ============================================================
+           FOOTER
+        ============================================================ */
+        .site-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.07);
+            padding: 32px 20px 28px;
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 32px;
+            flex-wrap: wrap;
+            padding-bottom: 20px;
+        }
+
+        .footer-brand-block {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .footer-name {
+            font-size: 0.9em;
+            font-weight: 700;
+            color: #64748b;
+        }
+
+        .footer-tagline {
+            font-size: 0.76em;
+            color: #334155;
+            max-width: 180px;
+            line-height: 1.45;
+        }
+
+        .footer-socials {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .footer-socials-label {
+            font-size: 0.68em;
+            font-weight: 600;
+            color: #334155;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .footer-socials-row {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .footer-socials-row a {
+            font-size: 0.84em;
+            color: #475569;
+            text-decoration: none;
+            transition: color 0.18s;
+        }
+
+        .footer-socials-row a:hover {
+            color: #38bdf8;
+        }
+
+        .footer-phone-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .footer-phone-label {
+            font-size: 0.68em;
+            font-weight: 600;
+            color: #334155;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .footer-phone-link {
+            font-size: 0.84em;
+            color: #475569;
+            text-decoration: none;
+            transition: color 0.18s;
+        }
+
+        .footer-phone-link:hover {
+            color: #a855f7;
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 0 auto;
+            font-size: 0.75em;
+            color: #334155;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        /* ============================================================
+           BREAKPOINT 900px
+        ============================================================ */
+        @media (max-width: 900px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .start-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .start-cards .start-card:last-child {
+                grid-column: 1 / -1;
+                max-width: 460px;
+                margin: 0 auto;
+                width: 100%;
+            }
+
+            .updates-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* ============================================================
+           BREAKPOINT 768px — планшет
+        ============================================================ */
         @media (max-width: 768px) {
-            .contacts-grid {
+            /* Dropdown: убираем transform, фиксируем к экрану */
+            .nav-center {
+                position: static;
+                transform: none;
+            }
+
+            .nav-dropdown {
+                position: fixed;
+                top: 62px;
+                left: 10px;
+                right: 10px;
+                transform: none;
+                min-width: 0;
+            }
+
+            .main-wrap {
+                padding: 0 16px 60px;
+            }
+
+            .hero {
+                padding: 48px 0 52px;
+            }
+
+            .hero-title {
+                font-size: 2.2em;
+                letter-spacing: -0.8px;
+            }
+
+            .hero-logo {
+                width: 46px;
+                margin-bottom: 20px;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+                margin-bottom: 52px;
+            }
+
+            .minitask-card,
+            .calculator-card {
+                padding: 24px 22px;
+            }
+
+            .advantages-grid {
                 grid-template-columns: 1fr;
-                gap: 20px;
             }
 
-            .contacts-section {
-                padding: 40px 15px;
+            .footer-inner {
+                flex-direction: column;
+                gap: 24px;
+            }
+        }
+
+        /* ============================================================
+           BREAKPOINT 480px — мобильный
+        ============================================================ */
+        @media (max-width: 480px) {
+            /* Navbar */
+            .navbar-site-title {
+                display: none;
             }
 
-            .phone-number {
+            .nav-btn {
+                padding: 5px 9px;
+                font-size: 0.775em;
+            }
+
+            .nav-dropdown-btn {
+                padding: 5px 10px;
+                font-size: 0.775em;
+            }
+
+            .nav-label-desktop {
+                display: none;
+            }
+
+            .nav-label-mobile {
+                display: inline;
+            }
+
+            /* Hero — компактный */
+            .hero {
+                padding: 24px 0 32px;
+            }
+
+            .hero-logo {
+                width: 38px;
+                margin-bottom: 16px;
+            }
+
+            .hero-title {
+                font-size: 1.65em;
+                letter-spacing: -0.4px;
+                line-height: 1.18;
+            }
+
+            .hero-tagline {
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+
+            .hero-desc {
+                font-size: 0.86em;
+                margin-bottom: 24px;
+            }
+
+            .hero-cta {
+                gap: 8px;
+            }
+
+            .hero-btn {
+                padding: 9px 18px;
+                font-size: 0.875em;
+            }
+
+            /* Прогресс */
+            .progress-section {
+                margin-bottom: 40px;
+            }
+
+            .progress-cards {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .progress-card {
+                padding: 14px 14px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                text-align: left;
+            }
+
+            .progress-num {
+                font-size: 1.55em;
+                margin-bottom: 0;
+            }
+
+            .progress-label {
+                font-size: 0.8em;
+                text-align: right;
+            }
+
+            /* Гостевой блок */
+            .guest-cta-section {
+                margin-bottom: 40px;
+            }
+
+            .guest-cta-card {
+                padding: 24px 16px;
+            }
+
+            .guest-cta-title {
+                font-size: 1.2em;
+            }
+
+            .guest-cta-desc {
+                font-size: 0.87em;
+                margin-bottom: 20px;
+            }
+
+            .guest-cta-buttons {
+                gap: 8px;
+            }
+
+            /* Stats */
+            .stats-row {
+                gap: 8px;
+                margin-bottom: 40px;
+            }
+
+            .stat-card {
+                padding: 14px 10px;
+            }
+
+            .stat-num {
                 font-size: 1.5em;
+                margin-bottom: 4px;
+            }
+
+            .stat-label {
+                font-size: 0.73em;
+            }
+
+            /* Межблочные отступы */
+            .start-section,
+            .minitask-section,
+            .calculator-section,
+            .roadmap-section,
+            .advantages-section {
+                margin-bottom: 48px;
+            }
+
+            .features-section {
+                margin-bottom: 44px;
+            }
+
+            .section-block {
+                margin-bottom: 36px;
+            }
+
+            /* Section heading */
+            .section-heading {
+                margin-bottom: 20px;
+            }
+
+            .section-heading h2 {
+                font-size: 1.35em;
+                letter-spacing: -0.2px;
+            }
+
+            .section-heading p {
+                font-size: 0.87em;
+            }
+
+            /* Start cards */
+            .start-cards {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .start-cards .start-card:last-child {
+                grid-column: auto;
+                max-width: none;
+            }
+
+            .start-card {
+                padding: 18px 16px;
+                gap: 10px;
+            }
+
+            /* Мини-задача */
+            .minitask-card {
+                padding: 18px 16px;
+            }
+
+            .minitask-options {
+                grid-template-columns: 1fr;
+                gap: 8px;
+                margin-bottom: 16px;
+            }
+
+            .minitask-option {
+                padding: 10px 12px;
+            }
+
+            /* Калькулятор */
+            .calculator-card {
+                padding: 18px 16px;
+            }
+
+            .calc-question {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+                padding: 12px 0;
+            }
+
+            .calc-q-text {
+                font-size: 0.87em;
+            }
+
+            .calc-questions {
+                margin-bottom: 18px;
+            }
+
+            /* Roadmap */
+            .roadmap {
+                max-width: 100%;
+            }
+
+            .roadmap-circle {
+                width: 36px;
+                height: 36px;
+                font-size: 0.9em;
+            }
+
+            .roadmap-content {
+                padding-bottom: 20px;
+            }
+
+            /* Advantages */
+            .advantages-grid {
+                gap: 8px;
+            }
+
+            .advantage-card {
+                padding: 16px 14px;
+            }
+
+            /* Features */
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .feature-card {
+                padding: 16px 14px;
+            }
+
+            /* Updates */
+            .updates-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .update-card {
+                padding: 14px 14px;
+            }
+
+            /* Variants date */
+            .new-variant-date {
+                display: none;
+            }
+
+            /* Footer */
+            .footer-socials-row {
+                gap: 10px;
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <!-- Кнопки действий -->
-        <div class="user-actions">
-            {% if session.get('user_id') %}
-            <a href="/profile" class="action-link">👤 Профиль</a>
-            <form method="POST" action="{{ url_for('logout') }}" style="display:contents">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button type="submit" class="action-link logout" style="font:inherit;cursor:pointer">🚪 Выйти</button>
-            </form>
-            {% else %}
-            <a href="/login" class="action-link">🔐 Войти</a>
-            <a href="/register" class="action-link">📝 Регистрация</a>
-            {% endif %}
-        </div>
 
-        <!-- Заголовок -->
-        <div class="header-section">
-            <!-- Обертка для логотипа и текста -->
-            <div class="logo-container">
-                <img src="{{ url_for('static', filename='favicon.png') }}" alt="Логотип" class="main-logo">
-                <h1 class="main-title">ЕГЭволюция</h1>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="navbar-inner">
+
+            <!-- Левая часть: логотип -->
+            <a href="/" class="navbar-brand">
+                <img src="{{ url_for('static', filename='favicon.png') }}" alt="Логотип" class="navbar-logo">
+                <span class="navbar-site-title">ЕГЭволюция</span>
+            </a>
+
+            <!-- Центральная часть: навигационное меню -->
+            <div class="nav-center">
+                <div class="nav-dropdown-wrap" id="navDropdownWrap">
+                    <button class="nav-dropdown-btn" id="navDropdownBtn" type="button" onclick="toggleNavDropdown()">
+                        <span class="nav-label-desktop">Разделы</span>
+                        <span class="nav-label-mobile">Меню</span>
+                        <span class="nav-dropdown-chevron">▾</span>
+                    </button>
+                    <div class="nav-dropdown" id="navDropdown">
+                        <a href="/preparation" class="nav-dropdown-item">🚀 Начальная подготовка</a>
+                        <a href="/theory" class="nav-dropdown-item">📚 Теория по заданиям</a>
+                        <a href="/variants" class="nav-dropdown-item">📝 Решать варианты</a>
+                        <a href="/stats" class="nav-dropdown-item">📊 Статистика</a>
+                        <a href="/tasks" class="nav-dropdown-item">🎯 База заданий</a>
+                    </div>
+                </div>
             </div>
-            <p class="subtitle">Платформа для подготовки к экзамену по информатике</p>
+
+            <!-- Правая часть: авторизация -->
+            <div class="navbar-auth">
+                {% if session.get('user_id') %}
+                <a href="/profile" class="nav-btn">👤 Профиль</a>
+                <form method="POST" action="{{ url_for('logout') }}" style="display:contents">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="nav-btn nav-btn-logout" style="font:inherit;cursor:pointer">🚪 Выйти</button>
+                </form>
+                {% else %}
+                <a href="/login" class="nav-btn">🔐 Войти</a>
+                <a href="/register" class="nav-btn nav-btn-primary">📝 Регистрация</a>
+                {% endif %}
+            </div>
+
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-wrap">
+
+        <!-- HERO -->
+        <section class="hero">
+            <img src="{{ url_for('static', filename='favicon.png') }}" alt="Логотип" class="hero-logo">
+            <h1 class="hero-title">Подготовка к ЕГЭ<br>по информатике</h1>
+            <p class="hero-tagline">от первых уроков до высоких баллов</p>
+            <p class="hero-desc">Теория, практика, варианты и отслеживание прогресса в одном месте</p>
+            <div class="hero-cta">
+                <a href="/preparation" class="hero-btn hero-btn-primary">Начать подготовку</a>
+                <a href="/variants" class="hero-btn hero-btn-secondary">Решить вариант</a>
+            </div>
+        </section>
+
+        <!-- ПРОГРЕСС — только для авторизованных -->
+        {% if session.get('user_id') %}
+        <section class="progress-section">
+            <div class="progress-header">
+                <span class="progress-header-title">📈 Ваш прогресс</span>
+                <a href="/stats" class="progress-more-link">Подробная статистика →</a>
+            </div>
+            <div class="progress-cards">
+                <div class="progress-card">
+                    <div class="progress-num">145</div>
+                    <div class="progress-label">Решено задач</div>
+                </div>
+                <div class="progress-card">
+                    <div class="progress-num">9 / 27</div>
+                    <div class="progress-label">Изучено тем</div>
+                </div>
+                <div class="progress-card">
+                    <div class="progress-num">90</div>
+                    <div class="progress-label">Лучший результат, баллов</div>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- ГОСТЕВОЙ БЛОК — только для неавторизованных -->
+        {% if not session.get('user_id') %}
+        <section class="guest-cta-section">
+            <div class="guest-cta-card">
+                <h2 class="guest-cta-title">Начните подготовку уже сегодня</h2>
+                <p class="guest-cta-desc">Создайте аккаунт и отслеживайте результаты, прогресс и историю решений.</p>
+                <div class="guest-cta-buttons">
+                    <a href="/register" class="hero-btn hero-btn-primary">Регистрация</a>
+                    <a href="/login" class="hero-btn hero-btn-secondary">Войти</a>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- СТАТИСТИКА ПЛАТФОРМЫ -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-num">1200+</div>
+                <div class="stat-label">задач</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">27</div>
+                <div class="stat-label">номеров ЕГЭ</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">14</div>
+                <div class="stat-label">вариантов</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">90+</div>
+                <div class="stat-label">баллов</div>
+            </div>
         </div>
 
-        <!-- Сетка меню -->
-        <div class="menu-grid">
-            <a href="/preparation" class="menu-card">
-                <span class="icon">🚀</span>
-                <h2>Начальная подготовка</h2>
-                <p>Базовые уроки и разбор тем</p>
-            </a>
-            <a href="/theory" class="menu-card">
-                <span class="icon">📚</span>
-                <h2>Изучить теорию</h2>
-                <p>Справочные материалы</p>
-            </a>
-            <a href="/variants" class="menu-card">
-                <span class="icon">📝</span>
-                <h2>Решать задания</h2>
-                <p>Практика с проверкой</p>
-            </a>
-            <a href="/stats" class="menu-card">
-                <span class="icon">📊</span>
-                <h2>Статистика</h2>
-                <p>Прогресс и история</p>
-            </a>
-            <a href="/tasks" class="menu-card">
-                <span class="icon">📚</span>
-                <h2>База заданий</h2>
-                <p>Задачи по каждому номеру</p>
-            </a>
+        <!-- С ЧЕГО НАЧАТЬ -->
+        <section class="start-section">
+            <div class="section-heading">
+                <h2>С чего начать подготовку?</h2>
+                <p>Выберите свой уровень и начните обучение по подходящему маршруту.</p>
+            </div>
+            <div class="start-cards">
+                <div class="start-card">
+                    <span class="start-card-level start-card-level-1">Уровень 1</span>
+                    <div class="start-card-title">Начинаю с нуля</div>
+                    <div class="start-card-desc">Для тех, кто ещё не изучал информатику или хочет пройти базу заново.</div>
+                    <a href="/preparation" class="start-card-btn start-card-btn-1">Перейти</a>
+                </div>
+                <div class="start-card">
+                    <span class="start-card-level start-card-level-2">Уровень 2</span>
+                    <div class="start-card-title">Уже знаю основы</div>
+                    <div class="start-card-desc">Изучайте отдельные темы и закрывайте пробелы в знаниях.</div>
+                    <a href="/theory" class="start-card-btn start-card-btn-2">Изучать теорию</a>
+                </div>
+                <div class="start-card">
+                    <span class="start-card-level start-card-level-3">Уровень 3</span>
+                    <div class="start-card-title">Готов решать варианты</div>
+                    <div class="start-card-desc">Переходите сразу к полноценным вариантам ЕГЭ и отслеживайте результаты.</div>
+                    <a href="/variants" class="start-card-btn start-card-btn-3">Решать варианты</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- МИНИ-ЗАДАЧА -->
+        <section class="minitask-section">
+            <div class="section-heading">
+                <h2>Попробуйте задачу прямо сейчас</h2>
+                <p>Так выглядит проверка знаний на платформе.</p>
+            </div>
+            <div class="minitask-card">
+                <div class="minitask-question">Сколько бит требуется для кодирования 256 различных символов?</div>
+                <div class="minitask-options" id="minitask-options">
+                    <label class="minitask-option">
+                        <input type="radio" name="minitask" value="6">
+                        <span class="minitask-option-label">6</span>
+                    </label>
+                    <label class="minitask-option">
+                        <input type="radio" name="minitask" value="7">
+                        <span class="minitask-option-label">7</span>
+                    </label>
+                    <label class="minitask-option">
+                        <input type="radio" name="minitask" value="8">
+                        <span class="minitask-option-label">8</span>
+                    </label>
+                    <label class="minitask-option">
+                        <input type="radio" name="minitask" value="9">
+                        <span class="minitask-option-label">9</span>
+                    </label>
+                </div>
+                <button class="minitask-check-btn" onclick="checkMiniTask()">Проверить</button>
+                <div class="minitask-result" id="minitask-result"></div>
+            </div>
+        </section>
+
+        <!-- КАЛЬКУЛЯТОР ГОТОВНОСТИ -->
+        <section class="calculator-section">
+            <div class="section-heading">
+                <h2>Оцените свою готовность</h2>
+            </div>
+            <div class="calculator-card">
+                <div class="calc-questions">
+                    <div class="calc-question">
+                        <span class="calc-q-text">Изучили ли вы всю теорию?</span>
+                        <div class="calc-options">
+                            <label class="calc-option"><input type="radio" name="cq1" value="1">Да</label>
+                            <label class="calc-option"><input type="radio" name="cq1" value="0">Нет</label>
+                        </div>
+                    </div>
+                    <div class="calc-question">
+                        <span class="calc-q-text">Решали ли вы полные варианты?</span>
+                        <div class="calc-options">
+                            <label class="calc-option"><input type="radio" name="cq2" value="1">Да</label>
+                            <label class="calc-option"><input type="radio" name="cq2" value="0">Нет</label>
+                        </div>
+                    </div>
+                    <div class="calc-question">
+                        <span class="calc-q-text">Решаете ли задания без подсказок?</span>
+                        <div class="calc-options">
+                            <label class="calc-option"><input type="radio" name="cq3" value="1">Да</label>
+                            <label class="calc-option"><input type="radio" name="cq3" value="0">Нет</label>
+                        </div>
+                    </div>
+                </div>
+                <button class="calc-btn" onclick="checkReadiness()">Показать результат</button>
+                <div class="calc-result" id="calc-result"></div>
+            </div>
+        </section>
+
+        <!-- МАРШРУТ ПОДГОТОВКИ -->
+        <section class="roadmap-section">
+            <div class="section-heading">
+                <h2>Маршрут подготовки к ЕГЭ</h2>
+            </div>
+            <div class="roadmap">
+                <div class="roadmap-step">
+                    <div class="roadmap-indicator">
+                        <div class="roadmap-circle">①</div>
+                        <div class="roadmap-connector"></div>
+                    </div>
+                    <div class="roadmap-content">
+                        <div class="roadmap-step-title">Начальная подготовка</div>
+                        <div class="roadmap-step-desc">Базовые понятия, алгоритмы и первые шаги в информатике</div>
+                    </div>
+                </div>
+                <div class="roadmap-step">
+                    <div class="roadmap-indicator">
+                        <div class="roadmap-circle">②</div>
+                        <div class="roadmap-connector"></div>
+                    </div>
+                    <div class="roadmap-content">
+                        <div class="roadmap-step-title">Теория</div>
+                        <div class="roadmap-step-desc">Изучение тем по каждому из 27 номеров ЕГЭ</div>
+                    </div>
+                </div>
+                <div class="roadmap-step">
+                    <div class="roadmap-indicator">
+                        <div class="roadmap-circle">③</div>
+                        <div class="roadmap-connector"></div>
+                    </div>
+                    <div class="roadmap-content">
+                        <div class="roadmap-step-title">Практика по номерам</div>
+                        <div class="roadmap-step-desc">Отработка задач из базы по каждому заданию отдельно</div>
+                    </div>
+                </div>
+                <div class="roadmap-step">
+                    <div class="roadmap-indicator">
+                        <div class="roadmap-circle">④</div>
+                        <div class="roadmap-connector"></div>
+                    </div>
+                    <div class="roadmap-content">
+                        <div class="roadmap-step-title">Полные варианты</div>
+                        <div class="roadmap-step-desc">Тренировочные варианты в режиме обучения с разбором ошибок</div>
+                    </div>
+                </div>
+                <div class="roadmap-step">
+                    <div class="roadmap-indicator">
+                        <div class="roadmap-circle roadmap-circle-goal">⑤</div>
+                        <div class="roadmap-connector"></div>
+                    </div>
+                    <div class="roadmap-content">
+                        <div class="roadmap-step-title">Экзамен</div>
+                        <div class="roadmap-step-desc">Симуляция реального ЕГЭ — таймер, без подсказок, итоговый балл</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ПРЕИМУЩЕСТВА -->
+        <section class="advantages-section">
+            <div class="section-heading">
+                <h2>Почему выбирают ЕГЭволюцию</h2>
+            </div>
+            <div class="advantages-grid">
+                <div class="advantage-card">
+                    <div class="advantage-card-title">📘 Все темы ЕГЭ</div>
+                    <div class="advantage-card-desc">27 номеров и полный теоретический материал по каждому заданию.</div>
+                </div>
+                <div class="advantage-card">
+                    <div class="advantage-card-title">🔄 Практика без ограничений</div>
+                    <div class="advantage-card-desc">Решайте задачи столько раз, сколько нужно — прогресс сохраняется.</div>
+                </div>
+                <div class="advantage-card">
+                    <div class="advantage-card-title">📊 Отслеживание прогресса</div>
+                    <div class="advantage-card-desc">Сохраняйте результаты, анализируйте ошибки и смотрите статистику.</div>
+                </div>
+                <div class="advantage-card">
+                    <div class="advantage-card-title">🚀 Подготовка с нуля</div>
+                    <div class="advantage-card-desc">От первых уроков до полноценных экзаменационных вариантов.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ВОЗМОЖНОСТИ ПЛАТФОРМЫ -->
+        <section class="features-section">
+            <h2 class="features-heading">Что есть на платформе</h2>
+            <div class="features-grid">
+                <a href="/theory" class="feature-card">
+                    <span class="feature-icon">📚</span>
+                    <div class="feature-title">Теория</div>
+                    <div class="feature-desc">Изучение всех тем ЕГЭ по информатике</div>
+                </a>
+                <a href="/variants" class="feature-card">
+                    <span class="feature-icon">📝</span>
+                    <div class="feature-title">Варианты</div>
+                    <div class="feature-desc">Полноценные тренировочные варианты с проверкой</div>
+                </a>
+                <a href="/tasks" class="feature-card">
+                    <span class="feature-icon">🎯</span>
+                    <div class="feature-title">База заданий</div>
+                    <div class="feature-desc">Практика по каждому номеру ЕГЭ отдельно</div>
+                </a>
+                <a href="/preparation" class="feature-card">
+                    <span class="feature-icon">🚀</span>
+                    <div class="feature-title">Начальная подготовка</div>
+                    <div class="feature-desc">Базовые уроки и изучение тем с нуля</div>
+                </a>
+                <a href="/stats" class="feature-card">
+                    <span class="feature-icon">📊</span>
+                    <div class="feature-title">Статистика</div>
+                    <div class="feature-desc">Отслеживание прогресса и истории решений</div>
+                </a>
+            </div>
+        </section>
+
+        <!-- ЧТО НОВОГО НА ПЛАТФОРМЕ -->
+        <div class="section-block">
+            <h2 class="section-title">✨ Что нового на платформе</h2>
+            <div class="updates-grid">
+                <div class="update-card">
+                    <div class="update-icon">🛠️</div>
+                    <div class="update-title">Новый редактор задач</div>
+                    <div class="update-desc">Поддержка изображений и прикреплённых файлов в задачах.</div>
+                </div>
+                <div class="update-card">
+                    <div class="update-icon">📖</div>
+                    <div class="update-title">Подготовка с нуля</div>
+                    <div class="update-desc">Добавлены первые уроки начальной подготовки по информатике.</div>
+                </div>
+                <div class="update-card">
+                    <div class="update-icon">🔒</div>
+                    <div class="update-title">Безопасность платформы</div>
+                    <div class="update-desc">Завершён полный аудит безопасности — данные пользователей защищены.</div>
+                </div>
+            </div>
         </div>
 
-        <!-- Новые варианты -->
+        <!-- НОВЫЕ ВАРИАНТЫ -->
         <div class="section-block">
             <h2 class="section-title">🔥 Новые варианты</h2>
             <div class="new-variants-list">
@@ -523,80 +1982,168 @@
             </div>
         </div>
 
-        <!-- Новости -->
+        <!-- НОВОСТИ -->
         <div class="section-block">
             <h2 class="section-title">📰 Новости</h2>
             <div class="news-feed">
                 <div class="news-item important">
                     <div class="news-date">20 мая 2026</div>
                     <div class="news-title-text">Добавлена статистика решений</div>
-                    <div class="news-description">Теперь вы можете отслеживать свой прогресс в разделе "Моя статистика".
-                    </div>
+                    <div class="news-description">Теперь вы можете отслеживать свой прогресс в разделе "Моя статистика".</div>
                 </div>
                 <div class="news-item">
                     <div class="news-date">18 мая 2026</div>
                     <div class="news-title-text">Добавлены новые варианты 3-5</div>
-                    <div class="news-description">В разделе выбора вариантов появились три новых тренировочных варианта.
-                    </div>
+                    <div class="news-description">В разделе выбора вариантов появились три новых тренировочных варианта.</div>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- Разделительная линия -->
-    <div class="divider"></div>
 
-    <!-- Блок с контактами и соцсетями -->
-    <div class="contacts-section">
-        <div class="container contacts-container">
-            <div class="contacts-grid">
-                <!-- Левая колонка - Контакты -->
-                <div class="contacts-column">
-                    <h3 class="contacts-title">📞 Связаться </h3>
-                    <div class="contacts-list">
-                        <a href="https://t.me/Tyomkinss" target="_blank" class="contact-link">
-                            <span class="contact-icon">✈️</span>
-                            <span class="contact-text">Telegram</span>
-                        </a>
-                        <a href="https://max.ru/u/f9LHodD0cOIojiO0gNWRLNP_as6P10M9ij53KQDQmY0CRLnpzpAaW07gVTg"
-                            target="_blank" class="contact-link">
-                            <span class="contact-icon">💬</span>
-                            <span class="contact-text">MAX</span>
-                        </a>
-                        <a href="https://vk.com/tyomik.fedoseev" target="_blank" class="contact-link">
-                            <span class="contact-icon">📱</span>
-                            <span class="contact-text">ВКонтакте</span>
-                        </a>
-                    </div>
-                </div>
+    </div><!-- /.main-wrap -->
 
-                <!-- Правая колонка - Социальные сети -->
-                <div class="contacts-column">
-                    <h3 class="contacts-title">📱 Соцсети</h3>
-                    <div class="social-links">
-                        <a href="https://www.tiktok.com/@top_gg012?_r=1&_t=ZS-96vdB0LxIbU" target="_blank"
-                            class="social-link">
-                            <span class="social-icon">🎵</span>
-                            <span class="social-text">TikTok</span>
-                        </a>
-                        <a href="https://instagram.com/tyoma_lch" target="_blank" class="social-link">
-                            <span class="social-icon">📷</span>
-                            <span class="social-text">Instagram</span>
-                        </a>
-                        <a href="https://t.me/+OyPoOPO3uc9lMjE6" target="_blank" class="social-link">
-                            <span class="social-icon">✈️</span>
-                            <span class="social-text">Telegram канал</span>
-                        </a>
-                    </div>
+    <!-- FOOTER -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+
+            <div class="footer-brand-block">
+                <span class="footer-name">ЕГЭволюция</span>
+                <span class="footer-tagline">Подготовка к ЕГЭ по информатике</span>
+            </div>
+
+            <div class="footer-socials">
+                <span class="footer-socials-label">Соцсети и контакты</span>
+                <div class="footer-socials-row">
+                    <a href="https://t.me/Tyomkinss" target="_blank">Telegram</a>
+                    <a href="https://vk.com/tyomik.fedoseev" target="_blank">VK</a>
+                    <a href="https://max.ru/u/f9LHodD0cOIojiO0gNWRLNP_as6P10M9ij53KQDQmY0CRLnpzpAaW07gVTg" target="_blank">MAX</a>
+                    <a href="https://www.tiktok.com/@top_gg012?_r=1&_t=ZS-96vdB0LxIbU" target="_blank">TikTok</a>
+                    <a href="https://instagram.com/tyoma_lch" target="_blank">Instagram</a>
+                    <a href="https://t.me/+OyPoOPO3uc9lMjE6" target="_blank">Telegram-канал</a>
                 </div>
             </div>
 
-            <!-- Нижняя часть с телефоном -->
-            <div class="contacts-phone">
-                <div class="phone-number">📞 8 960 836-58-37</div>
-                <div class="phone-number">📱 8 996 363-68-84</div>
+            <div class="footer-phone-group">
+                <span class="footer-phone-label">Телефоны</span>
+                <a href="tel:89608365837" class="footer-phone-link">📞 8 960 836-58-37</a>
+                <a href="tel:89963636884" class="footer-phone-link">📱 8 996 363-68-84</a>
             </div>
+
         </div>
-    </div>
+        <div class="footer-bottom">© 2026 ЕГЭволюция</div>
+    </footer>
+
+    <script>
+        /* ================================================================
+           NAVBAR DROPDOWN
+        ================================================================ */
+        function toggleNavDropdown() {
+            var dd = document.getElementById('navDropdown');
+            var btn = document.getElementById('navDropdownBtn');
+            if (dd.classList.contains('open')) {
+                dd.classList.remove('open');
+                btn.classList.remove('active');
+            } else {
+                dd.classList.add('open');
+                btn.classList.add('active');
+            }
+        }
+
+        /* Закрыть при клике вне */
+        document.addEventListener('click', function(e) {
+            var wrap = document.getElementById('navDropdownWrap');
+            var dd   = document.getElementById('navDropdown');
+            var btn  = document.getElementById('navDropdownBtn');
+            if (wrap && !wrap.contains(e.target)) {
+                dd.classList.remove('open');
+                btn.classList.remove('active');
+            }
+        });
+
+        /* Закрыть при клике на пункт меню */
+        document.querySelectorAll('.nav-dropdown-item').forEach(function(item) {
+            item.addEventListener('click', function() {
+                document.getElementById('navDropdown').classList.remove('open');
+                document.getElementById('navDropdownBtn').classList.remove('active');
+            });
+        });
+
+        /* ================================================================
+           МИНИ-ЗАДАЧА
+        ================================================================ */
+        document.querySelectorAll('.minitask-option').forEach(function(label) {
+            label.addEventListener('click', function() {
+                document.querySelectorAll('.minitask-option').forEach(function(o) {
+                    o.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+
+        function checkMiniTask() {
+            var selected = document.querySelector('input[name="minitask"]:checked');
+            var resultEl = document.getElementById('minitask-result');
+
+            if (!selected) {
+                resultEl.style.display = 'block';
+                resultEl.className = 'minitask-result no-answer';
+                resultEl.textContent = 'Выберите один из вариантов ответа.';
+                return;
+            }
+
+            resultEl.style.display = 'block';
+
+            if (selected.value === '8') {
+                resultEl.className = 'minitask-result correct';
+                resultEl.innerHTML = 'Верно ✅&nbsp;&nbsp;256 = 2<sup>8</sup>, значит нужно 8 бит.';
+            } else {
+                resultEl.className = 'minitask-result incorrect';
+                resultEl.innerHTML = 'Неверно ❌&nbsp;&nbsp;Правильный ответ: 8 (256 = 2<sup>8</sup>).';
+            }
+        }
+
+        /* ================================================================
+           КАЛЬКУЛЯТОР ГОТОВНОСТИ
+        ================================================================ */
+        document.querySelectorAll('.calc-option').forEach(function(label) {
+            label.addEventListener('click', function() {
+                var radio = this.querySelector('input[type="radio"]');
+                if (!radio) return;
+                document.querySelectorAll('input[name="' + radio.name + '"]').forEach(function(inp) {
+                    inp.closest('.calc-option').classList.remove('calc-selected');
+                });
+                this.classList.add('calc-selected');
+            });
+        });
+
+        function checkReadiness() {
+            var q1 = document.querySelector('input[name="cq1"]:checked');
+            var q2 = document.querySelector('input[name="cq2"]:checked');
+            var q3 = document.querySelector('input[name="cq3"]:checked');
+            var resultEl = document.getElementById('calc-result');
+
+            if (!q1 || !q2 || !q3) {
+                resultEl.style.display = 'block';
+                resultEl.className = 'calc-result calc-result-warn';
+                resultEl.textContent = 'Ответьте на все три вопроса.';
+                return;
+            }
+
+            var yesCount = Number(q1.value) + Number(q2.value) + Number(q3.value);
+            resultEl.style.display = 'block';
+
+            if (yesCount <= 1) {
+                resultEl.className = 'calc-result calc-result-low';
+                resultEl.innerHTML = '<strong>Начальный уровень</strong><br>Начните с базовых уроков и теории — у вас ещё есть время наверстать.';
+            } else if (yesCount === 2) {
+                resultEl.className = 'calc-result calc-result-mid';
+                resultEl.innerHTML = '<strong>Средний уровень</strong><br>Хорошая база! Продолжайте практику и решайте больше полных вариантов.';
+            } else {
+                resultEl.className = 'calc-result calc-result-high';
+                resultEl.innerHTML = '<strong>Высокая готовность</strong><br>Отлично! Вы готовы к экзамену. Продолжайте поддерживать форму.';
+            }
+        }
+    </script>
+
 </body>
 
 </html>
