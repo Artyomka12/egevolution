@@ -214,39 +214,51 @@
            HERO
         ============================================================ */
         .hero {
-            text-align: center;
-            padding: 80px 0 72px;
+            padding: 64px 0 60px;
             position: relative;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
         }
 
         .hero::before {
             content: '';
             position: absolute;
             top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 800px;
-            height: 380px;
-            background: radial-gradient(ellipse at center top,
+            right: 0;
+            width: 58%;
+            height: 100%;
+            background: radial-gradient(ellipse at right center,
                 rgba(56, 189, 248, 0.07) 0%,
-                rgba(129, 140, 248, 0.04) 40%,
+                rgba(129, 140, 248, 0.04) 45%,
                 transparent 70%);
             pointer-events: none;
         }
 
-        .hero > * {
+        .hero-left {
             position: relative;
+            z-index: 1;
+        }
+
+        .hero-right {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
         }
 
         .hero-logo {
-            width: 60px;
+            width: 52px;
             height: auto;
-            filter: drop-shadow(0 2px 16px rgba(56, 189, 248, 0.35));
-            margin-bottom: 26px;
+            display: block;
+            filter: drop-shadow(0 2px 12px rgba(56, 189, 248, 0.25));
+            margin-bottom: 22px;
         }
 
         .hero-title {
-            font-size: 3.1em;
+            font-size: 2.8em;
             font-weight: 800;
             background: linear-gradient(135deg, #38bdf8 0%, #818cf8 55%);
             -webkit-background-clip: text;
@@ -257,7 +269,7 @@
         }
 
         .hero-tagline {
-            font-size: 1.15em;
+            font-size: 1.05em;
             color: #94a3b8;
             font-weight: 400;
             margin-bottom: 10px;
@@ -266,15 +278,14 @@
         .hero-desc {
             font-size: 0.95em;
             color: #64748b;
-            max-width: 460px;
-            margin: 0 auto 40px;
+            max-width: 420px;
+            margin-bottom: 36px;
             line-height: 1.65;
         }
 
         .hero-cta {
             display: flex;
             gap: 12px;
-            justify-content: center;
             flex-wrap: wrap;
         }
 
@@ -310,6 +321,187 @@
             background: rgba(255, 255, 255, 0.06);
             border-color: rgba(255, 255, 255, 0.25);
             color: #e2e8f0;
+        }
+
+        /* ============================================================
+           HERO MOCKUP — правая колонка
+        ============================================================ */
+        .hero-mockup {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.11);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .mockup-topbar {
+            background: rgba(0, 0, 0, 0.22);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mockup-dots {
+            display: flex;
+            gap: 5px;
+            flex-shrink: 0;
+        }
+
+        .mockup-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .mockup-dot:first-child  { background: rgba(248, 113, 113, 0.5); }
+        .mockup-dot:nth-child(2) { background: rgba(250, 204,  21, 0.4); }
+        .mockup-dot:nth-child(3) { background: rgba( 74, 222, 128, 0.4); }
+
+        .mockup-bar-label {
+            flex: 1;
+            font-size: 0.8em;
+            font-weight: 600;
+            color: #64748b;
+            text-align: center;
+        }
+
+        .mockup-bar-timer {
+            font-size: 0.78em;
+            color: #94a3b8;
+            font-weight: 500;
+            font-variant-numeric: tabular-nums;
+            flex-shrink: 0;
+        }
+
+        .mockup-body {
+            padding: 20px 20px 16px;
+        }
+
+        .mockup-task-num {
+            font-size: 0.74em;
+            font-weight: 700;
+            color: #38bdf8;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .mockup-task-of {
+            color: #475569;
+            font-weight: 500;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .mockup-task-q {
+            font-size: 0.87em;
+            color: #cbd5e1;
+            line-height: 1.52;
+            margin-bottom: 14px;
+        }
+
+        .mockup-choices {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .mockup-choice {
+            padding: 7px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            font-size: 0.82em;
+            color: #64748b;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .mockup-choice-correct {
+            border-color: rgba(74, 222, 128, 0.38);
+            background: rgba(74, 222, 128, 0.08);
+            color: #86efac;
+            font-weight: 600;
+        }
+
+        .mockup-result-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 10px;
+            background: rgba(74, 222, 128, 0.05);
+            border-radius: 7px;
+            border-left: 2px solid rgba(74, 222, 128, 0.35);
+        }
+
+        .mockup-result-correct {
+            font-size: 0.8em;
+            font-weight: 700;
+            color: #4ade80;
+            flex-shrink: 0;
+        }
+
+        .mockup-result-explain {
+            font-size: 0.78em;
+            color: #64748b;
+        }
+
+        .mockup-progress-wrap {
+            padding: 10px 20px 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .mockup-progress-track {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .mockup-progress-fill {
+            height: 100%;
+            width: 4%;
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+            border-radius: 2px;
+        }
+
+        .mockup-progress-label {
+            font-size: 0.72em;
+            color: #475569;
+            font-weight: 500;
+        }
+
+        /* Мини-статистика под mockup */
+        .hero-mini-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .hero-mini-stat {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            border-radius: 11px;
+            padding: 14px 12px;
+            text-align: center;
+        }
+
+        .hero-mini-stat-num {
+            display: block;
+            font-size: 1.2em;
+            font-weight: 800;
+            color: #e2e8f0;
+            letter-spacing: -0.3px;
+            margin-bottom: 3px;
+        }
+
+        .hero-mini-stat-label {
+            display: block;
+            font-size: 0.74em;
+            color: #64748b;
+            font-weight: 500;
         }
 
         /* ============================================================
@@ -419,18 +611,23 @@
            STATS
         ============================================================ */
         .stats-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
+            display: flex;
+            align-items: center;
             margin-bottom: 72px;
+            padding: 20px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         }
 
         .stat-card {
-            background: rgba(255, 255, 255, 0.055);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 24px 14px;
+            flex: 1;
             text-align: center;
+            padding: 4px 16px;
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .stat-card:last-child {
+            border-right: none;
         }
 
         .stat-num {
@@ -474,10 +671,21 @@
             line-height: 1.6;
         }
 
-        .start-cards {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
+        .start-flow {
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+        }
+
+        .start-arrow {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            flex-shrink: 0;
+            width: 40px;
+            padding-top: 36px;
+            color: #334155;
+            font-size: 1.1em;
         }
 
         .start-card {
@@ -555,9 +763,36 @@
             border: 1px solid rgba(74, 222, 128, 0.2);
         }
 
+        .start-card-1 { border-left: 3px solid rgba(56, 189, 248, 0.5); }
+        .start-card-2 { border-left: 3px solid rgba(129, 140, 248, 0.5); }
+        .start-card-3 { border-left: 3px solid rgba(74, 222, 128, 0.5); }
+
         /* ============================================================
            МИНИ-ЗАДАЧА
         ============================================================ */
+        .section-tag {
+            display: inline-block;
+            font-size: 0.74em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+        }
+
+        .section-tag-blue {
+            background: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.22);
+        }
+
+        .section-tag-purple {
+            background: rgba(129, 140, 248, 0.1);
+            color: #818cf8;
+            border: 1px solid rgba(129, 140, 248, 0.22);
+        }
+
         .minitask-section {
             margin-bottom: 72px;
         }
@@ -565,8 +800,8 @@
         .minitask-card {
             max-width: 580px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(56, 189, 248, 0.04);
+            border: 1px solid rgba(56, 189, 248, 0.16);
             border-radius: 16px;
             padding: 32px 36px;
         }
@@ -679,8 +914,8 @@
         .calculator-card {
             max-width: 580px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(129, 140, 248, 0.04);
+            border: 1px solid rgba(129, 140, 248, 0.16);
             border-radius: 16px;
             padding: 32px 36px;
         }
@@ -740,9 +975,9 @@
         }
 
         .calc-option.calc-selected {
-            border-color: rgba(56, 189, 248, 0.44);
-            background: rgba(56, 189, 248, 0.09);
-            color: #38bdf8;
+            border-color: rgba(129, 140, 248, 0.44);
+            background: rgba(129, 140, 248, 0.09);
+            color: #818cf8;
         }
 
         .calc-option input[type="radio"] {
@@ -753,7 +988,7 @@
             display: block;
             width: 100%;
             padding: 12px;
-            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            background: linear-gradient(135deg, #6366f1, #a855f7);
             color: #fff;
             border: none;
             border-radius: 10px;
@@ -889,34 +1124,56 @@
             margin-bottom: 72px;
         }
 
-        .advantages-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 14px;
-        }
-
-        .advantage-card {
-            background: rgba(255, 255, 255, 0.05);
+        .advantages-panel {
             border: 1px solid rgba(255, 255, 255, 0.09);
-            border-radius: 13px;
-            padding: 26px 24px;
-            transition: background 0.18s, border-color 0.18s;
+            border-radius: 16px;
+            overflow: hidden;
         }
 
-        .advantage-card:hover {
-            background: rgba(255, 255, 255, 0.075);
-            border-color: rgba(255, 255, 255, 0.14);
+        .advantages-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
         }
 
-        .advantage-card-title {
-            font-size: 0.975em;
+        .advantage-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 24px 26px;
+            border-right: 1px solid rgba(255, 255, 255, 0.07);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+            transition: background 0.18s;
+        }
+
+        .advantage-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .advantage-item:nth-child(2n) {
+            border-right: none;
+        }
+
+        .advantage-item:nth-child(3),
+        .advantage-item:nth-child(4) {
+            border-bottom: none;
+        }
+
+        .advantage-item-icon {
+            font-size: 1.4em;
+            line-height: 1;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .advantage-item-title {
+            font-size: 0.95em;
             font-weight: 700;
             color: #e2e8f0;
-            margin-bottom: 9px;
+            margin-bottom: 5px;
         }
 
-        .advantage-card-desc {
-            font-size: 0.85em;
+        .advantage-item-desc {
+            font-size: 0.84em;
             color: #64748b;
             line-height: 1.58;
         }
@@ -1247,19 +1504,49 @@
            BREAKPOINT 900px
         ============================================================ */
         @media (max-width: 900px) {
+            /* Hero: коллапс в одну колонку */
+            .hero {
+                grid-template-columns: 1fr;
+                gap: 0;
+                padding: 56px 0 52px;
+            }
+
+            .hero-left {
+                text-align: center;
+            }
+
+            .hero-logo {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hero-desc {
+                max-width: 460px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hero-cta {
+                justify-content: center;
+            }
+
+            .hero-right {
+                display: none;
+            }
+
             .features-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            .start-cards {
-                grid-template-columns: repeat(2, 1fr);
+            .start-flow {
+                flex-direction: column;
             }
 
-            .start-cards .start-card:last-child {
-                grid-column: 1 / -1;
-                max-width: 460px;
-                margin: 0 auto;
+            .start-arrow {
+                align-self: center;
                 width: 100%;
+                padding-top: 0;
+                transform: rotate(90deg);
             }
 
             .updates-grid {
@@ -1305,8 +1592,27 @@
             }
 
             .stats-row {
-                grid-template-columns: repeat(2, 1fr);
+                flex-wrap: wrap;
                 margin-bottom: 52px;
+                padding: 0;
+                border-top: none;
+                border-bottom: none;
+            }
+
+            .stat-card {
+                flex: 0 0 50%;
+                padding: 16px 14px;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            }
+
+            .stat-card:nth-child(odd) {
+                border-right: 1px solid rgba(255, 255, 255, 0.08);
+            }
+
+            .stat-card:nth-child(3),
+            .stat-card:nth-child(4) {
+                border-bottom: none;
             }
 
             .minitask-card,
@@ -1314,8 +1620,20 @@
                 padding: 24px 22px;
             }
 
-            .advantages-grid {
+            .advantages-list {
                 grid-template-columns: 1fr;
+            }
+
+            .advantage-item:nth-child(2n) {
+                border-right: none;
+            }
+
+            .advantage-item {
+                border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+            }
+
+            .advantage-item:last-child {
+                border-bottom: none;
             }
 
             .footer-inner {
@@ -1438,12 +1756,11 @@
 
             /* Stats */
             .stats-row {
-                gap: 8px;
                 margin-bottom: 40px;
             }
 
             .stat-card {
-                padding: 14px 10px;
+                padding: 12px 10px;
             }
 
             .stat-num {
@@ -1486,15 +1803,9 @@
                 font-size: 0.87em;
             }
 
-            /* Start cards */
-            .start-cards {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-
-            .start-cards .start-card:last-child {
-                grid-column: auto;
-                max-width: none;
+            /* Start flow */
+            .start-flow {
+                flex-direction: column;
             }
 
             .start-card {
@@ -1553,12 +1864,8 @@
             }
 
             /* Advantages */
-            .advantages-grid {
-                gap: 8px;
-            }
-
-            .advantage-card {
-                padding: 16px 14px;
+            .advantage-item {
+                padding: 18px 18px;
             }
 
             /* Features */
@@ -1646,14 +1953,73 @@
 
         <!-- HERO -->
         <section class="hero">
-            <img src="{{ url_for('static', filename='favicon.png') }}" alt="Логотип" class="hero-logo">
-            <h1 class="hero-title">Подготовка к ЕГЭ<br>по информатике</h1>
-            <p class="hero-tagline">от первых уроков до высоких баллов</p>
-            <p class="hero-desc">Теория, практика, варианты и отслеживание прогресса в одном месте</p>
-            <div class="hero-cta">
-                <a href="/preparation" class="hero-btn hero-btn-primary">Начать подготовку</a>
-                <a href="/variants" class="hero-btn hero-btn-secondary">Решить вариант</a>
+
+            <!-- Левая колонка: текст + CTA -->
+            <div class="hero-left">
+                <img src="{{ url_for('static', filename='favicon.png') }}" alt="Логотип" class="hero-logo">
+                <h1 class="hero-title">Подготовка к ЕГЭ<br>по информатике</h1>
+                <p class="hero-tagline">от первых уроков до высоких баллов</p>
+                <p class="hero-desc">Теория, практика, варианты и отслеживание прогресса в одном месте</p>
+                <div class="hero-cta">
+                    <a href="/preparation" class="hero-btn hero-btn-primary">Начать подготовку</a>
+                    <a href="/variants" class="hero-btn hero-btn-secondary">Решить вариант</a>
+                </div>
             </div>
+
+            <!-- Правая колонка: демонстрация платформы -->
+            <div class="hero-right">
+                <div class="hero-mockup">
+                    <!-- Хром "окна" -->
+                    <div class="mockup-topbar">
+                        <div class="mockup-dots">
+                            <span class="mockup-dot"></span>
+                            <span class="mockup-dot"></span>
+                            <span class="mockup-dot"></span>
+                        </div>
+                        <span class="mockup-bar-label">Вариант 5</span>
+                        <span class="mockup-bar-timer">⏱ 03:42</span>
+                    </div>
+                    <!-- Задача -->
+                    <div class="mockup-body">
+                        <div class="mockup-task-num">Задание 1 <span class="mockup-task-of">из 27</span></div>
+                        <div class="mockup-task-q">Переведите число 44 в двоичную систему счисления:</div>
+                        <div class="mockup-choices">
+                            <div class="mockup-choice">101110</div>
+                            <div class="mockup-choice">100100</div>
+                            <div class="mockup-choice mockup-choice-correct">101100</div>
+                            <div class="mockup-choice">110100</div>
+                        </div>
+                        <div class="mockup-result-line">
+                            <span class="mockup-result-correct">✓ Верно!</span>
+                            <span class="mockup-result-explain">44 = 32 + 8 + 4 = 101100₂</span>
+                        </div>
+                    </div>
+                    <!-- Прогресс -->
+                    <div class="mockup-progress-wrap">
+                        <div class="mockup-progress-track">
+                            <div class="mockup-progress-fill"></div>
+                        </div>
+                        <span class="mockup-progress-label">1 / 27 заданий</span>
+                    </div>
+                </div>
+
+                <!-- Мини-статистика -->
+                <div class="hero-mini-stats">
+                    <div class="hero-mini-stat">
+                        <span class="hero-mini-stat-num">1200+</span>
+                        <span class="hero-mini-stat-label">задач</span>
+                    </div>
+                    <div class="hero-mini-stat">
+                        <span class="hero-mini-stat-num">27</span>
+                        <span class="hero-mini-stat-label">номеров ЕГЭ</span>
+                    </div>
+                    <div class="hero-mini-stat">
+                        <span class="hero-mini-stat-num">90+</span>
+                        <span class="hero-mini-stat-label">баллов</span>
+                    </div>
+                </div>
+            </div>
+
         </section>
 
         <!-- ПРОГРЕСС — только для авторизованных -->
@@ -1720,20 +2086,22 @@
                 <h2>С чего начать подготовку?</h2>
                 <p>Выберите свой уровень и начните обучение по подходящему маршруту.</p>
             </div>
-            <div class="start-cards">
-                <div class="start-card">
+            <div class="start-flow">
+                <div class="start-card start-card-1">
                     <span class="start-card-level start-card-level-1">Уровень 1</span>
                     <div class="start-card-title">Начинаю с нуля</div>
                     <div class="start-card-desc">Для тех, кто ещё не изучал информатику или хочет пройти базу заново.</div>
                     <a href="/preparation" class="start-card-btn start-card-btn-1">Перейти</a>
                 </div>
-                <div class="start-card">
+                <div class="start-arrow">→</div>
+                <div class="start-card start-card-2">
                     <span class="start-card-level start-card-level-2">Уровень 2</span>
                     <div class="start-card-title">Уже знаю основы</div>
                     <div class="start-card-desc">Изучайте отдельные темы и закрывайте пробелы в знаниях.</div>
                     <a href="/theory" class="start-card-btn start-card-btn-2">Изучать теорию</a>
                 </div>
-                <div class="start-card">
+                <div class="start-arrow">→</div>
+                <div class="start-card start-card-3">
                     <span class="start-card-level start-card-level-3">Уровень 3</span>
                     <div class="start-card-title">Готов решать варианты</div>
                     <div class="start-card-desc">Переходите сразу к полноценным вариантам ЕГЭ и отслеживайте результаты.</div>
@@ -1745,6 +2113,7 @@
         <!-- МИНИ-ЗАДАЧА -->
         <section class="minitask-section">
             <div class="section-heading">
+                <span class="section-tag section-tag-blue">Задание</span>
                 <h2>Попробуйте задачу прямо сейчас</h2>
                 <p>Так выглядит проверка знаний на платформе.</p>
             </div>
@@ -1776,6 +2145,7 @@
         <!-- КАЛЬКУЛЯТОР ГОТОВНОСТИ -->
         <section class="calculator-section">
             <div class="section-heading">
+                <span class="section-tag section-tag-purple">Калькулятор</span>
                 <h2>Оцените свою готовность</h2>
             </div>
             <div class="calculator-card">
@@ -1871,22 +2241,36 @@
             <div class="section-heading">
                 <h2>Почему выбирают ЕГЭволюцию</h2>
             </div>
-            <div class="advantages-grid">
-                <div class="advantage-card">
-                    <div class="advantage-card-title">📘 Все темы ЕГЭ</div>
-                    <div class="advantage-card-desc">27 номеров и полный теоретический материал по каждому заданию.</div>
-                </div>
-                <div class="advantage-card">
-                    <div class="advantage-card-title">🔄 Практика без ограничений</div>
-                    <div class="advantage-card-desc">Решайте задачи столько раз, сколько нужно — прогресс сохраняется.</div>
-                </div>
-                <div class="advantage-card">
-                    <div class="advantage-card-title">📊 Отслеживание прогресса</div>
-                    <div class="advantage-card-desc">Сохраняйте результаты, анализируйте ошибки и смотрите статистику.</div>
-                </div>
-                <div class="advantage-card">
-                    <div class="advantage-card-title">🚀 Подготовка с нуля</div>
-                    <div class="advantage-card-desc">От первых уроков до полноценных экзаменационных вариантов.</div>
+            <div class="advantages-panel">
+                <div class="advantages-list">
+                    <div class="advantage-item">
+                        <div class="advantage-item-icon">📘</div>
+                        <div>
+                            <div class="advantage-item-title">Все темы ЕГЭ</div>
+                            <div class="advantage-item-desc">27 номеров и полный теоретический материал по каждому заданию.</div>
+                        </div>
+                    </div>
+                    <div class="advantage-item">
+                        <div class="advantage-item-icon">🔄</div>
+                        <div>
+                            <div class="advantage-item-title">Практика без ограничений</div>
+                            <div class="advantage-item-desc">Решайте задачи столько раз, сколько нужно — прогресс сохраняется.</div>
+                        </div>
+                    </div>
+                    <div class="advantage-item">
+                        <div class="advantage-item-icon">📊</div>
+                        <div>
+                            <div class="advantage-item-title">Отслеживание прогресса</div>
+                            <div class="advantage-item-desc">Сохраняйте результаты, анализируйте ошибки и смотрите статистику.</div>
+                        </div>
+                    </div>
+                    <div class="advantage-item">
+                        <div class="advantage-item-icon">🚀</div>
+                        <div>
+                            <div class="advantage-item-title">Подготовка с нуля</div>
+                            <div class="advantage-item-desc">От первых уроков до полноценных экзаменационных вариантов.</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
