@@ -609,44 +609,6 @@
         }
 
         /* ============================================================
-           STATS
-        ============================================================ */
-        .stats-row {
-            display: flex;
-            align-items: center;
-            margin-bottom: 72px;
-            padding: 20px 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        .stat-card {
-            flex: 1;
-            text-align: center;
-            padding: 4px 16px;
-            border-right: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .stat-card:last-child {
-            border-right: none;
-        }
-
-        .stat-num {
-            font-size: 1.9em;
-            font-weight: 800;
-            color: #e2e8f0;
-            line-height: 1;
-            margin-bottom: 6px;
-            letter-spacing: -0.5px;
-        }
-
-        .stat-label {
-            font-size: 0.78em;
-            color: #94a3b8;
-            font-weight: 500;
-        }
-
-        /* ============================================================
            С ЧЕГО НАЧАТЬ
         ============================================================ */
         .start-section {
@@ -1058,21 +1020,38 @@
             margin-bottom: 44px;
         }
 
-        .iz-progress-label {
-            display: block;
-            font-size: 0.75em;
-            color: #64748b;
-            font-weight: 500;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-
-        .iz-progress-dots {
+        .iz-steps-row {
             display: flex;
             justify-content: center;
+            align-items: flex-start;
+        }
+
+        .iz-step-item {
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
+        }
+
+        .iz-step-connector {
+            width: 52px;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.12);
+            flex-shrink: 0;
+            align-self: flex-start;
+            margin-top: 5px;
+        }
+
+        .iz-step-label {
+            font-size: 0.73em;
+            color: #64748b;
+            font-weight: 500;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .iz-step-item:has(.iz-dot.iz-dot-active) .iz-step-label {
+            color: #94a3b8;
         }
 
         .iz-dot {
@@ -1691,30 +1670,6 @@
                 margin-bottom: 20px;
             }
 
-            .stats-row {
-                flex-wrap: wrap;
-                margin-bottom: 52px;
-                padding: 0;
-                border-top: none;
-                border-bottom: none;
-            }
-
-            .stat-card {
-                flex: 0 0 50%;
-                padding: 16px 14px;
-                border-right: none;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            }
-
-            .stat-card:nth-child(odd) {
-                border-right: 1px solid rgba(255, 255, 255, 0.08);
-            }
-
-            .stat-card:nth-child(3),
-            .stat-card:nth-child(4) {
-                border-bottom: none;
-            }
-
             .minitask-card,
             .calculator-card {
                 padding: 24px 22px;
@@ -1852,24 +1807,6 @@
 
             .guest-cta-buttons {
                 gap: 8px;
-            }
-
-            /* Stats */
-            .stats-row {
-                margin-bottom: 40px;
-            }
-
-            .stat-card {
-                padding: 12px 10px;
-            }
-
-            .stat-num {
-                font-size: 1.5em;
-                margin-bottom: 4px;
-            }
-
-            .stat-label {
-                font-size: 0.73em;
             }
 
             /* Межблочные отступы */
@@ -2191,26 +2128,6 @@
         </section>
         {% endif %}
 
-        <!-- СТАТИСТИКА ПЛАТФОРМЫ -->
-        <div class="stats-row">
-            <div class="stat-card">
-                <div class="stat-num">1200+</div>
-                <div class="stat-label">задач</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-num">27</div>
-                <div class="stat-label">номеров ЕГЭ</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-num">14</div>
-                <div class="stat-label">вариантов</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-num">90+</div>
-                <div class="stat-label">баллов</div>
-            </div>
-        </div>
-
         <!-- С ЧЕГО НАЧАТЬ -->
         <section class="start-section">
             <div class="section-heading">
@@ -2246,11 +2163,21 @@
 
         <!-- ИНДИКАТОР ПРОГРЕССА -->
         <div class="iz-progress" id="izProgress">
-            <span class="iz-progress-label" id="izProgressLabel">Шаг 1 из 3</span>
-            <div class="iz-progress-dots">
-                <span class="iz-dot iz-dot-active"></span>
-                <span class="iz-dot"></span>
-                <span class="iz-dot"></span>
+            <div class="iz-steps-row">
+                <div class="iz-step-item">
+                    <span class="iz-dot iz-dot-active"></span>
+                    <span class="iz-step-label">Задача</span>
+                </div>
+                <div class="iz-step-connector"></div>
+                <div class="iz-step-item">
+                    <span class="iz-dot"></span>
+                    <span class="iz-step-label">Готовность</span>
+                </div>
+                <div class="iz-step-connector"></div>
+                <div class="iz-step-item">
+                    <span class="iz-dot"></span>
+                    <span class="iz-step-label">Маршрут</span>
+                </div>
             </div>
         </div>
 
@@ -2403,31 +2330,31 @@
             <div class="advantages-panel">
                 <div class="advantages-list">
                     <div class="advantage-item">
-                        <div class="advantage-item-icon">📘</div>
+                        <div class="advantage-item-icon">🗺️</div>
                         <div>
-                            <div class="advantage-item-title">Все темы ЕГЭ</div>
-                            <div class="advantage-item-desc">27 номеров и полный теоретический материал по каждому заданию.</div>
+                            <div class="advantage-item-title">Готовый маршрут от нуля до ЕГЭ</div>
+                            <div class="advantage-item-desc">Пошаговый путь: базовые уроки → теория по темам → практика → полные варианты.</div>
                         </div>
                     </div>
                     <div class="advantage-item">
-                        <div class="advantage-item-icon">🔄</div>
+                        <div class="advantage-item-icon">📚</div>
                         <div>
-                            <div class="advantage-item-title">Практика без ограничений</div>
-                            <div class="advantage-item-desc">Решайте задачи столько раз, сколько нужно — прогресс сохраняется.</div>
+                            <div class="advantage-item-title">Все 27 тем — без пробелов</div>
+                            <div class="advantage-item-desc">Теория разбита по каждому из 27 номеров ЕГЭ. Изучай только то, что нужно именно тебе.</div>
                         </div>
                     </div>
                     <div class="advantage-item">
                         <div class="advantage-item-icon">📊</div>
                         <div>
-                            <div class="advantage-item-title">Отслеживание прогресса</div>
-                            <div class="advantage-item-desc">Сохраняйте результаты, анализируйте ошибки и смотрите статистику.</div>
+                            <div class="advantage-item-title">Видишь, где проваливаешься</div>
+                            <div class="advantage-item-desc">Статистика по каждому заданию показывает проблемные темы и историю твоих попыток.</div>
                         </div>
                     </div>
                     <div class="advantage-item">
-                        <div class="advantage-item-icon">🚀</div>
+                        <div class="advantage-item-icon">⏱️</div>
                         <div>
-                            <div class="advantage-item-title">Подготовка с нуля</div>
-                            <div class="advantage-item-desc">От первых уроков до полноценных экзаменационных вариантов.</div>
+                            <div class="advantage-item-title">Экзамен без страха</div>
+                            <div class="advantage-item-desc">Полные варианты в экзаменационном режиме: таймер, без подсказок, итоговый балл как на ЕГЭ.</div>
                         </div>
                     </div>
                 </div>
@@ -2652,7 +2579,6 @@
            ПОСЛЕДОВАТЕЛЬНАЯ ИНТЕРАКТИВНАЯ ЗОНА
         ================================================================ */
         function updateIzProgress(step) {
-            document.getElementById('izProgressLabel').textContent = 'Шаг ' + step + ' из 3';
             document.querySelectorAll('.iz-dot').forEach(function(dot, i) {
                 if (i < step) {
                     dot.classList.add('iz-dot-active');
