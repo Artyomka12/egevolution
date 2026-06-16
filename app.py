@@ -1635,8 +1635,8 @@ def save_theory_api():
         with open(file_path, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=1)
         return jsonify({"success": True})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    except Exception:
+        return jsonify({"error": "Не удалось сохранить теорию"}), 500
 
 
 @app.route("/constructor_editor")
@@ -2012,6 +2012,23 @@ def api_save_variant_from_base():
             400,
         )
 
+    # Валидируем типы до записи файлов на диск
+    # Правило: task_id должен быть int или digit-only str; bool и float отклоняются.
+    validated_tasks = {}
+    for position, ref in tasks_refs.items():
+        try:
+            task_num_v = int(position)  # position — всегда строка (ключ JSON-объекта)
+            task_id_raw = ref.get("task_id")
+            if isinstance(task_id_raw, (bool, float)):
+                raise TypeError
+            task_id_v = int(task_id_raw)  # int→int, "5"→5; None/list/dict→TypeError
+        except (TypeError, ValueError):
+            return (
+                jsonify({"error": f"Некорректный task_id в задании {position}"}),
+                400,
+            )
+        validated_tasks[position] = (task_num_v, task_id_v)
+
     # Находим следующий свободный номер варианта
     existing_variants = get_available_variants()
     next_variant_num = 1
@@ -2042,9 +2059,7 @@ def api_save_variant_from_base():
 
         # Записываем в таблицу task_usage информацию об использовании задач
         db = get_db()
-        for position, ref in tasks_refs.items():
-            task_num = int(position)
-            task_id = ref.get("task_id")
+        for position, (task_num, task_id) in validated_tasks.items():
             db.execute(
                 "INSERT INTO task_usage (task_num, task_id, variant_num) VALUES (?, ?, ?)",
                 (task_num, task_id, next_variant_num),
@@ -2059,8 +2074,8 @@ def api_save_variant_from_base():
                 "message": f"✅ Вариант №{next_variant_num} сохранён!",
             }
         )
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    except Exception:
+        return jsonify({"error": "Не удалось сохранить вариант"}), 500
 
 
 @app.route("/api/variant/preview", methods=["POST"])
