@@ -4,12 +4,12 @@
 
 **Дата последнего обновления:** 2026-06-16
 **Ветка:** main
-**Версия:** v1.4.0
-**Статус:** выполнен — расширенный редактор задач (Этап 1 ✅ Этап 2 ✅ Этап 3 ✅)
+**Версия:** v1.5.0
+**Статус:** выполнен — редизайн главной страницы, dropdown navbar, мобильная версия (21/21 OK)
 
 Аудит безопасности завершён в v1.3.0. D-1, D-2, D-3 закрыты.
 v1.4.0 — расширенный редактор задач в админке: все три этапа завершены.
-Этап 1 (форматирование текста), Этап 2 (загрузка изображений), Этап 3 (прикрепление файлов) — выполнены.
+v1.5.0 — редизайн главной страницы (`start.html`): dropdown navbar + мобильная версия. Backend не менялся.
 
 ---
 
@@ -661,6 +661,73 @@ Orphaned-файлы остаются в `tasks/task_XX/files/` и `tasks/task_XX
 
 ---
 
+### v1.5.0 — Редизайн главной страницы (start.html)
+
+**Дата:** 2026-06-16
+
+Полный редизайн `templates/start.html` в три итерации (v1.5.0 → v1.5.1 → v1.5.2).
+**Backend (`app.py`) не менялся.** Маршруты, схема БД, логика авторизации — без изменений.
+Logout: `method="POST"` + `{{ url_for('logout') }}` + `{{ csrf_token() }}` сохранены во всех итерациях.
+
+#### v1.5.0 — Новая структура лендинга
+
+- Hero: логотип + градиентный H1 «Подготовка к ЕГЭ по информатике» + тэглайн + 2 CTA-кнопки (`/preparation`, `/variants`)
+- Блок статистики платформы: 4 карточки (1200+, 27, 14, 90+)
+- Сетка возможностей: 5 карточек (3 колонки), ссылки на `/theory`, `/variants`, `/tasks`, `/preparation`, `/stats`
+- Компактный footer: бренд + соцсети строкой + телефоны
+
+#### v1.5.1 — Контент и интерактивность
+
+- Блок «С чего начать»: 3 карточки по уровням (`/preparation`, `/theory`, `/variants`)
+- Мини-задача: интерактивный вопрос (256 символов = 8 бит), проверка на JS, без backend
+- Маршрут подготовки: 5 шагов ①–⑤
+- Блок преимуществ: 2×2 карточки
+- Визуальное осветление: фон `#0f172a` → `#111827`, карточки чуть светлее
+
+#### v1.5.2 — Персонализация, dropdown navbar, мобильная версия
+
+**Персонализация:**
+- Блок «Ваш прогресс» (`{% if session.get('user_id') %}`): 3 карточки, ссылка на `/stats`
+- Гостевой CTA (`{% if not session.get('user_id') %}`): кнопки `/register`, `/login`
+- Калькулятор готовности: 3 да/нет вопроса, результат (начальный / средний / высокий) в JS
+- Блок «Что нового»: 3 карточки
+
+**Dropdown-меню в navbar (по центру, между логотипом и auth-кнопками):**
+- Кнопка «Разделы» (desktop) / «Меню» (≤480px) — по центру через `position: absolute; left: 50%; transform: translateX(-50%)`
+- 5 пунктов: `/preparation`, `/theory`, `/variants`, `/stats`, `/tasks`
+- Desktop: dropdown открывается вниз (`position: absolute; top: calc(100% + 9px)`)
+- Mobile ≤768px: `.nav-center { position: static; transform: none }` — убирает transform-контекст; dropdown переключается на `position: fixed; top: 62px; left: 10px; right: 10px` — привязан к viewport, не уезжает за экран
+- Mobile ≤480px: `.nav-label-desktop { display: none }`, `.nav-label-mobile { display: inline }` — текст «Меню»
+- JS: `toggleNavDropdown()` (toggle `.open`/`.active`), закрытие по клику вне (`!wrap.contains(e.target)`), закрытие по клику на пункт
+
+**Улучшения мобильной версии (≤480px):**
+- Hero: `padding: 24px 0 32px`, logo `38px`, title `1.65em`, кнопки `9px 18px`
+- Карточки прогресса: горизонтальный flex-layout, `padding: 14px`, `progress-num: 1.55em`
+- stat-card: `padding: 14px 10px`, `stat-num: 1.5em`
+- start/minitask/calculator/advantage/feature/update карточки: уменьшены padding до 14–18px
+- Варианты мини-задачи: одна колонка (`grid-template-columns: 1fr`)
+- `.calc-question`: `flex-direction: column; gap: 8px`
+- Все секции: `margin-bottom` 72px → 44–48px; `.section-heading`: `margin-bottom: 20px`
+- `navbar-site-title` скрыт, nav-btn и nav-dropdown-btn: `padding: 5px 9/10px; font-size: 0.775em`
+
+**Изменённые файлы:**
+
+| Файл | Что изменено |
+|---|---|
+| `templates/start.html` | Полная перезапись: новая структура, все блоки, CSS, JS |
+
+**Что не менялось:**
+
+| Компонент | Статус |
+|---|---|
+| `app.py` | Не трогался |
+| Маршруты | Без изменений |
+| Схема БД | Без изменений |
+| Logout POST + CSRF | Сохранены (`method="POST"`, `{{ url_for('logout') }}`, `{{ csrf_token() }}`) |
+| `/preparation`, `/theory`, `/variants`, `/stats`, `/tasks` | Все ссылки корректны |
+
+---
+
 ## Проведённые проверки
 
 | Проверка | Результат | Дата |
@@ -694,6 +761,7 @@ Orphaned-файлы остаются в `tasks/task_XX/files/` и `tasks/task_XX
 | v1.4.0 Этап 2: баг размеров изображений | img-small/img-medium/img-large не работали в reshenie.html и exam.html — CSS-правила отсутствовали; добавлены в оба шаблона | 2026-06-16 |
 | v1.4.0 Этап 3: прикрепление файлов | Whitelist xlsx/xls/csv/txt/zip/db/sqlite/ods/odt; save/delete/replace; path traversal protection; 21/21 сценариев OK | 2026-06-16 |
 | v1.4.0 Этап 3: маршрутизация скачивания | reshenie.html и exam.html: `_source_task_num` → task_files vs variant_files; tasks_view.html уже был корректен | 2026-06-16 |
+| v1.5.0: navbar desktop + mobile 375px | Desktop: лого слева / dropdown по центру / auth справа ✅; Mobile: no overflow / «Меню» / dropdown fixed 10px-10px / hero compact / все карточки compact ✅; JS: toggle / клик вне / клик пункт / повторный клик ✅; ссылки /preparation /theory /variants /stats /tasks ✅; logout POST + csrf_token ✅; **21/21 OK** | 2026-06-16 |
 
 ---
 
@@ -733,24 +801,26 @@ Orphaned-файлы остаются в `tasks/task_XX/files/` и `tasks/task_XX
 
 ## Текущий этап
 
-**Выполнено: расширенный редактор задач (v1.4.0, 2026-06-16)**
+**Выполнено: редизайн главной страницы (v1.5.0, 2026-06-16)**
 
-| Этап | Описание | Статус |
+| Итерация | Описание | Статус |
 |---|---|---|
-| Этап 1 | Форматирование текста (B/I/sup/sub) | ✅ Выполнен |
-| Этап 2 | Загрузка изображений в задачи | ✅ Выполнен |
-| Этап 3 | Прикрепление файлов (xlsx, db, csv и др.) | ✅ Выполнен |
+| v1.5.0 | Новая структура лендинга: hero, stats, features, footer | ✅ |
+| v1.5.1 | Контент и интерактивность: «С чего начать», мини-задача, маршрут, преимущества | ✅ |
+| v1.5.2 | Персонализация: прогресс, гость, калькулятор; dropdown navbar; мобильная версия | ✅ |
 
-**Что сделано в v1.4.0:**
-- Панель форматирования в редакторе задач (B/I/sup/sub)
-- Загрузка, хранение и удаление изображений через админку
-- Автоматическое заполнение `images[]` в `tasks.json`
-- Проверка extension + magic bytes + secure_filename для изображений
-- Устранены orphaned files при дублировании task_id и path traversal в delete_image
-- CSS-классы `img-small/img-medium/img-large` добавлены в `reshenie.html` и `exam.html`
-- Прикрепление файлов к задачам (`xlsx`, `xls`, `csv`, `txt`, `zip`, `db`, `sqlite`, `ods`, `odt`)
-- Orphaned-файлы при замене устранены (старый удаляется до сохранения нового)
-- Маршрутизация скачивания исправлена в `reshenie.html` и `exam.html` (`_source_task_num`)
+**Что сделано в v1.5.0:**
+- Полный редизайн `templates/start.html` с нуля
+- Dropdown-меню в navbar по центру: 5 разделов, desktop (`position: absolute`) + mobile (`position: fixed; left: 10px; right: 10px`)
+- Мобильная версия ≤480px: компактный hero, горизонтальные карточки прогресса, уменьшены padding всех блоков, одноколоночные сетки
+- Блоки персонализации: прогресс для авторизованных, CTA для гостей
+- Интерактивные блоки без backend: мини-задача, калькулятор готовности
+- Backend не менялся; logout POST + CSRF сохранены
+- Финальная проверка: **21/21 OK**
+
+**v1.4.0 (расширенный редактор задач):**
+- Панель форматирования (B/I/sup/sub), загрузка изображений, прикрепление файлов
+- Все три этапа завершены; security checks пройдены
 
 **Аудит безопасности (v1.3.0, итог):**
 
