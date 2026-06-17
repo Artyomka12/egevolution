@@ -20,6 +20,9 @@
 >
 > **v1.5.6 (2026-06-17):** персонализация воронки главной страницы (`start.html`) — Этап 1 выполнен.
 > Этап 1 ✅ (перенос progress-section/guest-cta-section после features-section, 13/13 OK) · Jinja2-условия сохранены · CSS/JS/backend не менялся · следующие этапы — позже
+>
+> **v1.6.0 (2026-06-17):** визуальный редизайн главной страницы под светло-голубую тему — выполнен.
+> Этап 1 ✅ (глобальные токены: body, headings, btn-secondary) · Этап 2 ✅ (hero-mockup, мини-статы) · Этап 3 ✅ (start-flow карточки) · Этап 4 ✅ (interactive zone: minitask/calculator/roadmap/iz-cta) · Этап 5 ✅ (advantages/features/updates/news) · Этап 6 ✅ (progress-card, guest-cta-card) · Этап 7 ✅ (глобальная проверка, ~55 CSS-селекторов) · HTML/JS/backend/navbar/CSRF не тронуты
 
 ## Следующий этап
 
@@ -70,6 +73,78 @@
   - [x] `.interactive-zone`: удалены `background`, `border-top`, `border-bottom` — только логическая обёртка и отступ (`padding: 64px 0`)
   - [x] JS-функции, roadmap/CTA, backend — не менялись
 
+### v1.6.0 — Визуальный редизайн главной страницы (светлая тема)
+
+- [x] **Этап 1** — Глобальные токены:
+  - [x] `body { color }`: `#e2e8f0` → `#0f172a`
+  - [x] `hero-tagline`, `hero-desc`: `#94a3b8` → `#475569`
+  - [x] `section-heading h2`: `#e2e8f0` → `#0f172a`
+  - [x] `section-heading p`: `#94a3b8` → `#475569`
+  - [x] `section-title`, `features-heading`, `progress-header-title`: `#64748b` → `#475569`; рамка → синяя
+  - [x] `hero-btn-secondary`: прозрачный → `rgba(255,255,255,0.75)` + синяя рамка; hover-цвет `#0f172a`
+
+- [x] **Этап 2** — Hero mockup и мини-статистика:
+  - [x] `hero-mockup`: `rgba(0.06)` → `rgba(255,255,255,0.96)` + синяя рамка + тень
+  - [x] `mockup-topbar`: чёрный → `rgba(237,245,255,0.9)`
+  - [x] `mockup-choice-correct`: неоновый зелёный → пастельный `#15803d` на `rgba(220,252,231,0.8)`
+  - [x] `mockup-result-correct`: `#4ade80` → `#16a34a`
+  - [x] `mockup-progress-track`: white-rgba → `rgba(37,99,235,0.1)`
+  - [x] `hero-mini-stat`: `rgba(0.04)` → `rgba(255,255,255,0.92)` + тень; числа `#0f172a`, лейбл `#475569`
+
+- [x] **Этап 3** — Start-flow карточки:
+  - [x] `start-card`: `rgba(0.05)` → `rgba(255,255,255,0.92)` + синяя рамка + `box-shadow`
+  - [x] `start-card-title/desc`: белый/серый → `#0f172a`/`#475569`
+  - [x] `start-card-btn-1/2/3`: неоновые → дневные синий/фиолетовый/зелёный (`#2563eb`/`#4f46e5`/`#16a34a`)
+  - [x] `start-arrow`: `#334155` → `#94a3b8` (мягкая стрелка на светлом фоне)
+
+- [x] **Этап 4** — Интерактивная зона:
+  - [x] `iz-dot`: white-rgba → `rgba(37,99,235,0.18)`; active → `#2563eb`
+  - [x] `iz-step-connector`: white-rgba → `rgba(37,99,235,0.2)`
+  - [x] `iz-next-btn`: прозрачный → `rgba(255,255,255,0.85)` + синяя рамка
+  - [x] `minitask-card`: синий-прозрачный → белый + синяя тень; опции — синий тинт hover/selected
+  - [x] `minitask-option-label`: `#e2e8f0` → `#0f172a`
+  - [x] результаты minitask correct/incorrect/no-answer: неоновые → пастельные + тёмный текст
+  - [x] `calculator-card`: фиолетовый-прозрачный → белый + фиолетовая тень
+  - [x] `calc-option/selected`: тёмная тема → `rgba(237,233,254,…)` + `#4338ca`
+  - [x] результаты calc low/mid/high/warn: неоновые → пастельные + тёмный текст
+  - [x] `roadmap-section`: `rgba(0.04)` → `rgba(255,255,255,0.96)` + тень
+  - [x] `roadmap-circle`: синий-прозрачный → `rgba(219,234,254,0.85)` / `#2563eb`
+  - [x] `roadmap-circle-goal`: зелёный-прозрачный → `rgba(220,252,231,0.85)` / `#16a34a`
+  - [x] `roadmap-step-title/desc`: белый/серый → `#0f172a`/`#475569`
+  - [x] `iz-cta`: прозрачный → `rgba(255,255,255,0.96)` + тень; текст тёмный
+  - [x] `iz-result-check`: неоновый зелёный → `rgba(220,252,231,0.9)` / `#16a34a`
+
+- [x] **Этап 5** — Advantages / Features / Updates / News:
+  - [x] `advantages-panel`: только рамка → + белый фон + тень; разделители → синие
+  - [x] `advantage-item-title/desc`: белый/серый → `#0f172a`/`#475569`
+  - [x] `feature-card`: `rgba(0.05)` → `rgba(255,255,255,0.92)` + тень; hover → голубой тинт
+  - [x] `feature-title/desc`: белый/серый → `#0f172a`/`#475569`
+  - [x] `update-card`: `rgba(0.04)` → `rgba(255,255,255,0.92)` + тень
+  - [x] `update-title/desc`: белый/серый → `#0f172a`/`#475569`
+  - [x] `news-item` border: `rgba(sky,0.25)` → `rgba(37,99,235,0.38)`
+  - [x] `news-item.important` border: → `rgba(220,38,38,0.5)`
+  - [x] `news-title-text`: `#cbd5e1` → `#0f172a`; `news-description`: `#94a3b8` → `#475569`
+
+- [x] **Этап 6** — Progress / Guest CTA:
+  - [x] `progress-card`: голубой-прозрачный → `rgba(255,255,255,0.95)` + синяя тень
+  - [x] `progress-num`: `#e2e8f0` → `#1e40af` (синий акцент)
+  - [x] `progress-label`: `#94a3b8` → `#475569`
+  - [x] `guest-cta-card`: голубой-прозрачный → `rgba(255,255,255,0.95)` + синяя тень
+  - [x] `guest-cta-title/desc`: белый/серый → `#0f172a`/`#475569`
+
+- [x] **Этап 7** — Глобальная проверка (~55 CSS-селекторов, OK):
+  - [x] `section-tag-blue/purple`: неоновые → дневные `#1d4ed8`/`#4338ca` на пастельных фонах
+  - [x] `minitask-question`: `#e2e8f0` → `#0f172a` (пропущен в этапе 4)
+  - [x] `footer-border` и `footer-bottom-border`: white-rgba → `rgba(37,99,235,0.08–0.1)`
+  - [x] `advantage-item` (media query 768px): white-rgba → синяя рамка
+  - [x] navbar: не тронут — все `#e2e8f0` и `rgba(255,255,255,…)` оставлены
+
+- [ ] **Этап 8** — Доработки после первого визуального просмотра:
+  - [ ] Усиление теней при hover (придать объём без аляповатости)
+  - [ ] Плавные CSS-анимации для карточек (`transition: box-shadow 0.2s, transform 0.15s`)
+  - [ ] Проверка на реальном desktop и мобильном (375px / 768px / 1280px)
+  - [ ] Возможная корректировка navbar под светлую тему (если принято решение)
+
 ### v1.5.6 — Персонализация воронки главной страницы
 
 - [x] **Этап 1** — Перенос блоков прогресса и регистрации в воронку (13/13 OK):
@@ -78,7 +153,7 @@
   - [x] Оба блока вставлены между `features-section` и «Что нового на платформе»
   - [x] Jinja2-условия сохранены дословно: `session.get('user_id')` / `not session.get('user_id')`
   - [x] CSS, содержимое блоков, JS, backend, navbar/logout/CSRF — не тронуты
-- [ ] **Этап 2 и далее** — планируются позже
+- [x] **Этап 2 и далее** — включены в v1.6.0
 
 ### v1.5.5 — Структура и конверсия главной страницы
 
@@ -225,7 +300,7 @@
 - [ ] **Мобильная адаптация остальных страниц** — `exam.html` (таблицы ответов),
   `reshenie.html`, `stats.html` плохо работают на телефоне.
 - [ ] **Экспорт результатов** — PDF или CSV для педагогов.
-- [ ] **Тёмная/светлая тема** — переключатель (сейчас всегда тёмная).
+- [~] **Светлая тема** — главная страница переведена на светло-голубую тему в v1.6.0. Остальные страницы по-прежнему тёмные. Переключатель — не реализован.
 
 ### Техническое
 - [ ] **Кэширование JSON-файлов** — `variants/*.json`, `tasks/*.json`, `theory/*.json`
