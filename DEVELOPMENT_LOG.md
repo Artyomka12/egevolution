@@ -2,10 +2,10 @@
 
 ## Текущее состояние проекта
 
-**Дата последнего обновления:** 2026-06-17
+**Дата последнего обновления:** 2026-06-18
 **Ветка:** main
-**Версия:** v1.6.0
-**Статус:** выполнен — полный визуальный редизайн главной страницы под светло-голубую тему (7 этапов, ~55 CSS-селекторов)
+**Версия:** v1.6.1
+**Статус:** выполнен — добавлены анимации, scroll reveal, count-up и уплотнена интерактивная зона главной страницы (4 этапа)
 
 Аудит безопасности завершён в v1.3.0. D-1, D-2, D-3 закрыты.
 v1.4.0 — расширенный редактор задач в админке: все три этапа завершены.
@@ -15,10 +15,91 @@ v1.5.4 — UX-доработка главной страницы: последо
 v1.5.5 — улучшение структуры и конверсии главной страницы: устранение дублирования статистики, переписан блок преимуществ, улучшен индикатор интерактивной зоны. Backend не менялся.
 v1.5.6 — персонализация воронки главной страницы: перенос `progress-section` и `guest-cta-section` после блока «Что есть на платформе». Backend не менялся.
 v1.6.0 — визуальный редизайн главной страницы под светло-голубую тему: светлый фон, белые карточки, мягкие голубые рамки и тени, тёмный текст. Изменения только в CSS `start.html`. HTML, JS, backend, navbar, маршруты — не тронуты.
+v1.6.1 — живой интерфейс главной страницы: hover-анимации карточек, scroll reveal с stagger, count-up анимации чисел, уплотнение интерактивной зоны. Изменения только в CSS и JS `start.html`. HTML-структура, backend, маршруты, бизнес-логика — не тронуты.
 
 ---
 
 ## Версии
+
+### v1.6.1 — Живой интерфейс главной страницы
+
+**Дата:** 2026-06-18
+
+**Описание:** Четыре этапа улучшения визуального восприятия и микро-взаимодействий на главной странице. Ориентир — современные EdTech и SaaS платформы. Изменения только в `templates/start.html` (CSS + JS). HTML-структура, JS-сценарий интерактивной зоны, backend, маршруты, база данных — не тронуты.
+
+**Этап 1 — Hover-анимации карточек:**
+
+| Компонент | Эффект |
+|---|---|
+| `.start-card` | `translateY(-4px)` + усиленная тень |
+| `.update-card` | `translateY(-3px)` + тень |
+| `.progress-card` | `translateY(-3px)` + тень |
+| `.guest-cta-card` | `translateY(-4px)` + тень |
+| `.advantage-item` | `translateY(-2px)` + bg |
+| `.feature-card` | уже был, не изменён |
+
+Также исправлены level-цвета start-card для WCAG AA контраста (`#38bdf8`→`#0284c7`, `#4ade80`→`#16a34a`).
+
+**Этап 2 — Уплотнение интерактивной зоны:**
+
+| Параметр | До | После |
+|---|---|---|
+| `.interactive-zone padding` | `64px 0` | `36px 0` |
+| `.iz-progress margin-bottom` | `44px` | `22px` |
+| `.iz-dot` размер | `10×10px` | `14×14px` |
+| `.iz-step-connector` | `52px × 1px` | `72px × 2px` |
+| `.minitask-card / .calculator-card max-width` | `580px` | `680px` |
+| `.interactive-zone .section-heading margin-bottom` | `36px` (глобальное) | `20px` (локальный override) |
+
+Убрано ~100px мёртвого пространства. JS-сценарий не тронут.
+
+**Этап 3 — Scroll Reveal:**
+
+- CSS: класс `.reveal` (opacity:0 + translateY:22px → visible). Transition 0.45s ease.
+- CSS: stagger-задержки 80–240ms для start-card, feature-card, advantage-item, update-card, progress-card.
+- JS: IIFE с IntersectionObserver, threshold 0.1, rootMargin -24px снизу. Fallback для браузеров без IO.
+- Reveal добавлен: section-heading'и, start-card ×3, iz-progress, minitask-card, advantage-item ×4, feature-card ×4, progress-header, progress-card ×3, guest-cta-card, update-card ×3, news-feed.
+- Reveal НЕ добавлен: Hero (выше fold), navbar, calculator-section, roadmap-section, iz-cta (управляются JS display:none/block).
+
+**Этап 4 — Count-up анимации:**
+
+- JS: отдельный IntersectionObserver, threshold 0.7. Regex `/^\d+\+?$/` — только чистые числа.
+- Анимирует: `hero-mini-stat-num` ("1200+", "27", "90+") и `progress-num` ("145", "90"). Пропускает "9 / 27".
+- easeOutCubic за 900ms. Финальное значение точно восстанавливается.
+
+**Результаты проверок:**
+
+| Компонент | Этап | Статус |
+|---|---|---|
+| `.start-card` hover `translateY(-4px)` + тень | 1 | ✅ |
+| `.update-card` hover `translateY(-3px)` + тень | 1 | ✅ |
+| `.progress-card` hover `translateY(-3px)` + тень | 1 | ✅ |
+| `.guest-cta-card` hover `translateY(-4px)` + тень | 1 | ✅ |
+| `.advantage-item` hover `translateY(-2px)` + bg | 1 | ✅ |
+| Level-цвета WCAG AA на белом фоне | 1 | ✅ |
+| Нет скачков layout (transform, не margin) | 1 | ✅ |
+| Нет горизонтального скролла | 1 | ✅ |
+| Navbar не затронут | 1–4 | ✅ |
+| `.interactive-zone` padding 64→36px | 2 | ✅ |
+| `.iz-progress` margin-bottom 44→22px | 2 | ✅ |
+| `.iz-dot` 10→14px; connector 52→72px, 1→2px | 2 | ✅ |
+| Карточки 580→680px, без поломки адаптива 480px | 2 | ✅ |
+| Мини-задача работает корректно | 2 | ✅ |
+| Калькулятор → roadmap → CTA: сценарий не нарушен | 2 | ✅ |
+| Scroll reveal: IntersectionObserver, fallback | 3 | ✅ |
+| Нет секций, которые остаются невидимыми | 3 | ✅ |
+| Stagger: start-card / feature / advantage / update / progress | 3 | ✅ |
+| Calculator/roadmap/iz-cta без `reveal` — нет конфликта с JS | 3 | ✅ |
+| Count-up: "1200+", "27", "90+", "145", "90" | 4 | ✅ |
+| "9 / 27" корректно пропускается regex'ом | 4 | ✅ |
+| Финальные значения точно совпадают с исходными | 4 | ✅ |
+| Нет ошибок JS в консоли | 3–4 | ✅ |
+
+**Итого: 23/23 ✅**
+
+**Не изменялось:** navbar, logout/CSRF, HTML-разметка, JS-функции `checkMiniTask`, `checkReadiness`, `updateIzProgress`, `goToStep2`, `goToStep3`, backend `app.py`, маршруты, база данных.
+
+---
 
 ### v1.6.0 — Визуальный редизайн главной страницы (светлая тема)
 

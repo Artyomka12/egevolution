@@ -561,6 +561,13 @@
             padding: 24px 18px;
             text-align: center;
             box-shadow: 0 4px 16px rgba(37, 99, 235, 0.09);
+            transition: border-color 0.22s, box-shadow 0.22s, transform 0.22s;
+        }
+
+        .progress-card:hover {
+            border-color: rgba(37, 99, 235, 0.28);
+            box-shadow: 0 10px 28px rgba(37, 99, 235, 0.14);
+            transform: translateY(-3px);
         }
 
         .progress-num {
@@ -592,6 +599,13 @@
             padding: 44px 32px;
             text-align: center;
             box-shadow: 0 6px 28px rgba(37, 99, 235, 0.1);
+            transition: border-color 0.22s, box-shadow 0.22s, transform 0.22s;
+        }
+
+        .guest-cta-card:hover {
+            border-color: rgba(37, 99, 235, 0.3);
+            box-shadow: 0 14px 40px rgba(37, 99, 235, 0.16);
+            transform: translateY(-4px);
         }
 
         .guest-cta-title {
@@ -668,14 +682,15 @@
             display: flex;
             flex-direction: column;
             gap: 14px;
-            transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+            transition: border-color 0.22s, background 0.22s, box-shadow 0.22s, transform 0.22s;
             box-shadow: 0 4px 18px rgba(37, 99, 235, 0.07);
         }
 
         .start-card:hover {
             background: rgba(255, 255, 255, 0.99);
-            border-color: rgba(37, 99, 235, 0.24);
-            box-shadow: 0 8px 28px rgba(37, 99, 235, 0.12);
+            border-color: rgba(37, 99, 235, 0.26);
+            box-shadow: 0 10px 32px rgba(37, 99, 235, 0.14);
+            transform: translateY(-4px);
         }
 
         .start-card-level {
@@ -685,9 +700,9 @@
             letter-spacing: 0.08em;
         }
 
-        .start-card-level-1 { color: #38bdf8; }
-        .start-card-level-2 { color: #818cf8; }
-        .start-card-level-3 { color: #4ade80; }
+        .start-card-level-1 { color: #0284c7; }
+        .start-card-level-2 { color: #6366f1; }
+        .start-card-level-3 { color: #16a34a; }
 
         .start-card-title {
             font-size: 1.05em;
@@ -772,7 +787,7 @@
         }
 
         .minitask-card {
-            max-width: 580px;
+            max-width: 680px;
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.94);
             border: 1px solid rgba(37, 99, 235, 0.18);
@@ -888,7 +903,7 @@
         }
 
         .calculator-card {
-            max-width: 580px;
+            max-width: 680px;
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.94);
             border: 1px solid rgba(99, 102, 241, 0.2);
@@ -1020,7 +1035,7 @@
            ИНТЕРАКТИВНАЯ ЗОНА
         ============================================================ */
         .interactive-zone {
-            padding: 64px 0;
+            padding: 36px 0;
             margin-bottom: 72px;
         }
 
@@ -1028,12 +1043,16 @@
             margin-bottom: 0;
         }
 
+        .interactive-zone .section-heading {
+            margin-bottom: 20px;
+        }
+
         /* ============================================================
            ПОСЛЕДОВАТЕЛЬНАЯ ИНТЕРАКТИВНАЯ ЗОНА: UI-элементы
         ============================================================ */
         .iz-progress {
             text-align: center;
-            margin-bottom: 44px;
+            margin-bottom: 22px;
         }
 
         .iz-steps-row {
@@ -1050,12 +1069,12 @@
         }
 
         .iz-step-connector {
-            width: 52px;
-            height: 1px;
-            background: rgba(37, 99, 235, 0.2);
+            width: 72px;
+            height: 2px;
+            background: rgba(37, 99, 235, 0.22);
             flex-shrink: 0;
             align-self: flex-start;
-            margin-top: 5px;
+            margin-top: 6px;
         }
 
         .iz-step-label {
@@ -1071,8 +1090,8 @@
         }
 
         .iz-dot {
-            width: 10px;
-            height: 10px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
             background: rgba(37, 99, 235, 0.18);
             transition: background 0.3s ease, transform 0.3s ease;
@@ -1080,7 +1099,7 @@
 
         .iz-dot.iz-dot-active {
             background: #2563eb;
-            transform: scale(1.25);
+            transform: scale(1.2);
         }
 
         .iz-next-btn {
@@ -1310,11 +1329,12 @@
             padding: 24px 26px;
             border-right: 1px solid rgba(37, 99, 235, 0.09);
             border-bottom: 1px solid rgba(37, 99, 235, 0.09);
-            transition: background 0.18s;
+            transition: background 0.18s, transform 0.18s;
         }
 
         .advantage-item:hover {
-            background: rgba(219, 234, 254, 0.25);
+            background: rgba(219, 234, 254, 0.32);
+            transform: translateY(-2px);
         }
 
         .advantage-item:nth-child(2n) {
@@ -1447,6 +1467,13 @@
             flex-direction: column;
             gap: 8px;
             box-shadow: 0 2px 10px rgba(37, 99, 235, 0.07);
+            transition: border-color 0.22s, box-shadow 0.22s, transform 0.22s;
+        }
+
+        .update-card:hover {
+            border-color: rgba(37, 99, 235, 0.22);
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.12);
+            transform: translateY(-3px);
         }
 
         .update-icon {
@@ -1723,6 +1750,47 @@
         /* ============================================================
            BREAKPOINT 480px — мобильный
         ============================================================ */
+        /* ============================================================
+           SCROLL REVEAL
+        ============================================================ */
+        .reveal {
+            opacity: 0;
+            transform: translateY(22px);
+            transition: opacity 0.45s ease, transform 0.45s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Stagger: start cards */
+        .start-card-1.reveal { transition-delay: 0ms; }
+        .start-card-2.reveal { transition-delay: 85ms; }
+        .start-card-3.reveal { transition-delay: 170ms; }
+
+        /* Stagger: features grid */
+        .features-grid .reveal:nth-child(1) { transition-delay: 0ms; }
+        .features-grid .reveal:nth-child(2) { transition-delay: 80ms; }
+        .features-grid .reveal:nth-child(3) { transition-delay: 160ms; }
+        .features-grid .reveal:nth-child(4) { transition-delay: 240ms; }
+
+        /* Stagger: advantages */
+        .advantages-list .reveal:nth-child(1) { transition-delay: 0ms; }
+        .advantages-list .reveal:nth-child(2) { transition-delay: 80ms; }
+        .advantages-list .reveal:nth-child(3) { transition-delay: 160ms; }
+        .advantages-list .reveal:nth-child(4) { transition-delay: 240ms; }
+
+        /* Stagger: updates */
+        .updates-grid .reveal:nth-child(1) { transition-delay: 0ms; }
+        .updates-grid .reveal:nth-child(2) { transition-delay: 80ms; }
+        .updates-grid .reveal:nth-child(3) { transition-delay: 160ms; }
+
+        /* Stagger: progress cards */
+        .progress-cards .reveal:nth-child(1) { transition-delay: 0ms; }
+        .progress-cards .reveal:nth-child(2) { transition-delay: 80ms; }
+        .progress-cards .reveal:nth-child(3) { transition-delay: 160ms; }
+
         @media (max-width: 480px) {
             /* Navbar */
             .navbar-site-title {
@@ -2115,26 +2183,26 @@
 
         <!-- С ЧЕГО НАЧАТЬ -->
         <section class="start-section">
-            <div class="section-heading">
+            <div class="section-heading reveal">
                 <h2>С чего начать подготовку?</h2>
                 <p>Выберите свой уровень и начните обучение по подходящему маршруту.</p>
             </div>
             <div class="start-flow">
-                <div class="start-card start-card-1">
+                <div class="start-card start-card-1 reveal">
                     <span class="start-card-level start-card-level-1">Уровень 1</span>
                     <div class="start-card-title">Начинаю с нуля</div>
                     <div class="start-card-desc">Для тех, кто ещё не изучал информатику или хочет пройти базу заново.</div>
                     <a href="/preparation" class="start-card-btn start-card-btn-1">Перейти</a>
                 </div>
                 <div class="start-arrow">→</div>
-                <div class="start-card start-card-2">
+                <div class="start-card start-card-2 reveal">
                     <span class="start-card-level start-card-level-2">Уровень 2</span>
                     <div class="start-card-title">Уже знаю основы</div>
                     <div class="start-card-desc">Изучайте отдельные темы и закрывайте пробелы в знаниях.</div>
                     <a href="/theory" class="start-card-btn start-card-btn-2">Изучать теорию</a>
                 </div>
                 <div class="start-arrow">→</div>
-                <div class="start-card start-card-3">
+                <div class="start-card start-card-3 reveal">
                     <span class="start-card-level start-card-level-3">Уровень 3</span>
                     <div class="start-card-title">Готов решать варианты</div>
                     <div class="start-card-desc">Переходите сразу к полноценным вариантам ЕГЭ и отслеживайте результаты.</div>
@@ -2147,7 +2215,7 @@
         <div class="interactive-zone">
 
         <!-- ИНДИКАТОР ПРОГРЕССА -->
-        <div class="iz-progress" id="izProgress">
+        <div class="iz-progress reveal" id="izProgress">
             <div class="iz-steps-row">
                 <div class="iz-step-item">
                     <span class="iz-dot iz-dot-active"></span>
@@ -2168,12 +2236,12 @@
 
         <!-- МИНИ-ЗАДАЧА -->
         <section class="minitask-section">
-            <div class="section-heading">
+            <div class="section-heading reveal">
                 <span class="section-tag section-tag-blue">Задание</span>
                 <h2>Попробуйте задачу прямо сейчас</h2>
                 <p>Так выглядит проверка знаний на платформе.</p>
             </div>
-            <div class="minitask-card">
+            <div class="minitask-card reveal">
                 <div class="minitask-question">Сколько бит требуется для кодирования 256 различных символов?</div>
                 <div class="minitask-options" id="minitask-options">
                     <label class="minitask-option">
@@ -2309,33 +2377,33 @@
 
         <!-- ПРЕИМУЩЕСТВА -->
         <section class="advantages-section">
-            <div class="section-heading">
+            <div class="section-heading reveal">
                 <h2>Почему выбирают ЕГЭволюцию</h2>
             </div>
             <div class="advantages-panel">
                 <div class="advantages-list">
-                    <div class="advantage-item">
+                    <div class="advantage-item reveal">
                         <div class="advantage-item-icon">🗺️</div>
                         <div>
                             <div class="advantage-item-title">Готовый маршрут от нуля до ЕГЭ</div>
                             <div class="advantage-item-desc">Пошаговый путь: базовые уроки → теория по темам → практика → полные варианты.</div>
                         </div>
                     </div>
-                    <div class="advantage-item">
+                    <div class="advantage-item reveal">
                         <div class="advantage-item-icon">📚</div>
                         <div>
                             <div class="advantage-item-title">Все 27 тем — без пробелов</div>
                             <div class="advantage-item-desc">Теория разбита по каждому из 27 номеров ЕГЭ. Изучай только то, что нужно именно тебе.</div>
                         </div>
                     </div>
-                    <div class="advantage-item">
+                    <div class="advantage-item reveal">
                         <div class="advantage-item-icon">📊</div>
                         <div>
                             <div class="advantage-item-title">Видишь, где проваливаешься</div>
                             <div class="advantage-item-desc">Статистика по каждому заданию показывает проблемные темы и историю твоих попыток.</div>
                         </div>
                     </div>
-                    <div class="advantage-item">
+                    <div class="advantage-item reveal">
                         <div class="advantage-item-icon">⏱️</div>
                         <div>
                             <div class="advantage-item-title">Экзамен без страха</div>
@@ -2348,24 +2416,24 @@
 
         <!-- ВОЗМОЖНОСТИ ПЛАТФОРМЫ -->
         <section class="features-section">
-            <h2 class="features-heading">Что есть на платформе</h2>
+            <h2 class="features-heading reveal">Что есть на платформе</h2>
             <div class="features-grid">
-                <a href="/preparation" class="feature-card">
+                <a href="/preparation" class="feature-card reveal">
                     <span class="feature-icon">🚀</span>
                     <div class="feature-title">Начальная подготовка</div>
                     <div class="feature-desc">Базовые уроки и изучение тем с нуля</div>
                 </a>
-                <a href="/theory" class="feature-card">
+                <a href="/theory" class="feature-card reveal">
                     <span class="feature-icon">📚</span>
                     <div class="feature-title">Теория</div>
                     <div class="feature-desc">Изучение всех тем ЕГЭ по информатике</div>
                 </a>
-                <a href="/variants" class="feature-card">
+                <a href="/variants" class="feature-card reveal">
                     <span class="feature-icon">📝</span>
                     <div class="feature-title">Варианты</div>
                     <div class="feature-desc">Полноценные тренировочные варианты с проверкой</div>
                 </a>
-                <a href="/tasks" class="feature-card">
+                <a href="/tasks" class="feature-card reveal">
                     <span class="feature-icon">🎯</span>
                     <div class="feature-title">База заданий</div>
                     <div class="feature-desc">Практика по каждому номеру ЕГЭ отдельно</div>
@@ -2376,20 +2444,20 @@
         <!-- ПРОГРЕСС — только для авторизованных -->
         {% if session.get('user_id') %}
         <section class="progress-section">
-            <div class="progress-header">
+            <div class="progress-header reveal">
                 <span class="progress-header-title">📈 Ваш прогресс</span>
                 <a href="/stats" class="progress-more-link">Подробная статистика →</a>
             </div>
             <div class="progress-cards">
-                <div class="progress-card">
+                <div class="progress-card reveal">
                     <div class="progress-num">145</div>
                     <div class="progress-label">Решено задач</div>
                 </div>
-                <div class="progress-card">
+                <div class="progress-card reveal">
                     <div class="progress-num">9 / 27</div>
                     <div class="progress-label">Изучено тем</div>
                 </div>
-                <div class="progress-card">
+                <div class="progress-card reveal">
                     <div class="progress-num">90</div>
                     <div class="progress-label">Лучший результат, баллов</div>
                 </div>
@@ -2400,7 +2468,7 @@
         <!-- ГОСТЕВОЙ БЛОК — только для неавторизованных -->
         {% if not session.get('user_id') %}
         <section class="guest-cta-section">
-            <div class="guest-cta-card">
+            <div class="guest-cta-card reveal">
                 <h2 class="guest-cta-title">Начните подготовку уже сегодня</h2>
                 <p class="guest-cta-desc">Создайте аккаунт и отслеживайте результаты, прогресс и историю решений.</p>
                 <div class="guest-cta-buttons">
@@ -2413,19 +2481,19 @@
 
         <!-- ЧТО НОВОГО НА ПЛАТФОРМЕ -->
         <div class="section-block">
-            <h2 class="section-title">✨ Что нового на платформе</h2>
+            <h2 class="section-title reveal">✨ Что нового на платформе</h2>
             <div class="updates-grid">
-                <div class="update-card">
+                <div class="update-card reveal">
                     <div class="update-icon">🛠️</div>
                     <div class="update-title">Новый редактор задач</div>
                     <div class="update-desc">Поддержка изображений и прикреплённых файлов в задачах.</div>
                 </div>
-                <div class="update-card">
+                <div class="update-card reveal">
                     <div class="update-icon">📖</div>
                     <div class="update-title">Подготовка с нуля</div>
                     <div class="update-desc">Добавлены первые уроки начальной подготовки по информатике.</div>
                 </div>
-                <div class="update-card">
+                <div class="update-card reveal">
                     <div class="update-icon">🔒</div>
                     <div class="update-title">Безопасность платформы</div>
                     <div class="update-desc">Завершён полный аудит безопасности — данные пользователей защищены.</div>
@@ -2435,8 +2503,8 @@
 
         <!-- НОВОСТИ -->
         <div class="section-block">
-            <h2 class="section-title">📰 Новости</h2>
-            <div class="news-feed">
+            <h2 class="section-title reveal">📰 Новости</h2>
+            <div class="news-feed reveal">
                 <div class="news-item important">
                     <div class="news-date">20 мая 2026</div>
                     <div class="news-title-text">Добавлена статистика решений</div>
@@ -2664,6 +2732,84 @@
                 updateIzProgress(3);
             }, 280);
         }
+
+        /* ================================================================
+           SCROLL REVEAL
+        ================================================================ */
+        (function () {
+            function initReveal() {
+                if (!('IntersectionObserver' in window)) {
+                    document.querySelectorAll('.reveal').forEach(function (el) {
+                        el.classList.add('visible');
+                    });
+                    return;
+                }
+                var io = new IntersectionObserver(function (entries) {
+                    entries.forEach(function (entry) {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            io.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.1, rootMargin: '0px 0px -24px 0px' });
+
+                document.querySelectorAll('.reveal').forEach(function (el) {
+                    io.observe(el);
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initReveal);
+            } else {
+                initReveal();
+            }
+        })();
+
+        /* ================================================================
+           COUNT-UP АНИМАЦИЯ
+        ================================================================ */
+        (function () {
+            if (!('IntersectionObserver' in window)) return;
+
+            function countUp(el) {
+                var original = el.textContent.trim();
+                var m = original.match(/^(\d+)(\+?)$/);
+                if (!m) return;
+                var target = parseInt(m[1], 10);
+                var suffix = m[2] || '';
+                var duration = 900;
+                var startTime = null;
+
+                function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+
+                function tick(ts) {
+                    if (!startTime) startTime = ts;
+                    var p = Math.min((ts - startTime) / duration, 1);
+                    el.textContent = Math.floor(easeOut(p) * target) + suffix;
+                    if (p < 1) {
+                        requestAnimationFrame(tick);
+                    } else {
+                        el.textContent = original;
+                    }
+                }
+                requestAnimationFrame(tick);
+            }
+
+            var co = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        countUp(entry.target);
+                        co.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.7 });
+
+            document.querySelectorAll('.hero-mini-stat-num, .progress-num').forEach(function (el) {
+                if (/^\d+\+?$/.test(el.textContent.trim())) {
+                    co.observe(el);
+                }
+            });
+        })();
     </script>
 
 </body>
