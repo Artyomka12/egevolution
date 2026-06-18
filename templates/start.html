@@ -1497,147 +1497,322 @@
         }
 
         /* ============================================================
+           CARD STRIPE — универсальная система цветных полосок
+        ============================================================ */
+        .card-stripe {
+            border-left: 3.5px solid var(--stripe, rgba(37, 99, 235, 0.85));
+        }
+
+        .card-stripe--blue   { --stripe: rgba(37, 99, 235, 0.85); }
+        .card-stripe--purple { --stripe: rgba(168, 85, 247, 0.85); }
+        .card-stripe--green  { --stripe: rgba(34, 197, 94, 0.85);  }
+
+        /* При hover update-card меняет border-color шортхэндом —
+           восстанавливаем цвет полоски повышенной специфичностью */
+        .update-card.card-stripe:hover {
+            border-left-color: var(--stripe);
+        }
+
+        /* ============================================================
            ВИДЕОРАЗБОРЫ
         ============================================================ */
         .video-preview-section {
             margin-bottom: 72px;
+            /* overflow-x контролируется body { overflow-x: hidden } — clip здесь не нужен */
         }
 
-        .video-preview-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
+        /* Позиционный контекст.
+           padding-top создаёт зону: боковые постеры (top:0) торчат
+           на 34px выше центрального видео (которое начинается после padding). */
+        .video-stage {
+            position: relative;
+            max-width: 720px;
+            margin: 0 auto;
+            padding-top: 34px;
         }
 
-        .video-card {
+        /* Центральная карточка — передний план */
+        .video-main {
+            position: relative;
+            z-index: 2;
             background: #fff;
             border: 1px solid rgba(37, 99, 235, 0.12);
-            border-radius: 16px;
+            border-radius: 18px;
             overflow: hidden;
-            box-shadow: 0 4px 18px rgba(37, 99, 235, 0.07);
+            box-shadow: 0 8px 32px rgba(37, 99, 235, 0.11);
             transition: transform 0.22s ease-out, box-shadow 0.22s ease-out;
-            text-decoration: none;
-            display: block;
-            cursor: pointer;
         }
 
-        .video-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 36px rgba(37, 99, 235, 0.14);
+        .video-stage:hover .video-main {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 48px rgba(37, 99, 235, 0.16);
         }
 
-        .video-thumb {
-            position: relative;
+        /* Боковые постеры — задний план */
+        .video-side {
+            position: absolute;
+            top: 0;            /* стартуют на 34px выше .video-main */
+            width: 83%;
+            border-radius: 24px;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 1;        /* под центральной карточкой */
+            opacity: 1;        /* естественные цвета, без засветки */
+            box-shadow: 0 6px 24px rgba(15, 23, 42, 0.14);
+            transition: transform 0.3s ease-out;
+        }
+
+        .video-side-left {
+            right: calc(100% - 280px); /* 280px заходят под центральную карточку */
+        }
+
+        .video-side-right {
+            left: calc(100% - 280px);
+        }
+
+        /* Hover: постеры мягко уходят наружу */
+        .video-stage:hover .video-side-left {
+            transform: translateX(-10px);
+        }
+
+        .video-stage:hover .video-side-right {
+            transform: translateX(10px);
+        }
+
+        /* Thumbnail: задаёт пропорцию и fallback-фон */
+        .video-side-thumb {
             aspect-ratio: 16 / 9;
+            position: relative;
+            overflow: hidden;
         }
 
-        .video-thumb-bg {
+        /* Fallback-градиент до загрузки изображения */
+        .video-side-left .video-side-thumb {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 55%, #c7d2fe 100%);
+        }
+
+        .video-side-right .video-side-thumb {
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 55%, #a5b4fc 100%);
+        }
+
+        /* Реальное изображение-постер */
+        .video-side-img {
             position: absolute;
             inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
         }
 
-        .video-thumb-1 { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 60%, #c7d2fe 100%); }
-        .video-thumb-2 { background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 60%, #c4b5fd 100%); }
-        .video-thumb-3 { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 60%, #6ee7b7 100%); }
-
-        .video-thumb-deco {
-            position: absolute;
-            bottom: 10px;
-            right: 14px;
-            font-size: 3.6em;
-            font-weight: 900;
-            color: rgba(255, 255, 255, 0.38);
-            line-height: 1;
-            letter-spacing: -2px;
-            user-select: none;
+        /* Видеоплеер центральной карточки */
+        .video-overview-player {
+            display: block;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: linear-gradient(155deg, #eff6ff 0%, #dbeafe 28%, #bfdbfe 58%, #e0e7ff 100%);
+            max-width: 100%;
         }
 
-        .video-play-btn {
+        /* Подпись под видео */
+        .video-overview-info {
+            padding: 20px 28px 24px;
+            border-top: 1px solid rgba(37, 99, 235, 0.08);
+        }
+
+        .video-overview-title {
+            font-size: 1.02em;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 7px;
+        }
+
+        .video-overview-desc {
+            font-size: 0.87em;
+            color: #475569;
+            line-height: 1.55;
+        }
+
+        /* ============================================================
+           CONTACT CTA
+        ============================================================ */
+        .contact-cta-section {
+            padding-bottom: 64px;
+        }
+
+        .contact-cta-card {
+            background: #fff;
+            border: 1px solid rgba(37, 99, 235, 0.14);
+            border-radius: 24px;
+            box-shadow: 0 8px 40px rgba(37, 99, 235, 0.08);
+            padding: 48px 40px 44px;
+            text-align: center;
+            max-width: 640px;
+            margin: 0 auto;
             position: relative;
-            z-index: 1;
-            width: 50px;
-            height: 50px;
-            background: rgba(255, 255, 255, 0.96);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 18px rgba(37, 99, 235, 0.22);
-            transition: transform 0.18s ease-out, box-shadow 0.18s ease-out;
+            overflow: hidden;
         }
 
-        .video-card:hover .video-play-btn {
-            transform: scale(1.12);
-            box-shadow: 0 8px 28px rgba(37, 99, 235, 0.32);
+        .contact-cta-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #2563eb 0%, #60a5fa 50%, #818cf8 100%);
+            border-radius: 24px 24px 0 0;
         }
 
-        .video-play-icon {
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 9px 0 9px 15px;
-            border-color: transparent transparent transparent #2563eb;
-            margin-left: 4px;
-        }
-
-        .video-card-body {
-            padding: 16px 18px 18px;
-        }
-
-        .video-task-badge {
+        .contact-cta-badge {
             display: inline-block;
             background: rgba(37, 99, 235, 0.08);
             color: #2563eb;
-            font-size: 0.72em;
+            font-size: 0.78em;
             font-weight: 700;
-            padding: 3px 9px;
-            border-radius: 6px;
-            margin-bottom: 9px;
-            letter-spacing: 0.02em;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 4px 14px;
+            border-radius: 20px;
+            margin-bottom: 18px;
         }
 
-        .video-card-title {
-            font-size: 0.9em;
-            font-weight: 700;
+        .contact-cta-title {
+            font-size: 1.85em;
+            font-weight: 800;
             color: #0f172a;
-            line-height: 1.4;
-            margin-bottom: 10px;
+            line-height: 1.2;
+            letter-spacing: -0.3px;
+            margin-bottom: 16px;
         }
 
-        .video-card-meta {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.77em;
-            color: #64748b;
+        .contact-cta-text {
+            font-size: 0.97em;
+            color: #475569;
+            line-height: 1.65;
+            max-width: 480px;
+            margin: 0 auto 12px;
         }
 
-        .video-card-meta::before {
-            content: '⏱';
-            font-size: 0.9em;
-        }
-
-        .video-preview-more {
-            margin-top: 22px;
-            text-align: center;
-        }
-
-        .video-preview-link {
-            font-size: 0.88em;
+        .contact-cta-note {
+            font-size: 0.87em;
             font-weight: 600;
             color: #2563eb;
-            text-decoration: none;
-            border-bottom: 1px solid rgba(37, 99, 235, 0.28);
-            padding-bottom: 1px;
-            transition: color 0.18s ease-out, border-color 0.18s ease-out;
+            margin-bottom: 28px;
         }
 
-        .video-preview-link:hover {
-            color: #1d4ed8;
-            border-color: rgba(29, 78, 216, 0.5);
+        .contact-cta-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .contact-cta-btn {
+            padding: 13px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 0.95em;
+            font-weight: 600;
+            display: inline-block;
+            transition: opacity 0.18s ease-out, transform 0.15s ease-out, box-shadow 0.18s ease-out;
+        }
+
+        .contact-cta-btn:hover {
+            opacity: 0.88;
+            transform: translateY(-2px);
+        }
+
+        .contact-cta-btn-tg {
+            background: linear-gradient(135deg, #229ed9, #1a8dbf);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(34, 158, 217, 0.28);
+        }
+
+        .contact-cta-btn-tg:hover {
+            box-shadow: 0 8px 24px rgba(34, 158, 217, 0.38);
+        }
+
+        .contact-cta-btn-max {
+            background: #fff;
+            color: #334155;
+            border: 1.5px solid rgba(37, 99, 235, 0.25);
+        }
+
+        /* ============================================================
+           ПЛАВАЮЩАЯ КАРТОЧКА СВЯЗИ
+        ============================================================ */
+        .floating-contact {
+            position: fixed;
+            bottom: 28px;
+            right: 24px;
+            z-index: 50;      /* ниже navbar(100) и dropdown(200) */
+            width: 260px;
+            background: #fff;
+            border: 1px solid rgba(37, 99, 235, 0.18);
+            border-radius: 20px;
+            box-shadow: 0 8px 40px rgba(15, 23, 42, 0.13), 0 2px 12px rgba(37, 99, 235, 0.07);
+            padding: 18px 20px 16px;
+            transition: transform 0.22s ease-out, box-shadow 0.22s ease-out;
+        }
+
+        .floating-contact:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 48px rgba(15, 23, 42, 0.18), 0 4px 16px rgba(37, 99, 235, 0.11);
+        }
+
+        .floating-contact-icon {
+            font-size: 1.3em;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .floating-contact-title {
+            font-size: 0.93em;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        .floating-contact-text {
+            font-size: 0.77em;
+            color: #64748b;
+            line-height: 1.5;
+            margin-bottom: 14px;
+        }
+
+        .floating-contact-links {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .floating-contact-link {
+            display: block;
+            padding: 8px 14px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 0.82em;
+            font-weight: 600;
+            text-align: center;
+            transition: opacity 0.15s ease-out, transform 0.12s ease-out;
+        }
+
+        .floating-contact-link:hover {
+            opacity: 0.88;
+            transform: translateY(-1px);
+        }
+
+        .floating-contact-link-tg {
+            background: linear-gradient(135deg, #229ed9, #1a8dbf);
+            color: #fff;
+        }
+
+        .floating-contact-link-max {
+            background: rgba(37, 99, 235, 0.07);
+            color: #2563eb;
+            border: 1px solid rgba(37, 99, 235, 0.18);
         }
 
         /* ============================================================
@@ -1793,8 +1968,17 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            .video-preview-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .video-side {
+                width: 72%;
+                opacity: 0.9;
+            }
+
+            .video-side-left {
+                right: calc(100% - 220px);
+            }
+
+            .video-side-right {
+                left: calc(100% - 220px);
             }
         }
 
@@ -1859,6 +2043,24 @@
             .footer-inner {
                 flex-direction: column;
                 gap: 24px;
+            }
+
+            .video-side {
+                display: none;
+            }
+
+            /* Contact CTA */
+            .contact-cta-card {
+                padding: 36px 24px 32px;
+            }
+
+            .contact-cta-title {
+                font-size: 1.5em;
+            }
+
+            /* Плавающая карточка — скрыть на мобильных */
+            .floating-contact {
+                display: none;
             }
         }
 
@@ -2140,11 +2342,6 @@
                 padding: 14px 14px;
             }
 
-            /* Video previews */
-            .video-preview-grid {
-                grid-template-columns: 1fr;
-            }
-
             /* Footer */
             .footer-socials-row {
                 gap: 10px;
@@ -2179,6 +2376,20 @@
                 width: 100%;
                 text-align: center;
                 padding: 12px 20px;
+            }
+
+            /* Contact CTA — кнопки на всю ширину */
+            .contact-cta-card {
+                padding: 28px 18px 28px;
+            }
+
+            .contact-cta-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .contact-cta-btn {
+                text-align: center;
             }
         }
         /* ============================================================
@@ -2555,49 +2766,42 @@
                 <h2>Видеоразборы и уроки</h2>
                 <p>Каждая тема сопровождается подробным объяснением на видео и примерами решений — чтобы понять, а не просто запомнить.</p>
             </div>
-            <div class="video-preview-grid">
-                <div class="video-card reveal">
-                    <div class="video-thumb">
-                        <div class="video-thumb-bg video-thumb-1">
-                            <div class="video-thumb-deco">8</div>
-                            <div class="video-play-btn"><div class="video-play-icon"></div></div>
-                        </div>
-                    </div>
-                    <div class="video-card-body">
-                        <span class="video-task-badge">Задание 8</span>
-                        <div class="video-card-title">Системы счисления — перевод и арифметика</div>
-                        <div class="video-card-meta">11 минут</div>
+            <div class="video-stage reveal">
+                <!-- Левый постер -->
+                <div class="video-side video-side-left">
+                    <div class="video-side-thumb">
+                        <img src="/static/images/video-preview-left.jpg"
+                             alt="Видеоразбор по ЕГЭ по информатике"
+                             class="video-side-img"
+                             loading="lazy">
                     </div>
                 </div>
-                <div class="video-card reveal">
-                    <div class="video-thumb">
-                        <div class="video-thumb-bg video-thumb-2">
-                            <div class="video-thumb-deco">12</div>
-                            <div class="video-play-btn"><div class="video-play-icon"></div></div>
-                        </div>
-                    </div>
-                    <div class="video-card-body">
-                        <span class="video-task-badge">Задание 12</span>
-                        <div class="video-card-title">Алгоритмы с ветвлениями и циклами</div>
-                        <div class="video-card-meta">9 минут</div>
-                    </div>
-                </div>
-                <div class="video-card reveal">
-                    <div class="video-thumb">
-                        <div class="video-thumb-bg video-thumb-3">
-                            <div class="video-thumb-deco">5</div>
-                            <div class="video-play-btn"><div class="video-play-icon"></div></div>
-                        </div>
-                    </div>
-                    <div class="video-card-body">
-                        <span class="video-task-badge">Задание 5</span>
-                        <div class="video-card-title">Кодирование информации — от теории к практике</div>
-                        <div class="video-card-meta">8 минут</div>
+
+                <!-- Основной видеоплеер -->
+                <div class="video-main">
+                    <video
+                        class="video-overview-player"
+                        controls
+                        preload="metadata"
+                    >
+                        <source src="/static/videos/platform-overview.mp4" type="video/mp4">
+                        Ваш браузер не поддерживает видео.
+                    </video>
+                    <div class="video-overview-info">
+                        <div class="video-overview-title">Обзор платформы и видеоуроков</div>
+                        <div class="video-overview-desc">Посмотрите, как устроены занятия: понятные объяснения, разбор задач и пошаговая подготовка к ЕГЭ.</div>
                     </div>
                 </div>
-            </div>
-            <div class="video-preview-more reveal">
-                <a href="/preparation" class="video-preview-link">Смотреть все уроки с видеоразборами →</a>
+
+                <!-- Правый постер -->
+                <div class="video-side video-side-right">
+                    <div class="video-side-thumb">
+                        <img src="/static/images/video-preview-right.jpg"
+                             alt="Видеопрактика по информатике"
+                             class="video-side-img"
+                             loading="lazy">
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -2709,23 +2913,37 @@
         <div class="section-block">
             <h2 class="section-title reveal">✨ Что нового на платформе</h2>
             <div class="updates-grid">
-                <div class="update-card reveal">
+                <div class="update-card card-stripe card-stripe--blue reveal">
                     <div class="update-icon">📹</div>
                     <div class="update-title">Уроки с видеоразборами</div>
                     <div class="update-desc">Каждая тема сопровождается видеообъяснением — смотри и сразу решай задачи.</div>
                 </div>
-                <div class="update-card reveal">
+                <div class="update-card card-stripe card-stripe--purple reveal">
                     <div class="update-icon">📊</div>
                     <div class="update-title">Статистика твоего прогресса</div>
                     <div class="update-desc">Видишь, сколько задач решено, какие темы западают и как растёт результат.</div>
                 </div>
-                <div class="update-card reveal">
+                <div class="update-card card-stripe card-stripe--green reveal">
                     <div class="update-icon">🚀</div>
                     <div class="update-title">Начни с нуля — без пробелов</div>
                     <div class="update-desc">Базовые уроки ведут с самых основ: понятно даже тем, кто раньше не изучал информатику.</div>
                 </div>
             </div>
         </div>
+
+        <!-- ЗАПИСЬ НА ЗАНЯТИЕ -->
+        <section class="contact-cta-section">
+            <div class="contact-cta-card reveal">
+                <span class="contact-cta-badge">Индивидуальные занятия</span>
+                <h2 class="contact-cta-title">Готов начать подготовку?</h2>
+                <p class="contact-cta-text">Напиши мне в Telegram или MAX — покажу платформу, расскажу как проходят занятия и помогу выбрать маршрут подготовки под твой уровень.</p>
+                <p class="contact-cta-note">Первое вводное занятие — бесплатно.</p>
+                <div class="contact-cta-actions">
+                    <a href="https://t.me/Tyomkinss" target="_blank" class="contact-cta-btn contact-cta-btn-tg">Telegram</a>
+                    <a href="https://max.ru/u/f9LHodD0cOIojiO0gNWRLNP_as6P10M9ij53KQDQmY0CRLnpzpAaW07gVTg" target="_blank" class="contact-cta-btn contact-cta-btn-max">MAX</a>
+                </div>
+            </div>
+        </section>
 
     </div><!-- /.main-wrap -->
 
@@ -2759,6 +2977,17 @@
         </div>
         <div class="footer-bottom">© 2026 ЕГЭволюция</div>
     </footer>
+
+    <!-- ПЛАВАЮЩАЯ КАРТОЧКА СВЯЗИ -->
+    <div class="floating-contact">
+        <span class="floating-contact-icon">💬</span>
+        <div class="floating-contact-title">Есть вопросы?</div>
+        <p class="floating-contact-text">Напиши — отвечу лично и помогу с началом подготовки.</p>
+        <div class="floating-contact-links">
+            <a href="https://t.me/Tyomkinss" target="_blank" class="floating-contact-link floating-contact-link-tg">Telegram</a>
+            <a href="https://max.ru/u/f9LHodD0cOIojiO0gNWRLNP_as6P10M9ij53KQDQmY0CRLnpzpAaW07gVTg" target="_blank" class="floating-contact-link floating-contact-link-max">MAX</a>
+        </div>
+    </div>
 
     <script>
         /* ================================================================

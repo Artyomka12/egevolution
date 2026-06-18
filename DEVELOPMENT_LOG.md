@@ -4,8 +4,8 @@
 
 **Дата последнего обновления:** 2026-06-18
 **Ветка:** main
-**Версия:** v1.6.3
-**Статус:** выполнен — видеоразборы в Hero и новый блок превью, удаление блока новостей, рефрейминг обновлений, полировка reveal-анимаций
+**Версия:** v1.6.4
+**Статус:** выполнен — доработка видеосекции (HTML5 video + боковые постеры + fix clipping), CTA-секция записи на занятие, плавающая карточка связи, система цветных полосок .card-stripe
 
 Аудит безопасности завершён в v1.3.0. D-1, D-2, D-3 закрыты.
 v1.4.0 — расширенный редактор задач в админке: все три этапа завершены.
@@ -18,10 +18,128 @@ v1.6.0 — визуальный редизайн главной страницы
 v1.6.1 — живой интерфейс главной страницы: hover-анимации карточек, scroll reveal с stagger, count-up анимации чисел, уплотнение интерактивной зоны. Изменения только в CSS и JS `start.html`. HTML-структура, backend, маршруты, бизнес-логика — не тронуты.
 v1.6.2 — горизонтальная динамика интерактивной зоны: единые slide+fade переходы для обоих шагов (Задача→Готовность и Готовность→Маршрут), заполнение коннекторов stepper, overflow:hidden и minHeight-фикс. Изменения только в CSS и JS `start.html`. HTML, backend, маршруты, бизнес-логика — не тронуты.
 v1.6.3 — усиление ценностного предложения главной страницы: счётчик видеоразборов в Hero, новый блок видео-превью, удаление блока новостей, рефрейминг блока обновлений с фокусом на студенте, ease → ease-out в reveal-анимациях. Изменения только в CSS и HTML `start.html`. JS, backend, маршруты, бизнес-логика — не тронуты.
+v1.6.4 — визуальные и конверсионные улучшения главной страницы: HTML5-видеоплеер + боковые постеры в видеосекции, CTA-секция записи на занятие, плавающая карточка связи, система цветных полосок .card-stripe для update-card. Изменения только в `templates/start.html`. JS, backend, маршруты — не тронуты.
 
 ---
 
 ## Версии
+
+### v1.6.4 — Визуальные и конверсионные улучшения главной страницы
+
+**Дата:** 2026-06-18
+
+**Описание:** Четыре независимых улучшения главной страницы. Центральные изменения: настоящий HTML5-видеоплеер в блоке видеоразборов, CTA-секция для записи на занятие и плавающая карточка связи — улучшают конверсию. Система `.card-stripe` добавляет семантическую цветовую маркировку карточек. Изменения только в `templates/start.html` (CSS + HTML). JS-бизнес-логика, backend, маршруты, navbar/logout/CSRF — не тронуты.
+
+**Этап 1 — Доработка секции «Видеоразборы и уроки»:**
+- Центральный элемент заменён: CSS-заглушка → настоящий `<video controls preload="metadata">`
+- Источник: `/static/videos/platform-overview.mp4`; создана директория `static/videos/`
+- Боковые карточки `.video-side`: CSS-градиенты → реальные `<img>` с `loading="lazy"`
+  - `/static/images/video-preview-left.jpg` и `/static/images/video-preview-right.jpg`
+  - Директория `static/images/` создана; файлы добавляются вручную
+- Боковые постеры некликабельны (`pointer-events: none`); play-кружки и overlay удалены
+- Фотографии в естественном цвете: убраны `filter: blur` и засветление
+- Эффект наложения: центральное видео `z-index:2` визуально поверх боковых `z-index:1`
+- Боковые постеры выглядывают слева, справа и 34px сверху над центральным видео
+  (`padding-top: 34px` на `.video-stage`; боковые карточки с `top: 0` начинаются раньше)
+- Исправлено обрезание постеров: удалён `overflow-x: clip` с секции;
+  защита от горизонтального скролла — через `body { overflow-x: hidden }` (line 27)
+- Адаптив ≤768px: боковые постеры скрываются (`display: none`)
+
+**Этап 2 — CTA-секция «Готов начать подготовку?»:**
+- Новая секция `.contact-cta-section` добавлена внутри `.main-wrap`
+- Расположение: после блока «Что нового на платформе», перед `</div><!-- /.main-wrap -->`
+- Карточка `.contact-cta-card`: декоративная цветная полоска сверху (`::before` gradient)
+- Кнопки `<a target="_blank">`: Telegram (`https://t.me/Tyomkinss`) и MAX — совпадают с footer
+- Reveal-анимация: `.reveal` на карточке; hover-переходы на кнопках
+- Адаптив: 768px → уменьшенный padding и font-size; 480px → кнопки в столбик `flex-direction: column`
+
+**Этап 3 — Плавающая карточка связи:**
+- Элемент `.floating-contact`: `position: fixed; bottom: 28px; right: 24px; z-index: 50`
+- Содержит Telegram и MAX ссылки, одинаковые с footer
+- `z-index: 50` — ниже navbar (`z-index: 100`) и dropdown (`z-index: 200`)
+- Нет JS — только CSS-анимации (`transform: translateY(-3px)` при hover)
+- Расположен в DOM после `</footer>`, перед `<script>`
+- Адаптив ≤768px: скрывается (`display: none`)
+
+**Этап 4 — Система цветных полосок `.card-stripe`:**
+- Базовый класс `.card-stripe`: `border-left: 3.5px solid var(--stripe, ...)`
+- Модификаторы: `.card-stripe--blue`, `.card-stripe--purple`, `.card-stripe--green`
+- Цвета: синий `rgba(37,99,235,0.85)`, фиолетовый `rgba(168,85,247,0.85)`, зелёный `rgba(34,197,94,0.85)`
+- Применено только к трём `.update-card` в блоке «Что нового»:
+  - «Уроки с видеоразборами» → `--blue` (контент/обучение)
+  - «Статистика прогресса» → `--purple` (трекинг/прогресс)
+  - «Начни с нуля» → `--green` (старт/достижение)
+- Hover-фикс: `.update-card.card-stripe:hover { border-left-color: var(--stripe) }` —
+  специфичность `(0,3,0)` перекрывает `(0,2,0)` у `.update-card:hover`, восстанавливает цвет полоски
+- Другие блоки (feature-card, start-card, advantage-item, contact-cta-card и др.) — не тронуты
+
+**Новые CSS-классы:**
+
+| Класс | Описание |
+|---|---|
+| `.contact-cta-section` | Контейнер CTA-секции записи |
+| `.contact-cta-card` | Карточка CTA с декоративной полоской сверху |
+| `.contact-cta-badge` | Бейдж «Индивидуальные занятия» |
+| `.contact-cta-title` | Заголовок CTA |
+| `.contact-cta-text` | Описание |
+| `.contact-cta-note` | Строка «Первое вводное занятие — бесплатно» |
+| `.contact-cta-actions` | Flex-контейнер кнопок |
+| `.contact-cta-btn` | Базовый стиль кнопки |
+| `.contact-cta-btn-tg` | Кнопка Telegram |
+| `.contact-cta-btn-max` | Кнопка MAX |
+| `.floating-contact` | Плавающая карточка (`position: fixed`) |
+| `.floating-contact-icon` | Иконка чата |
+| `.floating-contact-title` | Заголовок карточки |
+| `.floating-contact-text` | Описание |
+| `.floating-contact-links` | Flex-контейнер ссылок |
+| `.floating-contact-link` | Базовый стиль ссылки |
+| `.floating-contact-link-tg` | Telegram-ссылка |
+| `.floating-contact-link-max` | MAX-ссылка |
+| `.card-stripe` | Базовый класс: `border-left` через CSS custom property |
+| `.card-stripe--blue` | `--stripe: rgba(37,99,235,0.85)` |
+| `.card-stripe--purple` | `--stripe: rgba(168,85,247,0.85)` |
+| `.card-stripe--green` | `--stripe: rgba(34,197,94,0.85)` |
+
+**Изменённые файлы:**
+
+| Файл | Изменения |
+|---|---|
+| `templates/start.html` | CSS + HTML: все четыре этапа |
+| `static/videos/` | Новая директория; `platform-overview.mp4` добавляется вручную |
+| `static/images/` | Новая директория; `video-preview-left.jpg` и `video-preview-right.jpg` добавляются вручную |
+
+**Результаты финального аудита:**
+
+| Проверка | Статус |
+|---|---|
+| HTML5 `<video controls preload="metadata">` | ✅ |
+| Источник `/static/videos/platform-overview.mp4` | ✅ |
+| Боковые постеры: реальные `<img>`, естественные цвета | ✅ |
+| Нет play-кружков и overlay на постерах | ✅ |
+| Постеры некликабельны (`pointer-events: none`) | ✅ |
+| Центральное видео поверх постеров (z-index 2 > 1) | ✅ |
+| Постеры видны слева, справа и сверху (padding-top: 34px) | ✅ |
+| Нет горизонтального скролла (`body overflow-x:hidden`) | ✅ |
+| Адаптив ≤768px: боковые постеры скрыты | ✅ |
+| CTA-секция после «Что нового», перед footer | ✅ |
+| CTA Telegram = `t.me/Tyomkinss` (совпадает с footer) | ✅ |
+| CTA MAX = полная ссылка (совпадает с footer) | ✅ |
+| CTA reveal-анимация работает | ✅ |
+| CTA адаптив 480px: кнопки в столбик | ✅ |
+| Floating card: `position: fixed`, bottom-right | ✅ |
+| Floating card: `z-index 50` < navbar `100` < dropdown `200` | ✅ |
+| Floating card скрыта ≤768px | ✅ |
+| `.card-stripe` архитектура через CSS custom property | ✅ |
+| 3 update-card с полосками, остальные блоки не тронуты | ✅ |
+| Hover-фикс сохраняет цвет полоски при наведении | ✅ |
+| Backend не изменён | ✅ |
+| JS не изменён | ✅ |
+
+**Итого: 22/22 ✅**
+
+**Не изменялось:** navbar, logout/CSRF, JS-функции `checkMiniTask`, `checkReadiness`, `updateIzProgress`, `goToStep2`, `goToStep3`, scroll reveal IIFE, count-up IIFE, backend `app.py`, маршруты, база данных.
+
+---
 
 ### v1.6.3 — Усиление ценностного предложения главной страницы
 
