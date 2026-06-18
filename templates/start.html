@@ -483,7 +483,7 @@
         /* Мини-статистика под mockup */
         .hero-mini-stats {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 10px;
         }
 
@@ -1497,39 +1497,147 @@
         }
 
         /* ============================================================
-           НОВОСТИ
+           ВИДЕОРАЗБОРЫ
         ============================================================ */
-        .news-item {
-            padding: 0 0 2px 13px;
-            margin-bottom: 18px;
-            border-left: 2px solid rgba(37, 99, 235, 0.38);
+        .video-preview-section {
+            margin-bottom: 72px;
         }
 
-        .news-item:last-child {
-            margin-bottom: 0;
+        .video-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
         }
 
-        .news-item.important {
-            border-left-color: rgba(220, 38, 38, 0.5);
+        .video-card {
+            background: #fff;
+            border: 1px solid rgba(37, 99, 235, 0.12);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 18px rgba(37, 99, 235, 0.07);
+            transition: transform 0.22s ease-out, box-shadow 0.22s ease-out;
+            text-decoration: none;
+            display: block;
+            cursor: pointer;
         }
 
-        .news-date {
-            font-size: 0.76em;
-            color: #64748b;
-            margin-bottom: 3px;
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 36px rgba(37, 99, 235, 0.14);
         }
 
-        .news-title-text {
+        .video-thumb {
+            position: relative;
+            aspect-ratio: 16 / 9;
+        }
+
+        .video-thumb-bg {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-thumb-1 { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 60%, #c7d2fe 100%); }
+        .video-thumb-2 { background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 60%, #c4b5fd 100%); }
+        .video-thumb-3 { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 60%, #6ee7b7 100%); }
+
+        .video-thumb-deco {
+            position: absolute;
+            bottom: 10px;
+            right: 14px;
+            font-size: 3.6em;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.38);
+            line-height: 1;
+            letter-spacing: -2px;
+            user-select: none;
+        }
+
+        .video-play-btn {
+            position: relative;
+            z-index: 1;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 18px rgba(37, 99, 235, 0.22);
+            transition: transform 0.18s ease-out, box-shadow 0.18s ease-out;
+        }
+
+        .video-card:hover .video-play-btn {
+            transform: scale(1.12);
+            box-shadow: 0 8px 28px rgba(37, 99, 235, 0.32);
+        }
+
+        .video-play-icon {
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 9px 0 9px 15px;
+            border-color: transparent transparent transparent #2563eb;
+            margin-left: 4px;
+        }
+
+        .video-card-body {
+            padding: 16px 18px 18px;
+        }
+
+        .video-task-badge {
+            display: inline-block;
+            background: rgba(37, 99, 235, 0.08);
+            color: #2563eb;
+            font-size: 0.72em;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 6px;
+            margin-bottom: 9px;
+            letter-spacing: 0.02em;
+        }
+
+        .video-card-title {
             font-size: 0.9em;
-            font-weight: 600;
+            font-weight: 700;
             color: #0f172a;
-            margin-bottom: 4px;
+            line-height: 1.4;
+            margin-bottom: 10px;
         }
 
-        .news-description {
-            color: #475569;
-            font-size: 0.82em;
-            line-height: 1.55;
+        .video-card-meta {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.77em;
+            color: #64748b;
+        }
+
+        .video-card-meta::before {
+            content: '⏱';
+            font-size: 0.9em;
+        }
+
+        .video-preview-more {
+            margin-top: 22px;
+            text-align: center;
+        }
+
+        .video-preview-link {
+            font-size: 0.88em;
+            font-weight: 600;
+            color: #2563eb;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(37, 99, 235, 0.28);
+            padding-bottom: 1px;
+            transition: color 0.18s ease-out, border-color 0.18s ease-out;
+        }
+
+        .video-preview-link:hover {
+            color: #1d4ed8;
+            border-color: rgba(29, 78, 216, 0.5);
         }
 
         /* ============================================================
@@ -1684,6 +1792,10 @@
             .updates-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+
+            .video-preview-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         /* ============================================================
@@ -1759,7 +1871,7 @@
         .reveal {
             opacity: 0;
             transform: translateY(22px);
-            transition: opacity 0.45s ease, transform 0.45s ease;
+            transition: opacity 0.45s ease-out, transform 0.45s ease-out;
         }
 
         .reveal.visible {
@@ -1851,6 +1963,10 @@
             .hero-btn {
                 padding: 9px 18px;
                 font-size: 0.875em;
+            }
+
+            .hero-mini-stats {
+                grid-template-columns: repeat(2, 1fr);
             }
 
             /* Прогресс */
@@ -2022,6 +2138,11 @@
 
             .update-card {
                 padding: 14px 14px;
+            }
+
+            /* Video previews */
+            .video-preview-grid {
+                grid-template-columns: 1fr;
             }
 
             /* Footer */
@@ -2224,6 +2345,10 @@
                         <span class="hero-mini-stat-num">90+</span>
                         <span class="hero-mini-stat-label">баллов</span>
                     </div>
+                    <div class="hero-mini-stat">
+                        <span class="hero-mini-stat-num">100+</span>
+                        <span class="hero-mini-stat-label">видеоразборов</span>
+                    </div>
                 </div>
             </div>
 
@@ -2423,6 +2548,59 @@
 
         </div><!-- /.interactive-zone -->
 
+        <!-- ВИДЕОРАЗБОРЫ -->
+        <section class="video-preview-section">
+            <div class="section-heading reveal">
+                <span class="section-tag section-tag-blue">Видеоуроки</span>
+                <h2>Видеоразборы и уроки</h2>
+                <p>Каждая тема сопровождается подробным объяснением на видео и примерами решений — чтобы понять, а не просто запомнить.</p>
+            </div>
+            <div class="video-preview-grid">
+                <div class="video-card reveal">
+                    <div class="video-thumb">
+                        <div class="video-thumb-bg video-thumb-1">
+                            <div class="video-thumb-deco">8</div>
+                            <div class="video-play-btn"><div class="video-play-icon"></div></div>
+                        </div>
+                    </div>
+                    <div class="video-card-body">
+                        <span class="video-task-badge">Задание 8</span>
+                        <div class="video-card-title">Системы счисления — перевод и арифметика</div>
+                        <div class="video-card-meta">11 минут</div>
+                    </div>
+                </div>
+                <div class="video-card reveal">
+                    <div class="video-thumb">
+                        <div class="video-thumb-bg video-thumb-2">
+                            <div class="video-thumb-deco">12</div>
+                            <div class="video-play-btn"><div class="video-play-icon"></div></div>
+                        </div>
+                    </div>
+                    <div class="video-card-body">
+                        <span class="video-task-badge">Задание 12</span>
+                        <div class="video-card-title">Алгоритмы с ветвлениями и циклами</div>
+                        <div class="video-card-meta">9 минут</div>
+                    </div>
+                </div>
+                <div class="video-card reveal">
+                    <div class="video-thumb">
+                        <div class="video-thumb-bg video-thumb-3">
+                            <div class="video-thumb-deco">5</div>
+                            <div class="video-play-btn"><div class="video-play-icon"></div></div>
+                        </div>
+                    </div>
+                    <div class="video-card-body">
+                        <span class="video-task-badge">Задание 5</span>
+                        <div class="video-card-title">Кодирование информации — от теории к практике</div>
+                        <div class="video-card-meta">8 минут</div>
+                    </div>
+                </div>
+            </div>
+            <div class="video-preview-more reveal">
+                <a href="/preparation" class="video-preview-link">Смотреть все уроки с видеоразборами →</a>
+            </div>
+        </section>
+
         <!-- ПРЕИМУЩЕСТВА -->
         <section class="advantages-section">
             <div class="section-heading reveal">
@@ -2532,36 +2710,19 @@
             <h2 class="section-title reveal">✨ Что нового на платформе</h2>
             <div class="updates-grid">
                 <div class="update-card reveal">
-                    <div class="update-icon">🛠️</div>
-                    <div class="update-title">Новый редактор задач</div>
-                    <div class="update-desc">Поддержка изображений и прикреплённых файлов в задачах.</div>
+                    <div class="update-icon">📹</div>
+                    <div class="update-title">Уроки с видеоразборами</div>
+                    <div class="update-desc">Каждая тема сопровождается видеообъяснением — смотри и сразу решай задачи.</div>
                 </div>
                 <div class="update-card reveal">
-                    <div class="update-icon">📖</div>
-                    <div class="update-title">Подготовка с нуля</div>
-                    <div class="update-desc">Добавлены первые уроки начальной подготовки по информатике.</div>
+                    <div class="update-icon">📊</div>
+                    <div class="update-title">Статистика твоего прогресса</div>
+                    <div class="update-desc">Видишь, сколько задач решено, какие темы западают и как растёт результат.</div>
                 </div>
                 <div class="update-card reveal">
-                    <div class="update-icon">🔒</div>
-                    <div class="update-title">Безопасность платформы</div>
-                    <div class="update-desc">Завершён полный аудит безопасности — данные пользователей защищены.</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- НОВОСТИ -->
-        <div class="section-block">
-            <h2 class="section-title reveal">📰 Новости</h2>
-            <div class="news-feed reveal">
-                <div class="news-item important">
-                    <div class="news-date">20 мая 2026</div>
-                    <div class="news-title-text">Добавлена статистика решений</div>
-                    <div class="news-description">Теперь вы можете отслеживать свой прогресс в разделе "Моя статистика".</div>
-                </div>
-                <div class="news-item">
-                    <div class="news-date">18 мая 2026</div>
-                    <div class="news-title-text">Добавлены новые варианты 3-5</div>
-                    <div class="news-description">В разделе выбора вариантов появились три новых тренировочных варианта.</div>
+                    <div class="update-icon">🚀</div>
+                    <div class="update-title">Начни с нуля — без пробелов</div>
+                    <div class="update-desc">Базовые уроки ведут с самых основ: понятно даже тем, кто раньше не изучал информатику.</div>
                 </div>
             </div>
         </div>
