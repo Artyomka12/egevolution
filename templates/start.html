@@ -1037,6 +1037,7 @@
         .interactive-zone {
             padding: 36px 0;
             margin-bottom: 72px;
+            overflow: hidden;
         }
 
         .interactive-zone .roadmap-section {
@@ -1075,6 +1076,8 @@
             flex-shrink: 0;
             align-self: flex-start;
             margin-top: 6px;
+            position: relative;
+            overflow: hidden;
         }
 
         .iz-step-label {
@@ -1099,7 +1102,7 @@
 
         .iz-dot.iz-dot-active {
             background: #2563eb;
-            transform: scale(1.2);
+            transform: scale(1.25);
         }
 
         .iz-next-btn {
@@ -2057,6 +2060,51 @@
                 padding: 12px 20px;
             }
         }
+        /* ============================================================
+           INTERACTIVE ZONE — ПЕРЕХОДНЫЕ АНИМАЦИИ (v1.6.2)
+        ============================================================ */
+
+        /* Коннектор-заливка: полоса заполняется слева направо */
+        .iz-step-connector::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #2563eb;
+            transform: scaleX(0);
+            transform-origin: left center;
+            transition: transform 0.38s ease 0.12s;
+        }
+
+        .iz-step-connector.iz-connector-filled::after {
+            transform: scaleX(1);
+        }
+
+        /* Уход карточки влево (шаг 1 → 2) */
+        .iz-slide-out-left {
+            transition: opacity 0.26s ease-in, transform 0.26s ease-in !important;
+            opacity: 0 !important;
+            transform: translateX(-48px) !important;
+        }
+
+        /* ============================================================
+           PREFERS-REDUCED-MOTION
+        ============================================================ */
+        @media (prefers-reduced-motion: reduce) {
+            .iz-step-connector::after {
+                transition: none;
+            }
+            .iz-dot {
+                transition: background 0.15s ease;
+            }
+            .iz-slide-out-left {
+                transition: opacity 0.18s ease !important;
+                transform: none !important;
+            }
+        }
+
     </style>
 </head>
 
@@ -2677,25 +2725,47 @@
                     dot.classList.remove('iz-dot-active');
                 }
             });
+            // Заливка коннекторов: коннектор i заполняется когда step >= i+2
+            document.querySelectorAll('.iz-step-connector').forEach(function(conn, i) {
+                if (i < step - 1) {
+                    conn.classList.add('iz-connector-filled');
+                } else {
+                    conn.classList.remove('iz-connector-filled');
+                }
+            });
         }
 
         function goToStep2() {
             var minitask = document.querySelector('.minitask-section');
             var calculator = document.querySelector('.calculator-section');
+            var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-            minitask.style.transition = 'opacity 0.25s ease';
-            minitask.style.opacity = '0';
+            // Подготовить calculator до показа: спрятать справа
+            calculator.style.transition = 'none';
+            calculator.style.opacity = '0';
+            calculator.style.transform = reducedMotion ? '' : 'translateX(48px)';
+            calculator.style.display = 'block';
+
+            // Уход minitask влево (или просто fade при reduced-motion)
+            if (reducedMotion) {
+                minitask.style.transition = 'opacity 0.22s ease';
+                minitask.style.opacity = '0';
+            } else {
+                minitask.classList.add('iz-slide-out-left');
+            }
 
             setTimeout(function() {
                 minitask.style.display = 'none';
+                minitask.classList.remove('iz-slide-out-left');
+                minitask.style.opacity = '';
+                minitask.style.transform = '';
 
-                calculator.style.opacity = '0';
-                calculator.style.transition = 'opacity 0.25s ease';
-                calculator.style.display = 'block';
-
+                // Приезд calculator справа
                 requestAnimationFrame(function() {
                     requestAnimationFrame(function() {
+                        calculator.style.transition = 'opacity 0.32s ease-out, transform 0.32s ease-out';
                         calculator.style.opacity = '1';
+                        calculator.style.transform = 'translateX(0)';
                     });
                 });
 
@@ -2707,27 +2777,56 @@
             var calculator = document.querySelector('.calculator-section');
             var roadmap = document.querySelector('.roadmap-section');
             var cta = document.getElementById('izCta');
+            var zone = document.querySelector('.interactive-zone');
+            var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-            calculator.style.transition = 'opacity 0.25s ease';
-            calculator.style.opacity = '0';
+            // Зафиксировать минимальную высоту зоны — roadmap выше calculator,
+            // без этого при скрытии calculator зона схлопывается
+            zone.style.minHeight = zone.offsetHeight + 'px';
+
+            // Calculator уходит влево (та же логика, что minitask в goToStep2)
+            if (reducedMotion) {
+                calculator.style.transition = 'opacity 0.22s ease';
+                calculator.style.opacity = '0';
+            } else {
+                calculator.classList.add('iz-slide-out-left');
+            }
 
             setTimeout(function() {
                 calculator.style.display = 'none';
+                calculator.classList.remove('iz-slide-out-left');
+                calculator.style.opacity = '';
+                calculator.style.transform = '';
+                calculator.style.transition = '';
 
-                roadmap.style.opacity = '0';
-                roadmap.style.transition = 'opacity 0.25s ease';
+                // Начальное состояние: roadmap и CTA справа, невидимые
                 roadmap.style.display = 'block';
+                roadmap.style.transition = 'none';
+                roadmap.style.opacity = '0';
+                roadmap.style.transform = reducedMotion ? '' : 'translateX(48px)';
 
-                cta.style.opacity = '0';
-                cta.style.transition = 'opacity 0.25s ease';
                 cta.style.display = 'block';
+                cta.style.transition = 'none';
+                cta.style.opacity = '0';
+                cta.style.transform = reducedMotion ? '' : 'translateX(48px)';
 
-                requestAnimationFrame(function() {
-                    requestAnimationFrame(function() {
-                        roadmap.style.opacity = '1';
-                        cta.style.opacity = '1';
-                    });
-                });
+                // Forced layout flush — гарантирует, что браузер зафиксировал
+                // translateX(48px) как стартовое состояние перед transition
+                void roadmap.offsetHeight;
+
+                // Roadmap и CTA въезжают справа налево
+                roadmap.style.transition = 'opacity 0.32s ease-out, transform 0.32s ease-out';
+                roadmap.style.opacity = '1';
+                roadmap.style.transform = 'translateX(0)';
+
+                cta.style.transition = 'opacity 0.32s ease-out 0.06s, transform 0.32s ease-out 0.06s';
+                cta.style.opacity = '1';
+                cta.style.transform = 'translateX(0)';
+
+                // Снять фиксацию высоты после завершения анимации
+                setTimeout(function() {
+                    zone.style.minHeight = '';
+                }, 520);
 
                 updateIzProgress(3);
             }, 280);

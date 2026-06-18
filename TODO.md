@@ -26,10 +26,13 @@
 >
 > **v1.6.1 (2026-06-18):** живой интерфейс главной страницы — выполнен.
 > Этап 1 ✅ (hover translateY для start-card/update-card/progress-card/guest-cta-card/advantage-item + WCAG-контраст level-цветов) · Этап 2 ✅ (уплотнение интерактивной зоны: padding 64→36px, margin 44→22px, dot 10→14px, connector 52→72px, max-width 580→680px) · Этап 3 ✅ (scroll reveal IntersectionObserver + CSS transitions + stagger-delays, 19 элементов) · Этап 4 ✅ (count-up анимации: hero-mini-stat-num + progress-num, easeOutCubic 900ms) · 19/19 OK · JS-бизнес-логика/backend/navbar/CSRF не тронуты
+>
+> **v1.6.2 (2026-06-18):** горизонтальная динамика интерактивной зоны — выполнен.
+> slide+fade 1→2 ✅ (minitask влево, calculator справа) · slide+fade 2→3 ✅ (calculator влево, roadmap+CTA справа) · коннекторы stepper ✅ (scaleX fill) · overflow:hidden ✅ · minHeight-фикс ✅ · reduced-motion ✅ · 12/12 OK · checkMiniTask/checkReadiness/backend/navbar/CSRF не тронуты
 
 ## Следующий этап
 
-### v1.6.2 — Улучшения главной страницы (идеи)
+### v1.6.3 — Улучшения главной страницы
 
 - [ ] **Дальнейшее улучшение Hero** — визуальные акценты, насыщенность, анимации выше fold
 - [ ] **Усиление конверсии** — доработка CTA-блоков, воронки, призывов к действию

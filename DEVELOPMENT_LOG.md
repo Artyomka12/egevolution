@@ -4,8 +4,8 @@
 
 **Дата последнего обновления:** 2026-06-18
 **Ветка:** main
-**Версия:** v1.6.1
-**Статус:** выполнен — добавлены анимации, scroll reveal, count-up и уплотнена интерактивная зона главной страницы (4 этапа)
+**Версия:** v1.6.2
+**Статус:** выполнен — горизонтальные slide+fade переходы в интерактивной зоне (оба шага), заполнение коннекторов stepper, overflow и height-jump защиты
 
 Аудит безопасности завершён в v1.3.0. D-1, D-2, D-3 закрыты.
 v1.4.0 — расширенный редактор задач в админке: все три этапа завершены.
@@ -16,10 +16,82 @@ v1.5.5 — улучшение структуры и конверсии глав�
 v1.5.6 — персонализация воронки главной страницы: перенос `progress-section` и `guest-cta-section` после блока «Что есть на платформе». Backend не менялся.
 v1.6.0 — визуальный редизайн главной страницы под светло-голубую тему: светлый фон, белые карточки, мягкие голубые рамки и тени, тёмный текст. Изменения только в CSS `start.html`. HTML, JS, backend, navbar, маршруты — не тронуты.
 v1.6.1 — живой интерфейс главной страницы: hover-анимации карточек, scroll reveal с stagger, count-up анимации чисел, уплотнение интерактивной зоны. Изменения только в CSS и JS `start.html`. HTML-структура, backend, маршруты, бизнес-логика — не тронуты.
+v1.6.2 — горизонтальная динамика интерактивной зоны: единые slide+fade переходы для обоих шагов (Задача→Готовность и Готовность→Маршрут), заполнение коннекторов stepper, overflow:hidden и minHeight-фикс. Изменения только в CSS и JS `start.html`. HTML, backend, маршруты, бизнес-логика — не тронуты.
 
 ---
 
 ## Версии
+
+### v1.6.2 — Горизонтальная динамика интерактивной зоны
+
+**Дата:** 2026-06-18
+
+**Описание:** Переход от fade-анимации к единым горизонтальным slide+fade переходам во всей интерактивной зоне. Оба шага теперь выглядят единообразно: уходящая карточка уезжает влево, входящая приезжает справа. Добавлены анимированные коннекторы stepper, защита от горизонтального скролла, фикс скачка высоты при появлении roadmap. Изменения только в `templates/start.html` (CSS + JS). HTML-структура, `checkMiniTask`, `checkReadiness`, backend, маршруты, navbar/logout/CSRF — не тронуты.
+
+**Переход Задача → Готовность (goToStep2):**
+- Minitask: добавлен CSS-класс `.iz-slide-out-left` (`translateX(-48px) + opacity:0`, 0.26s ease-in)
+- Calculator подготавливается до начала анимации: `display:block`, `opacity:0`, `translateX(48px)`, `transition:none`
+- После 280ms calculator въезжает на место: `transition 0.32s ease-out`, `opacity:1`, `translateX(0)`
+- Работает через double rAF — calculator был подготовлен за 280ms, браузер уже отрендерил его начальное состояние
+
+**Переход Готовность → Маршрут (goToStep3):**
+- Calculator получает тот же `.iz-slide-out-left` (зеркально с minitask)
+- Roadmap и CTA подготавливаются внутри setTimeout: `display:block`, `opacity:0`, `translateX(48px)`
+- `void roadmap.offsetHeight` — принудительный layout flush, гарантирует фиксацию `translateX(48px)` до запуска transition
+- Roadmap: `transition 0.32s ease-out`, `opacity:1`, `translateX(0)`
+- CTA: то же с задержкой `0.06s`
+- `zone.style.minHeight` зафиксирован перед анимацией → снимается через 520ms
+
+**Индикатор прогресса — коннекторы:**
+- `updateIzProgress(step)` расширена: добавлен второй forEach по `.iz-step-connector`
+- Коннектор i заполняется при `step >= i + 2`
+- CSS: `.iz-step-connector { position: relative; overflow: hidden }` + `::after { scaleX(0→1) }` с `transition 0.38s ease delay 0.12s`
+- `.iz-connector-filled::after { scaleX(1) }` — заливка слева направо
+
+**Индикатор прогресса — точки:**
+- `.iz-dot.iz-dot-active` scale: `1.2` → `1.25`
+
+**Защита от горизонтального скролла:**
+- `overflow: hidden` добавлен к `.interactive-zone` (body уже имел `overflow-x: hidden`)
+
+**Reduced-motion:**
+- CSS `@media (prefers-reduced-motion: reduce)`: `.iz-slide-out-left { transform: none !important }`, мгновенный коннектор, упрощённый dot
+- JS: `window.matchMedia('(prefers-reduced-motion: reduce)').matches` — при `true` transform не применяется, только opacity fade
+
+**Новые CSS-классы:**
+
+| Класс / правило | Описание |
+|---|---|
+| `.iz-slide-out-left` | Уход влево: `translateX(-48px) + opacity:0`, `!important` |
+| `.iz-step-connector::after` | Псевдо-элемент заливки коннектора |
+| `.iz-step-connector.iz-connector-filled::after` | Финальное состояние: `scaleX(1)` |
+| `.iz-step-connector` (обновлён) | Добавлено `position: relative; overflow: hidden` |
+| `.iz-dot.iz-dot-active` (обновлён) | scale `1.2` → `1.25` |
+| `.interactive-zone` (обновлён) | Добавлено `overflow: hidden` |
+| `@media (prefers-reduced-motion: reduce)` | Новый блок |
+
+**Результаты проверок:**
+
+| Проверка | Статус |
+|---|---|
+| Переход 1→2: minitask уходит влево | ✅ |
+| Переход 1→2: calculator приезжает справа | ✅ |
+| Переход 2→3: calculator уходит влево | ✅ |
+| Переход 2→3: roadmap приезжает справа | ✅ |
+| CTA появляется вместе с roadmap | ✅ |
+| Коннектор 1→2 заполняется при переходе | ✅ |
+| Коннектор 2→3 заполняется при переходе | ✅ |
+| Нет горизонтального скролла (desktop + mobile) | ✅ |
+| Нет скачка высоты при появлении roadmap | ✅ |
+| prefers-reduced-motion: только opacity fade | ✅ |
+| checkMiniTask() не изменён | ✅ |
+| checkReadiness() не изменён | ✅ |
+
+**Итого: 12/12 ✅**
+
+**Не изменялось:** HTML-структура интерактивной зоны, `checkMiniTask`, `checkReadiness`, логика показа кнопок, scroll reveal (IIFE), count-up (IIFE), backend `app.py`, маршруты, navbar, logout, CSRF.
+
+---
 
 ### v1.6.1 — Живой интерфейс главной страницы
 
