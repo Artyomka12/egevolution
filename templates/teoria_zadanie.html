@@ -54,12 +54,14 @@
             {% endif %}
             {% endfor %}
             <!-- Картинки без привязки к абзацу -->
+            {% if theory.theory.images %}
             {% for image in theory.theory.images %}
             {% if image.after_paragraph is not defined %}
             <img src="{{ url_for('theory_images', task_num=task_num, filename=image.path) }}"
                 alt="{{ image.alt or 'Изображение' }}" class="{{ image.size or 'img-medium' }}">
             {% endif %}
             {% endfor %}
+            {% endif %}
         </div>
         {% else %}
         <p class="teoria-empty">Теоретический материал в разработке...</p>
@@ -104,7 +106,7 @@
 
     <!-- ПРАКТИКА -->
     {% if theory.practice and theory.practice.tasks %}
-    <div class="card teoria-practice-card reveal">
+    <div class="card teoria-practice-card">
         <h2 class="teoria-card-title"> Практические задания</h2>
         {% if theory.practice.description %}
         <p class="practice-desc">{{ theory.practice.description }}</p>

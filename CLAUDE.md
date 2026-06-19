@@ -9,6 +9,10 @@ EGEvolution — учебная платформа для подготовки к
 решают практические задачи в уроках. Администратор управляет контентом
 через встроенную панель.
 
+**Текущая версия: v1.6.5** — полный редизайн 15 пользовательских страниц
+(светло-голубая тема, `base.html` + компоненты + 8 page-CSS файлов).
+Финальный аудит: 246/246 ✅
+
 ---
 
 ## Стек технологий
@@ -30,7 +34,7 @@ EGEvolution — учебная платформа для подготовки к
 
 ```
 webpl with base/
-├── app.py                  # Весь backend (~2400 строк), единственный Python-файл
+├── app.py                  # Весь backend (~2611 строк), единственный Python-файл
 ├── requirements.txt
 ├── users.db                # SQLite база данных
 ├── .env                    # Секреты (НЕ в git)
@@ -48,7 +52,7 @@ webpl with base/
 │   ├── task_01/
 │   │   ├── tasks.json
 │   │   └── images/
-│   └── ... (task_01 — task_10+)
+│   └── ... (task_01 — task_27)
 │
 ├── theory/                 # Теоретические материалы
 │   ├── task_01/
@@ -63,12 +67,97 @@ webpl with base/
 │   │   └── images/
 │   └── ...
 │
-├── templates/              # 27 Jinja2 HTML-шаблонов (без наследования)
+├── templates/              # 31 HTML-файл (Jinja2)
+│   ├── base.html           # Базовый шаблон: блоки title, extra_head, content, scripts
+│   ├── components/
+│   │   ├── navbar.html     # Sticky тёмный navbar, dropdown, logout POST+CSRF
+│   │   ├── footer.html     # Футер со ссылкой на Telegram
+│   │   └── flash.html      # Flash-сообщения (success/error/warning)
+│   ├── start.html          # Главная страница — автономная, не наследует base.html
+│   ├── exam.html           # Экзаменационный режим — автономный, вне scope редизайна
+│   ├── reshenie.html       # Решение варианта — автономный, вне scope редизайна
+│   ├── [9 admin/constructor-шаблонов] — автономные, вне scope редизайна
+│   │   # admin_panel, admin_task_form, admin_tasks_list, admin_tasks_view,
+│   │   # admin_user_stats, constructor_gate, constructor_from_base,
+│   │   # constructor_theory, constructor_editor
+│   └── [15 пользовательских страниц — {% extends "base.html" %}]
+│       # login, register, csrf_error, variant_list, teoria, preparation,
+│       # tasks_list, profile, stats, attempt_detail, choose_mode,
+│       # tasks_view, teoria_zadanie, preparation_lesson, results
+│
 ├── static/
 │   ├── favicon.png
-│   ├── uploads/avatars/    # Аватары пользователей
-│   └── tutors/             # Файлы преподавателей
+│   ├── css/
+│   │   ├── design-system.css           # Дизайн-токены: цвета, отступы, .card, .btn, .form-input
+│   │   └── pages/                      # Page-specific CSS (8 файлов)
+│   │       ├── auth.css                # login, register, csrf_error
+│   │       ├── catalogs.css            # variant_list, teoria, preparation, tasks_list
+│   │       ├── profile.css             # profile
+│   │       ├── stats.css               # stats, attempt_detail
+│   │       ├── variants.css            # choose_mode
+│   │       ├── tasks.css               # tasks_view
+│   │       ├── teoria.css              # teoria_zadanie
+│   │       └── preparation_lesson.css  # preparation_lesson
+│   ├── js/
+│   │   └── scroll-reveal.js            # IntersectionObserver-анимация .reveal → .reveal.visible
+│   ├── images/                         # video-preview-left.jpg, video-preview-right.jpg
+│   ├── videos/                         # platform-overview.mp4
+│   ├── uploads/avatars/                # Аватары пользователей
+│   └── tutors/                         # Файлы преподавателей
 ```
+
+---
+
+## Дизайн-система и архитектура шаблонов (v1.6.5)
+
+### Светлая тема (пользовательские страницы)
+
+Все 15 пользовательских страниц переведены на единую светло-голубую тему:
+градиент фона `#eaf6ff → #f5fbff → #eef8ff`, белые карточки, синий акцент `#2563eb`,
+тёмный текст `#0f172a`, sticky тёмный navbar.
+
+### Файлы дизайн-системы
+
+| Файл | Назначение |
+|---|---|
+| `static/css/design-system.css` | CSS-токены: `--color-bg-page`, `--color-accent-blue`, `--radius-md`, `--transition-base`; классы `.card`, `.btn`, `.form-input`, `.section-heading`, `.page-wrap` |
+| `static/css/pages/auth.css` | `login.html`, `register.html`, `csrf_error.html` |
+| `static/css/pages/catalogs.css` | `variant_list.html`, `teoria.html`, `preparation.html`, `tasks_list.html` |
+| `static/css/pages/profile.css` | `profile.html` |
+| `static/css/pages/stats.css` | `stats.html`, `attempt_detail.html` |
+| `static/css/pages/variants.css` | `choose_mode.html` |
+| `static/css/pages/tasks.css` | `tasks_view.html` (collapse/expand через `max-height: 5000px`) |
+| `static/css/pages/teoria.css` | `teoria_zadanie.html` |
+| `static/css/pages/preparation_lesson.css` | `preparation_lesson.html` |
+| `static/js/scroll-reveal.js` | IntersectionObserver: `.reveal → .reveal.visible`, threshold 0.12 |
+
+### Компоненты (templates/components/)
+
+| Компонент | Особенности |
+|---|---|
+| `navbar.html` | Sticky тёмный navbar; dropdown раздела; logout через `POST` + CSRF hidden input |
+| `footer.html` | Футер со ссылкой на Telegram |
+| `flash.html` | Flash-сообщения трёх категорий: `success`, `error`, `warning` |
+
+Примечание: `.card` в `design-system.css` не имеет собственного `padding` — каждый page-CSS добавляет его.
+При hover `.card:hover { transform }` переопределяется в page-CSS для интерактивных карточек,
+где transform нежелателен (`.task-progress-panel`, `.lesson-practice-card` и др.).
+
+### Автономные шаблоны (не наследуют base.html)
+
+| Шаблон | Причина автономности |
+|---|---|
+| `start.html` | Собственная дизайн-система v1.6.0–1.6.4; navbar встроен напрямую |
+| `exam.html` | Специально вне scope редизайна v1.6.5; встроенный CSS |
+| `reshenie.html` | Специально вне scope редизайна v1.6.5; встроенный CSS |
+| Admin/constructor-шаблоны (9 шт.) | Вне scope редизайна v1.6.5 |
+
+### CSRF в шаблонах
+
+- HTML-формы: `<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">`
+- JSON fetch: заголовок `'X-CSRFToken': '{{ csrf_token() }}'`
+- `preparation_lesson.html` не имеет `<form>` — ответы только через `onclick` → `checkTask()` → fetch.
+  Любые `<input>` внутри `.task-block` попадают в `querySelectorAll('input')` — скрытые поля недопустимы.
 
 ---
 
@@ -179,7 +268,7 @@ webpl with base/
 | `GET /` | Главная страница |
 | `GET /login`, `POST /login` | Вход |
 | `GET /register`, `POST /register` | Регистрация |
-| `GET /logout` | Выход |
+| `POST /logout` | Выход (защищён CSRF; GET → 405) |
 
 ### Пользовательские (требуют авторизации)
 | Маршрут | Описание |
@@ -306,7 +395,8 @@ gunicorn app:app
 - Изменять `.env` (содержит реальные секреты).
 
 ### Стиль кода
-- Шаблоны — самостоятельные HTML-файлы без наследования (нет base.html).
+- Шаблоны: 15 пользовательских страниц наследуют `base.html`; `start.html`, `exam.html`,
+  `reshenie.html` и все admin-шаблоны — автономные HTML-файлы со встроенным CSS.
 - JS — только vanilla, встроен в шаблоны.
 - Все секреты — через `os.environ`, не хардкодить.
 - Паттерн чтения переменных: `os.environ.get(key) or default` (не `get(key, default)`).
@@ -324,6 +414,17 @@ gunicorn app:app
 6. **Логика подсчёта баллов** — `secondary_score`, `score` в `user_results`.
 7. **Права доступа** (`is_admin`) — механизм безопасности.
 8. **CSRF-инфраструктура** — не добавлять `csrf.exempt` без аудита.
+9. **`exam.html`** — автономный шаблон, специально не переведён на `base.html`;
+   содержит встроенный CSS и JS для экзаменационного режима. Требует отдельного решения.
+10. **`reshenie.html`** — автономный шаблон, специально не переведён на `base.html`;
+    содержит встроенный CSS и JS для режима решения. Требует отдельного решения.
+11. **`start.html`** — автономная главная страница со своей дизайн-системой (v1.6.0–1.6.4);
+    navbar встроен напрямую. Любые изменения — только отдельным согласованием.
+12. **Admin-шаблоны** (9 файлов: `admin_panel`, `admin_task_form`, `admin_tasks_list`,
+    `admin_tasks_view`, `admin_user_stats`, `constructor_gate`, `constructor_from_base`,
+    `constructor_theory`, `constructor_editor`) — автономные, вне scope редизайна v1.6.5.
+13. **`design-system.css`** — изменение токенов затронет все 15 пользовательских страниц одновременно.
+14. **`base.html` и `components/`** — изменение затронет все 15 пользовательских страниц.
 
 ---
 
