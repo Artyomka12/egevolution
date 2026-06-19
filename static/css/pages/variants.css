@@ -1,0 +1,86 @@
+/* ============================================================
+   EGEvolution — Variants section pages (variants.css)
+   Используется: choose_mode.html и будущие подстраницы раздела вариантов.
+   Требует design-system.css из base.html.
+   ============================================================ */
+
+
+/* ── Кнопка «назад» ──────────────────────────────────────── */
+.mode-back {
+    margin-bottom: 24px;
+}
+
+
+/* ── Сетка выбора режима ─────────────────────────────────── */
+.mode-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+
+/* ── Карточка режима ─────────────────────────────────────── */
+/* Карточка-ссылка: сбрасываем стили <a>, inherit от .card */
+.mode-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 48px 32px;
+    gap: 16px;
+    text-decoration: none;
+    color: var(--color-text-primary);
+}
+
+/* Усиливаем всплытие (перебивает .card:hover с той же специфичностью) */
+.mode-card:hover {
+    transform: translateY(-6px);
+    color: var(--color-text-primary);
+}
+
+/* Иконка */
+.mode-icon {
+    font-size: 3.2em;
+    line-height: 1;
+}
+
+/* Заголовок карточки */
+.mode-title {
+    font-size: 1.35em;
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+/* Описание: растягивается, чтобы кнопки были на одной высоте */
+.mode-desc {
+    font-size: 0.95em;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    flex-grow: 1;
+}
+
+
+/* ── Адаптив ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .mode-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .mode-card {
+        padding: 36px 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .mode-card {
+        padding: 28px 18px;
+        gap: 12px;
+    }
+
+    .mode-icon {
+        font-size: 2.6em;
+    }
+}

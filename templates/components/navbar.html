@@ -1,0 +1,79 @@
+<nav class="navbar">
+    <div class="navbar-inner">
+
+        <!-- Левая часть: логотип -->
+        <a href="/" class="navbar-brand">
+            <img src="{{ url_for('static', filename='favicon.png') }}" alt="Логотип" class="navbar-logo">
+            <span class="navbar-site-title">ЕГЭволюция</span>
+        </a>
+
+        <!-- Центральная часть: навигационное меню -->
+        <div class="nav-center">
+            <div class="nav-dropdown-wrap" id="navDropdownWrap">
+                <button class="nav-dropdown-btn" id="navDropdownBtn" type="button" onclick="toggleNavDropdown()">
+                    <span class="nav-label-desktop">Разделы платформы</span>
+                    <span class="nav-label-mobile">Меню</span>
+                    <span class="nav-dropdown-chevron">▾</span>
+                </button>
+                <div class="nav-dropdown" id="navDropdown">
+                    <a href="/preparation" class="nav-dropdown-item">🚀 Начальная подготовка</a>
+                    <a href="/theory" class="nav-dropdown-item">📚 Теория по заданиям</a>
+                    <a href="/variants" class="nav-dropdown-item">📝 Решать варианты</a>
+                    <a href="/stats" class="nav-dropdown-item">📊 Статистика</a>
+                    <a href="/tasks" class="nav-dropdown-item">🎯 База заданий</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Правая часть: авторизация -->
+        <div class="navbar-auth">
+            {% if session.get('user_id') %}
+            <a href="/profile" class="nav-btn">👤 Профиль</a>
+            <form method="POST" action="{{ url_for('logout') }}" style="display:contents">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="nav-btn nav-btn-logout" style="font:inherit;cursor:pointer">🚪 Выйти</button>
+            </form>
+            {% else %}
+            <a href="/login" class="nav-btn">🔐 Войти</a>
+            <a href="/register" class="nav-btn nav-btn-primary">📝 Регистрация</a>
+            {% endif %}
+        </div>
+
+    </div>
+</nav>
+
+<script>
+    /* ================================================================
+       NAVBAR DROPDOWN
+    ================================================================ */
+    function toggleNavDropdown() {
+        var dd  = document.getElementById('navDropdown');
+        var btn = document.getElementById('navDropdownBtn');
+        if (dd.classList.contains('open')) {
+            dd.classList.remove('open');
+            btn.classList.remove('active');
+        } else {
+            dd.classList.add('open');
+            btn.classList.add('active');
+        }
+    }
+
+    /* Закрыть при клике вне */
+    document.addEventListener('click', function (e) {
+        var wrap = document.getElementById('navDropdownWrap');
+        var dd   = document.getElementById('navDropdown');
+        var btn  = document.getElementById('navDropdownBtn');
+        if (wrap && !wrap.contains(e.target)) {
+            dd.classList.remove('open');
+            btn.classList.remove('active');
+        }
+    });
+
+    /* Закрыть при клике на пункт меню */
+    document.querySelectorAll('.nav-dropdown-item').forEach(function (item) {
+        item.addEventListener('click', function () {
+            document.getElementById('navDropdown').classList.remove('open');
+            document.getElementById('navDropdownBtn').classList.remove('active');
+        });
+    });
+</script>

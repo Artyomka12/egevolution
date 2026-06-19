@@ -1,65 +1,69 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ошибка безопасности | ЕГЭ Информатика</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
-    <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #0a0a0f;
-            color: #e0e0e0;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0;
-        }
-        .card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(239,68,68,0.3);
-            border-radius: 16px;
-            padding: 48px 40px;
-            max-width: 480px;
-            width: 100%;
-            text-align: center;
-        }
-        .icon { font-size: 3em; margin-bottom: 20px; }
-        h1 { color: #ef4444; font-size: 1.5em; margin: 0 0 12px; }
-        p  { color: #94a3b8; line-height: 1.6; margin: 0 0 28px; }
-        .reason {
-            background: rgba(239,68,68,0.08);
-            border: 1px solid rgba(239,68,68,0.2);
-            border-radius: 8px;
-            padding: 10px 14px;
-            font-size: 0.85em;
-            color: #fca5a5;
-            margin-bottom: 28px;
-            word-break: break-word;
-        }
-        a {
-            display: inline-block;
-            padding: 10px 24px;
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
-            color: #e0e0e0;
-            text-decoration: none;
-            transition: background 0.2s;
-        }
-        a:hover { background: rgba(255,255,255,0.12); }
-    </style>
-</head>
-<body>
-    <div class="card">
-        <div class="icon">🔒</div>
-        <h1>Ошибка безопасности</h1>
-        <p>Запрос не прошёл проверку безопасности. Возможно, форма устарела — попробуйте обновить страницу и повторить действие.</p>
-        {% if reason %}
-        <div class="reason">{{ reason }}</div>
-        {% endif %}
-        <a href="javascript:history.back()">← Назад</a>
-    </div>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Ошибка безопасности | ЕГЭволюция{% endblock %}
+
+{% block extra_head %}
+<style>
+    .page-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 40px 20px;
+    }
+
+    .csrf-card {
+        max-width: 480px;
+        width: 100%;
+        padding: 48px 40px;
+        text-align: center;
+        border-top: 3px solid #ef4444;
+    }
+
+    .csrf-icon {
+        font-size: 3em;
+        margin-bottom: 20px;
+    }
+
+    .csrf-title {
+        color: #991b1b;
+        font-size: 1.5em;
+        font-weight: 700;
+        margin: 0 0 12px;
+    }
+
+    .csrf-desc {
+        color: var(--color-text-secondary);
+        line-height: 1.6;
+        margin: 0 0 28px;
+    }
+
+    .csrf-reason {
+        background: rgba(239, 68, 68, 0.06);
+        border: 1px solid rgba(239, 68, 68, 0.18);
+        border-radius: var(--radius-sm);
+        padding: 10px 14px;
+        font-size: 0.85em;
+        color: #991b1b;
+        margin-bottom: 28px;
+        word-break: break-word;
+        text-align: left;
+    }
+</style>
+{% endblock %}
+
+{% block navbar %}{% endblock %}
+{% block flash %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="card csrf-card">
+    <div class="csrf-icon">🔒</div>
+    <h1 class="csrf-title">Ошибка безопасности</h1>
+    <p class="csrf-desc">Запрос не прошёл проверку безопасности. Возможно, форма устарела — попробуйте обновить страницу и повторить действие.</p>
+    {% if reason %}
+    <div class="csrf-reason">{{ reason }}</div>
+    {% endif %}
+    <a href="javascript:history.back()" class="btn btn-secondary">← Назад</a>
+</div>
+{% endblock %}

@@ -1,0 +1,357 @@
+/* ============================================================
+   EGEvolution — Theory page (teoria_zadanie.html)  Stage 4C.1
+   Требует design-system.css из base.html.
+   Формы, JS-классы (result-msg/success/error, attempted, correct)
+   переопределяют только цвет — имена не меняются!
+   ============================================================ */
+
+
+/* ── Вертикальный отступ страницы ────────────────────────── */
+.teoria-back {
+    margin-top: 40px;
+    margin-bottom: 24px;
+}
+
+
+/* ── Padding карточек (design-system .card не имеет padding) */
+.card {
+    padding: 28px 30px;
+}
+
+/* Прогресс-панель — меньше padding, без всплытия */
+.task-progress-panel.card {
+    padding: 14px 18px;
+}
+.task-progress-panel.card:hover {
+    transform: none;
+}
+
+/* Практика — без всплытия (внутри форм) */
+.teoria-practice-card:hover {
+    transform: none;
+}
+
+
+/* ── Заголовок карточки ──────────────────────────────────── */
+.teoria-card-title {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+/* ── Панель прогресса ────────────────────────────────────── */
+.task-progress-panel {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* ВАЖНО: .attempted и .correct устанавливаются JS через classList.add()
+   Имена классов нельзя менять. Переопределяем только цвета. */
+.task-square {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.88em;
+    color: var(--color-text-muted);
+    background: rgba(241, 245, 249, 0.8);
+    border: 2px solid var(--color-card-border);
+    transition: all var(--transition-base);
+    user-select: none;
+}
+
+.task-square.attempted {
+    border-color: var(--color-accent-red);
+    color: var(--color-accent-red);
+    background: rgba(239, 68, 68, 0.07);
+}
+
+.task-square.correct {
+    border-color: var(--color-accent-green);
+    color: #166534;
+    background: rgba(34, 197, 94, 0.08);
+    box-shadow: 0 0 8px rgba(34, 197, 94, 0.18);
+}
+
+
+/* ── Теоретический материал ──────────────────────────────── */
+.theory-content p {
+    margin-bottom: 14px;
+    line-height: 1.75;
+    color: var(--color-text-primary);
+    text-indent: 20px;
+}
+
+.teoria-empty {
+    text-align: center;
+    color: var(--color-text-muted);
+}
+
+
+/* ── Изображения теории и практики ──────────────────────── */
+.theory-content img,
+.task-description img {
+    display: block;
+    margin: 18px auto;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-card-border);
+    max-width: 100%;
+}
+
+.img-small  { max-width: 250px !important; }
+.img-medium { max-width: 350px !important; }
+.img-large  { max-width: 500px !important; }
+
+
+/* ── Видео ───────────────────────────────────────────────── */
+.videos-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.video-container {
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    transition: box-shadow var(--transition-base);
+}
+
+.video-container:hover {
+    box-shadow: var(--color-card-shadow-hover);
+}
+
+.video-container video {
+    width: 100%;
+    display: block;
+}
+
+/* Заголовок видео (новый формат) */
+.video-title {
+    padding: 12px 16px;
+    background: rgba(241, 245, 249, 0.6);
+    border-top: 1px solid var(--color-card-border);
+}
+
+.video-title h3 {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: 1em;
+    font-weight: 600;
+}
+
+/* Заголовок видео (старый формат) */
+.video-title-old {
+    margin-top: 12px;
+    color: var(--color-text-primary);
+    font-size: 1em;
+    font-weight: 600;
+}
+
+
+/* ── Практические задания ────────────────────────────────── */
+.practice-desc {
+    margin-bottom: 20px;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+}
+
+.task-block {
+    background: rgba(241, 245, 249, 0.5);
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-md);
+    padding: 22px;
+    margin-bottom: 20px;
+}
+
+.task-block:last-child {
+    margin-bottom: 0;
+}
+
+.task-title {
+    color: var(--color-accent-indigo);
+    font-weight: 700;
+    font-size: 1.05em;
+    margin-bottom: 14px;
+}
+
+.task-description p {
+    color: var(--color-text-primary);
+    margin-bottom: 12px;
+    line-height: 1.7;
+    text-indent: 20px;
+}
+
+
+/* ── Описание файла ──────────────────────────────────────── */
+.file-desc {
+    font-size: 0.88em;
+    color: var(--color-text-muted);
+}
+
+
+/* ── Поля ввода ──────────────────────────────────────────── */
+/* Базовая стилизация: .form-input из design-system.css.
+   Добавлять class="form-input" ко всем input[type="text"] в формах.
+   Grid-ячейки дополнительно используют .grid-input ниже.   */
+
+/* Обёртка двух полей (two-answer branch) */
+.form-inputs-double {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+/* Строка input + кнопка (single-answer branch) */
+.form-row-inline {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+    align-items: center;
+}
+
+.form-row-inline .form-input {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Кнопка «Проверить» в inline-строке — без верхнего отступа */
+.form-row-inline .check-button {
+    margin-top: 0;
+    flex-shrink: 0;
+}
+
+/* Таблица ввода (answer_grid) */
+.task-block table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 5px;
+    margin: 15px 0;
+}
+
+.task-block td {
+    padding: 3px;
+}
+
+/* Переопределяет form-input для ячеек сетки:
+   меньший padding, центрирование, синий цвет */
+.grid-input {
+    padding: 8px;
+    text-align: center;
+    color: var(--color-accent-blue);
+    font-size: 0.9em;
+}
+
+
+/* ── Кнопка «Проверить» ──────────────────────────────────── */
+/* check-button: JS не ссылается на этот класс, только visual */
+.check-button {
+    padding: 10px 24px;
+    background: var(--btn-primary-bg);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-family: inherit;
+    font-size: 0.95em;
+    cursor: pointer;
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
+    margin-top: 10px;
+}
+
+.check-button:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+}
+
+
+/* ── Результат проверки ──────────────────────────────────── */
+/* ВАЖНО: JS устанавливает className = 'result-msg result-success|result-error'
+   и style.display = 'block'. Имена классов НЕЛЬЗЯ менять! */
+.result-msg {
+    margin-top: 14px;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    display: none;
+    font-weight: 600;
+    font-size: 0.95em;
+}
+
+.result-success {
+    background: rgba(34, 197, 94, 0.08);
+    color: #166534;
+    border: 1px solid rgba(34, 197, 94, 0.28);
+}
+
+.result-error {
+    background: rgba(239, 68, 68, 0.07);
+    color: #991b1b;
+    border: 1px solid rgba(239, 68, 68, 0.22);
+}
+
+
+/* ── Пустое состояние ────────────────────────────────────── */
+.no-theory {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.no-theory h2 {
+    font-size: 1.2em;
+    color: var(--color-text-secondary);
+    margin-bottom: 12px;
+}
+
+.no-theory p {
+    color: var(--color-text-muted);
+    font-size: 0.95em;
+}
+
+
+/* ── Типографика ─────────────────────────────────────────── */
+sup {
+    font-size: 0.75em;
+    vertical-align: super;
+    line-height: 0;
+}
+
+sub {
+    font-size: 0.75em;
+    vertical-align: sub;
+    line-height: 0;
+}
+
+
+/* ── Адаптив ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .card {
+        padding: 20px 18px;
+    }
+
+    .task-block {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .task-square {
+        width: 34px;
+        height: 34px;
+        font-size: 0.8em;
+    }
+
+    .card {
+        padding: 16px 14px;
+    }
+}

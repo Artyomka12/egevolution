@@ -1,0 +1,279 @@
+/* ============================================================
+   EGEvolution — Lesson page (preparation_lesson.html)  Stage 4D
+   Требует design-system.css из base.html.
+   JS-классы (attempted, correct, result-msg/success/error)
+   переопределяют только цвет — имена НЕ меняются!
+   ============================================================ */
+
+
+/* ── Кнопка назад ─────────────────────────────────────────── */
+.lesson-back {
+    margin-top: 40px;
+    margin-bottom: 24px;
+}
+
+
+/* ── Padding карточек (design-system .card не имеет padding) */
+.card {
+    padding: 28px 30px;
+}
+
+/* Прогресс-панель — меньше padding, без всплытия */
+.task-progress-panel.card {
+    padding: 14px 18px;
+}
+
+.task-progress-panel.card:hover {
+    transform: none;
+}
+
+/* Практика — без всплытия (содержит кнопки) */
+.lesson-practice-card:hover {
+    transform: none;
+}
+
+
+/* ── Прогресс-панель ─────────────────────────────────────── */
+.task-progress-panel {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+
+/* ── Заголовок карточки ──────────────────────────────────── */
+.lesson-card-title {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+/* ── Квадратики прогресса ────────────────────────────────── */
+/* ВАЖНО: .attempted и .correct устанавливаются JS через classList.
+   Имена нельзя менять. */
+.task-square {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.88em;
+    color: var(--color-text-muted);
+    background: rgba(241, 245, 249, 0.8);
+    border: 2px solid var(--color-card-border);
+    transition: all var(--transition-base);
+    user-select: none;
+}
+
+.task-square.attempted {
+    border-color: var(--color-accent-red);
+    color: var(--color-accent-red);
+    background: rgba(239, 68, 68, 0.07);
+}
+
+.task-square.correct {
+    border-color: var(--color-accent-green);
+    color: #166534;
+    background: rgba(34, 197, 94, 0.08);
+    box-shadow: 0 0 8px rgba(34, 197, 94, 0.18);
+}
+
+
+/* ── Теоретический материал ──────────────────────────────── */
+.theory-content p {
+    margin-bottom: 14px;
+    line-height: 1.75;
+    color: var(--color-text-primary);
+    text-indent: 20px;
+}
+
+.theory-img {
+    display: block;
+    margin: 18px auto;
+    max-width: 100%;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-card-border);
+}
+
+
+/* ── Видеоразбор ─────────────────────────────────────────── */
+.video-container {
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    transition: box-shadow var(--transition-base);
+}
+
+.video-container:hover {
+    box-shadow: var(--color-card-shadow-hover);
+}
+
+.video-container video {
+    width: 100%;
+    display: block;
+}
+
+
+/* ── Блоки практических заданий ──────────────────────────── */
+.task-block {
+    background: rgba(241, 245, 249, 0.5);
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-md);
+    padding: 22px;
+    margin-bottom: 20px;
+}
+
+.task-block:last-child {
+    margin-bottom: 0;
+}
+
+.task-title {
+    color: var(--color-accent-indigo);
+    font-weight: 700;
+    font-size: 1.05em;
+    margin-bottom: 14px;
+}
+
+.task-description p {
+    color: var(--color-text-primary);
+    margin-bottom: 12px;
+    line-height: 1.7;
+    text-indent: 20px;
+}
+
+.task-img {
+    display: block;
+    max-width: 300px;
+    margin: 12px auto;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-card-border);
+}
+
+
+/* ── Зона ввода ──────────────────────────────────────────── */
+.input-area {
+    margin-top: 16px;
+}
+
+/* Таблица для answer_grid */
+.task-block table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 5px;
+    margin: 15px 0;
+}
+
+.task-block td {
+    padding: 3px;
+}
+
+/* .grid-input переопределяет form-input для ячеек таблицы */
+.grid-input {
+    padding: 8px;
+    text-align: center;
+    color: var(--color-accent-blue);
+    font-size: 0.9em;
+}
+
+/* Обычные text-input через form-input из design-system.
+   Добавляем margin-bottom для двойного ответа (два input подряд) */
+.task-block .form-input {
+    margin-bottom: 10px;
+}
+
+.task-block .form-input:last-of-type {
+    margin-bottom: 0;
+}
+
+
+/* ── Кнопка «Проверить» ──────────────────────────────────── */
+/* JS не ссылается на этот класс — только визуал */
+.check-button {
+    padding: 10px 24px;
+    background: var(--btn-primary-bg);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-family: inherit;
+    font-size: 0.95em;
+    cursor: pointer;
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
+    margin-top: 10px;
+}
+
+.check-button:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+}
+
+
+/* ── Результат проверки ──────────────────────────────────── */
+/* ВАЖНО: JS устанавливает className = 'result-msg result-success|result-error'
+   и style.display = 'block'. Имена НЕЛЬЗЯ менять! */
+.result-msg {
+    margin-top: 14px;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    display: none;
+    font-weight: 600;
+    font-size: 0.95em;
+}
+
+.result-success {
+    background: rgba(34, 197, 94, 0.08);
+    color: #166534;
+    border: 1px solid rgba(34, 197, 94, 0.28);
+}
+
+.result-error {
+    background: rgba(239, 68, 68, 0.07);
+    color: #991b1b;
+    border: 1px solid rgba(239, 68, 68, 0.22);
+}
+
+
+/* ── Типографика ─────────────────────────────────────────── */
+sup {
+    font-size: 0.75em;
+    vertical-align: super;
+    line-height: 0;
+}
+
+sub {
+    font-size: 0.75em;
+    vertical-align: sub;
+    line-height: 0;
+}
+
+
+/* ── Адаптив ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .card {
+        padding: 20px 18px;
+    }
+
+    .task-block {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .task-square {
+        width: 34px;
+        height: 34px;
+        font-size: 0.8em;
+    }
+
+    .card {
+        padding: 16px 14px;
+    }
+}

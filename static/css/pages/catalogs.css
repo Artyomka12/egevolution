@@ -1,0 +1,365 @@
+/* ============================================================
+   EGEvolution — Catalog pages
+   variant_list.html / teoria.html / preparation.html / tasks_list.html
+   Требует design-system.css из base.html.
+   ============================================================ */
+
+
+/* ── Верхний отступ страницы ─────────────────────────────── */
+.page-wrap {
+    padding-top: 48px;
+}
+
+
+/* ── Общая сетка каталогов ───────────────────────────────── */
+.catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 24px;
+}
+
+.catalog-grid--wide {
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 28px;
+}
+
+/* Сбросить стили ссылок для карточек-ссылок */
+.variant-card,
+.theory-item,
+.lesson-card {
+    text-decoration: none;
+    color: var(--color-text-primary);
+}
+
+
+/* ============================================================
+   VARIANT CARDS (variant_list.html)
+   ============================================================ */
+.variant-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 36px 24px;
+    gap: 10px;
+}
+
+.variant-icon {
+    font-size: 2.8em;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.variant-title {
+    font-size: 1.25em;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0;
+}
+
+.variant-desc {
+    font-size: 0.9em;
+    color: var(--color-text-secondary);
+    margin: 0;
+}
+
+
+/* ============================================================
+   THEORY LIST (teoria.html)
+   ============================================================ */
+.theory-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.theory-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 22px;
+}
+
+/* Переопределяем hover-transform: горизонтально, не вертикально */
+.theory-item.card:hover {
+    transform: translateX(4px);
+    border-color: rgba(37, 99, 235, 0.3);
+    box-shadow: var(--color-card-shadow-hover);
+}
+
+.theory-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.theory-num {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15em;
+    font-weight: 700;
+    color: var(--color-accent-blue);
+    background: rgba(37, 99, 235, 0.08);
+    border-radius: 50%;
+    border: 1.5px solid rgba(37, 99, 235, 0.18);
+}
+
+.theory-name {
+    font-size: 1em;
+    font-weight: 500;
+    color: var(--color-text-primary);
+}
+
+.theory-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 12px;
+    background: rgba(37, 99, 235, 0.04);
+    border-radius: 20px;
+    border: 1px solid rgba(37, 99, 235, 0.1);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.lock-badge {
+    font-size: 0.9em;
+    opacity: 0.85;
+}
+
+.theory-progress {
+    font-size: 0.88em;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+}
+
+/* Статус-точки (теория и урок) */
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.status-dot--not_started { background: #94a3b8; }
+.status-dot--in_progress { background: #fbbf24; box-shadow: 0 0 5px rgba(251,191,36,0.6); }
+.status-dot--completed   { background: #22c55e; box-shadow: 0 0 5px rgba(34,197,94,0.6); }
+
+
+/* ============================================================
+   LESSON CARDS (preparation.html)
+   ============================================================ */
+.lesson-card {
+    display: flex;
+    flex-direction: column;
+    padding: 28px;
+}
+
+.lesson-card--locked {
+    opacity: 0.60;
+    filter: grayscale(0.25);
+}
+
+.lesson-icon {
+    font-size: 1.8em;
+    width: 54px;
+    height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.07);
+    border-radius: 14px;
+    border: 1px solid rgba(37, 99, 235, 0.13);
+    margin-bottom: 16px;
+}
+
+.lesson-title {
+    font-size: 1.15em;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 8px;
+}
+
+.lesson-desc {
+    font-size: 0.9em;
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    flex-grow: 1;
+    margin-bottom: 20px;
+}
+
+.lesson-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid rgba(37, 99, 235, 0.09);
+    margin-top: auto;
+}
+
+/* Статус-бейдж в карточке урока */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.82em;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.status-dot-inner {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.status-badge--not_started {
+    background: rgba(100, 116, 139, 0.1);
+    color: #475569;
+}
+.status-badge--not_started .status-dot-inner { background: #94a3b8; }
+
+.status-badge--in_progress {
+    background: rgba(251, 191, 36, 0.12);
+    color: #92400e;
+}
+.status-badge--in_progress .status-dot-inner { background: #fbbf24; }
+
+.status-badge--completed {
+    background: rgba(34, 197, 94, 0.1);
+    color: #166534;
+}
+.status-badge--completed .status-dot-inner { background: #22c55e; }
+
+.lesson-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.88em;
+}
+
+.lesson-progress {
+    font-weight: 600;
+    color: var(--color-text-secondary);
+}
+
+
+/* ============================================================
+   TASK CARDS (tasks_list.html)
+   ============================================================ */
+.task-card {
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    gap: 10px;
+}
+
+.task-card--empty {
+    opacity: 0.52;
+}
+
+.task-card-num {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: var(--color-accent-blue);
+}
+
+.task-card-count {
+    font-size: 0.88em;
+    color: var(--color-text-secondary);
+    min-height: 1.4em;
+}
+
+.difficulty-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    min-height: 22px;
+}
+
+.diff-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 8px;
+    border-radius: 5px;
+    font-size: 0.82em;
+    font-weight: 600;
+}
+
+.diff-tag--easy   { background: rgba(34, 197, 94, 0.1);  color: #166534; }
+.diff-tag--medium { background: rgba(234, 179, 8, 0.1);  color: #713f12; }
+.diff-tag--hard   { background: rgba(239, 68, 68, 0.1);  color: #991b1b; }
+.diff-tag--grave  { background: rgba(168, 85, 247, 0.1); color: #6b21a8; }
+
+/* Кнопка "Перейти" занимает нижнее место в карточке */
+.task-card .btn {
+    margin-top: auto;
+}
+
+/* В пустых карточках кнопка неактивна */
+.task-card--empty .btn-primary {
+    background: rgba(37, 99, 235, 0.07);
+    color: #94a3b8;
+    pointer-events: none;
+    cursor: default;
+    border-color: rgba(37, 99, 235, 0.1);
+}
+
+
+/* ============================================================
+   ADAPTIVE
+   ============================================================ */
+
+/* ≤ 900px */
+@media (max-width: 900px) {
+    .catalog-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+
+    .catalog-grid--wide {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+}
+
+/* ≤ 768px */
+@media (max-width: 768px) {
+    .catalog-grid,
+    .catalog-grid--wide {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Теория — переход к вертикальному */
+    .theory-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .theory-right {
+        align-self: flex-end;
+    }
+
+    /* Переопределяем hover-transform для теории на мобайл */
+    .theory-item.card:hover {
+        transform: none;
+    }
+}
+
+/* ≤ 480px */
+@media (max-width: 480px) {
+    .catalog-grid,
+    .catalog-grid--wide {
+        grid-template-columns: 1fr;
+    }
+
+    .page-wrap {
+        padding-top: 32px;
+    }
+}

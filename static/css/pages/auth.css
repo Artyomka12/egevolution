@@ -1,0 +1,116 @@
+/* ============================================================
+   EGEvolution — Auth pages (login, register)
+   Подключается через {% block extra_head %} в login.html
+   и register.html. Требует design-system.css из base.html.
+   ============================================================ */
+
+
+/* ── Центрирующая обёртка ───────────────────────────────── */
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+
+/* ── Карточка авторизации ───────────────────────────────── */
+.auth-card {
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--color-card-shadow);
+    padding: 44px 40px;
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+}
+
+
+/* ── Логотип и заголовок ────────────────────────────────── */
+.auth-logo {
+    font-size: 2.5em;
+    line-height: 1;
+    margin-bottom: 10px;
+}
+
+.auth-title {
+    font-size: 1.65em;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    letter-spacing: -0.5px;
+    margin: 0 0 6px;
+}
+
+.auth-subtitle {
+    font-size: 0.95em;
+    color: var(--color-text-secondary);
+    margin: 0 0 24px;
+}
+
+
+/* ── Flash внутри карточки ──────────────────────────────── */
+.auth-card .flash-msg {
+    text-align: left;
+    margin-bottom: 4px;
+}
+
+
+/* ── Форма ──────────────────────────────────────────────── */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 8px;
+    text-align: left;
+}
+
+.auth-form .btn--full {
+    margin-top: 6px;
+}
+
+
+/* ── Ссылка в низу карточки ─────────────────────────────── */
+.auth-footer-link {
+    margin-top: 22px;
+    font-size: 0.9em;
+    color: var(--color-text-secondary);
+}
+
+.auth-footer-link a {
+    color: var(--color-accent-blue);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-footer-link a:hover {
+    text-decoration: underline;
+}
+
+
+/* ── Поле «Пароль сайта» — оранжевый акцент ─────────────── */
+.site-password-label {
+    color: #92400e;
+}
+
+.site-password-input {
+    border-color: rgba(245, 158, 11, 0.4);
+}
+
+.site-password-input:focus {
+    border-color: rgba(245, 158, 11, 0.75);
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+
+
+/* ── Адаптив ────────────────────────────────────────────── */
+@media (max-width: 480px) {
+    .auth-card {
+        padding: 32px 24px;
+    }
+
+    .auth-title {
+        font-size: 1.4em;
+    }
+}

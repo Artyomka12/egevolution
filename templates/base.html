@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ЕГЭволюция{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/design-system.css') }}">
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+
+    {% block navbar %}
+    {% include 'components/navbar.html' %}
+    {% endblock %}
+
+    {% block flash %}
+    <div class="flash-wrapper">
+        {% include 'components/flash.html' %}
+    </div>
+    {% endblock %}
+
+    <main class="page-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    {% block footer %}
+    {% include 'components/footer.html' %}
+    {% endblock %}
+
+    <script src="{{ url_for('static', filename='js/scroll-reveal.js') }}"></script>
+    {% block scripts %}{% endblock %}
+
+</body>
+
+</html>

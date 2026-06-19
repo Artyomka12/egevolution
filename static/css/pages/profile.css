@@ -1,0 +1,144 @@
+/* ============================================================
+   EGEvolution — Profile page (profile.html)
+   Требует design-system.css из base.html.
+   ============================================================ */
+
+
+/* ── Обёртка страницы (узкая колонка) ───────────────────── */
+.profile-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+}
+
+
+/* ── Основная карточка профиля ───────────────────────────── */
+.profile-card {
+    padding: 48px 40px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+
+/* ── Аватар ──────────────────────────────────────────────── */
+.avatar-wrapper {
+    display: inline-block;
+    margin-bottom: 18px;
+}
+
+.avatar-img {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid rgba(37, 99, 235, 0.22);
+    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.12);
+    display: block;
+    transition: box-shadow var(--transition-base), border-color var(--transition-base);
+}
+
+.avatar-img:hover {
+    border-color: rgba(37, 99, 235, 0.45);
+    box-shadow: 0 6px 22px rgba(37, 99, 235, 0.2);
+}
+
+
+/* ── Имя, логин, дата ────────────────────────────────────── */
+.user-name {
+    font-size: 1.75em;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    margin-bottom: 4px;
+    letter-spacing: -0.4px;
+}
+
+.user-login {
+    font-size: 1em;
+    color: var(--color-text-secondary);
+    margin-bottom: 6px;
+}
+
+.user-reg {
+    font-size: 0.85em;
+    color: var(--color-text-muted);
+    margin-bottom: 22px;
+}
+
+
+/* ── Сетка статистики ────────────────────────────────────── */
+.profile-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+
+/* ── Карточка быстрых действий ───────────────────────────── */
+.profile-actions {
+    padding: 28px;
+}
+
+.actions-title {
+    font-size: 0.75em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    margin-bottom: 14px;
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+
+/* ── Блок администратора ─────────────────────────────────── */
+.admin-divider {
+    border-top: 1px solid rgba(239, 68, 68, 0.15);
+    padding-top: 20px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.admin-note {
+    font-size: 0.82em;
+    color: var(--color-text-muted);
+    margin-top: 8px;
+}
+
+
+/* ── Адаптив ─────────────────────────────────────────────── */
+
+/* ≤ 768px: stat-grid в 3 колонки (достаточно места) */
+@media (max-width: 768px) {
+    .profile-card {
+        padding: 36px 28px;
+    }
+}
+
+/* ≤ 480px: одна колонка везде */
+@media (max-width: 480px) {
+    .profile-page {
+        padding-top: 24px;
+    }
+
+    .profile-card {
+        padding: 28px 18px;
+    }
+
+    .avatar-img {
+        width: 110px;
+        height: 110px;
+    }
+
+    .profile-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .actions-grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,250 @@
+/* ============================================================
+   EGEvolution — Tasks view page (tasks_view.html)
+   Требует design-system.css из base.html.
+   ============================================================ */
+
+
+/* ── Кнопка «назад» ──────────────────────────────────────── */
+.tasks-back {
+    margin-bottom: 24px;
+}
+
+
+/* ── Фильтры сложности ───────────────────────────────────── */
+.filters {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+}
+
+/* ВАЖНО: JS добавляет/убирает класс .active через filterTasks() */
+.filter-btn {
+    padding: 8px 18px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.9em;
+    font-weight: 500;
+    transition: all var(--transition-fast);
+}
+
+.filter-btn:hover {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(37, 99, 235, 0.3);
+    color: var(--color-text-primary);
+    transform: translateY(-1px);
+}
+
+.filter-btn.active {
+    background: var(--btn-primary-bg);
+    border-color: transparent;
+    color: #fff;
+    font-weight: 600;
+}
+
+
+/* ── Карточка задачи ─────────────────────────────────────── */
+/* Классы .task-view-card + .task-block + .card на одном элементе.
+   .task-block нужен JS (querySelectorAll), .card — visual, .task-view-card — переопределения. */
+.task-view-card {
+    overflow: hidden;   /* для анимации раскрытия + border-radius */
+    margin-bottom: 16px;
+}
+
+/* Отключить всплытие по умолчанию от .card:hover */
+.task-view-card:hover {
+    transform: none;
+}
+
+
+/* ── Заголовок карточки (кликабельный) ───────────────────── */
+.task-header {
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.task-header:hover {
+    background: rgba(37, 99, 235, 0.04);
+}
+
+/* Номер задачи */
+.task-id {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: var(--color-accent-blue);
+    min-width: 38px;
+    white-space: nowrap;
+}
+
+/* Превью текста */
+.task-preview {
+    flex: 1;
+    color: var(--color-text-muted);
+    font-size: 0.88em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Шеврон */
+.expand-icon {
+    color: var(--color-text-dim);
+    font-size: 1em;
+    transition: transform var(--transition-base);
+    flex-shrink: 0;
+    user-select: none;
+}
+
+
+/* ── Раскрытие / схлопывание ─────────────────────────────── */
+/* ВАЖНО: JS переключает класс .expanded через toggleTask() */
+.task-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+}
+
+.task-block.expanded .task-body {
+    max-height: 5000px;
+}
+
+.task-block.expanded .expand-icon {
+    transform: rotate(180deg);
+}
+
+
+/* ── Содержимое задачи ───────────────────────────────────── */
+.task-content {
+    padding: 0 22px 24px;
+    border-top: 1px solid var(--color-card-border);
+}
+
+.task-description {
+    color: var(--color-text-primary);
+    line-height: 1.75;
+    margin: 20px 0 16px;
+}
+
+.task-description p {
+    margin-bottom: 12px;
+    text-indent: 20px;
+}
+
+
+/* ── Изображения задачи ──────────────────────────────────── */
+.task-image {
+    display: block;
+    margin: 14px auto;
+    border-radius: var(--radius-md);
+    max-width: 100%;
+    border: 1px solid var(--color-card-border);
+}
+
+.img-small  { max-width: 250px !important; }
+.img-medium { max-width: 350px !important; }
+.img-large  { max-width: 500px !important; }
+
+
+/* ── Файл задачи (дополнение к .file-download) ───────────── */
+.file-desc {
+    font-size: 0.88em;
+    color: var(--color-text-muted);
+}
+
+
+/* ── Блок правильного ответа ─────────────────────────────── */
+/* ВАЖНО: JS переключает класс .visible через showAnswer() */
+.answer-block {
+    display: none;
+    margin-top: 16px;
+    padding: 16px 20px;
+    background: rgba(34, 197, 94, 0.06);
+    border: 1px solid rgba(34, 197, 94, 0.25);
+    border-radius: var(--radius-md);
+}
+
+.answer-block.visible {
+    display: block;
+}
+
+.answer-label {
+    font-size: 0.82em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #166534;
+    margin-bottom: 8px;
+}
+
+.answer-value {
+    font-family: 'Courier New', monospace;
+    font-size: 1.05em;
+    color: var(--color-text-primary);
+    word-break: break-word;
+}
+
+
+/* ── Пустое состояние ────────────────────────────────────── */
+.no-tasks {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.no-tasks h2 {
+    font-size: 1.3em;
+    color: var(--color-text-secondary);
+    margin-bottom: 12px;
+}
+
+.no-tasks p {
+    color: var(--color-text-muted);
+    font-size: 0.95em;
+}
+
+
+/* ── Типографика (сохранена из старого шаблона) ──────────── */
+sup, sub {
+    font-size: 0.75em;
+    line-height: 0;
+}
+
+sup { vertical-align: super; }
+sub { vertical-align: sub; }
+
+
+/* ── Адаптив ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .task-header {
+        padding: 14px 16px;
+        gap: 10px;
+    }
+
+    .task-content {
+        padding: 0 16px 18px;
+    }
+
+    /* На мобильном превью скрывается — мало места */
+    .task-preview {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .filter-btn {
+        padding: 6px 12px;
+        font-size: 0.82em;
+    }
+
+    .task-id {
+        font-size: 1em;
+    }
+}

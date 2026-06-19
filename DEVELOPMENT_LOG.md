@@ -2,10 +2,10 @@
 
 ## Текущее состояние проекта
 
-**Дата последнего обновления:** 2026-06-18
+**Дата последнего обновления:** 2026-06-19
 **Ветка:** main
-**Версия:** v1.6.4
-**Статус:** выполнен — доработка видеосекции (HTML5 video + боковые постеры + fix clipping), CTA-секция записи на занятие, плавающая карточка связи, система цветных полосок .card-stripe
+**Версия:** v1.6.5
+**Статус:** выполнен — полный редизайн пользовательских страниц (15 страниц, светло-голубая тема, base.html + компоненты + 8 CSS-файлов, аудит 246/246 OK)
 
 Аудит безопасности завершён в v1.3.0. D-1, D-2, D-3 закрыты.
 v1.4.0 — расширенный редактор задач в админке: все три этапа завершены.
@@ -19,10 +19,126 @@ v1.6.1 — живой интерфейс главной страницы: hover-
 v1.6.2 — горизонтальная динамика интерактивной зоны: единые slide+fade переходы для обоих шагов (Задача→Готовность и Готовность→Маршрут), заполнение коннекторов stepper, overflow:hidden и minHeight-фикс. Изменения только в CSS и JS `start.html`. HTML, backend, маршруты, бизнес-логика — не тронуты.
 v1.6.3 — усиление ценностного предложения главной страницы: счётчик видеоразборов в Hero, новый блок видео-превью, удаление блока новостей, рефрейминг блока обновлений с фокусом на студенте, ease → ease-out в reveal-анимациях. Изменения только в CSS и HTML `start.html`. JS, backend, маршруты, бизнес-логика — не тронуты.
 v1.6.4 — визуальные и конверсионные улучшения главной страницы: HTML5-видеоплеер + боковые постеры в видеосекции, CTA-секция записи на занятие, плавающая карточка связи, система цветных полосок .card-stripe для update-card. Изменения только в `templates/start.html`. JS, backend, маршруты — не тронуты.
+v1.6.5 — полный редизайн пользовательских страниц: base.html + компоненты, 15 страниц мигрированы на `{% extends "base.html" %}`, создан design-system.css и 8 page-CSS файлов. Аудит 246/246 OK. Backend не менялся.
 
 ---
 
 ## Версии
+
+### v1.6.5 — Полный редизайн пользовательских страниц
+
+**Дата:** 2026-06-19
+
+**Описание:** Полный визуальный редизайн 15 пользовательских страниц: переход от тёмной «геймерской» темы (#0a0a0f, glassmorphism, cyan glow, dot-grid) к светло-голубой теме (linear-gradient #eaf6ff→#f5fbff→#eef8ff, белые карточки, синий #2563eb, тёмный sticky navbar). Все шаблоны мигрированы на `{% extends "base.html" %}`. Созданы единая `design-system.css` и 8 page-specific CSS-файлов в `static/css/pages/`. Изменения только в шаблонах и static/css. Backend (`app.py`), маршруты, схема БД, логика авторизации — не тронуты.
+
+**Этап 0 — Архитектурная база:**
+
+| Файл | Назначение |
+|---|---|
+| `templates/base.html` | Базовый шаблон: блоки `title`, `extra_head`, `content`, `scripts` |
+| `templates/components/navbar.html` | Sticky тёмный navbar, dropdown пользователя, logout POST + CSRF |
+| `templates/components/footer.html` | Футер со ссылкой на Telegram |
+| `templates/components/flash.html` | Flash-сообщения (категории: `success`, `error`, `warning`) |
+| `static/css/design-system.css` | Полная система CSS-токенов: цвета, отступы, радиусы, тени, `.card`, `.btn`, `.form-input`, `.section-heading`, `.page-wrap` |
+| `static/js/scroll-reveal.js` | IntersectionObserver-анимация `.reveal → .reveal.visible` (threshold 0.12) |
+
+Ключевые токены `design-system.css`: `--color-bg-page` (градиент), `--color-accent-blue` (#2563eb), `--color-card-shadow`, `--radius-md`, `--transition-base`. Класс `.card` не имеет собственного `padding` — page-CSS добавляют его.
+
+**Этап 1 — Страницы авторизации:**
+
+| Шаблон | Что изменено |
+|---|---|
+| `login.html` | `{% extends "base.html" %}`, светлая форма входа |
+| `register.html` | `{% extends "base.html" %}`, светлая форма регистрации |
+| `csrf_error.html` | `{% extends "base.html" %}`, светлая карточка ошибки |
+
+- Создан `static/css/pages/auth.css` — только брейкпоинт 480px (центрированная карточка адаптируется выше автоматически; 768px-брейкпоинт намеренно отсутствует)
+
+**Этап 2 — Каталоги и списки:**
+
+| Шаблон | Что изменено |
+|---|---|
+| `variant_list.html` | `{% extends "base.html" %}`, карточки вариантов (`variant-card card`) |
+| `teoria.html` | `{% extends "base.html" %}`, карточки заданий |
+| `preparation.html` | `{% extends "base.html" %}`, карточки уроков |
+| `tasks_list.html` | `{% extends "base.html" %}`, карточки номеров заданий |
+
+- Создан `static/css/pages/catalogs.css` — сетки карточек, брейкпоинты 900px / 768px / 480px
+
+**Этап 3 — Профиль и статистика:**
+
+| Шаблон | Что изменено |
+|---|---|
+| `profile.html` | `{% extends "base.html" %}`, профиль с аватаром |
+| `stats.html` | `{% extends "base.html" %}`, сводная статистика попыток |
+| `attempt_detail.html` | `{% extends "base.html" %}`, детальный просмотр попытки |
+
+- Создан `static/css/pages/profile.css`
+- Создан `static/css/pages/stats.css` (используется обоими шаблонами)
+
+**Этап 4 — Интерактивные страницы:**
+
+| Шаблон | CSS-файл | Особенности |
+|---|---|---|
+| `choose_mode.html` | `variants.css` | Выбор режима (обычный / экзамен) |
+| `tasks_view.html` | `tasks.css` | Раскрывающиеся карточки, JS-фильтр сложности |
+| `teoria_zadanie.html` | `teoria.css` | `<form onsubmit>` + CSRF hidden input, `checkPracticeTask()`, progress-squares |
+| `preparation_lesson.html` | `preparation_lesson.css` | Без `<form>` — только `onclick` + fetch, `checkTask()`, progress-squares |
+
+- Создан `static/css/pages/variants.css`
+- Создан `static/css/pages/tasks.css` (`max-height: 5000px` — CSS-техника collapse/expand animation, не реальный размер)
+- Создан `static/css/pages/teoria.css`
+- Создан `static/css/pages/preparation_lesson.css`
+
+**Технические особенности:**
+
+| Особенность | Описание |
+|---|---|
+| `replace_markers` | Jinja2-фильтр используется в `teoria_zadanie.html` и `preparation_lesson.html` для рендера `<b>`/`<i>`/`<sup>`/`<sub>` из JSON |
+| `preparation_lesson.html` без `<form>` | Ответы только через `onclick` → `checkTask()` → `fetch`. Любой `<input>` внутри `.task-block` попадает в `querySelectorAll('input')` — скрытые поля недопустимы |
+| CSRF в fetch | `'X-CSRFToken': '{{ csrf_token() }}'` в заголовке; hidden input только в `<form>` шаблонах |
+| `.card:hover { transform }` | Переопределяется в page-CSS для интерактивных карточек: `.task-progress-panel.card:hover { transform: none }`, `.lesson-practice-card:hover { transform: none }` |
+| `max-height: 5000px` в tasks.css | Стандартная CSS-техника для анимированного раскрытия: `max-height: 0 → 5000px` вместо `display: none → block` |
+
+**Что не изменялось:**
+
+| Файл / Группа | Причина |
+|---|---|
+| `app.py` | Backend без изменений |
+| `templates/start.html` | Уже redesigned в v1.6.0–v1.6.4 |
+| `templates/exam.html` | Вне scope редизайна |
+| `templates/reshenie.html` | Вне scope редизайна |
+| Все admin-шаблоны | Вне scope редизайна |
+| Маршруты Flask | Без изменений |
+| Схема БД | Без изменений |
+| CSRF-инфраструктура | Без изменений |
+| Логика авторизации | Без изменений |
+
+**Финальный интеграционный аудит:**
+
+| Страница | URL | Статус |
+|---|---|---|
+| Вход | `/login` | ✅ |
+| Регистрация | `/register` | ✅ |
+| CSRF-ошибка | `/csrf-error` | ✅ |
+| Список вариантов | `/variants` | ✅ |
+| Список теории | `/theory` | ✅ |
+| Подготовка (уроки) | `/preparation` | ✅ |
+| База задач | `/tasks` | ✅ |
+| Профиль | `/profile` | ✅ |
+| Статистика | `/stats` | ✅ |
+| Детальная попытка | `/stats/attempt/N` | ✅ |
+| Выбор режима | `/choose-mode/N` | ✅ |
+| Просмотр задач | `/tasks/N` | ✅ |
+| Теория: задание | `/theory/N` | ✅ |
+| Урок | `/preparation/N` | ✅ |
+| Главная | `/` (start.html) | ✅ |
+
+**Итого: 15/15 страниц ✅ · 246/246 проверок ✅**
+
+**Не изменялось:** `app.py`, `start.html`, `exam.html`, `reshenie.html`, все admin-шаблоны, маршруты Flask, схема БД, CSRF-инфраструктура, логика авторизации.
+
+---
 
 ### v1.6.4 — Визуальные и конверсионные улучшения главной страницы
 

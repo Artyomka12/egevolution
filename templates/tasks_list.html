@@ -1,189 +1,58 @@
-<!DOCTYPE html>
-<html lang="ru">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>База заданий | ЕГЭволюция</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+{% block title %}База заданий | ЕГЭволюция{% endblock %}
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle at 10% 20%, #0f172a 0%, #020617 90%);
-            color: #e2e8f0;
-            min-height: 100vh;
-            padding: 40px 20px;
-        }
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/catalogs.css') }}">
+{% endblock %}
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+{% block content %}
+<div class="page-wrap">
 
-        .nav-back {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: #38bdf8;
-            text-decoration: none;
-            padding: 8px 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(56, 189, 248, 0.2);
-            border-radius: 8px;
-            margin-bottom: 30px;
-            transition: 0.3s;
-        }
+    <div class="section-heading reveal">
+        <span class="section-tag">База заданий</span>
+        <h1 class="section-title">Задания по номерам ЕГЭ</h1>
+        <p class="section-desc">Выберите номер задания и тренируйтесь отдельно по каждому типу</p>
+    </div>
 
-        .nav-back:hover {
-            background: rgba(56, 189, 248, 0.15);
-            border-color: #38bdf8;
-        }
+    <div class="catalog-grid">
+        {% for item in tasks_info %}
+        <div class="task-card card {% if item.total == 0 %}task-card--empty{% endif %} reveal">
 
-        .page-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
+            <div class="task-card-num">Задание №{{ item.num }}</div>
 
-        .page-header h1 {
-            font-size: 2.5em;
-            font-weight: 700;
-            background: linear-gradient(to right, #38bdf8, #818cf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-        }
-
-        .page-header p {
-            color: #94a3b8;
-            font-size: 1.1em;
-        }
-
-        .tasks-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 20px;
-        }
-
-        .task-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 25px;
-            transition: all 0.3s;
-        }
-
-        .task-card:hover {
-            border-color: rgba(56, 189, 248, 0.3);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(56, 189, 248, 0.15);
-        }
-
-        .task-num {
-            font-size: 1.8em;
-            font-weight: 700;
-            color: #38bdf8;
-            margin-bottom: 8px;
-        }
-
-        .task-count {
-            color: #94a3b8;
-            font-size: 0.9em;
-            margin-bottom: 15px;
-        }
-
-        .difficulty-row {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-            font-size: 0.85em;
-        }
-
-        .diff-badge {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            padding: 3px 8px;
-            border-radius: 6px;
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .btn-go {
-            display: block;
-            text-align: center;
-            padding: 10px;
-            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
-            color: #0f172a;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-
-        .btn-go:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
-        }
-
-        .empty-card {
-            opacity: 0.5;
-        }
-
-        .empty-card .btn-go {
-            background: rgba(255, 255, 255, 0.1);
-            color: #64748b;
-            pointer-events: none;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="container">
-        <a href="/" class="nav-back">← На главную</a>
-        <div class="page-header">
-            <h1>📚 База заданий</h1>
-            <p>Выбери номер задания, чтобы увидеть доступные задачи</p>
-        </div>
-        <div class="tasks-grid">
-            {% for item in tasks_info %}
-            <div class="task-card {% if item.total == 0 %}empty-card{% endif %}">
-                <div class="task-num">Задание №{{ item.num }}</div>
-                <div class="task-count">
-                    {% if item.total > 0 %}
-                    {{ item.total }} {{ 'задача' if item.total == 1 else ('задачи' if item.total < 5 else 'задач' ) }} в
-                        базе {% else %} Пока нет задач {% endif %} </div>
-                        {% if item.total > 0 %}
-                        <div class="difficulty-row">
-                            {% if item.difficulty_count.easy > 0 %}
-                            <span class="diff-badge" style="color: #4ade80;">🟢 {{ item.difficulty_count.easy }}</span>
-                            {% endif %}
-                            {% if item.difficulty_count.medium > 0 %}
-                            <span class="diff-badge" style="color: #facc15;">🟡 {{ item.difficulty_count.medium
-                                }}</span>
-                            {% endif %}
-                            {% if item.difficulty_count.hard > 0 %}
-                            <span class="diff-badge" style="color: #ef4444;"> {{ item.difficulty_count.hard }}</span>
-                            {% endif %}
-                            {% if item.difficulty_count.grave > 0 %}
-                            <span class="diff-badge" style="color: #a855f7;">⚫ {{ item.difficulty_count.grave }}</span>
-                            {% endif %}
-                        </div>
-                        {% endif %}
-                        <a href="/tasks/{{ item.num }}" class="btn-go">
-                            {% if item.total > 0 %}Перейти к задачам{% else %}Пусто{% endif %}
-                        </a>
-                </div>
-                {% endfor %}
+            <div class="task-card-count">
+                {% if item.total > 0 %}
+                {{ item.total }} {{ 'задача' if item.total == 1 else ('задачи' if item.total < 5 else 'задач') }} в базе
+                {% else %}
+                Пока нет задач
+                {% endif %}
             </div>
-        </div>
-</body>
 
-</html>
+            {% if item.total > 0 %}
+            <div class="difficulty-row">
+                {% if item.difficulty_count.easy > 0 %}
+                <span class="diff-tag diff-tag--easy">🟢 {{ item.difficulty_count.easy }}</span>
+                {% endif %}
+                {% if item.difficulty_count.medium > 0 %}
+                <span class="diff-tag diff-tag--medium">🟡 {{ item.difficulty_count.medium }}</span>
+                {% endif %}
+                {% if item.difficulty_count.hard > 0 %}
+                <span class="diff-tag diff-tag--hard">🔴 {{ item.difficulty_count.hard }}</span>
+                {% endif %}
+                {% if item.difficulty_count.grave > 0 %}
+                <span class="diff-tag diff-tag--grave">⚫ {{ item.difficulty_count.grave }}</span>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <a href="/tasks/{{ item.num }}" class="btn btn-primary btn--full">
+                {% if item.total > 0 %}Перейти к задачам{% else %}Пусто{% endif %}
+            </a>
+
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

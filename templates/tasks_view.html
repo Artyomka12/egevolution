@@ -1,427 +1,168 @@
-<!DOCTYPE html>
-<html lang="ru">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Задание №{{ task_num }} | База заданий</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+{% block title %}Задание №{{ task_num }} | ЕГЭволюция{% endblock %}
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle at 10% 20%, #0f172a 0%, #020617 90%);
-            color: #e2e8f0;
-            min-height: 100vh;
-            padding: 40px 20px;
-        }
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/tasks.css') }}">
+{% endblock %}
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
+{% block content %}
+<div class="page-wrap--narrow page-wrap">
 
-        .nav-back {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: #38bdf8;
-            text-decoration: none;
-            padding: 8px 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(56, 189, 248, 0.2);
-            border-radius: 8px;
-            margin-bottom: 30px;
-            transition: 0.3s;
-        }
-
-        .nav-back:hover {
-            background: rgba(56, 189, 248, 0.15);
-            border-color: #38bdf8;
-        }
-
-        .page-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .page-header h1 {
-            font-size: 2.5em;
-            font-weight: 700;
-            background: linear-gradient(to right, #38bdf8, #818cf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-        }
-
-        .page-header p {
-            color: #94a3b8;
-            font-size: 1.1em;
-        }
-
-        .filters {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 30px;
-        }
-
-        .filter-btn {
-            padding: 8px 18px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: #e2e8f0;
-            cursor: pointer;
-            transition: 0.3s;
-            font-size: 0.95em;
-        }
-
-        .filter-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .filter-btn.active {
-            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
-            color: #0f172a;
-            border-color: transparent;
-            font-weight: 600;
-        }
-
-        .task-block {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            margin-bottom: 20px;
-            overflow: hidden;
-            transition: all 0.3s;
-        }
-
-        .task-block:hover {
-            border-color: rgba(56, 189, 248, 0.2);
-        }
-
-        .task-header {
-            padding: 20px 25px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            transition: background 0.3s;
-        }
-
-        .task-header:hover {
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        .task-id {
-            font-size: 1.5em;
-            font-weight: 700;
-            color: #38bdf8;
-            min-width: 50px;
-        }
-
-        .diff-badge {
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.85em;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-
-        .task-preview {
-            flex: 1;
-            color: #94a3b8;
-            font-size: 0.95em;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .expand-icon {
-            color: #64748b;
-            font-size: 1.2em;
-            transition: transform 0.3s;
-        }
-
-        .task-block.expanded .expand-icon {
-            transform: rotate(180deg);
-        }
-
-        .task-body {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease;
-        }
-
-        .task-block.expanded .task-body {
-            max-height: 5000px;
-        }
-
-        .task-content {
-            padding: 0 25px 25px 25px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .task-description {
-            color: #cbd5e1;
-            line-height: 1.7;
-            margin: 20px 0;
-        }
-
-        .task-description p {
-            margin-bottom: 12px;
-            text-indent: 20px;
-        }
-
-        .task-image {
-            display: block;
-            margin: 15px auto;
-            border-radius: 12px;
-            max-width: 100%;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .img-small {
-            max-width: 250px !important;
-        }
-
-        .img-medium {
-            max-width: 350px !important;
-        }
-
-        .img-large {
-            max-width: 500px !important;
-        }
-
-        .task-file {
-            margin: 15px 0;
-            padding: 12px 18px;
-            background: rgba(56, 189, 248, 0.05);
-            border-radius: 10px;
-            border-left: 3px solid #38bdf8;
-        }
-
-        .task-file a {
-            color: #38bdf8;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .btn-answer {
-            margin-top: 15px;
-            padding: 10px 24px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 8px;
-            color: #e2e8f0;
-            cursor: pointer;
-            transition: 0.3s;
-            font-size: 0.95em;
-        }
-
-        .btn-answer:hover {
-            background: rgba(56, 189, 248, 0.15);
-            border-color: #38bdf8;
-        }
-
-        .answer-block {
-            margin-top: 15px;
-            padding: 15px 20px;
-            background: rgba(74, 222, 128, 0.1);
-            border: 1px solid rgba(74, 222, 128, 0.3);
-            border-radius: 10px;
-            display: none;
-        }
-
-        .answer-block.visible {
-            display: block;
-        }
-
-        .answer-label {
-            color: #4ade80;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .answer-value {
-            color: #e2e8f0;
-            font-size: 1.1em;
-            font-family: 'Courier New', monospace;
-        }
-
-        .no-tasks {
-            text-align: center;
-            padding: 60px 20px;
-            color: #64748b;
-        }
-
-        .no-tasks h2 {
-            color: #f87171;
-            margin-bottom: 15px;
-        }
-
-        sup {
-            font-size: 0.75em;
-            vertical-align: super;
-            line-height: 0;
-        }
-
-        sub {
-            font-size: 0.75em;
-            vertical-align: sub;
-            line-height: 0;
-        }
-
-        b {
-            font-weight: 700;
-        }
-
-        i {
-            font-style: italic;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="container">
-        <a href="/tasks" class="nav-back">← К списку заданий</a>
-        <div class="page-header">
-            <h1>📋 Задание №{{ task_num }}</h1>
-            <p>Доступно задач: {{ tasks|length }}</p>
-        </div>
-
-        {% if tasks %}
-        <!-- Фильтры -->
-        <div class="filters">
-            <button class="filter-btn active" onclick="filterTasks('all', this)">
-                Все ({{ tasks|length }})
-            </button>
-            <button class="filter-btn" onclick="filterTasks('easy', this)">🟢 Лёгкие</button>
-            <button class="filter-btn" onclick="filterTasks('medium', this)">🟡 Средние</button>
-            <button class="filter-btn" onclick="filterTasks('hard', this)">🔴 Сложные</button>
-            <button class="filter-btn" onclick="filterTasks('grave', this)">⚫ Гроб</button>
-        </div>
-
-        <!-- Список задач -->
-        <div id="tasks-container">
-            {% for task in tasks %}
-            <div class="task-block" data-difficulty="{{ task.difficulty or 'medium' }}" id="task-block-{{ task.id }}">
-                <div class="task-header" onclick="toggleTask({{ task.id }})">
-                    <div class="task-id">№{{ task.id }}</div>
-                    {% set diff = task.difficulty or 'medium' %}
-                    {% if diff == 'easy' %}
-                    <span class="diff-badge" style="background: rgba(74, 222, 128, 0.15); color: #4ade80;">🟢
-                        Лёгкое</span>
-                    {% elif diff == 'medium' %}
-                    <span class="diff-badge" style="background: rgba(250, 204, 21, 0.15); color: #facc15;">🟡
-                        Среднее</span>
-                    {% elif diff == 'hard' %}
-                    <span class="diff-badge" style="background: rgba(239, 68, 68, 0.15); color: #ef4444;">🔴
-                        Сложное</span>
-                    {% elif diff == 'grave' %}
-                    <span class="diff-badge" style="background: rgba(168, 85, 247, 0.15); color: #a855f7;">⚫ Гроб</span>
-                    {% endif %}
-                    <div class="task-preview">{{ (task.description|join(' '))[:120] }}{% if task.description|join('
-                        ')|length > 120 %}...{% endif %}</div>
-                    <div class="expand-icon">▼</div>
-                </div>
-                <div class="task-body">
-                    <div class="task-content">
-                        <div class="task-description">
-                            {% for paragraph in task.description %}
-                            <p>{{ paragraph | replace_markers }}</p>
-                            {% if task.images %}
-                            {% set current_paragraph_index = loop.index0 %}
-                            {% for image in task.images %}
-                            {% if image.after_paragraph == current_paragraph_index %}
-                            <img src="{{ url_for('task_images', task_num=task_num, filename=image.path) }}"
-                                alt="Изображение" class="task-image {{ image.size or 'img-medium' }}">
-                            {% endif %}
-                            {% endfor %}
-                            {% endif %}
-                            {% endfor %}
-                        </div>
-
-                        {% if task.file %}
-                        <div class="task-file">
-                            📄 <a href="{{ url_for('task_files', task_num=task_num, filename=task.file.path) }}"
-                                download>
-                                {{ task.file.name or task.file.path }}
-                            </a>
-                            {% if task.file.description %}
-                            <div style="color: #94a3b8; font-size: 0.9em; margin-top: 5px;">
-                                {{ task.file.description }}
-                            </div>
-                            {% endif %}
-                        </div>
-                        {% endif %}
-
-                        <button class="btn-answer" onclick="showAnswer({{ task.id }})">
-                            👁️ Показать правильный ответ
-                        </button>
-
-                        <div class="answer-block" id="answer-{{ task.id }}">
-                            <div class="answer-label">✅ Правильный ответ:</div>
-                            <div class="answer-value">
-                                {% if task.answer_grid %}
-                                {% for row in task.answer_grid.answers %}
-                                {{ row|join(', ') }}{% if not loop.last %}; {% endif %}
-                                {% endfor %}
-                                {% elif task.answers %}
-                                {{ task.answers|join(', ') }}
-                                {% elif task.correct_answer %}
-                                {{ task.correct_answer }}
-                                {% else %}
-                                Ответ не указан
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="no-tasks">
-            <h2>📭 Пока нет задач</h2>
-            <p>Для задания №{{ task_num }} ещё не добавлено ни одной задачи в базу.</p>
-        </div>
-        {% endif %}
+    <!-- Кнопка назад -->
+    <div class="tasks-back reveal">
+        <a href="/tasks" class="btn btn-secondary">← К базе заданий</a>
     </div>
 
-    <script>
-        function toggleTask(taskId) {
-            const block = document.getElementById('task-block-' + taskId);
-            block.classList.toggle('expanded');
-        }
+    <div class="section-heading reveal">
+        <span class="section-tag">Задание {{ task_num }}</span>
+        <h1 class="section-title">Задачи по номеру {{ task_num }}</h1>
+        <p class="section-desc">Доступно задач: {{ tasks|length }}. Разворачивайте карточки и проверяйте ответы.</p>
+    </div>
 
-        function showAnswer(taskId) {
-            const answerBlock = document.getElementById('answer-' + taskId);
-            answerBlock.classList.toggle('visible');
-        }
+    {% if tasks %}
 
-        function filterTasks(difficulty, btn) {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+    <!-- Фильтры сложности -->
+    <div class="filters reveal">
+        <button class="filter-btn active" onclick="filterTasks('all', this)">
+            Все ({{ tasks|length }})
+        </button>
+        <button class="filter-btn" onclick="filterTasks('easy', this)">🟢 Лёгкие</button>
+        <button class="filter-btn" onclick="filterTasks('medium', this)">🟡 Средние</button>
+        <button class="filter-btn" onclick="filterTasks('hard', this)">🔴 Сложные</button>
+        <button class="filter-btn" onclick="filterTasks('grave', this)">⚫ Гроб</button>
+    </div>
 
-            const blocks = document.querySelectorAll('.task-block');
-            blocks.forEach(block => {
-                if (difficulty === 'all' || block.dataset.difficulty === difficulty) {
-                    block.style.display = 'block';
-                } else {
-                    block.style.display = 'none';
-                }
-            });
-        }
-    </script>
-</body>
+    <!-- Список задач -->
+    <div id="tasks-container">
+        {% for task in tasks %}
+        {% set diff = task.difficulty or 'medium' %}
+        <div class="card task-view-card task-block card-stripe {% if diff == 'easy' %}card-stripe--green{% elif diff == 'hard' %}card-stripe--red{% elif diff == 'grave' %}card-stripe--purple{% else %}card-stripe--yellow{% endif %}"
+             data-difficulty="{{ diff }}" id="task-block-{{ task.id }}">
 
-</html>
+            <!-- Заголовок (кликабельный) -->
+            <div class="task-header" onclick="toggleTask({{ task.id }})">
+
+                <div class="task-id">№{{ task.id }}</div>
+
+                {% if diff == 'easy' %}
+                <span class="badge badge--green">🟢 Лёгкое</span>
+                {% elif diff == 'medium' %}
+                <span class="badge badge--yellow">🟡 Среднее</span>
+                {% elif diff == 'hard' %}
+                <span class="badge badge--red">🔴 Сложное</span>
+                {% elif diff == 'grave' %}
+                <span class="badge badge--purple">⚫ Гроб</span>
+                {% endif %}
+
+                <div class="task-preview">{{ (task.description|join(' '))[:120] }}{% if (task.description|join(' '))|length > 120 %}...{% endif %}</div>
+
+                <div class="expand-icon">▼</div>
+
+            </div>
+
+            <!-- Тело (раскрывается) -->
+            <div class="task-body">
+                <div class="task-content">
+
+                    <!-- Описание с изображениями -->
+                    <div class="task-description">
+                        {% for paragraph in task.description %}
+                        <p>{{ paragraph | replace_markers }}</p>
+                        {% if task.images %}
+                        {% set current_paragraph_index = loop.index0 %}
+                        {% for image in task.images %}
+                        {% if image.after_paragraph == current_paragraph_index %}
+                        <img src="{{ url_for('task_images', task_num=task_num, filename=image.path) }}"
+                             alt="Изображение" class="task-image {{ image.size or 'img-medium' }}">
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <!-- Файл для скачивания -->
+                    {% if task.file %}
+                    <div class="file-download">
+                        <a class="file-link"
+                           href="{{ url_for('task_files', task_num=task_num, filename=task.file.path) }}"
+                           download>
+                            📄 {{ task.file.name or task.file.path }}
+                        </a>
+                        {% if task.file.description %}
+                        <span class="file-desc">{{ task.file.description }}</span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Кнопка раскрытия ответа -->
+                    <button class="btn btn-secondary btn--sm" style="margin-top:16px"
+                            onclick="showAnswer({{ task.id }})">
+                        👁️ Показать правильный ответ
+                    </button>
+
+                    <!-- Блок ответа -->
+                    <div class="answer-block" id="answer-{{ task.id }}">
+                        <div class="answer-label">✅ Правильный ответ:</div>
+                        <div class="answer-value">
+                            {% if task.answer_grid %}
+                            {% for row in task.answer_grid.answers %}
+                            {{ row|join(', ') }}{% if not loop.last %}; {% endif %}
+                            {% endfor %}
+                            {% elif task.answers %}
+                            {{ task.answers|join(', ') }}
+                            {% elif task.correct_answer %}
+                            {{ task.correct_answer }}
+                            {% else %}
+                            Ответ не указан
+                            {% endif %}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+
+    <!-- Пустое состояние -->
+    <div class="card no-tasks reveal">
+        <h2>📭 Пока нет задач</h2>
+        <p>Для задания №{{ task_num }} ещё не добавлено ни одной задачи в базу.</p>
+    </div>
+
+    {% endif %}
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function toggleTask(taskId) {
+        const block = document.getElementById('task-block-' + taskId);
+        block.classList.toggle('expanded');
+    }
+
+    function showAnswer(taskId) {
+        const answerBlock = document.getElementById('answer-' + taskId);
+        answerBlock.classList.toggle('visible');
+    }
+
+    function filterTasks(difficulty, btn) {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const blocks = document.querySelectorAll('.task-block');
+        blocks.forEach(block => {
+            if (difficulty === 'all' || block.dataset.difficulty === difficulty) {
+                block.style.display = 'block';
+            } else {
+                block.style.display = 'none';
+            }
+        });
+    }
+</script>
+{% endblock %}
