@@ -291,7 +291,6 @@ webpl with base/
 | `GET /tasks/<task_num>` | Просмотр задач из базы по номеру задания |
 | `GET /stats` | Личная статистика |
 | `GET /stats/attempt/<attempt_id>` | Детальная статистика конкретной попытки |
-| `POST /clear_stats` | Очистка статистики |
 | `GET /profile` | Профиль |
 | `POST /profile/upload_avatar` | Загрузка аватара |
 

@@ -36,9 +36,6 @@
 
         <div class="history-header">
             <h2 class="history-title">📋 История решений</h2>
-            <button type="button" class="btn btn-danger btn--sm" onclick="clearStats()">
-                Очистить статистику
-            </button>
         </div>
 
         {% if stats.variants_history %}
@@ -75,23 +72,4 @@
     </div>
 
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-    function clearStats() {
-        if (confirm('⚠️ Вы уверены, что хотите удалить всю статистику? Это действие нельзя отменить!')) {
-            fetch('/clear_stats', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token() }}'
-                }
-            })
-                .then(response => response.json())
-                .then(data => { if (data.success) window.location.reload(); })
-                .catch(error => console.error('Ошибка:', error));
-        }
-    }
-</script>
 {% endblock %}

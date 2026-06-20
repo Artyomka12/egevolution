@@ -2247,22 +2247,6 @@ def api_variant_preview():
     return jsonify({"tasks": preview_tasks})
 
 
-@app.route("/clear_stats", methods=["POST"])
-def clear_stats():
-    if "user_id" not in session:
-        return jsonify({"success": False, "error": "Unauthorized"}), 401
-    user_id = session["user_id"]
-    try:
-        db = get_db()
-        db.execute("DELETE FROM user_task_answers WHERE user_id = ?", (user_id,))
-        db.execute("DELETE FROM user_results WHERE user_id = ?", (user_id,))
-        db.commit()
-        db.close()
-        return jsonify({"success": True, "message": "Ваша статистика очищена"})
-    except Exception:
-        return jsonify({"success": False, "error": "Не удалось очистить статистику"}), 500
-
-
 # === АДМИН ПАНЕЛЬ ===
 
 
