@@ -12,19 +12,7 @@
 </head>
 <body>
 
-  <!-- Header -->
-  <header class="header">
-    <div class="header-inner">
-      <div class="logo">
-        <span class="logo-icon">⚡</span>
-        <span class="logo-text">ЕГЭволюция</span>
-      </div>
-      <nav class="header-nav">
-        <span class="nav-label">Визуализатор Python</span>
-        <button id="theme-toggle" class="theme-toggle" title="Сменить тему">🌙</button>
-      </nav>
-    </div>
-  </header>
+  {% include 'components/navbar.html' %}
 
   <!-- Main -->
   <main class="main">
@@ -32,8 +20,11 @@
     <!-- Input view -->
     <section id="input-view" class="view active">
       <div class="page-title">
-        <h1>Визуализатор Python-кода</h1>
-        <p class="subtitle">Введи код — и увидишь, как он выполняется шаг за шагом</p>
+        <div class="page-title-text">
+          <h1>Визуализатор Python-кода</h1>
+          <p class="subtitle">Введи код — и увидишь, как он выполняется шаг за шагом</p>
+        </div>
+        <button id="theme-toggle" class="theme-toggle" title="Сменить тему">🌙</button>
       </div>
 
       <div class="input-layout">

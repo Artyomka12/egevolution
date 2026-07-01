@@ -9,11 +9,16 @@ EGEvolution — учебная платформа для подготовки к
 решают практические задачи в уроках. Администратор управляет контентом
 через встроенную панель.
 
-**Текущая версия: v1.7.0** — интеграция визуализатора Python-кода
-(отдельный проект [visual-code](https://github.com/Artyomka12/visual-code),
-встроен как модуль: `validator.py` + `tracer.py` рядом с `app.py`,
-маршруты `GET /visualizer` и `POST /api/visualizer/trace`, доступ только
-для авторизованных пользователей).
+**Текущая версия: v1.7.1** — визуальная унификация визуализатора Python-кода
+с остальным сайтом: собственный navbar визуализатора заменён на общий
+`components/navbar.html`, светлая тема визуализатора перекрашена под палитру
+сайта (`--primary: #2563EB`, общий градиентный фон), тёмная тема визуализатора
+сохранена, но при её включении navbar инвертируется в светлый вариант.
+
+v1.7.0 — интеграция визуализатора Python-кода (отдельный проект
+[visual-code](https://github.com/Artyomka12/visual-code)), встроен как модуль:
+`validator.py` + `tracer.py` рядом с `app.py`, маршруты `GET /visualizer` и
+`POST /api/visualizer/trace`, доступ только для авторизованных пользователей.
 
 Редизайн пользовательских страниц (v1.6.5): 15 страниц, светло-голубая тема,
 `base.html` + компоненты + 8 page-CSS файлов. Финальный аудит: 246/246 ✅
@@ -172,7 +177,7 @@ webpl with base/
 
 ---
 
-## Визуализатор Python-кода (v1.7.0)
+## Визуализатор Python-кода (v1.7.0–v1.7.1)
 
 Интегрирован отдельный проект [visual-code](https://github.com/Artyomka12/visual-code) —
 интерактивный визуализатор выполнения Python-кода (Classic View: scope-блоки и «шарики»
@@ -189,8 +194,9 @@ webpl with base/
 
 **Frontend:**
 
-- `templates/visualizer.html` — автономный шаблон (свой header, переключатель тёмной темы), не наследует `base.html`, как `start.html`/`exam.html`
-- `static/visualizer/style.css`, `static/visualizer/js/{editor,animator,block-scheme}.js` — перенесены без изменений
+- `templates/visualizer.html` — автономный шаблон, не наследует `base.html` (как `start.html`/`exam.html`), но с v1.7.1 использует общий `{% include 'components/navbar.html' %}` вместо собственного header
+- `static/visualizer/style.css` — с v1.7.1 содержит собственную копию CSS navbar (не подключает `design-system.css` целиком — во избежание конфликта одноимённых классов `.card`/`.btn` с классами самого визуализатора); светлая тема (`:root`) перекрашена под палитру сайта (`--primary: #2563EB`, фон — общий градиент `#eaf6ff→#f5fbff→#eef8ff`); тёмная тема (`.dark`) сохранена как есть, но `.dark .navbar` и дочерние элементы инвертированы в светлый вариант — единственный на сайте пример navbar с двумя цветовыми состояниями
+- `static/visualizer/js/{editor,animator,block-scheme}.js` — перенесены без изменений; кнопка переключения темы (🌙, `editor.js`) с v1.7.1 расположена в `.page-title` рядом с заголовком страницы, а не в header
 - `static/visualizer/js/api.js` — единственная адаптированная часть самого визуализатора: `API_BASE` переведён на относительный путь `/api/visualizer`, добавлен заголовок `X-CSRFToken` (токен читается из `<meta name="csrf-token">` в `visualizer.html`)
 
 **Точки входа в навигации:**
