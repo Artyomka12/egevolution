@@ -811,6 +811,12 @@
             border: 1px solid rgba(99, 102, 241, 0.3);
         }
 
+        .section-tag-cyan {
+            background: rgba(224, 242, 254, 0.85);
+            color: #0369a1;
+            border: 1px solid rgba(56, 189, 248, 0.35);
+        }
+
         .minitask-section {
             margin-bottom: 72px;
         }
@@ -1664,6 +1670,130 @@
         }
 
         /* ============================================================
+           ВИЗУАЛИЗАТОР КОДА (тот же паттерн, что video-preview-section)
+        ============================================================ */
+        .visualizer-preview-section {
+            margin-bottom: 72px;
+        }
+
+        .visualizer-stage {
+            position: relative;
+            max-width: 720px;
+            margin: 0 auto;
+            padding-top: 34px;
+        }
+
+        .visualizer-main {
+            position: relative;
+            z-index: 2;
+            background: #fff;
+            border: 1px solid rgba(56, 189, 248, 0.18);
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(56, 189, 248, 0.14);
+            transition: transform 0.22s ease-out, box-shadow 0.22s ease-out;
+        }
+
+        .visualizer-stage:hover .visualizer-main {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 48px rgba(56, 189, 248, 0.2);
+        }
+
+        .visualizer-side {
+            position: absolute;
+            top: 0;
+            width: 83%;
+            border-radius: 24px;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 1;
+            box-shadow: 0 6px 24px rgba(15, 23, 42, 0.14);
+            transition: transform 0.3s ease-out;
+        }
+
+        .visualizer-side-left {
+            right: calc(100% - 280px);
+        }
+
+        .visualizer-side-right {
+            left: calc(100% - 280px);
+        }
+
+        .visualizer-stage:hover .visualizer-side-left {
+            transform: translateX(-10px);
+        }
+
+        .visualizer-stage:hover .visualizer-side-right {
+            transform: translateX(10px);
+        }
+
+        .visualizer-side-thumb {
+            aspect-ratio: 16 / 9;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .visualizer-side-left .visualizer-side-thumb {
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 55%, #c7d2fe 100%);
+        }
+
+        .visualizer-side-right .visualizer-side-thumb {
+            background: linear-gradient(135deg, #dbeafe 0%, #bae6fd 55%, #a5f3fc 100%);
+        }
+
+        .visualizer-side-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+
+        .visualizer-overview-player {
+            display: block;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: linear-gradient(155deg, #f0f9ff 0%, #e0f2fe 28%, #bae6fd 58%, #e0e7ff 100%);
+            max-width: 100%;
+        }
+
+        .visualizer-overview-info {
+            padding: 20px 28px 24px;
+            border-top: 1px solid rgba(56, 189, 248, 0.14);
+        }
+
+        .visualizer-overview-title {
+            font-size: 1.02em;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 7px;
+        }
+
+        .visualizer-overview-desc {
+            font-size: 0.87em;
+            color: #475569;
+            line-height: 1.55;
+        }
+
+        .visualizer-cta {
+            text-align: center;
+            margin-top: 28px;
+        }
+
+        .visualizer-cta-btn {
+            background: linear-gradient(135deg, #0ea5e9, #6366f1);
+            color: #fff;
+        }
+
+        .visualizer-cta-btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        /* ============================================================
            CONTACT CTA
         ============================================================ */
         .contact-cta-section {
@@ -2009,6 +2139,19 @@
             .video-side-right {
                 left: calc(100% - 220px);
             }
+
+            .visualizer-side {
+                width: 72%;
+                opacity: 0.9;
+            }
+
+            .visualizer-side-left {
+                right: calc(100% - 220px);
+            }
+
+            .visualizer-side-right {
+                left: calc(100% - 220px);
+            }
         }
 
         /* ============================================================
@@ -2084,6 +2227,10 @@
             }
 
             .video-side {
+                display: none;
+            }
+
+            .visualizer-side {
                 display: none;
             }
 
@@ -2908,6 +3055,55 @@
                     <div class="feature-title">База заданий</div>
                     <div class="feature-desc">Практика по каждому номеру ЕГЭ отдельно</div>
                 </a>
+            </div>
+        </section>
+
+        <!-- ВИЗУАЛИЗАТОР КОДА -->
+        <section class="visualizer-preview-section">
+            <div class="section-heading reveal">
+                <span class="section-tag section-tag-cyan">Уникально</span>
+                <h2>Визуализатор Python-кода</h2>
+                <p>Пиши код и смотри, как он выполняется шаг за шагом: переменные, вывод и анимированная блок-схема — в реальном времени. Такого больше нет нигде.</p>
+            </div>
+            <div class="visualizer-stage reveal">
+                <!-- Левый постер -->
+                <div class="visualizer-side visualizer-side-left">
+                    <div class="visualizer-side-thumb">
+                        <img src="/static/images/visualizer-preview-left.jpg"
+                             alt="Визуализатор кода — Classic View"
+                             class="visualizer-side-img"
+                             loading="lazy">
+                    </div>
+                </div>
+
+                <!-- Основное видео -->
+                <div class="visualizer-main">
+                    <video
+                        class="visualizer-overview-player"
+                        controls
+                        preload="metadata"
+                    >
+                        <source src="/static/videos/visualizer-overview.mp4" type="video/mp4">
+                        Ваш браузер не поддерживает видео.
+                    </video>
+                    <div class="visualizer-overview-info">
+                        <div class="visualizer-overview-title">Код оживает на глазах</div>
+                        <div class="visualizer-overview-desc">Classic View показывает scope-блоки и «шарики» данных, Block Scheme — анимированную блок-схему выполнения. Обе версии — в одном инструменте.</div>
+                    </div>
+                </div>
+
+                <!-- Правый постер -->
+                <div class="visualizer-side visualizer-side-right">
+                    <div class="visualizer-side-thumb">
+                        <img src="/static/images/visualizer-preview-right.jpg"
+                             alt="Визуализатор кода — Block Scheme"
+                             class="visualizer-side-img"
+                             loading="lazy">
+                    </div>
+                </div>
+            </div>
+            <div class="visualizer-cta reveal">
+                <a href="/visualizer" class="hero-btn visualizer-cta-btn">Попробовать визуализатор →</a>
             </div>
         </section>
 

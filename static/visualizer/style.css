@@ -28,6 +28,7 @@
   --bs-action-fill:     #dcfce7;  --bs-action-stroke:   #16a34a;  --bs-action-text:     #14532d;
   --bs-cond-fill:       #fef9c3;  --bs-cond-stroke:     #ca8a04;  --bs-cond-text:       #78350f;
   --bs-loop-fill:       #ede9fe;  --bs-loop-stroke:     #7c3aed;  --bs-loop-text:       #3b0764;
+  --bs-return-fill:     #ccfbf1;  --bs-return-stroke:   #0d9488;  --bs-return-text:     #134e4a;
   --bs-edge:            #4b5563;
   --bs-yes:             #16a34a;
   --bs-no:              #dc2626;
@@ -333,7 +334,7 @@ body {
 /* Block Scheme needs more room for the diagram itself — only this view
    gets a wider container; Classic View's 1200px layout is untouched. */
 .main:has(#bs-view.active) {
-  max-width: 1400px;
+  max-width: 1850px;
 }
 
 /* ===== View toggle ===== */
@@ -929,6 +930,7 @@ body {
   --bs-action-fill:     #14532d;  --bs-action-stroke:   #4ade80;  --bs-action-text:     #bbf7d0;
   --bs-cond-fill:       #422006;  --bs-cond-stroke:     #f59e0b;  --bs-cond-text:       #fde68a;
   --bs-loop-fill:       #2e1065;  --bs-loop-stroke:     #a78bfa;  --bs-loop-text:       #ddd6fe;
+  --bs-return-fill:     #042f2e;  --bs-return-stroke:   #2dd4bf;  --bs-return-text:     #99f6e4;
   --bs-edge:            #8b949e;
   --bs-yes:             #4ade80;
   --bs-no:              #f87171;
@@ -1050,7 +1052,7 @@ body, .card, .scope-block, .card-header, .editor-footer,
   align-items: flex-start;
 }
 .bs-code-panel {
-  width: 320px;
+  width: 390px;
   flex-shrink: 0;
 }
 .bs-code-panel .card-header { position: sticky; top: 0; z-index: 1; }
@@ -1102,6 +1104,14 @@ body, .card, .scope-block, .card-header, .editor-footer,
 #bs-svg {
   display: block;
   overflow: visible;
+  /* Responsive: shrinks to fit the canvas via its own viewBox (never
+     stretches beyond native size) whenever room is tight — but only down
+     to min-width. Past that floor the diagram would become unreadably
+     small, so #bs-canvas's overflow:auto takes over with a scrollbar
+     instead of shrinking further. */
+  max-width: 100%;
+  height: auto;
+  min-width: 650px;
 }
 .bs-sidebar {
   width: 220px;

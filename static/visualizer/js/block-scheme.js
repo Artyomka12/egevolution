@@ -9,6 +9,7 @@ const BS = {
   COND_W:   130, COND_H:   72,
   LOOP_W:   160, LOOP_H:   62, LOOP_FLAT:   36,
   TERM_W:   120, TERM_H:   44,
+  RETURN_W: 150, RETURN_H: 56, RETURN_SKEW: 30,   // inverted trapezoid — narrower top, wider bottom
   V_GAP:     56,
   H_OFF:    130,   // branch x-offset for if-else
   BACK_PAD:  50,   // extra left padding for back arrows
@@ -19,6 +20,8 @@ const BS = {
   FRAME_PAD_X: 25,  // x-padding from widest node to frame border
   FRAME_PAD_Y: 10,  // y-padding above loop top / below body bottom
   BACK_DOWN:   10,  // px down before turning left on back arrow
+  FUNC_GAP_X: 130,  // horizontal clearance between main diagram and the function column
+  FUNC_GAP_Y: 150,  // vertical gap between stacked function diagrams (> V_GAP*2.2 so addColArrows never bridges two diagrams)
 };
 
 let _uid = 0;
@@ -33,23 +36,29 @@ function parseCode(src) {
   const lines = src.split('\n')
     .map((t, i) => ({ s: t.trimStart(), ind: t.length - t.trimStart().length, i }))
     .filter(l => l.s.length > 0);
-  return parseBlock(lines, 0, 0).nodes;
+  const { nodes, functions } = parseBlock(lines, 0, 0);
+  return { tree: nodes, functions };
 }
 
+/* def — не часть последовательного потока: тело парсится отдельно и
+   всплывает через functions[], а не через nodes[] (своя диаграмма). */
 function parseBlock(lines, si, indent) {
   const nodes = [];
+  const functions = [];
   let i = si;
   while (i < lines.length) {
     const l = lines[i];
     if (l.ind < indent) break;
     if (l.ind > indent) { i++; continue; }
     if (l.s === 'else:' || l.s.startsWith('elif ')) break;
-    if      (l.s.startsWith('for '))   { const r = parseLoop(lines, i, indent);  nodes.push(r.node); i = r.next; }
-    else if (l.s.startsWith('while ')) { const r = parseWhile(lines, i, indent); nodes.push(r.node); i = r.next; }
-    else if (l.s.startsWith('if '))    { const r = parseCond(lines, i, indent);  nodes.push(r.node); i = r.next; }
+    if      (l.s.startsWith('def '))    { const r = parseFunctionDef(lines, i, indent); functions.push(r.node, ...r.functions); i = r.next; }
+    else if (l.s.startsWith('for '))    { const r = parseLoop(lines, i, indent);  nodes.push(r.node); functions.push(...r.functions); i = r.next; }
+    else if (l.s.startsWith('while ')) { const r = parseWhile(lines, i, indent); nodes.push(r.node); functions.push(...r.functions); i = r.next; }
+    else if (l.s.startsWith('if '))    { const r = parseCond(lines, i, indent);  nodes.push(r.node); functions.push(...r.functions); i = r.next; }
+    else if (l.s === 'return' || l.s.startsWith('return ')) { nodes.push(parseReturn(l)); i++; }
     else                               { nodes.push(parseStmt(l)); i++; }
   }
-  return { nodes, next: i };
+  return { nodes, next: i, functions };
 }
 
 function parseStmt(l) {
@@ -64,49 +73,115 @@ function parseStmt(l) {
   return { id: uid(), type: 'action', label: s, line: l.i + 1 };
 }
 
+function parseReturn(l) {
+  return { id: uid(), type: 'return', label: l.s, line: l.i + 1 };
+}
+
+function parseFunctionDef(lines, i, indent) {
+  const raw = lines[i].s;
+  const m = raw.match(/^def\s+(\w+)\s*\(/);
+  const name = m ? m[1] : 'function';
+  const { nodes: body, next, functions } = parseBlock(lines, i + 1, indent + 4);
+  return { node: { id: uid(), type: 'function', name, body, line: lines[i].i + 1 }, next, functions };
+}
+
 function parseLoop(lines, i, indent) {
   const m = lines[i].s.match(/^for\s+(\w+)\s+in\s+(range\([^)]+\))\s*:/);
   const label = m ? `${m[1]} in ${m[2]}` : lines[i].s.replace(/^for\s+/,'').replace(/:$/,'');
-  const { nodes: body, next } = parseBlock(lines, i + 1, indent + 4);
-  return { node: { id: uid(), type: 'loop', label, body, line: lines[i].i + 1 }, next };
+  const { nodes: body, next, functions } = parseBlock(lines, i + 1, indent + 4);
+  return { node: { id: uid(), type: 'loop', label, body, line: lines[i].i + 1 }, next, functions };
 }
 
 function parseWhile(lines, i, indent) {
   const m = lines[i].s.match(/^while\s+(.+?)\s*:$/);
   const label = m ? m[1].trim() : lines[i].s.replace(/^while\s+/, '').replace(/:$/, '');
-  const { nodes: body, next } = parseBlock(lines, i + 1, indent + 4);
-  return { node: { id: uid(), type: 'loop', label, body, line: lines[i].i + 1 }, next };
+  const { nodes: body, next, functions } = parseBlock(lines, i + 1, indent + 4);
+  return { node: { id: uid(), type: 'loop', label, body, line: lines[i].i + 1 }, next, functions };
 }
 
 function parseCond(lines, i, indent) {
   const raw = lines[i].s;
   const m = raw.match(/^(?:if|elif)\s+(.+?)\s*:$/);
   const label = m ? m[1].trim() : raw.replace(/^(?:if|elif)\s+/, '').replace(/:$/, '');
-  const { nodes: yes, next: ay } = parseBlock(lines, i + 1, indent + 4);
-  let no = [], next = ay, hasElse = false;
+  const { nodes: yes, next: ay, functions: yesFns } = parseBlock(lines, i + 1, indent + 4);
+  let no = [], next = ay, hasElse = false, noFns = [];
   if (ay < lines.length && lines[ay].ind === indent) {
     if (lines[ay].s === 'else:') {
       const r = parseBlock(lines, ay + 1, indent + 4);
-      no = r.nodes; next = r.next; hasElse = true;
+      no = r.nodes; next = r.next; hasElse = true; noFns = r.functions;
     } else if (lines[ay].s.startsWith('elif ')) {
       // elif → рекурсивно превращается во вложенный if в no-ветви
       const r = parseCond(lines, ay, indent);
-      no = [r.node]; next = r.next; hasElse = true;
+      no = [r.node]; next = r.next; hasElse = true; noFns = r.functions;
     }
   }
-  return { node: { id: uid(), type: 'condition', label, yes, no, hasElse, line: lines[i].i + 1 }, next };
+  return { node: { id: uid(), type: 'condition', label, yes, no, hasElse, line: lines[i].i + 1 }, next, functions: [...yesFns, ...noFns] };
 }
 
 /* ═══════════════════════════════════════════════════════════════════
    LAYER 2 — LAYOUT
    ═══════════════════════════════════════════════════════════════════ */
 
-function layoutTree(tree) {
+/* Главная диаграмма (Начало → tree → Конец) + одна диаграмма на каждую
+   def, столбцом справа от главной, друг под другом в порядке определения.
+   У диаграмм функций нет "Конец" — они просто обрываются на последнем
+   блоке (обычно на return-трапеции). */
+function layoutProgram(mainNodes, functions) {
   const lnodes = [], edges = [];
   const startNode = { id: uid(), type: 'terminal', label: 'Начало' };
   const endNode   = { id: uid(), type: 'terminal', label: 'Конец'  };
-  layoutSeq([startNode, ...tree, endNode], BS.SVG_PAD + 200, BS.SVG_PAD, null, lnodes, edges);
+  const mainCX = BS.SVG_PAD + 200;
+  layoutSeq([startNode, ...mainNodes, endNode], mainCX, BS.SVG_PAD, null, lnodes, edges);
+
+  if (functions && functions.length > 0) {
+    let mainRight = mainCX;
+    lnodes.forEach(n => { mainRight = Math.max(mainRight, n.cx + n.w / 2); });
+
+    // Пробный проход при cx=0 для каждой функции: узнаём, насколько далеко
+    // влево реально уйдёт её рамка/ветки (зависит от вложенности циклов и
+    // условий — фиксированный отступ этого не учитывал и мог "наехать" на
+    // главную диаграмму при глубокой вложенности). Худший случай определяет
+    // общий funcCX для всей колонки — все "Начало (имя)" остаются на одной
+    // вертикали, но зазор от главной диаграммы гарантирован для каждой.
+    let worstLeft = 0;
+    functions.forEach(fn => {
+      const dryNodes = [], dryEdges = [];
+      const dryStart = { id: uid(), type: 'terminal', label: `Начало (${fn.name})`, line: fn.line };
+      layoutSeq([dryStart, ...fn.body], 0, BS.SVG_PAD, null, dryNodes, dryEdges);
+      resolveBackArrows(dryEdges);
+      worstLeft = Math.min(worstLeft, leftExtent(dryNodes, dryEdges));
+    });
+
+    const funcCX = mainRight + BS.FUNC_GAP_X - worstLeft;
+    let funcY = BS.SVG_PAD;
+
+    functions.forEach(fn => {
+      const fnStart = { id: uid(), type: 'terminal', label: `Начало (${fn.name})`, line: fn.line };
+      const bot = layoutSeq([fnStart, ...fn.body], funcCX, funcY, null, lnodes, edges);
+      funcY = bot + BS.FUNC_GAP_Y;
+    });
+  }
+
   return { lnodes, edges };
+}
+
+/* Крайняя левая точка раскладки (узлы + рамки циклов + все точки рёбер) —
+   используется, чтобы измерить, сколько места реально нужно диаграмме
+   функции, прежде чем её позиционировать (см. layoutProgram). */
+function leftExtent(lnodes, edges) {
+  let minX = Infinity;
+  lnodes.forEach(n => {
+    minX = Math.min(minX, n.cx - n.w / 2);
+    if (n.frameLeft != null) minX = Math.min(minX, n.frameLeft);
+  });
+  edges.forEach(e => (e.points || []).forEach(p => { minX = Math.min(minX, p.x); }));
+  return minX;
+}
+
+/* True, если последний оператор ветки — return (тупиковый блок:
+   вниз по этой ветке дальше рисовать нечего). */
+function endsInReturn(branchNodes) {
+  return branchNodes.length > 0 && branchNodes[branchNodes.length - 1].type === 'return';
 }
 
 /* Lay out a sequence of siblings. loopCtx = enclosing LayoutNode or null.
@@ -177,6 +252,7 @@ function bsz(type) {
   if (type === 'condition')  return { w: BS.COND_W,   h: BS.COND_H   };
   if (type === 'loop')       return { w: BS.LOOP_W,   h: BS.LOOP_H   };
   if (type === 'terminal')   return { w: BS.TERM_W,   h: BS.TERM_H   };
+  if (type === 'return')     return { w: BS.RETURN_W, h: BS.RETURN_H };
   return { w: BS.ACTION_W, h: BS.ACTION_H };
 }
 
@@ -215,18 +291,20 @@ function layoutCond(node, cx, topY, loopCtx, lnodes, edges, isLastInLoop = true)
       edges.push(ePath([P(cx - w/2, cy), P(cx - w/2, cy + D), P(yesCX, cy + D), P(yesCX, branchTop)], 'Да', 'left'));
       ({ bot: yesBot, lastLoop: yesLastLoop } = linSeq(node.yes, yesCX, branchTop, loopCtx, lnodes, edges));
     }
+    const yesReturns = endsInReturn(node.yes);
 
     if (node.hasElse && node.no.length > 0) {
       edges.push(ePath([P(cx + w/2, cy), P(cx + w/2, cy + D), P(noCX, cy + D), P(noCX, branchTop)], 'Нет', 'right'));
       const { bot: noBot, lastLoop: noLastLoop } = linSeq(node.no, noCX, branchTop, loopCtx, lnodes, edges);
+      const noReturns = endsInReturn(node.no);
 
       const yesJoin = node.yes.length > 0 ? yesBot : condBot;
       const joinY   = Math.max(yesJoin, noBot) + Math.round(BS.V_GAP / 2);
 
-      if (node.yes.length > 0) {
+      if (node.yes.length > 0 && !yesReturns) {
         mergeFrom(yesLastLoop, yesCX, yesBot, cx, joinY);
       }
-      mergeFrom(noLastLoop, noCX, noBot, cx, joinY);
+      if (!noReturns) mergeFrom(noLastLoop, noCX, noBot, cx, joinY);
       return joinY;
 
     } else {
@@ -234,7 +312,7 @@ function layoutCond(node, cx, topY, loopCtx, lnodes, edges, isLastInLoop = true)
       const joinY = (node.yes.length > 0 ? yesBot : condBot) + Math.round(BS.V_GAP / 2);
 
       if (node.yes.length > 0) {
-        mergeFrom(yesLastLoop, yesCX, yesBot, cx, joinY);
+        if (!yesReturns) mergeFrom(yesLastLoop, yesCX, yesBot, cx, joinY);
       } else {
         edges.push({ points: [P(cx - w/2, cy), P(cx - w/2, joinY), P(cx, joinY)],
                      label: 'Да', labelSide: 'left', noArrow: true });
@@ -254,18 +332,20 @@ function layoutCond(node, cx, topY, loopCtx, lnodes, edges, isLastInLoop = true)
       edges.push(ePath([P(cx - w/2, cy), P(cx - w/2, cy + D), P(yesCX, cy + D), P(yesCX, branchTop)], 'Да', 'left'));
       ({ bot: yesBot, lastLoop: yesLastLoop } = linSeq(node.yes, yesCX, branchTop, loopCtx, lnodes, edges));
     }
+    const yesReturns = endsInReturn(node.yes);
 
     if (node.hasElse && node.no.length > 0) {
       edges.push(ePath([P(cx + w/2, cy), P(cx + w/2, cy + D), P(noCX, cy + D), P(noCX, branchTop)], 'Нет', 'right'));
       const { bot: noBot, lastLoop: noLastLoop } = linSeq(node.no, noCX, branchTop, loopCtx, lnodes, edges);
+      const noReturns = endsInReturn(node.no);
 
       const yesJoin = node.yes.length > 0 ? yesBot : condBot;
       const joinY   = Math.max(yesJoin, noBot) + Math.round(BS.V_GAP / 2);
 
-      if (node.yes.length > 0) {
+      if (node.yes.length > 0 && !yesReturns) {
         mergeFrom(yesLastLoop, yesCX, yesBot, cx, joinY);
       }
-      mergeFrom(noLastLoop, noCX, noBot, cx, joinY);
+      if (!noReturns) mergeFrom(noLastLoop, noCX, noBot, cx, joinY);
       edges.push(backArrow(cx, joinY, loopCtx));
       return joinY;
 
@@ -274,7 +354,7 @@ function layoutCond(node, cx, topY, loopCtx, lnodes, edges, isLastInLoop = true)
       const joinY = (node.yes.length > 0 ? yesBot : condBot) + Math.round(BS.V_GAP / 2);
 
       if (node.yes.length > 0) {
-        mergeFrom(yesLastLoop, yesCX, yesBot, cx, joinY);
+        if (!yesReturns) mergeFrom(yesLastLoop, yesCX, yesBot, cx, joinY);
       } else {
         edges.push({ points: [P(cx - w/2, cy), P(cx - w/2, joinY), P(cx, joinY)],
                      label: 'Да', labelSide: 'left', noArrow: true });
@@ -293,6 +373,7 @@ function layoutCond(node, cx, topY, loopCtx, lnodes, edges, isLastInLoop = true)
     edges.push(ePath([P(cx - w/2, cy), P(yesCX, cy), P(yesCX, branchTop)], 'Да', 'left'));
     ({ bot: yesBot, lastLoop: yesLastLoop } = linSeq(node.yes, yesCX, branchTop, null, lnodes, edges));
   }
+  const yesReturns = endsInReturn(node.yes);
 
   // NO branch
   let noBot = branchTop, noLastLoop = null;
@@ -303,19 +384,20 @@ function layoutCond(node, cx, topY, loopCtx, lnodes, edges, isLastInLoop = true)
   } else {
     edges.push(ePath([P(cx + w/2, cy), P(bpX, cy)], 'Нет', 'right', true));
   }
+  const noReturns = node.hasElse && endsInReturn(node.no);
 
   // Join Y
   const joinY = Math.max(yesBot, noBot) + BS.V_GAP;
 
   if (node.yes.length > 0) {
-    mergeFrom(yesLastLoop, yesCX, yesBot, cx, joinY);
+    if (!yesReturns) mergeFrom(yesLastLoop, yesCX, yesBot, cx, joinY);
   } else {
     mergeFrom(null, cx - w/2, cy, cx, joinY);
   }
 
   if (node.hasElse && node.no.length > 0) {
-    mergeFrom(noLastLoop, noCX, noBot, cx, joinY);
-  } else {
+    if (!noReturns) mergeFrom(noLastLoop, noCX, noBot, cx, joinY);
+  } else if (!node.hasElse) {
     edges.push({ points: [P(bpX, cy), P(bpX, joinY), P(cx, joinY)], noArrow: true });
   }
 
@@ -596,11 +678,13 @@ function renderSVG(lnodes, edges) {
       .bs-action    {fill:var(--bs-action-fill);stroke:var(--bs-action-stroke);stroke-width:1.5}
       .bs-condition {fill:var(--bs-cond-fill);stroke:var(--bs-cond-stroke);stroke-width:1.5}
       .bs-loop      {fill:var(--bs-loop-fill);stroke:var(--bs-loop-stroke);stroke-width:1.5}
+      .bs-return    {fill:var(--bs-return-fill);stroke:var(--bs-return-stroke);stroke-width:1.5}
       .bs-terminal-txt  {fill:var(--bs-terminal-text)}
       .bs-assignment-txt{fill:var(--bs-assign-text)}
       .bs-action-txt    {fill:var(--bs-action-text)}
       .bs-condition-txt {fill:var(--bs-cond-text)}
       .bs-loop-txt      {fill:var(--bs-loop-text)}
+      .bs-return-txt    {fill:var(--bs-return-text)}
       .bs-edge      {fill:none;stroke:var(--bs-edge);stroke-width:1.5}
       .bs-arrowhead {fill:var(--bs-edge)}
       .bs-label-yes {fill:var(--bs-yes);font-size:12px;font-weight:600;font-family:Inter,sans-serif}
@@ -661,6 +745,7 @@ function drawBlock(n) {
     case 'condition':  return drawDiam(n);
     case 'loop':       return drawHex(n);
     case 'terminal':   return drawOval(n);
+    case 'return':     return drawTrap(n);
     default:           return drawRect(n);
   }
 }
@@ -669,10 +754,12 @@ function drawBlock(n) {
 const TYPE_CLS = {
   terminal: 'bs-terminal', assignment: 'bs-assignment',
   action: 'bs-action', condition: 'bs-condition', loop: 'bs-loop',
+  return: 'bs-return',
 };
 const TXT_CLS = {
   terminal: 'bs-terminal-txt', assignment: 'bs-assignment-txt',
   action: 'bs-action-txt', condition: 'bs-condition-txt', loop: 'bs-loop-txt',
+  return: 'bs-return-txt',
 };
 
 function drawOval(n) {
@@ -698,15 +785,23 @@ function drawHex(n) {
   const pts=`${f(cx-fl)},${f(cy-h/2)} ${f(cx+fl)},${f(cy-h/2)} ${f(cx+w/2)},${f(cy)} ${f(cx+fl)},${f(cy+h/2)} ${f(cx-fl)},${f(cy+h/2)} ${f(cx-w/2)},${f(cy)}`;
   return `<polygon class="${TYPE_CLS[n.type]||'bs-action'}" points="${pts}"/>${drawTxt(n)}`;
 }
+/* Перевёрнутая трапеция для return — уже сверху, шире снизу; тупиковый
+   блок (без исходящей стрелки), в отличие от параллелограмма присваивания. */
+function drawTrap(n) {
+  const {cx,cy,w,h}=n, sk=BS.RETURN_SKEW, topHalf=w/2-sk, botHalf=w/2;
+  const pts=`${f(cx-topHalf)},${f(cy-h/2)} ${f(cx+topHalf)},${f(cy-h/2)} ${f(cx+botHalf)},${f(cy+h/2)} ${f(cx-botHalf)},${f(cy+h/2)}`;
+  return `<polygon class="${TYPE_CLS[n.type]||'bs-action'}" points="${pts}"/>${drawTxt(n)}`;
+}
 /* ── Typography helpers ───────────────────────────────────────────── */
 
 // Max chars per line and max lines per block type
 const TYPE_WRAP = {
-  terminal:   { maxChars: 12, maxLines: 1 },
+  terminal:   { maxChars: 14, maxLines: 2 },   // 2 lines: "Начало (name)" can be longer than plain "Начало"/"Конец"
   assignment: { maxChars: 20, maxLines: 2 },
   action:     { maxChars: 18, maxLines: 2 },
   condition:  { maxChars: 15, maxLines: 2 },
   loop:       { maxChars: 22, maxLines: 2 },
+  return:     { maxChars: 20, maxLines: 2 },
 };
 
 // Split into "words" for wrapping, but spaces inside ( ) or [ ] never split
@@ -801,6 +896,7 @@ function addColArrows(lnodes, edges) {
     col.sort((a,b)=>a.cy-b.cy);
     for (let i=0; i<col.length-1; i++) {
       const a=col[i], b=col[i+1];
+      if (a.type === 'return') continue;   // тупиковый блок — никогда не тянем стрелку вниз
       const aBot=a.cy+a.h/2, bTop=b.cy-b.h/2;
       const gap=bTop-aBot;
       if (gap<=0 || gap>BS.V_GAP*2.2) continue;
@@ -823,8 +919,8 @@ let bsPathCache = new Map();   // "fromLine->toLine" → resolved path | null (n
 
 function startBlockScheme(code) {
   try {
-    const tree = parseCode(code);
-    const { lnodes, edges } = layoutTree(tree);
+    const { tree, functions } = parseCode(code);
+    const { lnodes, edges } = layoutProgram(tree, functions);
     resolveBackArrows(edges);   // must run before addColArrows
     addColArrows(lnodes, edges);
     document.getElementById('bs-canvas').innerHTML = renderSVG(lnodes, edges);
@@ -856,6 +952,21 @@ let bsTraceGen = 0;   // guards against a stale (slow) response overwriting a ne
 
 function getBlockSchemeTrace() { return bsTrace; }
 
+/* scope_id (уникален для каждого конкретного вызова, в т.ч. рекурсивного) →
+   строка, с которой этот вызов был сделан. Строится один раз на всю
+   трассировку: строка непосредственно ПЕРЕД 'call'-шагом всегда и есть
+   место вызова — работает одинаково для любого блока, включая рекурсию
+   и вызов одной функции из другой. Используется, чтобы отправить
+   значение return обратно туда, откуда был сделан именно этот вызов. */
+function buildCallSiteMap(steps) {
+  const map = new Map();
+  for (let i = 1; i < steps.length; i++) {
+    if (steps[i].event === 'call') map.set(steps[i].scope_id, steps[i - 1].line);
+  }
+  return map;
+}
+let bsCallSiteLine = new Map();
+
 async function loadBlockSchemeTrace(code) {
   const gen = ++bsTraceGen;
   bsTrace = { steps: null, error: null, truncated: false };
@@ -868,6 +979,7 @@ async function loadBlockSchemeTrace(code) {
       error:     result.error || null,
       truncated: !!result.truncated,
     };
+    bsCallSiteLine = buildCallSiteMap(bsTrace.steps);
     if (bsTrace.error) {
       bsShowTraceStatus(`Трассировка недоступна: ${bsTrace.error.message}`, true);
     } else if (bsTrace.truncated) {
@@ -1012,7 +1124,37 @@ function bsStepNext(onDone) {
   // in time so simultaneous changes (e.g. a, b = b, a) read as a short
   // "train" rather than one illegible overlapping blob. No change at all →
   // a single plain unlabeled dot.
-  if (curStep.line != null && nextStep.line != null && curStep.line !== nextStep.line) {
+  if (nextStep.event === 'call') {
+    // Entering a function (incl. recursive self-calls and calls made from
+    // inside another function's own diagram) — args fly on an invisible
+    // straight line from the call-site block to that function's "Начало".
+    const fromNode = bsFindNodeByLine(curStep.line);
+    const toNode   = bsFindNodeByLine(nextStep.line);
+    if (fromNode && toNode) {
+      const path = [P(fromNode.cx, fromNode.cy), P(toNode.cx, toNode.cy)];
+      const args = Object.entries(nextStep.args || {});
+      if (args.length === 0) {
+        bsAnimateFlowCursor(path, null);
+      } else {
+        const stagger = BS_FLOW_STAGGER_MS / bsSpeed;
+        args.forEach(([name, val], i) => {
+          const label = `${name}=${formatValue(val)}`;
+          setTimeout(() => bsAnimateFlowCursor(path, label), i * stagger);
+        });
+      }
+    }
+  } else if (nextStep.event === 'return') {
+    // Leaving a function — the returned value flies back to wherever THIS
+    // specific call instance was made from (scope_id-keyed, so recursion
+    // and nested cross-function calls resolve to the correct call site).
+    const callSiteLine = bsCallSiteLine.get(nextStep.scope_id);
+    const fromNode = bsFindNodeByLine(nextStep.line);
+    const toNode   = callSiteLine != null ? bsFindNodeByLine(callSiteLine) : null;
+    if (fromNode && toNode) {
+      const path = [P(fromNode.cx, fromNode.cy), P(toNode.cx, toNode.cy)];
+      bsAnimateFlowCursor(path, formatValue(nextStep.return_value));
+    }
+  } else if (curStep.line != null && nextStep.line != null && curStep.line !== nextStep.line) {
     const path = bsFindEdgePath(curStep.line, nextStep.line);
     if (path) {
       if (changedVars.length === 0) {
@@ -1027,7 +1169,19 @@ function bsStepNext(onDone) {
     }
   }
 
-  const srcEl  = document.querySelector('#bs-svg .bs-block-active');
+  // curStep being a 'return' event means control is conceptually already back
+  // at the call site, not still on the return statement's own line — any new
+  // output/variables reported on nextStep really belong there. Reuses
+  // bsCallSiteLine (the same scope_id → call-site-line map the call/return
+  // flow-chips already use) instead of the plain "last active block" lookup.
+  let srcEl = document.querySelector('#bs-svg .bs-block-active');
+  if (curStep.event === 'return') {
+    const callSiteLine = bsCallSiteLine.get(curStep.scope_id);
+    if (callSiteLine != null) {
+      const callSiteEl = document.querySelector(`#bs-svg [data-line="${callSiteLine}"]`);
+      if (callSiteEl) srcEl = callSiteEl;
+    }
+  }
   const hasCon = newLines.length > 0 && !!srcEl;
   const memBalls  = srcEl ? changedVars : [];
   const ballCount = memBalls.length + (hasCon ? 1 : 0);
@@ -1065,6 +1219,14 @@ function bsNearNode(pt, node) {
          pt.x <= node.cx + node.w / 2 + BS_FLOW_MARGIN &&
          pt.y >= node.cy - node.h / 2 - BS_FLOW_MARGIN &&
          pt.y <= node.cy + node.h / 2 + BS_FLOW_MARGIN;
+}
+
+/* Единственный узел с данным номером строки — используется для перелётов
+   вызов/возврат, которые идут не по нарисованным рёбрам, а напрямую между
+   двумя блоками (в т.ч. на разных диаграммах, или из блока в него же самого
+   при рекурсии). */
+function bsFindNodeByLine(line) {
+  return bsLnodes.find(n => n.line === line);
 }
 
 function bsFindEdgePath(fromLine, toLine) {
