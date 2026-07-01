@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <title>Визуализатор Python — ЕГЭволюция</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='visualizer/style.css') }}" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">⚡</span>
+        <span class="logo-text">ЕГЭволюция</span>
+      </div>
+      <nav class="header-nav">
+        <span class="nav-label">Визуализатор Python</span>
+        <button id="theme-toggle" class="theme-toggle" title="Сменить тему">🌙</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- Input view -->
+    <section id="input-view" class="view active">
+      <div class="page-title">
+        <h1>Визуализатор Python-кода</h1>
+        <p class="subtitle">Введи код — и увидишь, как он выполняется шаг за шагом</p>
+      </div>
+
+      <div class="input-layout">
+        <!-- Editor card -->
+        <div class="card editor-card">
+          <div class="card-header">
+            <span class="card-title">Код</span>
+            <select id="example-select" class="example-select">
+              <option value="">Выбрать пример</option>
+              <option value="factorial">Факториал</option>
+              <option value="fibonacci">Числа Фибоначчи</option>
+              <option value="bubble">Пузырьковая сортировка</option>
+              <option value="digits">Цифры числа</option>
+            </select>
+            <div class="lang-badge">Python</div>
+          </div>
+          <div id="editor-wrapper">
+            <textarea id="code-input">for i in range(5):
+    print(i)</textarea>
+          </div>
+          <div class="bs-mode-selector">
+            <span class="bs-mode-label">Режим:</span>
+            <div class="bs-mode-toggle">
+              <button class="bs-mode-btn active" data-mode="classic">Classic View</button>
+              <button class="bs-mode-btn" data-mode="blockscheme">Block Scheme</button>
+            </div>
+          </div>
+          <div class="editor-footer">
+            <div id="syntax-hint" class="syntax-hint">
+              Доступно: переменные, if/elif/else, for, while, print, списки
+            </div>
+            <button id="run-btn" class="btn btn-primary">
+              <span class="btn-icon">▶</span> Запустить
+            </button>
+          </div>
+        </div>
+
+        <!-- Info card -->
+        <div class="card info-card">
+          <div class="card-header">
+            <span class="card-title">Как это работает</span>
+          </div>
+          <div class="info-content">
+            <div class="info-step">
+              <div class="info-num">1</div>
+              <div>Напиши Python-код в редакторе слева</div>
+            </div>
+            <div class="info-step">
+              <div class="info-num">2</div>
+              <div>Нажми «Запустить» — код выполнится шаг за шагом</div>
+            </div>
+            <div class="info-step">
+              <div class="info-num">3</div>
+              <div>Следи за <b>Memory</b> (переменные) и <b>Выводом</b> (print)</div>
+            </div>
+            <div class="info-step">
+              <div class="info-num">4</div>
+              <div>Используй кнопки управления или клавиши ← →</div>
+            </div>
+          </div>
+          <div class="allowed-syntax">
+            <div class="allowed-title">Доступный синтаксис</div>
+            <div class="tags">
+              <span class="tag">переменные</span>
+              <span class="tag">if / elif / else</span>
+              <span class="tag">for i in range()</span>
+              <span class="tag">while</span>
+              <span class="tag">print()</span>
+              <span class="tag">списки</span>
+              <span class="tag">арифметика</span>
+              <span class="tag">функции</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="error-banner" class="error-banner hidden">
+        <span class="error-icon">✕</span>
+        <span id="error-text"></span>
+      </div>
+    </section>
+
+    <!-- Visualization view -->
+    <section id="viz-view" class="view">
+      <div class="viz-header">
+        <button id="back-btn" class="btn btn-secondary">← Изменить код</button>
+        <div class="viz-title" id="viz-title">Визуализация</div>
+        <div class="step-counter">
+          Шаг <span id="step-current">1</span> из <span id="step-total">1</span>
+        </div>
+      </div>
+
+      <div id="truncated-warn" class="warn-banner hidden">
+        ⚠ Код содержит более 600 шагов — показаны первые 600
+      </div>
+
+      <!-- Top row: code + sidebar -->
+      <div class="viz-top">
+        <!-- Code panel -->
+        <div class="card code-panel">
+          <div class="card-header">
+            <span class="card-title">Код</span>
+            <div class="lang-badge">Python</div>
+          </div>
+          <div id="code-display"></div>
+        </div>
+
+        <!-- Right sidebar: controls + console -->
+        <div class="viz-sidebar">
+          <div class="card controls-card">
+            <div class="card-header">
+              <span class="card-title">Управление</span>
+            </div>
+            <div class="controls-body">
+              <div class="speed-control">
+                <label>Скорость</label>
+                <select id="speed-select">
+                  <option value="800">Медленно</option>
+                  <option value="300" selected>Нормально</option>
+                  <option value="50">Быстро</option>
+                  <option value="0">Очень быстро</option>
+                </select>
+              </div>
+              <div class="ctrl-buttons">
+                <button id="ctrl-first" class="ctrl-btn" title="В начало">⏮</button>
+                <button id="ctrl-prev"  class="ctrl-btn" title="Назад (←)">◀</button>
+                <button id="ctrl-play"  class="ctrl-btn ctrl-play" title="Играть / Пауза">▶</button>
+                <button id="ctrl-next"  class="ctrl-btn" title="Вперёд (→)">▶▶</button>
+                <button id="ctrl-last"  class="ctrl-btn" title="В конец">⏭</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card console-panel" id="console-panel">
+            <div class="card-header">
+              <span class="card-title">Вывод</span>
+              <span class="panel-hint">print()</span>
+            </div>
+            <div class="panel-body" id="console-body">
+              <span class="empty-hint">Вывода пока нет</span>
+              <div id="console-anchor" aria-hidden="true" style="height:0;pointer-events:none"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scope canvas: full width below code -->
+      <div id="scope-canvas">
+        <svg id="scope-arrows" aria-hidden="true"></svg>
+      </div>
+    </section>
+
+    <!-- Block Scheme view -->
+    <section id="bs-view" class="view">
+      <div class="bs-header">
+        <button id="bs-back-btn" class="btn btn-secondary">← Вернуться к редактору кода</button>
+      </div>
+      <div id="bs-trace-warn" class="warn-banner hidden">
+        <span class="error-icon">⚠</span>
+        <span id="bs-trace-warn-text"></span>
+      </div>
+      <div class="bs-body">
+        <div class="card bs-code-panel">
+          <div class="card-header">
+            <span class="card-title">Код</span>
+            <div class="lang-badge">Python</div>
+          </div>
+          <div id="bs-code-display"></div>
+        </div>
+        <div id="bs-canvas">
+          <svg id="bs-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+        <div class="bs-sidebar">
+          <div class="bs-sidebar-section">
+            <div class="bs-sidebar-title">Управление</div>
+            <div class="bs-speed-btns">
+              <button class="bs-speed-btn" data-speed="0.5">0.5</button>
+              <button class="bs-speed-btn bs-speed-active" data-speed="1">1</button>
+              <button class="bs-speed-btn" data-speed="2">2</button>
+            </div>
+            <div class="bs-ctrl-buttons">
+              <button id="bs-ctrl-first" class="bs-ctrl-btn" title="В начало">⏮</button>
+              <button id="bs-ctrl-prev"  class="bs-ctrl-btn" title="Назад (←)">◀</button>
+              <button id="bs-ctrl-play"  class="bs-ctrl-btn bs-ctrl-play" title="Играть / Пауза">▶</button>
+              <button id="bs-ctrl-next"  class="bs-ctrl-btn" title="Вперёд (→)">▶▶</button>
+              <button id="bs-ctrl-last"  class="bs-ctrl-btn" title="В конец">⏭</button>
+            </div>
+          </div>
+          <div class="bs-sidebar-section bs-vars-section">
+            <div class="bs-sidebar-title">Переменные</div>
+            <div id="bs-vars-body" class="bs-panel-body">
+              <span class="bs-panel-empty">—</span>
+            </div>
+          </div>
+          <div class="bs-sidebar-section bs-console-section">
+            <div class="bs-sidebar-title">Вывод / консоль</div>
+            <div id="bs-console-body" class="bs-panel-body">
+              <span class="bs-panel-empty">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Ball layer (for animations) -->
+  <div id="ball-layer" aria-hidden="true"></div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="{{ url_for('static', filename='visualizer/js/api.js') }}"></script>
+  <script src="{{ url_for('static', filename='visualizer/js/editor.js') }}"></script>
+  <script src="{{ url_for('static', filename='visualizer/js/animator.js') }}"></script>
+  <script src="{{ url_for('static', filename='visualizer/js/block-scheme.js') }}"></script>
+</body>
+</html>

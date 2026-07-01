@@ -122,6 +122,7 @@ body {
     transform: translateX(-50%);
     display: flex;
     align-items: center;
+    gap: 10px;
 }
 
 .nav-dropdown-wrap {
@@ -205,6 +206,34 @@ body {
 .nav-dropdown-item:hover {
     background: rgba(255, 255, 255, 0.07);
     color: #e2e8f0;
+}
+
+.nav-dropdown-item-mobile-only {
+    display: none;
+}
+
+/* --- Кнопка визуализатора (рядом с выпадающим меню) --- */
+.nav-visualizer-btn {
+    padding: 7px 18px;
+    border-radius: var(--radius-sm);
+    font-size: 0.875em;
+    font-weight: 600;
+    font-family: inherit;
+    text-decoration: none;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(56, 189, 248, 0.1);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.22);
+    transition: color var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.nav-visualizer-btn:hover {
+    background: rgba(56, 189, 248, 0.18);
+    border-color: rgba(56, 189, 248, 0.38);
+    color: #7dd3fc;
 }
 
 /* --- Auth-кнопки (правая часть navbar) --- */
@@ -833,6 +862,15 @@ body {
         right: 10px;
         transform: none;
         min-width: 0;
+    }
+
+    /* Визуализатор: на мобильном только пункт в выпадающем списке */
+    .nav-visualizer-btn {
+        display: none;
+    }
+
+    .nav-dropdown-item-mobile-only {
+        display: flex;
     }
 
     /* Layout */

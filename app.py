@@ -20,6 +20,9 @@ from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 from flask_wtf.csrf import CSRFProtect, CSRFError
 
+from validator import validate
+from tracer import trace_code
+
 load_dotenv()
 
 # Проверяем наличие всех обязательных переменных окружения
@@ -2589,6 +2592,37 @@ def check_lesson_access(user_id, lesson_id):
     if not result:
         return False
     return result["is_unlocked"] == 1
+
+
+@app.route("/visualizer")
+def visualizer():
+    """Визуализатор выполнения Python-кода (только для авторизованных)"""
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+    return render_template("visualizer.html")
+
+
+@app.route("/api/visualizer/trace", methods=["POST"])
+def api_visualizer_trace():
+    """Трассировка выполнения Python-кода для визуализатора"""
+    if "user_id" not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    try:
+        data = request.get_json()
+        code = (data or {}).get("code", "").strip()
+    except Exception:
+        return jsonify({"error": {"type": "ParseError", "message": "Неверный JSON", "line": None}, "steps": [], "truncated": False}), 400
+
+    if not code:
+        return jsonify({"error": {"type": "ValidationError", "message": "Код не может быть пустым", "line": None}, "steps": [], "truncated": False})
+
+    valid, err_msg = validate(code)
+    if not valid:
+        return jsonify({"error": {"type": "ValidationError", "message": err_msg, "line": None}, "steps": [], "truncated": False})
+
+    result = trace_code(code)
+    return jsonify(result)
 
 
 if __name__ == "__main__":

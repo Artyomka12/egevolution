@@ -38,8 +38,17 @@
 >
 > **v1.6.5 (2026-06-19):** полный редизайн пользовательских страниц — завершён.
 > Этап 0 ✅ (base.html, компоненты, design-system.css, scroll-reveal.js) · Этап 1 ✅ (login/register/csrf_error + auth.css) · Этап 2 ✅ (variant_list/teoria/preparation/tasks_list + catalogs.css) · Этап 3 ✅ (profile + profile.css; stats/attempt_detail + stats.css) · Этап 4 ✅ (choose_mode + variants.css; tasks_view + tasks.css; teoria_zadanie + teoria.css; preparation_lesson + preparation_lesson.css) · 15/15 страниц ✅ · Аудит 246/246 OK · Backend/маршруты/CSRF/схема БД не тронуты
+>
+> **v1.7.0 (2026-07-01):** интеграция визуализатора Python-кода (visual-code) — завершена.
+> `validator.py`/`tracer.py` перенесены без изменений ✅ · роуты `GET /visualizer` + `POST /api/visualizer/trace` в app.py, доступ только авторизованным ✅ · `templates/visualizer.html` автономный шаблон ✅ · `static/visualizer/` (CSS+JS, `api.js` адаптирован под относительный путь + CSRF) ✅ · кнопка в `components/navbar.html` и продублирована в `start.html` (десктоп рядом с dropdown, мобильная — внутри dropdown) ✅ · wall-clock timeout и rate limiting на трассировку — сознательно отложены
 
 ## Следующий этап
+
+### v1.7.1 — Возможные доработки визуализатора
+
+- [ ] **Wall-clock timeout на `/api/visualizer/trace`** — тяжёлая одна строка кода (`2**10**8` и т.п.) может надолго занять воркер; риск снижен закрытым доступом, но не устранён
+- [ ] **Rate limiting на `/api/visualizer/trace`** — пока не реализован
+- [ ] **Дизайн визуализатора vs. остальной сайт** — `visualizer.html` автономен (свой header, тёмная тема); решить, стоит ли визуально сближать со светло-голубой темой после практического использования
 
 ### v1.6.6 — Дальнейшее развитие платформы
 
@@ -48,6 +57,15 @@
 - [ ] **Mobile check остальных страниц** — `exam.html` (таблицы ответов), `reshenie.html`, проверка на реальных устройствах (375px / 768px)
 - [ ] **Редизайн `exam.html` и `reshenie.html`** — перевод на `{% extends "base.html" %}` и светло-голубую тему (отдельный scope)
 - [ ] **Редизайн admin-шаблонов** — опционально, по запросу
+
+### v1.7.0 — Интеграция визуализатора Python-кода (выполнен, 2026-07-01)
+
+- [x] **Backend** — `validator.py`, `tracer.py` перенесены из visual-code без изменений; `app.py` импортирует `validate()`/`trace_code()`; роуты `GET /visualizer` и `POST /api/visualizer/trace`, оба за `"user_id" not in session`
+- [x] **Frontend** — `templates/visualizer.html` (автономный, без `{% extends "base.html" %}`), `static/visualizer/style.css` + `js/{editor,animator,block-scheme}.js` без изменений
+- [x] **api.js** — `API_BASE` → относительный `/api/visualizer`; добавлен заголовок `X-CSRFToken` (токен из `<meta name="csrf-token">`)
+- [x] **Навигация** — кнопка «⚡ Визуализатор кода» в `components/navbar.html` (десктоп рядом с dropdown через общий `.nav-center`, мобильная версия — пункт внутри dropdown) и продублирована в `start.html` (свой встроенный navbar)
+- [x] **Проверка** — Flask test client: анонимный доступ заблокирован, авторизованный — рендер + CSRF + трассировка работают корректно
+- [ ] Wall-clock timeout и rate limiting — отложены (см. v1.7.1)
 
 ### v1.6.5 — Редизайн пользовательских страниц (выполнен, 2026-06-19)
 

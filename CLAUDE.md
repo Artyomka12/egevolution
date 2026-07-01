@@ -9,9 +9,14 @@ EGEvolution — учебная платформа для подготовки к
 решают практические задачи в уроках. Администратор управляет контентом
 через встроенную панель.
 
-**Текущая версия: v1.6.5** — полный редизайн 15 пользовательских страниц
-(светло-голубая тема, `base.html` + компоненты + 8 page-CSS файлов).
-Финальный аудит: 246/246 ✅
+**Текущая версия: v1.7.0** — интеграция визуализатора Python-кода
+(отдельный проект [visual-code](https://github.com/Artyomka12/visual-code),
+встроен как модуль: `validator.py` + `tracer.py` рядом с `app.py`,
+маршруты `GET /visualizer` и `POST /api/visualizer/trace`, доступ только
+для авторизованных пользователей).
+
+Редизайн пользовательских страниц (v1.6.5): 15 страниц, светло-голубая тема,
+`base.html` + компоненты + 8 page-CSS файлов. Финальный аудит: 246/246 ✅
 
 ---
 
@@ -34,7 +39,9 @@ EGEvolution — учебная платформа для подготовки к
 
 ```
 webpl with base/
-├── app.py                  # Весь backend (~2611 строк), единственный Python-файл
+├── app.py                  # Весь backend (~2629 строк) и все Flask-маршруты
+├── validator.py            # AST-валидатор кода визуализатора (whitelist-подход, из visual-code)
+├── tracer.py               # Трейсер выполнения кода визуализатора (sys.settrace, из visual-code)
 ├── requirements.txt
 ├── users.db                # SQLite база данных
 ├── .env                    # Секреты (НЕ в git)
@@ -76,6 +83,7 @@ webpl with base/
 │   ├── start.html          # Главная страница — автономная, не наследует base.html
 │   ├── exam.html           # Экзаменационный режим — автономный, вне scope редизайна
 │   ├── reshenie.html       # Решение варианта — автономный, вне scope редизайна
+│   ├── visualizer.html     # Визуализатор Python-кода — автономный (visual-code), только для авторизованных
 │   ├── [9 admin/constructor-шаблонов] — автономные, вне scope редизайна
 │   │   # admin_panel, admin_task_form, admin_tasks_list, admin_tasks_view,
 │   │   # admin_user_stats, constructor_gate, constructor_from_base,
@@ -100,6 +108,9 @@ webpl with base/
 │   │       └── preparation_lesson.css  # preparation_lesson
 │   ├── js/
 │   │   └── scroll-reveal.js            # IntersectionObserver-анимация .reveal → .reveal.visible
+│   ├── visualizer/                     # Статика визуализатора Python-кода (из visual-code, без изменений)
+│   │   ├── style.css
+│   │   └── js/                         # api.js (адаптирован под относительный путь + CSRF), editor.js, animator.js, block-scheme.js
 │   ├── images/                         # video-preview-left.jpg, video-preview-right.jpg
 │   ├── videos/                         # platform-overview.mp4
 │   ├── uploads/avatars/                # Аватары пользователей
@@ -158,6 +169,39 @@ webpl with base/
 - JSON fetch: заголовок `'X-CSRFToken': '{{ csrf_token() }}'`
 - `preparation_lesson.html` не имеет `<form>` — ответы только через `onclick` → `checkTask()` → fetch.
   Любые `<input>` внутри `.task-block` попадают в `querySelectorAll('input')` — скрытые поля недопустимы.
+
+---
+
+## Визуализатор Python-кода (v1.7.0)
+
+Интегрирован отдельный проект [visual-code](https://github.com/Artyomka12/visual-code) —
+интерактивный визуализатор выполнения Python-кода (Classic View: scope-блоки и «шарики»
+данных; Block Scheme: анимированная блок-схема/AST). Перенесён как модуль внутрь
+существующего Flask-приложения, без отдельного процесса/порта.
+
+**Backend:**
+
+| Файл | Назначение |
+|---|---|
+| `validator.py` | Whitelist-валидация AST (перенесён из visual-code без изменений). Разрешены: переменные, `if/elif/else`, `for`/`while`, функции, списки/словари/comprehension, ~20 builtin-функций. Запрещены: `import`, `class`, `lambda`, `try/except`, `global/nonlocal`, `async/await` |
+| `tracer.py` | Трассировка выполнения через `sys.settrace` (перенесён без изменений). Лимит 600 line-событий (`MAX_STEPS`). Wall-clock timeout не реализован — при необходимости решать отдельно |
+| `app.py` | Роуты `GET /visualizer` и `POST /api/visualizer/trace`, импортирующие `validate()`/`trace_code()`. Оба защищены проверкой `"user_id" not in session` |
+
+**Frontend:**
+
+- `templates/visualizer.html` — автономный шаблон (свой header, переключатель тёмной темы), не наследует `base.html`, как `start.html`/`exam.html`
+- `static/visualizer/style.css`, `static/visualizer/js/{editor,animator,block-scheme}.js` — перенесены без изменений
+- `static/visualizer/js/api.js` — единственная адаптированная часть самого визуализатора: `API_BASE` переведён на относительный путь `/api/visualizer`, добавлен заголовок `X-CSRFToken` (токен читается из `<meta name="csrf-token">` в `visualizer.html`)
+
+**Точки входа в навигации:**
+
+- `templates/components/navbar.html` — кнопка «⚡ Визуализатор кода» рядом с выпадающим списком «Разделы платформы» (десктоп); на `≤768px` уходит внутрь выпадающего списка
+- `templates/start.html` — идентичная кнопка продублирована во встроенном navbar главной страницы (свой `<style>`, не наследует `components/navbar.html`)
+
+**Известные ограничения (сознательно отложены):**
+
+- Нет wall-clock timeout на трассировку — тяжёлая одна строка (`2**10**8` и т.п.) может надолго занять воркер. Риск снижен закрытым доступом (только авторизованные), но не устранён
+- Нет rate limiting на `/api/visualizer/trace`
 
 ---
 
@@ -293,6 +337,8 @@ webpl with base/
 | `GET /stats/attempt/<attempt_id>` | Детальная статистика конкретной попытки |
 | `GET /profile` | Профиль |
 | `POST /profile/upload_avatar` | Загрузка аватара |
+| `GET /visualizer` | Визуализатор выполнения Python-кода (только для авторизованных) |
+| `POST /api/visualizer/trace` | Трассировка выполнения Python-кода для визуализатора (JSON) |
 
 ### Административные (требуют is_admin=1)
 | Маршрут | Описание |
