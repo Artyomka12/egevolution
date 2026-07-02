@@ -144,7 +144,7 @@
 .task-image {
     display: block;
     margin: 14px auto;
-    border-radius: var(--radius-md);
+    border-radius: 0;
     max-width: 100%;
     border: 1px solid var(--color-card-border);
 }
