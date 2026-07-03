@@ -625,10 +625,8 @@
                         ← Назад
                     </button>
 
-                    <!-- Файл задания (будет показан через JS если есть) -->
-                    <a href="#" class="task-file-link" id="task-file-link" style="display: none;">
-                        📄 <span id="task-file-name">Файл</span>
-                    </a>
+                    <!-- Файл(ы) задания (будет показан через JS если есть) -->
+                    <div id="task-file-links-container" style="display: none; gap: 8px;"></div>
                 </div>
 
                 <!-- Правая часть: Поле ввода + Кнопка Сохранить + Кнопка Вперёд -->
@@ -710,23 +708,33 @@
             }
         }
 
-        // Обновление ссылки на файл
+        // Обновление ссылки(ок) на файл(ы)
         function updateFileLink() {
             const currentTask = tasks[currentTaskIndex];
-            const fileLink = document.getElementById('task-file-link');
-            const fileName = document.getElementById('task-file-name');
+            const container = document.getElementById('task-file-links-container');
+            container.innerHTML = '';
 
-            if (currentTask && currentTask.file) {
-                if (currentTask._source_task_num !== undefined && currentTask._source_task_num !== null) {
-                    fileLink.href = `/task_files/${currentTask._source_task_num}/${currentTask.file.path}`;
-                } else {
-                    fileLink.href = `{{ url_for('variant_files', variant_num=variant_num, filename='FILE') }}`.replace('FILE', currentTask.file.path);
-                }
-                fileName.textContent = currentTask.file.name;
-                fileLink.style.display = 'flex';
-            } else {
-                fileLink.style.display = 'none';
+            const files = currentTask && currentTask.files ? currentTask.files
+                : (currentTask && currentTask.file ? [currentTask.file] : []);
+
+            if (files.length === 0) {
+                container.style.display = 'none';
+                return;
             }
+
+            files.forEach(f => {
+                const a = document.createElement('a');
+                a.href = '#';
+                a.className = 'task-file-link';
+                a.textContent = '📄 ' + f.name;
+                if (currentTask._source_task_num !== undefined && currentTask._source_task_num !== null) {
+                    a.href = `/task_files/${currentTask._source_task_num}/${f.path}`;
+                } else {
+                    a.href = `{{ url_for('variant_files', variant_num=variant_num, filename='FILE') }}`.replace('FILE', f.path);
+                }
+                container.appendChild(a);
+            });
+            container.style.display = 'flex';
         }
 
         // Загрузка ответа в панель

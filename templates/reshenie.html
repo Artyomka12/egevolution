@@ -448,8 +448,25 @@
             {% endfor %}
             {% endif %}
             {% endfor %}
-            <!-- Файл для скачивания -->
-            {% if task.file %}
+            <!-- Файл(ы) для скачивания -->
+            {% if task.files %}
+            {% for f in task.files %}
+            <div class="file-download">
+                <div style="font-size: 40px;">📄</div>
+                <div style="flex: 1;">
+                    <a href="{% if task._source_task_num is defined %}{{ url_for('task_files', task_num=task._source_task_num, filename=f.path) }}{% else %}{{ url_for('variant_files', variant_num=variant_num, filename=f.path) }}{% endif %}" download
+                        class="file-link">
+                        {{ f.name }}
+                    </a>
+                    {% if f.description %}
+                    <p style="margin: 5px 0 0 0; color: #94a3b8; font-size: 14px;">
+                        {{ f.description }}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+            {% elif task.file %}
             <div class="file-download">
                 <div style="font-size: 40px;">📄</div>
                 <div style="flex: 1;">
