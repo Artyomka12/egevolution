@@ -491,6 +491,12 @@
         let currentFilter = 'all';
         let availableTasks = [];
 
+        // Задания 19-21 в базе идут связкой: одно условие, три разных вопроса к нему.
+        // В базе (tasks/task_19,20,21) им намеренно присвоены параллельные id — id=N в
+        // task_19 всегда та же игровая ситуация, что и id=N в task_20 и task_21. Поэтому
+        // выбор задачи для одной из этих трёх позиций должен применяться сразу ко всем трём.
+        const LINKED_TRIO = [19, 20, 21];
+
         // Инициализация
         document.addEventListener('DOMContentLoaded', () => {
             renderTaskNumbersGrid();
@@ -545,10 +551,13 @@
                 .then(data => {
                     availableTasks = data.tasks || [];
                     renderTasksFromBase();
+                    const linkedHint = LINKED_TRIO.includes(taskNum)
+                        ? ' Задания 19–21 идут связкой: выбор задачи здесь применится сразу к трём номерам.'
+                        : '';
                     if (availableTasks.length === 0) {
-                        document.getElementById('current-task-info').textContent = `Для задания №${taskNum} нет задач${currentFilter !== 'all' ? ' с такой сложностью' : ''}`;
+                        document.getElementById('current-task-info').textContent = `Для задания №${taskNum} нет задач${currentFilter !== 'all' ? ' с такой сложностью' : ''}` + linkedHint;
                     } else {
-                        document.getElementById('current-task-info').textContent = `Найдено задач: ${availableTasks.length}`;
+                        document.getElementById('current-task-info').textContent = `Найдено задач: ${availableTasks.length}` + linkedHint;
                     }
                 })
                 .catch(err => {
@@ -598,11 +607,15 @@
         function selectTask(taskId) {
             if (!currentTaskNum) return;
 
+            // Задания 19-21 связаны (общее условие, id совпадают между тремя номерами) —
+            // выбор/снятие выбора применяется ко всем трём позициям сразу.
+            const targets = LINKED_TRIO.includes(currentTaskNum) ? LINKED_TRIO : [currentTaskNum];
+
             // Если эта задача уже выбрана — снимаем выбор
             if (variantTasks[currentTaskNum] && variantTasks[currentTaskNum].task_id === taskId) {
-                delete variantTasks[currentTaskNum];
+                targets.forEach(n => delete variantTasks[n]);
             } else {
-                variantTasks[currentTaskNum] = { task_id: taskId };
+                targets.forEach(n => { variantTasks[n] = { task_id: taskId }; });
             }
 
             updateTaskNumbersVisual();
@@ -648,9 +661,10 @@
 
         // Удалить задачу из варианта
         function removeTask(position) {
-            delete variantTasks[position];
+            const targets = LINKED_TRIO.includes(position) ? LINKED_TRIO : [position];
+            targets.forEach(n => delete variantTasks[n]);
             updateTaskNumbersVisual();
-            if (currentTaskNum === position) {
+            if (targets.includes(currentTaskNum)) {
                 renderTasksFromBase();
             }
             renderVariantSummary();
