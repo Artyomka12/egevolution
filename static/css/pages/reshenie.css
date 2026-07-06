@@ -1,0 +1,211 @@
+/* ============================================================
+   EGEvolution — Решение варианта (reshenie.html)
+   Требует design-system.css из base.html.
+   ============================================================ */
+
+
+/* ── Заголовок ────────────────────────────────────────────── */
+.reshenie-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.reshenie-title {
+    font-size: 1.8em;
+    font-weight: 800;
+    color: var(--color-text-primary);
+}
+
+
+/* ── Плавающий таймер ─────────────────────────────────────── */
+.timer-widget {
+    position: fixed;
+    top: 90px;
+    right: 24px;
+    width: 160px;
+    padding: 16px;
+    text-align: center;
+    z-index: 500;
+}
+
+.timer-widget:hover {
+    transform: none;
+}
+
+.timer-label {
+    font-size: 0.85em;
+    color: var(--color-text-secondary);
+    margin-bottom: 6px;
+}
+
+#timer-display {
+    font-size: 1.5em;
+    font-weight: 800;
+    color: var(--color-accent-blue);
+    font-family: 'Courier New', monospace;
+    margin: 6px 0 12px;
+}
+
+.timer-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.timer-btn {
+    width: 100%;
+}
+
+
+/* ── Карточка задания ─────────────────────────────────────── */
+.reshenie-task-card {
+    padding: 28px;
+    margin-bottom: 24px;
+}
+
+.reshenie-task-card:hover {
+    transform: none;
+}
+
+.reshenie-task-title {
+    font-size: 1.25em;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--color-card-border);
+}
+
+
+/* ── Описание задания ─────────────────────────────────────── */
+.task-description {
+    color: var(--color-text-primary);
+    line-height: 1.75;
+    margin-bottom: 8px;
+}
+
+.task-description p {
+    margin-bottom: 12px;
+    text-indent: 20px;
+}
+
+sup, sub {
+    font-size: 0.75em;
+    line-height: 0;
+}
+
+sup { vertical-align: super; }
+sub { vertical-align: sub; }
+
+
+/* ── Изображения задания ──────────────────────────────────── */
+.task-image {
+    display: block;
+    margin: 16px auto;
+    border-radius: 0;
+    max-width: 100%;
+    border: 1px solid var(--color-card-border);
+}
+
+.img-small  { max-width: 250px !important; }
+.img-medium { max-width: 350px !important; }
+.img-large  { max-width: 500px !important; }
+
+
+/* ── Файл задания (дополнение к .file-download) ──────────── */
+.file-desc {
+    font-size: 0.88em;
+    color: var(--color-text-muted);
+}
+
+
+/* ── Форма ответа ─────────────────────────────────────────── */
+.reshenie-answer-form {
+    margin-top: 20px;
+}
+
+/* Одно поле ввода */
+.input-group {
+    display: flex;
+    gap: 14px;
+    align-items: stretch;
+}
+
+.input-group .form-input {
+    flex: 1;
+}
+
+/* Два поля ввода */
+.answers-group {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.answer-field {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* Таблица ответов (задания 26-27) */
+.answer-grid-container {
+    margin: 20px 0;
+}
+
+.answer-grid-table {
+    border-collapse: separate;
+    border-spacing: 12px;
+    margin-bottom: 16px;
+}
+
+.answer-grid-table td {
+    padding: 0;
+}
+
+.grid-input {
+    width: 130px;
+    text-align: center;
+}
+
+
+/* ── Адаптив ─────────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .timer-widget {
+        top: auto;
+        bottom: 20px;
+        right: 20px;
+        left: 20px;
+        width: auto;
+    }
+
+    .timer-controls {
+        flex-direction: row;
+    }
+}
+
+@media (max-width: 768px) {
+    .reshenie-task-card {
+        padding: 20px 16px;
+    }
+
+    .input-group {
+        flex-direction: column;
+    }
+
+    .answers-group {
+        flex-direction: column;
+    }
+
+    .answer-grid-table {
+        border-spacing: 8px;
+    }
+
+    .grid-input {
+        width: 100px;
+    }
+}

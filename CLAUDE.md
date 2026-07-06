@@ -9,7 +9,23 @@ EGEvolution — учебная платформа для подготовки к
 решают практические задачи в уроках. Администратор управляет контентом
 через встроенную панель.
 
-**Текущая версия: v1.10.2** — два независимых патча по репорту пользователя со
+**Текущая версия: v1.11.0** — смена приоритета платформы: подготовка сайта к
+роли «визитной карточки» для привлечения новых клиентов (обзорные видео,
+продвижение в соцсетях), функционал решения вариантов временно отложен. Три
+пункта за сессию: (1) убран видимый текст версии сайта из публичного футера
+(`components/footer.html`, `start.html`) — случайному посетителю `vX.Y.Z` в
+футере читается как «сайт в разработке»; техническая инфраструктура версии
+(cache-busting статики) не тронута; (2) `reshenie.html` (обычное решение
+варианта) переведён на `{% extends "base.html" %}` + новый `reshenie.css`, с
+переиспользованием готовых компонентов дизайн-системы; вся Jinja/JS-логика
+(3 типа формы ответа, таймер, AJAX-проверка) сохранена без изменений;
+**`exam.html` осознанно не тронут** — по требованию пользователя; (3)
+подключены Яндекс.Метрика (Вебвизор, карта кликов/скроллинга) и Open
+Graph/`twitter:card` теги в `base.html`/`start.html` — счётчик сознательно не
+добавлен на `exam.html` и в админ-шаблоны. Пункт про наполнение теории/уроков
+контентом перенесён на следующую сессию (v1.11.1).
+
+v1.10.2 — два независимых патча по репорту пользователя со
 скриншотов живого сайта. (1) Диаграмма статистики по заданиям отображалась на
 egevolution.ru без стилей — деплой был корректным (CSS на сервере побайтово
 идентичен локальному), но у статики выставлен `Cache-Control: max-age=3888000`
@@ -204,22 +220,21 @@ webpl with base/
 │   │   └── flash.html      # Flash-сообщения (success/error/warning)
 │   ├── start.html          # Главная страница — автономная, не наследует base.html
 │   ├── exam.html           # Экзаменационный режим — автономный, вне scope редизайна
-│   ├── reshenie.html       # Решение варианта — автономный, вне scope редизайна
 │   ├── visualizer.html     # Визуализатор Python-кода — автономный (visual-code), только для авторизованных
 │   ├── [9 admin/constructor-шаблонов] — автономные, вне scope редизайна
 │   │   # admin_panel, admin_task_form, admin_tasks_list, admin_tasks_view,
 │   │   # admin_user_stats, constructor_gate, constructor_from_base,
 │   │   # constructor_theory, constructor_editor
-│   └── [15 пользовательских страниц — {% extends "base.html" %}]
+│   └── [16 пользовательских страниц — {% extends "base.html" %}]
 │       # login, register, csrf_error, variant_list, teoria, preparation,
 │       # tasks_list, profile, stats, attempt_detail, choose_mode,
-│       # tasks_view, teoria_zadanie, preparation_lesson, results
+│       # tasks_view, teoria_zadanie, preparation_lesson, results, reshenie
 │
 ├── static/
 │   ├── favicon.png
 │   ├── css/
 │   │   ├── design-system.css           # Дизайн-токены: цвета, отступы, .card, .btn, .form-input
-│   │   └── pages/                      # Page-specific CSS (8 файлов)
+│   │   └── pages/                      # Page-specific CSS (9 файлов)
 │   │       ├── auth.css                # login, register, csrf_error
 │   │       ├── catalogs.css            # variant_list, teoria, preparation, tasks_list
 │   │       ├── profile.css             # profile
@@ -227,7 +242,8 @@ webpl with base/
 │   │       ├── variants.css            # choose_mode
 │   │       ├── tasks.css               # tasks_view
 │   │       ├── teoria.css              # teoria_zadanie
-│   │       └── preparation_lesson.css  # preparation_lesson
+│   │       ├── preparation_lesson.css  # preparation_lesson
+│   │       └── reshenie.css            # reshenie (добавлен в v1.11.0)
 │   ├── js/
 │   │   └── scroll-reveal.js            # IntersectionObserver-анимация .reveal → .reveal.visible
 │   ├── visualizer/                     # Статика визуализатора Python-кода (из visual-code, без изменений)
@@ -282,8 +298,9 @@ webpl with base/
 |---|---|
 | `start.html` | Собственная дизайн-система v1.6.0–1.6.4; navbar встроен напрямую |
 | `exam.html` | Специально вне scope редизайна v1.6.5; встроенный CSS |
-| `reshenie.html` | Специально вне scope редизайна v1.6.5; встроенный CSS |
 | Admin/constructor-шаблоны (9 шт.) | Вне scope редизайна v1.6.5 |
+
+`reshenie.html` переведён на `base.html`/`design-system.css` в v1.11.0 — больше не автономный.
 
 ### CSRF в шаблонах
 
@@ -618,8 +635,8 @@ git-репозиторий, работа ведётся прямо в нём.
 - Изменять `.env` (содержит реальные секреты).
 
 ### Стиль кода
-- Шаблоны: 15 пользовательских страниц наследуют `base.html`; `start.html`, `exam.html`,
-  `reshenie.html` и все admin-шаблоны — автономные HTML-файлы со встроенным CSS.
+- Шаблоны: 16 пользовательских страниц наследуют `base.html`; `start.html`, `exam.html`
+  и все admin-шаблоны — автономные HTML-файлы со встроенным CSS.
 - JS — только vanilla, встроен в шаблоны.
 - Все секреты — через `os.environ`, не хардкодить.
 - Паттерн чтения переменных: `os.environ.get(key) or default` (не `get(key, default)`).
@@ -639,15 +656,14 @@ git-репозиторий, работа ведётся прямо в нём.
 8. **CSRF-инфраструктура** — не добавлять `csrf.exempt` без аудита.
 9. **`exam.html`** — автономный шаблон, специально не переведён на `base.html`;
    содержит встроенный CSS и JS для экзаменационного режима. Требует отдельного решения.
-10. **`reshenie.html`** — автономный шаблон, специально не переведён на `base.html`;
-    содержит встроенный CSS и JS для режима решения. Требует отдельного решения.
-11. **`start.html`** — автономная главная страница со своей дизайн-системой (v1.6.0–1.6.4);
+   (`reshenie.html` переведён на `base.html` в v1.11.0 — больше не в этом списке.)
+10. **`start.html`** — автономная главная страница со своей дизайн-системой (v1.6.0–1.6.4);
     navbar встроен напрямую. Любые изменения — только отдельным согласованием.
-12. **Admin-шаблоны** (9 файлов: `admin_panel`, `admin_task_form`, `admin_tasks_list`,
+11. **Admin-шаблоны** (9 файлов: `admin_panel`, `admin_task_form`, `admin_tasks_list`,
     `admin_tasks_view`, `admin_user_stats`, `constructor_gate`, `constructor_from_base`,
     `constructor_theory`, `constructor_editor`) — автономные, вне scope редизайна v1.6.5.
-13. **`design-system.css`** — изменение токенов затронет все 15 пользовательских страниц одновременно.
-14. **`base.html` и `components/`** — изменение затронет все 15 пользовательских страниц.
+12. **`design-system.css`** — изменение токенов затронет все 16 пользовательских страниц одновременно.
+13. **`base.html` и `components/`** — изменение затронет все 16 пользовательских страниц.
 
 ---
 
