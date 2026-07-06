@@ -13,6 +13,113 @@
 }
 
 
+/* ── Статистика по заданиям (диаграмма) ──────────────────── */
+.task-stats-card {
+    padding: 28px;
+    margin-bottom: 24px;
+}
+
+.task-chart-legend {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 18px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85em;
+    color: var(--color-text-secondary);
+}
+
+.legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.legend-dot--correct {
+    background: var(--color-accent-green);
+}
+
+.legend-dot--incorrect {
+    background: var(--color-accent-red);
+}
+
+.task-chart-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.task-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    min-width: 1050px;
+    padding-top: 22px;
+}
+
+.task-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    min-width: 34px;
+}
+
+.task-bar-stack {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    width: 100%;
+    background: rgba(37, 99, 235, 0.05);
+}
+
+.task-bar-total {
+    margin-bottom: 4px;
+    font-size: 0.62em;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+}
+
+.task-bar-fill {
+    width: 100%;
+    border-radius: 4px 4px 0 0;
+    overflow: hidden;
+}
+
+.task-bar-segment {
+    width: 100%;
+}
+
+.task-bar-segment--correct {
+    background: var(--color-accent-green);
+}
+
+.task-bar-segment--incorrect {
+    background: var(--color-accent-red);
+}
+
+.task-bar-segment:hover {
+    opacity: 0.8;
+}
+
+.task-bar-label {
+    margin-top: 2px;
+    font-size: 0.72em;
+    color: var(--color-text-muted);
+}
+
+.task-bar-correct {
+    margin-top: 6px;
+    font-size: 0.68em;
+    font-weight: 600;
+    color: var(--color-accent-green);
+}
+
+
 /* ── Карточка истории ────────────────────────────────────── */
 .history-card {
     padding: 28px;
@@ -71,12 +178,20 @@
     .history-card {
         padding: 20px 16px;
     }
+
+    .task-stats-card {
+        padding: 20px 16px;
+    }
 }
 
 
 /* ── Минимальные паддинги на 480px ───────────────────────── */
 @media (max-width: 480px) {
     .history-card {
+        padding: 16px 12px;
+    }
+
+    .task-stats-card {
         padding: 16px 12px;
     }
 

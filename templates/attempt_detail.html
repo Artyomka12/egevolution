@@ -67,7 +67,14 @@
                     {% for item in tasks %}
                     <tr class="{% if item.points > 0 %}row--correct{% else %}row--incorrect{% endif %}">
 
-                        <td class="task-num-cell">{{ item.task_data.id }}</td>
+                        <td class="task-num-cell">
+                            {% if item.task_data._base_task_id is defined %}
+                            <a href="/tasks/{{ item.task_data._source_task_num }}#task-block-{{ item.task_data._base_task_id }}"
+                               target="_blank" title="Открыть в базе заданий">{{ item.task_data.id }} 🔗</a>
+                            {% else %}
+                            {{ item.task_data.id }}
+                            {% endif %}
+                        </td>
 
                         <td class="answer-cell {% if item.user_answer is none %}not-answered{% endif %}">
                             {% if item.user_answer %}

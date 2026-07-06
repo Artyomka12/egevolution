@@ -177,5 +177,18 @@
             }
         });
     }
+
+    // Переход по ссылке из детальной статистики: #task-block-<id>
+    (function () {
+        if (!location.hash) return;
+        var target = document.querySelector(location.hash);
+        if (!target || !target.classList.contains('task-block')) return;
+
+        var allFilterBtn = document.querySelector('.filter-btn');
+        if (allFilterBtn) filterTasks('all', allFilterBtn);
+
+        target.classList.add('expanded');
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    })();
 </script>
 {% endblock %}

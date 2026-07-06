@@ -126,11 +126,6 @@
     flex-shrink: 0;
 }
 
-.lock-badge {
-    font-size: 0.9em;
-    opacity: 0.85;
-}
-
 .theory-progress {
     font-size: 0.88em;
     font-weight: 600;

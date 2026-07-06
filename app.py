@@ -52,6 +52,14 @@ def handle_csrf_error(e):
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
+APP_VERSION = "1.10.0"
+
+
+@app.context_processor
+def inject_app_version():
+    return {"app_version": APP_VERSION}
+
+
 SITE_PASSWORD = os.environ["SITE_PASSWORD"]
 
 VARIANTS_FOLDER = os.path.join(basedir, "variants")
@@ -325,9 +333,28 @@ def save_task_image(file, task_num, task_id, after_paragraph, size, alt):
 # === ЗАЩИТА МАРШРУТОВ ===
 @app.before_request
 def check_auth():
-    allowed = ["start", "login", "register", "static"]
+    allowed = [
+        "start",
+        "login",
+        "register",
+        "static",
+        "tasks_list",
+        "tasks_view",
+        "theory",
+        "preparation",
+        "check_theory_answer",
+        "check_lesson_task",
+    ]
     endpoint = request.endpoint
-    if endpoint not in allowed and "user_id" not in session:
+
+    always_open = endpoint in allowed
+    view_args = request.view_args or {}
+    if endpoint == "preparation_lesson" and view_args.get("lesson_id") == 1:
+        always_open = True
+    if endpoint == "theory_task" and view_args.get("task_num") == 1:
+        always_open = True
+
+    if not always_open and "user_id" not in session:
         flash("️ Пожалуйста, войдите в систему", "warning")
         return redirect(url_for("login"))
 
@@ -356,22 +383,27 @@ def register():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        name = request.form.get("name", "")
+        name = request.form.get("name", "").strip()
         site_password = request.form.get("site_password", "")
 
-        # 1. Проверяем пароль сайта
+        # 1. Проверяем имя
+        if not name:
+            flash("⚠️ Укажите имя", "error")
+            return render_template("register.html")
+
+        # 2. Проверяем пароль сайта
         if site_password != SITE_PASSWORD:
             flash("❌ Неверный пароль сайта", "error")
             return render_template("register.html")
 
-        # 2. Проверяем логин
+        # 3. Проверяем логин
         db = get_db()
         if db.execute(
             "SELECT id FROM users WHERE username = ?", (username,)
         ).fetchone():
             flash("⚠️ Такой логин уже занят", "error")
         else:
-            # 3. Создаем пользователя
+            # 4. Создаем пользователя
             hashed_pw = generate_password_hash(password)
             db.execute(
                 "INSERT INTO users (username, password_hash, name, avatar) VALUES (?, ?, ?, 'default.png')",
@@ -426,6 +458,58 @@ def load_user_stats(user_id):
 
     db.close()
     return stats
+
+
+def load_task_number_stats(user_id):
+    """Детальная статистика по каждому из 27 номеров заданий ЕГЭ:
+    сколько всего отвечено (варианты + практика теории) и сколько правильно.
+    Задания без ответа (user_answer IS NULL) не учитываются."""
+    db = get_db()
+
+    variant_rows = db.execute(
+        """
+        SELECT task_id, COUNT(*) AS total, SUM(is_correct) AS correct
+        FROM user_task_answers
+        WHERE user_id = ? AND user_answer IS NOT NULL
+        GROUP BY task_id
+        """,
+        (user_id,),
+    ).fetchall()
+
+    theory_rows = db.execute(
+        """
+        SELECT task_num, COUNT(*) AS total, SUM(is_correct) AS correct
+        FROM user_theory_progress
+        WHERE user_id = ?
+        GROUP BY task_num
+        """,
+        (user_id,),
+    ).fetchall()
+
+    db.close()
+
+    totals = {i: 0 for i in range(1, 28)}
+    corrects = {i: 0 for i in range(1, 28)}
+
+    for row in variant_rows:
+        if row["task_id"] in totals:
+            totals[row["task_id"]] += row["total"]
+            corrects[row["task_id"]] += row["correct"] or 0
+
+    for row in theory_rows:
+        if row["task_num"] in totals:
+            totals[row["task_num"]] += row["total"]
+            corrects[row["task_num"]] += row["correct"] or 0
+
+    return [
+        {
+            "task_num": i,
+            "total": totals[i],
+            "correct": corrects[i],
+            "incorrect": totals[i] - corrects[i],
+        }
+        for i in range(1, 28)
+    ]
 
 
 # Замени старую функцию save_user_result на эту
@@ -764,6 +848,7 @@ def load_variant_tasks(variant_num):
                 task = dict(task)  # копия
                 task["id"] = task_num
                 task["_source_task_num"] = task_num
+                task["_base_task_id"] = task_id
                 loaded_tasks.append(task)
         return loaded_tasks
 
@@ -970,6 +1055,9 @@ def theory():
                         "num": i,
                         "title": data.get("title", f"Задание {i}"),
                         "total_tasks": len(data.get("practice", {}).get("tasks", [])),
+                        "status": "not_started",
+                        "correct_tasks": 0,
+                        "is_unlocked": 1 if i == 1 else 0,
                     }
                     theory_tasks.append(task_info)
             except:
@@ -1182,6 +1270,9 @@ def preparation():
                                 "total_tasks": len(
                                     data.get("practice", {}).get("tasks", [])
                                 ),
+                                "status": "not_started",
+                                "correct_tasks": 0,
+                                "is_unlocked": 1 if lesson_num == 1 else 0,
                             }
                             lessons.append(lesson_info)
                     except:
@@ -1406,7 +1497,14 @@ def check(variant_num, task_id):
 def stats():
     user_id = session["user_id"]
     statistics = load_user_stats(user_id)
-    return render_template("stats.html", stats=statistics)
+    task_stats = load_task_number_stats(user_id)
+    has_task_stats = any(t["total"] > 0 for t in task_stats)
+    return render_template(
+        "stats.html",
+        stats=statistics,
+        task_stats=task_stats,
+        has_task_stats=has_task_stats,
+    )
 
 
 @app.route("/stats/attempt/<int:attempt_id>")
@@ -2461,6 +2559,8 @@ def admin_view_user(user_id):
     user_stats = load_user_stats(user_id)
     lesson_stats = get_user_lesson_stats(user_id)
     theory_stats = get_user_theory_stats(user_id)
+    task_stats = load_task_number_stats(user_id)
+    has_task_stats = any(t["total"] > 0 for t in task_stats)
 
     # Получаем информацию о доступе к урокам
     for lesson in lesson_stats:
@@ -2485,6 +2585,8 @@ def admin_view_user(user_id):
         stats=user_stats,
         lesson_stats=lesson_stats,
         theory_stats=theory_stats,
+        task_stats=task_stats,
+        has_task_stats=has_task_stats,
     )
 
 
@@ -2571,6 +2673,8 @@ def toggle_theory_access(user_id, task_num):
 
 def check_theory_access(user_id, task_num):
     """Проверяет, открыта ли теория для пользователя"""
+    if task_num == 1:
+        return True
     db = get_db()
     result = db.execute(
         "SELECT is_unlocked FROM user_theory_access WHERE user_id=? AND task_num=?",
@@ -2586,6 +2690,8 @@ def check_theory_access(user_id, task_num):
 
 def check_lesson_access(user_id, lesson_id):
     """Проверяет, открыт ли урок для пользователя"""
+    if lesson_id == 1:
+        return True
     db = get_db()
     result = db.execute(
         "SELECT is_unlocked FROM user_lesson_access WHERE user_id=? AND lesson_id=?",

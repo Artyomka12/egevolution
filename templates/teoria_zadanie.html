@@ -248,7 +248,12 @@
                 answer: answer
             })
         })
-            .then(res => res.json())
+            .then(res => {
+                if (res.status === 401) {
+                    throw { unauthorized: true };
+                }
+                return res.json();
+            })
             .then(data => {
                 if (data.correct) {
                     resultDiv.className = 'result-msg result-success';
@@ -266,6 +271,12 @@
                 resultDiv.style.display = 'block';
             })
             .catch(error => {
+                if (error && error.unauthorized) {
+                    resultDiv.className = 'result-msg result-error';
+                    resultDiv.innerHTML = '🔒 Войдите в систему, чтобы проверить ответ.';
+                    resultDiv.style.display = 'block';
+                    return;
+                }
                 console.error('Error:', error);
                 resultDiv.className = 'result-msg result-error';
                 resultDiv.innerHTML = '❌ Ошибка соединения';

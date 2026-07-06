@@ -474,7 +474,7 @@
         </div>
         <div class="exam-actions">
             <div class="timer" id="timer">03:55:00</div>
-            <button class="btn-finish" onclick="finishExam()">Завершить экзамен досрочно</button>
+            <button class="btn-finish" id="finish-exam-btn" onclick="finishExam()">Завершить экзамен досрочно</button>
         </div>
     </div>
 
@@ -901,6 +901,9 @@
         // Завершение экзамена
         function finishExam() {
             if (confirm('⚠️ Вы уверены, что хотите завершить экзамен?')) {
+                const btn = document.getElementById('finish-exam-btn');
+                btn.disabled = true;
+
                 const timeSpent = formatTime(3 * 3600 + 55 * 60 - timeRemaining);
 
                 // ✅ Отправляем на сервер для сохранения в БД
@@ -919,6 +922,8 @@
                             localStorage.setItem(`variant_${variantNum}_answers`, JSON.stringify(answers));
                             localStorage.setItem(`variant_${variantNum}_time`, timeSpent);
                             window.location.href = data.redirect || `/results/${variantNum}`;
+                        } else {
+                            btn.disabled = false;
                         }
                     })
                     .catch(error => {

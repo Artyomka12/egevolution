@@ -103,6 +103,23 @@
     box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
 }
 
+.site-password-hint {
+    margin: 6px 0 0;
+    font-size: 0.82em;
+    line-height: 1.4;
+    color: var(--color-text-secondary);
+}
+
+.site-password-hint a {
+    color: #92400e;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.site-password-hint a:hover {
+    text-decoration: underline;
+}
+
 
 /* ── Адаптив ────────────────────────────────────────────── */
 @media (max-width: 480px) {

@@ -412,7 +412,7 @@
             style="width: 100%; padding: 8px; background: rgba(248, 113, 113, 0.2); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3); border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; margin-bottom: 8px; transition: 0.3s;">
             🔄 Сброс
         </button>
-        <button onclick="finishVariant()"
+        <button onclick="finishVariant()" id="finish-variant-btn"
             style="width: 100%; padding: 8px; background: linear-gradient(135deg, #38bdf8, #818cf8); color: #0f172a; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; transition: 0.3s;">
             ✅ Завершить
         </button>
@@ -587,6 +587,9 @@
         // === ГЛАВНАЯ ФУНКЦИЯ ЗАВЕРШЕНИЯ (ИСПРАВЛЕНА) ===
         async function finishVariant() {
             if (confirm('⚠️ Вы уверены, что хотите завершить вариант?')) {
+                const btn = document.getElementById('finish-variant-btn');
+                btn.disabled = true;
+
                 const answers = {};
                 const forms = document.querySelectorAll('form[id^="check-form-"]');
 
@@ -635,10 +638,12 @@
                         window.location.href = `/results/{{ variant_num }}`;
                     } else {
                         alert('Ошибка при сохранении результатов на сервере.');
+                        btn.disabled = false;
                     }
                 } catch (error) {
                     console.error('Ошибка сети:', error);
                     alert('Ошибка сети. Проверьте подключение.');
+                    btn.disabled = false;
                 }
             }
         }

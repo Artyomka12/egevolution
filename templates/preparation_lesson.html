@@ -165,7 +165,12 @@
             answer: userAnswer
     })
 })
-.then(response => response.json())
+.then(response => {
+            if (response.status === 401) {
+                throw { unauthorized: true };
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.correct) {
                 resEl.className = 'result-msg result-success';
@@ -187,6 +192,12 @@
             resEl.style.display = 'block';
         })
         .catch(error => {
+            if (error && error.unauthorized) {
+                resEl.className = 'result-msg result-error';
+                resEl.textContent = '🔒 Войдите в систему, чтобы проверить ответ.';
+                resEl.style.display = 'block';
+                return;
+            }
             console.error('Error:', error);
             resEl.className = 'result-msg result-error';
             resEl.textContent = '❌ Ошибка при проверке.';

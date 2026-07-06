@@ -26,9 +26,9 @@
 
             <div class="theory-right">
                 {% if task.is_unlocked %}
-                <span class="lock-badge">🔓</span>
+                <span class="badge badge--green">🔓 Открыто</span>
                 {% else %}
-                <span class="lock-badge">🔒</span>
+                <span class="badge badge--red">🔒 Закрыто</span>
                 {% endif %}
                 <div class="status-dot status-dot--{{ task.status }}"></div>
                 <span class="theory-progress">{{ task.correct_tasks }} / {{ task.total_tasks }}</span>

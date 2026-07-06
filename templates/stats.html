@@ -31,6 +31,27 @@
         </div>
     </div>
 
+    <!-- Статистика по заданиям -->
+    <div class="card task-stats-card reveal">
+
+        <div class="history-header">
+            <h2 class="history-title">📊 Статистика по заданиям</h2>
+        </div>
+
+        {% if has_task_stats %}
+        <div class="task-chart-legend">
+            <span class="legend-item"><span class="legend-dot legend-dot--correct"></span>Правильно</span>
+            <span class="legend-item"><span class="legend-dot legend-dot--incorrect"></span>Неправильно</span>
+        </div>
+        <div class="task-chart-scroll">
+            <div class="task-chart" id="task-chart"></div>
+        </div>
+        {% else %}
+        <div class="empty-state">Пока нет отвеченных заданий — реши хотя бы один вариант или практику из теории</div>
+        {% endif %}
+
+    </div>
+
     <!-- История решений -->
     <div class="card history-card reveal">
 
@@ -72,4 +93,74 @@
     </div>
 
 </div>
+{% endblock %}
+
+{% block scripts %}
+{% if has_task_stats %}
+<script>
+    (function () {
+        var data = {{ task_stats | tojson }};
+        var chart = document.getElementById('task-chart');
+        if (!chart) return;
+
+        var maxTotal = Math.max.apply(null, data.map(function (d) { return d.total; }).concat([1]));
+        var CHART_HEIGHT = 200;
+
+        data.forEach(function (d) {
+            var bar = document.createElement('div');
+            bar.className = 'task-bar';
+
+            var stack = document.createElement('div');
+            stack.className = 'task-bar-stack';
+            stack.style.height = CHART_HEIGHT + 'px';
+
+            if (d.total > 0) {
+                var incorrectH = Math.round((d.incorrect / maxTotal) * CHART_HEIGHT);
+                var correctH = Math.round((d.correct / maxTotal) * CHART_HEIGHT);
+
+                var totalLabel = document.createElement('div');
+                totalLabel.className = 'task-bar-total';
+                totalLabel.textContent = d.total;
+                totalLabel.title = 'Задание ' + d.task_num + ': всего попыток — ' + d.total;
+
+                var fill = document.createElement('div');
+                fill.className = 'task-bar-fill';
+
+                var incorrectEl = document.createElement('div');
+                incorrectEl.className = 'task-bar-segment task-bar-segment--incorrect';
+                incorrectEl.style.height = incorrectH + 'px';
+                incorrectEl.title = 'Задание ' + d.task_num + ': неправильно — ' + d.incorrect;
+
+                var correctEl = document.createElement('div');
+                correctEl.className = 'task-bar-segment task-bar-segment--correct';
+                correctEl.style.height = correctH + 'px';
+                correctEl.title = 'Задание ' + d.task_num + ': правильно — ' + d.correct;
+
+                fill.appendChild(incorrectEl);
+                fill.appendChild(correctEl);
+                stack.appendChild(totalLabel);
+                stack.appendChild(fill);
+            }
+
+            var label = document.createElement('div');
+            label.className = 'task-bar-label';
+            label.textContent = d.task_num;
+
+            bar.appendChild(stack);
+
+            if (d.total > 0) {
+                var correctLabel = document.createElement('div');
+                correctLabel.className = 'task-bar-correct';
+                correctLabel.textContent = d.correct;
+                correctLabel.title = 'Задание ' + d.task_num + ': правильно — ' + d.correct;
+                bar.appendChild(correctLabel);
+            }
+
+            bar.appendChild(label);
+
+            chart.appendChild(bar);
+        });
+    })();
+</script>
+{% endif %}
 {% endblock %}

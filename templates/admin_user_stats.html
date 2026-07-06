@@ -139,6 +139,113 @@
             margin-bottom: 20px;
             font-size: 1.3em;
         }
+
+        /* ── Статистика по заданиям (диаграмма) ──────────────── */
+        .task-chart-legend {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 18px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85em;
+            color: #888;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .legend-dot--correct {
+            background: #22c55e;
+        }
+
+        .legend-dot--incorrect {
+            background: #ef4444;
+        }
+
+        .task-chart-scroll {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .task-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 6px;
+            min-width: 1050px;
+            padding-top: 22px;
+        }
+
+        .task-bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            min-width: 34px;
+        }
+
+        .task-bar-stack {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .task-bar-total {
+            margin-bottom: 4px;
+            font-size: 0.62em;
+            color: #888;
+            white-space: nowrap;
+        }
+
+        .task-bar-fill {
+            width: 100%;
+            border-radius: 4px 4px 0 0;
+            overflow: hidden;
+        }
+
+        .task-bar-segment {
+            width: 100%;
+        }
+
+        .task-bar-segment--correct {
+            background: #22c55e;
+        }
+
+        .task-bar-segment--incorrect {
+            background: #ef4444;
+        }
+
+        .task-bar-segment:hover {
+            opacity: 0.8;
+        }
+
+        .task-bar-label {
+            margin-top: 2px;
+            font-size: 0.72em;
+            color: #888;
+        }
+
+        .task-bar-correct {
+            margin-top: 6px;
+            font-size: 0.68em;
+            font-weight: 600;
+            color: #22c55e;
+        }
+
+        .task-stats-empty {
+            text-align: center;
+            padding: 30px 20px;
+            color: #666;
+        }
     </style>
 </head>
 
@@ -176,6 +283,21 @@
                 <div class="stat-value">{{ stats.average_score }}</div>
                 <div class="stat-label">Средний балл</div>
             </div>
+        </div>
+        <!-- Статистика по заданиям -->
+        <div class="history-table-container">
+            <h3 class="section-title">📊 Статистика по заданиям</h3>
+            {% if has_task_stats %}
+            <div class="task-chart-legend">
+                <span class="legend-item"><span class="legend-dot legend-dot--correct"></span>Правильно</span>
+                <span class="legend-item"><span class="legend-dot legend-dot--incorrect"></span>Неправильно</span>
+            </div>
+            <div class="task-chart-scroll">
+                <div class="task-chart" id="task-chart"></div>
+            </div>
+            {% else %}
+            <p class="task-stats-empty">У пользователя пока нет отвеченных заданий.</p>
+            {% endif %}
         </div>
         <!-- История решений (кликабельная) -->
         <div class="history-table-container">
@@ -242,12 +364,12 @@
                                 style="display: inline;">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <button type="submit"
-                                    style="background: none; border: none; cursor: pointer; font-size: 1.2em;"
+                                    style="background: none; border: none; cursor: pointer; font-size: 0.9em; white-space: nowrap;"
                                     title="{{ 'Открыть доступ' if lesson.is_unlocked == 0 else 'Закрыть доступ' }}">
                                     {% if lesson.is_unlocked == 1 %}
-                                    🔓
+                                    🔓 Открыто
                                     {% else %}
-                                    🔒
+                                    🔒 Закрыто
                                     {% endif %}
                                 </button>
                             </form>
@@ -295,12 +417,12 @@
                                 style="display: inline;">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <button type="submit"
-                                    style="background: none; border: none; cursor: pointer; font-size: 1.2em;"
+                                    style="background: none; border: none; cursor: pointer; font-size: 0.9em; white-space: nowrap;"
                                     title="{{ 'Открыть доступ' if task.is_unlocked == 0 else 'Закрыть доступ' }}">
                                     {% if task.is_unlocked == 1 %}
-                                    🔓
+                                    🔓 Открыто
                                     {% else %}
-                                    🔒
+                                    🔒 Закрыто
                                     {% endif %}
                                 </button>
                             </form>
@@ -314,6 +436,74 @@
             {% endif %}
         </div>
     </div>
+
+    {% if has_task_stats %}
+    <script>
+        (function () {
+            var data = {{ task_stats | tojson }};
+            var chart = document.getElementById('task-chart');
+            if (!chart) return;
+
+            var maxTotal = Math.max.apply(null, data.map(function (d) { return d.total; }).concat([1]));
+            var CHART_HEIGHT = 200;
+
+            data.forEach(function (d) {
+                var bar = document.createElement('div');
+                bar.className = 'task-bar';
+
+                var stack = document.createElement('div');
+                stack.className = 'task-bar-stack';
+                stack.style.height = CHART_HEIGHT + 'px';
+
+                if (d.total > 0) {
+                    var incorrectH = Math.round((d.incorrect / maxTotal) * CHART_HEIGHT);
+                    var correctH = Math.round((d.correct / maxTotal) * CHART_HEIGHT);
+
+                    var totalLabel = document.createElement('div');
+                    totalLabel.className = 'task-bar-total';
+                    totalLabel.textContent = d.total;
+                    totalLabel.title = 'Задание ' + d.task_num + ': всего попыток — ' + d.total;
+
+                    var fill = document.createElement('div');
+                    fill.className = 'task-bar-fill';
+
+                    var incorrectEl = document.createElement('div');
+                    incorrectEl.className = 'task-bar-segment task-bar-segment--incorrect';
+                    incorrectEl.style.height = incorrectH + 'px';
+                    incorrectEl.title = 'Задание ' + d.task_num + ': неправильно — ' + d.incorrect;
+
+                    var correctEl = document.createElement('div');
+                    correctEl.className = 'task-bar-segment task-bar-segment--correct';
+                    correctEl.style.height = correctH + 'px';
+                    correctEl.title = 'Задание ' + d.task_num + ': правильно — ' + d.correct;
+
+                    fill.appendChild(incorrectEl);
+                    fill.appendChild(correctEl);
+                    stack.appendChild(totalLabel);
+                    stack.appendChild(fill);
+                }
+
+                var label = document.createElement('div');
+                label.className = 'task-bar-label';
+                label.textContent = d.task_num;
+
+                bar.appendChild(stack);
+
+                if (d.total > 0) {
+                    var correctLabel = document.createElement('div');
+                    correctLabel.className = 'task-bar-correct';
+                    correctLabel.textContent = d.correct;
+                    correctLabel.title = 'Задание ' + d.task_num + ': правильно — ' + d.correct;
+                    bar.appendChild(correctLabel);
+                }
+
+                bar.appendChild(label);
+
+                chart.appendChild(bar);
+            });
+        })();
+    </script>
+    {% endif %}
 </body>
 
 </html>

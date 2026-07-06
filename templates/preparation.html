@@ -34,9 +34,9 @@
                 <div class="lesson-meta">
                     <span class="lesson-progress">{{ lesson.correct_tasks }} / {{ lesson.total_tasks }}</span>
                     {% if lesson.is_unlocked %}
-                    <span title="Доступ открыт">🔓</span>
+                    <span class="badge badge--green">🔓 Открыто</span>
                     {% else %}
-                    <span title="Нет доступа">🔒</span>
+                    <span class="badge badge--red">🔒 Закрыто</span>
                     {% endif %}
                 </div>
             </div>

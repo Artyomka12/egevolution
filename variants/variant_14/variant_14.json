@@ -1,87 +1,87 @@
 {
- "title": "Пробный вариант",
- "created_at": "14.06.2026 18:50",
+ "title": "Вариант 14",
+ "created_at": "06.07.2026 10:32",
  "tasks": {
   "1": {
-   "task_id": 1
-  },
-  "2": {
-   "task_id": 1
-  },
-  "3": {
-   "task_id": 1
-  },
-  "4": {
-   "task_id": 1
-  },
-  "5": {
-   "task_id": 1
-  },
-  "6": {
-   "task_id": 1
-  },
-  "7": {
-   "task_id": 1
-  },
-  "8": {
-   "task_id": 1
-  },
-  "9": {
-   "task_id": 1
+   "task_id": 84
   },
   "10": {
-   "task_id": 1
+   "task_id": 66
   },
   "11": {
-   "task_id": 1
+   "task_id": 99
   },
   "12": {
-   "task_id": 1
+   "task_id": 34
   },
   "13": {
-   "task_id": 1
+   "task_id": 46
   },
   "14": {
-   "task_id": 1
+   "task_id": 74
   },
   "15": {
-   "task_id": 1
+   "task_id": 93
   },
   "16": {
-   "task_id": 1
+   "task_id": 117
   },
   "17": {
-   "task_id": 1
+   "task_id": 29
   },
   "18": {
-   "task_id": 1
+   "task_id": 97
   },
   "19": {
-   "task_id": 1
+   "task_id": 87
+  },
+  "2": {
+   "task_id": 85
   },
   "20": {
-   "task_id": 1
+   "task_id": 87
   },
   "21": {
-   "task_id": 1
+   "task_id": 87
   },
   "22": {
-   "task_id": 1
+   "task_id": 10
   },
   "23": {
-   "task_id": 1
+   "task_id": 69
   },
   "24": {
-   "task_id": 1
+   "task_id": 34
   },
   "25": {
-   "task_id": 1
+   "task_id": 80
   },
   "26": {
-   "task_id": 1
+   "task_id": 77
   },
   "27": {
-   "task_id": 1
+   "task_id": 29
+  },
+  "3": {
+   "task_id": 39
+  },
+  "4": {
+   "task_id": 78
+  },
+  "5": {
+   "task_id": 94
+  },
+  "6": {
+   "task_id": 54
+  },
+  "7": {
+   "task_id": 121
+  },
+  "8": {
+   "task_id": 37
+  },
+  "9": {
+   "task_id": 12
   }
  },
  "format": "references"
