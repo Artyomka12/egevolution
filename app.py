@@ -1093,11 +1093,7 @@ def theory():
                 task["status"] = "in_progress"  # Желтый
 
             # ✅ ДОБАВЛЕНО: Получаем статус доступа
-            access = db.execute(
-                "SELECT is_unlocked FROM user_theory_access WHERE user_id=? AND task_num=?",
-                (user_id, task_num),
-            ).fetchone()
-            task["is_unlocked"] = access["is_unlocked"] if access else 0
+            task["is_unlocked"] = 1 if check_theory_access(user_id, task_num) else 0
 
         db.close()
 
