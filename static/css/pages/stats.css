@@ -256,6 +256,12 @@
     white-space: nowrap;
 }
 
+/* Кнопка перехода к заданию в базе */
+.task-link-cell {
+    white-space: nowrap;
+    text-align: right;
+}
+
 /* Ячейка с ответом: моноширинный шрифт */
 .answer-cell {
     font-family: 'Courier New', monospace;

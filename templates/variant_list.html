@@ -3,7 +3,7 @@
 {% block title %}Варианты ЕГЭ | ЕГЭволюция{% endblock %}
 
 {% block extra_head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/catalogs.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/catalogs.css') }}?v={{ app_version }}">
 {% endblock %}
 
 {% block content %}

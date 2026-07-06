@@ -3,7 +3,7 @@
 {% block title %}Выбор режима | Вариант {{ variant_num }} | ЕГЭволюция{% endblock %}
 
 {% block extra_head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/variants.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/variants.css') }}?v={{ app_version }}">
 {% endblock %}
 
 {% block content %}

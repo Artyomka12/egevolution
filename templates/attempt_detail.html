@@ -3,7 +3,7 @@
 {% block title %}Детали попытки | ЕГЭволюция{% endblock %}
 
 {% block extra_head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/stats.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/stats.css') }}?v={{ app_version }}">
 {% endblock %}
 
 {% block content %}
@@ -61,20 +61,14 @@
                         <th>Твой ответ</th>
                         <th>Правильный ответ</th>
                         <th class="points-right">Балл</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for item in tasks %}
                     <tr class="{% if item.points > 0 %}row--correct{% else %}row--incorrect{% endif %}">
 
-                        <td class="task-num-cell">
-                            {% if item.task_data._base_task_id is defined %}
-                            <a href="/tasks/{{ item.task_data._source_task_num }}#task-block-{{ item.task_data._base_task_id }}"
-                               target="_blank" title="Открыть в базе заданий">{{ item.task_data.id }} 🔗</a>
-                            {% else %}
-                            {{ item.task_data.id }}
-                            {% endif %}
-                        </td>
+                        <td class="task-num-cell">{{ item.task_data.id }}</td>
 
                         <td class="answer-cell {% if item.user_answer is none %}not-answered{% endif %}">
                             {% if item.user_answer %}
@@ -107,6 +101,13 @@
                             <span class="badge badge--green">+{{ item.points }}</span>
                             {% else %}
                             <span class="badge badge--red">0</span>
+                            {% endif %}
+                        </td>
+
+                        <td class="task-link-cell">
+                            {% if item.task_data._base_task_id is defined %}
+                            <a href="/tasks/{{ item.task_data._source_task_num }}#task-block-{{ item.task_data._base_task_id }}"
+                               target="_blank" class="btn btn-secondary btn--sm">Перейти к заданию</a>
                             {% endif %}
                         </td>
 

@@ -3,7 +3,7 @@
 {% block title %}Теория: Задание {{ task_num }} | ЕГЭволюция{% endblock %}
 
 {% block extra_head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/teoria.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/teoria.css') }}?v={{ app_version }}">
 {% endblock %}
 
 {% block content %}

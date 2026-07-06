@@ -3,7 +3,7 @@
 {% block title %}Урок: {{ lesson.title }} | ЕГЭволюция{% endblock %}
 
 {% block extra_head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/preparation_lesson.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/preparation_lesson.css') }}?v={{ app_version }}">
 {% endblock %}
 
 {% block content %}

@@ -3,7 +3,7 @@
 {% block title %}Моя статистика | ЕГЭволюция{% endblock %}
 
 {% block extra_head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/stats.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/stats.css') }}?v={{ app_version }}">
 {% endblock %}
 
 {% block content %}

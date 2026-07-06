@@ -7,7 +7,7 @@
     <title>{% block title %}ЕГЭволюция{% endblock %}</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/design-system.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/design-system.css') }}?v={{ app_version }}">
     {% block extra_head %}{% endblock %}
 </head>
 
@@ -31,7 +31,7 @@
     {% include 'components/footer.html' %}
     {% endblock %}
 
-    <script src="{{ url_for('static', filename='js/scroll-reveal.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/scroll-reveal.js') }}?v={{ app_version }}"></script>
     {% block scripts %}{% endblock %}
 
 </body>

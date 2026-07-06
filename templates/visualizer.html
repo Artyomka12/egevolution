@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='visualizer/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='visualizer/style.css') }}?v={{ app_version }}" />
 </head>
 <body>
 
@@ -238,9 +238,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="{{ url_for('static', filename='visualizer/js/api.js') }}"></script>
-  <script src="{{ url_for('static', filename='visualizer/js/editor.js') }}"></script>
-  <script src="{{ url_for('static', filename='visualizer/js/animator.js') }}"></script>
-  <script src="{{ url_for('static', filename='visualizer/js/block-scheme.js') }}"></script>
+  <script src="{{ url_for('static', filename='visualizer/js/api.js') }}?v={{ app_version }}"></script>
+  <script src="{{ url_for('static', filename='visualizer/js/editor.js') }}?v={{ app_version }}"></script>
+  <script src="{{ url_for('static', filename='visualizer/js/animator.js') }}?v={{ app_version }}"></script>
+  <script src="{{ url_for('static', filename='visualizer/js/block-scheme.js') }}?v={{ app_version }}"></script>
 </body>
 </html>
