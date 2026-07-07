@@ -509,6 +509,43 @@ def load_user_stats(user_id):
     return stats
 
 
+def load_homepage_progress(user_id):
+    """Сводка для блока 'Ваш прогресс' на главной странице."""
+    db = get_db()
+
+    variant_correct = db.execute(
+        "SELECT COUNT(*) FROM user_task_answers WHERE user_id=? AND is_correct=1",
+        (user_id,),
+    ).fetchone()[0]
+    theory_correct = db.execute(
+        "SELECT COUNT(*) FROM user_theory_progress WHERE user_id=? AND is_correct=1",
+        (user_id,),
+    ).fetchone()[0]
+    lesson_correct = db.execute(
+        "SELECT COUNT(*) FROM user_lesson_progress WHERE user_id=? AND is_correct=1",
+        (user_id,),
+    ).fetchone()[0]
+    topics_studied = db.execute(
+        "SELECT COUNT(DISTINCT task_num) FROM user_theory_progress WHERE user_id=? AND is_correct=1",
+        (user_id,),
+    ).fetchone()[0]
+    best_score = (
+        db.execute(
+            "SELECT MAX(secondary_score) FROM user_results WHERE user_id=?",
+            (user_id,),
+        ).fetchone()[0]
+        or 0
+    )
+
+    db.close()
+
+    return {
+        "solved_tasks": variant_correct + theory_correct + lesson_correct,
+        "topics_studied": topics_studied,
+        "best_score": best_score,
+    }
+
+
 def load_task_number_stats(user_id):
     """Детальная статистика по каждому из 27 номеров заданий ЕГЭ:
     сколько всего отвечено (варианты + практика теории) и сколько правильно.
@@ -1071,7 +1108,10 @@ def check_theory_answer():
 # === МАРШРУТЫ ===
 @app.route("/")
 def start():
-    return render_template("start.html")
+    progress = None
+    if "user_id" in session:
+        progress = load_homepage_progress(session["user_id"])
+    return render_template("start.html", progress=progress)
 
 
 @app.route("/variants")

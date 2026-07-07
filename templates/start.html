@@ -637,6 +637,21 @@
             font-weight: 500;
         }
 
+        .progress-empty {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(37, 99, 235, 0.16);
+            border-radius: 13px;
+            padding: 32px 24px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(37, 99, 235, 0.09);
+        }
+
+        .progress-empty-text {
+            color: #475569;
+            font-size: 0.95em;
+            margin: 0 0 16px;
+        }
+
         /* ============================================================
            ГОСТЕВОЙ БЛОК
         ============================================================ */
@@ -3137,20 +3152,27 @@
                 <span class="progress-header-title">📈 Ваш прогресс</span>
                 <a href="/stats" class="progress-more-link">Подробная статистика →</a>
             </div>
+            {% if progress and (progress.solved_tasks > 0 or progress.topics_studied > 0 or progress.best_score > 0) %}
             <div class="progress-cards">
                 <div class="progress-card reveal">
-                    <div class="progress-num">145</div>
+                    <div class="progress-num">{{ progress.solved_tasks }}</div>
                     <div class="progress-label">Решено задач</div>
                 </div>
                 <div class="progress-card reveal">
-                    <div class="progress-num">9 / 27</div>
+                    <div class="progress-num">{{ progress.topics_studied }} / 27</div>
                     <div class="progress-label">Изучено тем</div>
                 </div>
                 <div class="progress-card reveal">
-                    <div class="progress-num">90</div>
+                    <div class="progress-num">{{ progress.best_score }}</div>
                     <div class="progress-label">Лучший результат, баллов</div>
                 </div>
             </div>
+            {% else %}
+            <div class="progress-empty reveal">
+                <p class="progress-empty-text">Прогресс появится здесь, как только вы решите первую задачу</p>
+                <a href="/variants" class="hero-btn hero-btn-primary progress-empty-btn">Начать решать →</a>
+            </div>
+            {% endif %}
         </section>
         {% endif %}
 
