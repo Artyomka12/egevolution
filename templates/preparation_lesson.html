@@ -36,7 +36,12 @@
         <h2 class="lesson-card-title">📚 Теоретический материал</h2>
         <div class="theory-content">
             {% for para in lesson.theory.description %}
+            {% set stripped_para = para.strip() %}
+            {% if stripped_para in ['<ul>', '</ul>', '<ol>', '</ol>'] or (stripped_para.startswith('<li>') and stripped_para.endswith('</li>')) %}
+            {{ para | replace_markers }}
+            {% else %}
             <p>{{ para | replace_markers }}</p>
+            {% endif %}
             {% if lesson.theory.images %}
             {% set p_idx = loop.index0 %}
             {% for img in lesson.theory.images %}
@@ -77,7 +82,12 @@
             {% if task.description %}
             <div class="task-description">
                 {% for para in task.description %}
+                {% set stripped_para = para.strip() %}
+                {% if stripped_para in ['<ul>', '</ul>', '<ol>', '</ol>'] or (stripped_para.startswith('<li>') and stripped_para.endswith('</li>')) %}
+                {{ para | replace_markers }}
+                {% else %}
                 <p>{{ para | replace_markers }}</p>
+                {% endif %}
                 {% if task.images %}
                 {% set t_idx = loop.index0 %}
                 {% for img in task.images %}

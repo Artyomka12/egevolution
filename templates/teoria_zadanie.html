@@ -42,7 +42,12 @@
         {% if theory.theory %}
         <div class="theory-content">
             {% for paragraph in theory.theory.description %}
+            {% set stripped_paragraph = paragraph.strip() %}
+            {% if stripped_paragraph in ['<ul>', '</ul>', '<ol>', '</ol>'] or (stripped_paragraph.startswith('<li>') and stripped_paragraph.endswith('</li>')) %}
+            {{ paragraph | replace_markers }}
+            {% else %}
             <p>{{ paragraph | replace_markers }}</p>
+            {% endif %}
             {% if theory.theory.images %}
             {% set current_paragraph_index = loop.index0 %}
             {% for image in theory.theory.images %}
@@ -119,7 +124,12 @@
             {% if task.description %}
             <div class="task-description">
                 {% for paragraph in task.description %}
+                {% set stripped_paragraph = paragraph.strip() %}
+                {% if stripped_paragraph in ['<ul>', '</ul>', '<ol>', '</ol>'] or (stripped_paragraph.startswith('<li>') and stripped_paragraph.endswith('</li>')) %}
+                {{ paragraph | replace_markers }}
+                {% else %}
                 <p>{{ paragraph | replace_markers }}</p>
+                {% endif %}
                 {% if task.images %}
                 {% set current_para_index = loop.index0 %}
                 {% for image in task.images %}

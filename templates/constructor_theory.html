@@ -269,6 +269,12 @@
         .fmt-btn-b { font-weight: bold; }
         .fmt-btn-i { font-style: italic; }
         .fmt-btn-u { text-decoration: underline; }
+        .fmt-btn-code {
+            font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+            background: rgba(37, 99, 235, 0.12);
+            border-color: rgba(37, 99, 235, 0.35);
+            color: #93c5fd;
+        }
 
         /* Картинки под абзацем теории */
         .img-card {
@@ -678,6 +684,7 @@
                 { label: 'U',  tag: 'u',   cls: 'fmt-btn-u', title: 'Подчёркнутый' },
                 { label: 'xⁿ', tag: 'sup', cls: '',          title: 'Верхний индекс' },
                 { label: 'x₁', tag: 'sub', cls: '',          title: 'Нижний индекс' },
+                { label: '</>', tag: 'code', cls: 'fmt-btn-code', title: 'Код' },
             ].forEach(({ label, tag, cls, title }) => {
                 const btn = document.createElement('button');
                 btn.type = 'button';
