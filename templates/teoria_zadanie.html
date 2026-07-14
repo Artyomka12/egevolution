@@ -118,6 +118,7 @@
         {% endif %}
 
         {% for task in theory.practice.tasks %}
+        {% set task_idx = loop.index %}
         <div class="task-block">
             <div class="task-title">{{ task.title or 'Задание ' + loop.index|string }}</div>
 
@@ -143,8 +144,20 @@
             </div>
             {% endif %}
 
-            <!-- Файл задания -->
-            {% if task.file %}
+            <!-- Файл(ы) задания -->
+            {% if task.files %}
+            {% for f in task.files %}
+            <div class="file-download">
+                <a href="{{ url_for('theory_files', task_num=task_num, filename=f.path) }}" download
+                    class="file-link">
+                    📄 {{ f.name or f.path }}
+                </a>
+                {% if f.description %}
+                <span class="file-desc">{{ f.description }}</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+            {% elif task.file %}
             <div class="file-download">
                 <a href="{{ url_for('theory_files', task_num=task_num, filename=task.file.path) }}" download
                     class="file-link">
@@ -166,7 +179,7 @@
                         {% for col in range(task.answer_grid.cols) %}
                         <td>
                             <input type="text"
-                                id="practice-grid-{{ task_num }}-{{ loop.parent.loop.index }}-{{ row }}-{{ col }}"
+                                id="practice-grid-{{ task_num }}-{{ task_idx }}-{{ row }}-{{ col }}"
                                 placeholder="R{{ row+1 }}C{{ col+1 }}" class="grid-input form-input" autocomplete="off"
                                 maxlength="30">
                         </td>
