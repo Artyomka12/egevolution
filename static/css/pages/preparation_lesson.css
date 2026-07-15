@@ -105,6 +105,12 @@
 
 
 /* ── Видеоразбор ─────────────────────────────────────────── */
+.videos-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
 .video-container {
     border: 1px solid var(--color-card-border);
     border-radius: var(--radius-md);
@@ -119,6 +125,35 @@
 .video-container video {
     width: 100%;
     display: block;
+}
+
+/* Заголовок видео (новый формат, несколько видео) */
+.video-title {
+    padding: 12px 16px;
+    background: rgba(241, 245, 249, 0.6);
+    border-top: 1px solid var(--color-card-border);
+}
+
+.video-title h3 {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: 1em;
+    font-weight: 600;
+}
+
+/* Заголовок видео (старый формат, одно видео) */
+.video-title-old {
+    margin-top: 12px;
+    color: var(--color-text-primary);
+    font-size: 1em;
+    font-weight: 600;
+}
+
+
+/* ── Описание прикреплённого файла ───────────────────────── */
+.file-desc {
+    font-size: 0.88em;
+    color: var(--color-text-muted);
 }
 
 

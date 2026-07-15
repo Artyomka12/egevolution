@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Конструктор уроков | ЕГЭволюция</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .nav-back {
+            display: inline-block;
+            color: #a855f7;
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            transition: 0.3s;
+        }
+
+        .nav-back:hover {
+            background: rgba(168, 85, 247, 0.1);
+        }
+
+        .constructor-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+        }
+
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .right-column {
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 25px;
+        }
+
+        .card h2 {
+            color: #fff;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #a855f7;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #e0e0e0;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #a855f7;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e0e0e0;
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.9em;
+        }
+
+        .paragraph-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .video-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .task-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .section-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+            border-color: transparent;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Список выбора урока (переменная длина названий — вертикальный список, не сетка) */
+        .task-numbers-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .task-num-btn {
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #888;
+            cursor: pointer;
+            text-align: left;
+            transition: 0.3s;
+            font-size: 0.9em;
+        }
+
+        .task-num-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .task-num-btn.active {
+            border-color: #a855f7;
+            background: rgba(168, 85, 247, 0.2);
+            color: #e0e0e0;
+        }
+
+        .task-num-btn.filled {
+            border-color: #4ade80;
+            background: rgba(74, 222, 128, 0.15);
+            color: #4ade80;
+        }
+
+        /* Тулбар форматирования (Ж/К/Подч./степени) */
+        .fmt-toolbar {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 6px;
+        }
+
+        .fmt-btn {
+            padding: 3px 10px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 5px;
+            color: #e0e0e0;
+            cursor: pointer;
+            font-size: 13px;
+            line-height: 1.5;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .fmt-btn:hover {
+            background: rgba(168, 85, 247, 0.25);
+            border-color: #a855f7;
+        }
+
+        .fmt-btn-b { font-weight: bold; }
+        .fmt-btn-i { font-style: italic; }
+        .fmt-btn-u { text-decoration: underline; }
+        .fmt-btn-code {
+            font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+            background: rgba(37, 99, 235, 0.12);
+            border-color: rgba(37, 99, 235, 0.35);
+            color: #93c5fd;
+        }
+
+        /* Картинки под абзацем теории */
+        .img-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            font-size: 13px;
+            color: #aaa;
+        }
+
+        .new-img-block {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px dashed rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 8px 0 12px;
+        }
+
+        .new-img-block .form-group {
+            margin-bottom: 10px;
+        }
+
+        .new-img-block .form-group:last-of-type {
+            margin-bottom: 0;
+        }
+
+        /* Задачи практики: сворачиваемая карточка */
+        .practice-task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .practice-task-body {
+            padding-top: 8px;
+        }
+
+        /* Тип ответа (один/два/таблица) — по образцу admin_task_form.html */
+        .answer-type-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .answer-type-btn {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: 0.3s;
+            font-size: 0.9em;
+        }
+
+        .answer-type-btn.active {
+            border-color: #a855f7;
+            background: rgba(168, 85, 247, 0.15);
+        }
+
+        .grid-inputs {
+            display: grid;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .grid-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .grid-row input {
+            flex: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="/constructor_gate" class="nav-back">← Назад к выбору</a>
+            <h1>🎓 Конструктор уроков</h1>
+            <p>Создание и редактирование уроков начальной подготовки</p>
+        </div>
+
+        <div class="constructor-grid">
+            <div class="left-column">
+                <!-- Выбор урока -->
+                <div class="card">
+                    <h2>📋 Выбор урока</h2>
+                    <div class="task-numbers-grid" id="task-numbers-grid">
+                        <!-- Генерируется JS -->
+                    </div>
+                    <div id="current-task-info" style="color: #888; text-align: center; margin-bottom: 15px;">
+                        Выберите урок выше
+                    </div>
+                    <div class="form-group">
+                        <label>Название урока:</label>
+                        <input type="text" id="theory-title" placeholder="Например: Python: условия">
+                    </div>
+                    <div class="form-group">
+                        <label>Краткое описание (для каталога уроков):</label>
+                        <input type="text" id="lesson-description" placeholder="Например: Изучаем if/elif/else">
+                    </div>
+                </div>
+
+                <!-- Секции -->
+                <div class="card">
+                    <div class="section-tabs">
+                        <div class="tab active" onclick="showSection('theory')">📖 Теория</div>
+                        <div class="tab" onclick="showSection('video')">🎬 Видео</div>
+                        <div class="tab" onclick="showSection('practice')">📝 Практика</div>
+                    </div>
+
+                    <!-- ТЕОРИЯ -->
+                    <div id="theory-section" class="section active">
+                        <h2>Теоретический материал</h2>
+
+                        <div class="form-group">
+                            <label>📝 Массовый ввод (текст разделится на абзацы по пустой строке):</label>
+                            <textarea id="bulk-text-input"
+                                placeholder="Вставьте текст целиком. Абзацы должны быть разделены пустой строкой."
+                                rows="5"></textarea>
+                            <button class="btn btn-secondary btn-sm" onclick="splitBulkText()" style="margin-top: 10px;">
+                                🔄 Разделить на абзацы</button>
+                        </div>
+
+                        <div id="theory-paragraphs"></div>
+                        <button class="btn btn-secondary btn-sm" onclick="addTheoryParagraph()">+ Добавить
+                            абзац</button>
+                    </div>
+
+                    <!-- ВИДЕО -->
+                    <div id="video-section" class="section">
+                        <h2>Видео разбор</h2>
+                        <div id="videos-list"></div>
+                        <button class="btn btn-secondary btn-sm" onclick="addVideo()">+ Добавить видео</button>
+                    </div>
+
+                    <!-- ПРАКТИКА -->
+                    <div id="practice-section" class="section">
+                        <h2>Практические задания</h2>
+                        <div class="form-group">
+                            <label>Описание раздела:</label>
+                            <textarea id="practice-description"
+                                placeholder="Решите задания для закрепления материала..." rows="3"></textarea>
+                        </div>
+                        <div id="practice-tasks"></div>
+                        <button class="btn btn-secondary btn-sm" onclick="addPracticeTask()">+ Добавить задание</button>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn btn-primary" onclick="saveTheory()" style="flex: 1;">💾 Сохранить урок</button>
+                    <button class="btn btn-danger" onclick="clearTheory()" style="flex: 1;">🗑️ Очистить</button>
+                </div>
+            </div>
+
+            <!-- Правая колонка -->
+            <div class="right-column">
+                <div class="card">
+                    <h2>💡 Подсказки</h2>
+                    <ul style="color: #888; line-height: 1.8; padding-left: 20px;">
+                        <li>Выберите урок из списка</li>
+                        <li>Заполните теоретический материал</li>
+                        <li>Добавьте видео разбор (опционально, можно несколько)</li>
+                        <li>Добавьте практические задания</li>
+                        <li>Нажмите "Сохранить урок"</li>
+                        <li>JSON файл сохранится в папке uroki/urok_XX/</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Диапазон уроков, показываемых в списке выбора (с запасом на будущий рост).
+        const LESSON_COUNT = 20;
+
+        let currentTaskNum = null;
+        let filledTaskNums = new Set();
+        let lessonTitles = {}; // { [num]: title } — для подписи кнопок в списке
+        let theoryData = {
+            lesson_id: null,
+            title: "",
+            description: "",
+            theory: { description: [], images: [] },
+            videos: [],
+            practice: { description: "", tasks: [] }
+        };
+        // Картинки для абзацев теории, ещё не отправленные на сервер (File-объекты)
+        let pendingNewTheoryImages = []; // { file, after_paragraph, size, alt }
+        // Пути уже сохранённых картинок, отмеченных на удаление при следующем сохранении
+        let pendingDeleteTheoryImages = [];
+        // Аналогичное pending-состояние для картинок/файлов задач практики
+        let pendingNewPracticeImages = []; // { file, task_idx, after_paragraph, size, alt }
+        let pendingDeletePracticeImages = [];
+        let pendingNewPracticeFiles = {}; // { [task_idx]: { file, name, description } }
+        let pendingDeletePracticeFileTaskIdx = new Set();
+        // Какие карточки задач практики сейчас свёрнуты (по индексу)
+        let collapsedPracticeTasks = new Set();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTaskNumbersGrid();
+            fetchAllTheoryStatuses();
+        });
+
+        function showSection(sectionName) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(sectionName + '-section').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // === Список выбора урока (1..LESSON_COUNT) ===
+        function renderTaskNumbersGrid() {
+            const grid = document.getElementById('task-numbers-grid');
+            grid.innerHTML = '';
+            for (let i = 1; i <= LESSON_COUNT; i++) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'task-num-btn';
+                btn.textContent = `${i}. Урок ${i}`;
+                btn.dataset.num = i;
+                btn.onclick = () => selectTaskNumber(i);
+                grid.appendChild(btn);
+            }
+            updateTaskNumbersVisual();
+        }
+
+        function updateTaskNumbersVisual() {
+            document.querySelectorAll('.task-num-btn').forEach(btn => {
+                const num = parseInt(btn.dataset.num);
+                btn.classList.remove('active', 'filled');
+                if (filledTaskNums.has(num)) {
+                    btn.classList.add('filled');
+                }
+                if (lessonTitles[num]) {
+                    btn.textContent = `${num}. ${lessonTitles[num]}`;
+                }
+                if (num === currentTaskNum) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // Узнаём, для каких номеров урок уже есть (для зелёной подсветки и названия в списке)
+        function fetchAllTheoryStatuses() {
+            const checks = [];
+            for (let i = 1; i <= LESSON_COUNT; i++) {
+                checks.push(
+                    fetch(`/api/uroki/${i}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.exists) {
+                                filledTaskNums.add(i);
+                                if (data.lesson && data.lesson.title) {
+                                    lessonTitles[i] = data.lesson.title;
+                                }
+                            }
+                        })
+                        .catch(() => {})
+                );
+            }
+            Promise.all(checks).then(updateTaskNumbersVisual);
+        }
+
+        function selectTaskNumber(num) {
+            currentTaskNum = num;
+            document.getElementById('current-task-info').textContent = lessonTitles[num] ? `Урок №${num} — ${lessonTitles[num]}` : `Урок №${num}`;
+            pendingNewTheoryImages = [];
+            pendingDeleteTheoryImages = [];
+            pendingNewPracticeImages = [];
+            pendingDeletePracticeImages = [];
+            pendingNewPracticeFiles = {};
+            pendingDeletePracticeFileTaskIdx = new Set();
+            updateTaskNumbersVisual();
+
+            fetch(`/api/uroki/${num}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.exists) {
+                        theoryData = data.lesson;
+                        theoryData.theory = theoryData.theory || { description: [], images: [] };
+                        theoryData.theory.images = theoryData.theory.images || [];
+                        theoryData.practice = theoryData.practice || { description: "", tasks: [] };
+                        theoryData.practice.tasks = theoryData.practice.tasks || [];
+                        theoryData.practice.tasks.forEach(t => { t.images = t.images || []; });
+                        // Уже существующие задачи практики сворачиваем по умолчанию
+                        collapsedPracticeTasks = new Set(theoryData.practice.tasks.map((_, i) => i));
+                        // На случай старого одиночного video-объекта — переводим в массив для редактирования.
+                        if (!theoryData.videos) {
+                            theoryData.videos = theoryData.video ? [theoryData.video] : [];
+                        }
+                        delete theoryData.video;
+                        document.getElementById('theory-title').value = theoryData.title || '';
+                        document.getElementById('lesson-description').value = theoryData.description || '';
+                        renderTheoryParagraphs();
+                        renderPracticeTasks();
+                        renderVideos();
+                        document.getElementById('practice-description').value = theoryData.practice?.description || '';
+                    } else {
+                        resetTheoryData();
+                    }
+                })
+                .catch(err => {
+                    console.error('Error loading lesson:', err);
+                    resetTheoryData();
+                });
+        }
+
+        function resetTheoryData() {
+            theoryData = {
+                lesson_id: currentTaskNum,
+                title: "",
+                description: "",
+                theory: { description: [], images: [] },
+                videos: [],
+                practice: { description: "", tasks: [] }
+            };
+            pendingNewTheoryImages = [];
+            pendingDeleteTheoryImages = [];
+            pendingNewPracticeImages = [];
+            pendingDeletePracticeImages = [];
+            pendingNewPracticeFiles = {};
+            pendingDeletePracticeFileTaskIdx = new Set();
+            collapsedPracticeTasks = new Set();
+            document.getElementById('theory-title').value = '';
+            document.getElementById('lesson-description').value = '';
+            document.getElementById('theory-paragraphs').innerHTML = '';
+            document.getElementById('practice-tasks').innerHTML = '';
+            document.getElementById('videos-list').innerHTML = '';
+            document.getElementById('practice-description').value = '';
+        }
+
+        // === Видео (несколько на тему) ===
+        function renderVideos() {
+            const container = document.getElementById('videos-list');
+            container.innerHTML = '';
+            theoryData.videos.forEach((video, idx) => {
+                const div = document.createElement('div');
+                div.className = 'video-item';
+                div.innerHTML = `
+<div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+<span style="color: #a855f7; font-weight: bold;">Видео ${idx + 1}</span>
+<button type="button" class="btn btn-danger btn-sm" onclick="removeVideo(${idx})">✕</button>
+</div>
+<div class="form-group">
+<label>Путь к видео файлу:</label>
+<input type="text" value="${video.path || ''}" placeholder="video.mp4" onchange="updateVideo(${idx}, 'path', this.value)">
+</div>
+<div class="form-group">
+<label>Название видео:</label>
+<input type="text" value="${video.title || ''}" placeholder="Разбор задания №1" onchange="updateVideo(${idx}, 'title', this.value)">
+</div>
+`;
+                container.appendChild(div);
+            });
+        }
+
+        function addVideo() {
+            theoryData.videos.push({ path: "", title: "" });
+            renderVideos();
+        }
+
+        function updateVideo(idx, field, value) {
+            theoryData.videos[idx][field] = value;
+        }
+
+        function removeVideo(idx) {
+            theoryData.videos.splice(idx, 1);
+            renderVideos();
+        }
+
+        // === Массовый ввод: разбиение вставленного текста на абзацы ===
+        function splitBulkText() {
+            const bulkText = document.getElementById('bulk-text-input').value.trim();
+            if (!bulkText) {
+                alert('Вставьте текст для разделения!');
+                return;
+            }
+
+            const paragraphs = bulkText.split(/\r?\n\s*\r?\n/).map(p => p.trim()).filter(p => p.length > 0);
+            if (paragraphs.length === 0) {
+                alert('Не удалось выделить абзацы. Проверьте форматирование текста.');
+                return;
+            }
+
+            theoryData.theory.description = paragraphs;
+            renderTheoryParagraphs();
+            document.getElementById('bulk-text-input').value = '';
+        }
+
+        // === Тулбар форматирования текста (Ж/К/Подч./степени) ===
+        function formatText(textarea, tag) {
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const val = textarea.value;
+            const open = `<${tag}>`;
+            const close = `</${tag}>`;
+            if (start === end) {
+                textarea.value = val.slice(0, start) + open + close + val.slice(end);
+                const pos = start + open.length;
+                textarea.setSelectionRange(pos, pos);
+            } else {
+                const selected = val.slice(start, end);
+                textarea.value = val.slice(0, start) + open + selected + close + val.slice(end);
+                textarea.setSelectionRange(start, start + open.length + selected.length + close.length);
+            }
+            textarea.focus();
+        }
+
+        // onUpdate вызывается после форматирования, чтобы сразу синхронизировать theoryData
+        // (программное изменение .value не порождает событие change у textarea)
+        function attachToolbar(textarea, onUpdate) {
+            const toolbar = document.createElement('div');
+            toolbar.className = 'fmt-toolbar';
+            [
+                { label: 'B',  tag: 'b',   cls: 'fmt-btn-b', title: 'Жирный' },
+                { label: 'I',  tag: 'i',   cls: 'fmt-btn-i', title: 'Курсив' },
+                { label: 'U',  tag: 'u',   cls: 'fmt-btn-u', title: 'Подчёркнутый' },
+                { label: 'xⁿ', tag: 'sup', cls: '',          title: 'Верхний индекс' },
+                { label: 'x₁', tag: 'sub', cls: '',          title: 'Нижний индекс' },
+                { label: '</>', tag: 'code', cls: 'fmt-btn-code', title: 'Код' },
+            ].forEach(({ label, tag, cls, title }) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'fmt-btn' + (cls ? ' ' + cls : '');
+                btn.textContent = label;
+                btn.title = title;
+                btn.addEventListener('click', () => {
+                    formatText(textarea, tag);
+                    onUpdate(textarea.value);
+                });
+                toolbar.appendChild(btn);
+            });
+            textarea.parentNode.insertBefore(toolbar, textarea);
+        }
+
+        function renderTheoryParagraphs() {
+            const container = document.getElementById('theory-paragraphs');
+            container.innerHTML = '';
+            theoryData.theory.description.forEach((para, idx) => {
+                const div = document.createElement('div');
+                div.className = 'paragraph-item';
+
+                const existingImgs = (theoryData.theory.images || [])
+                    .filter(img => img.after_paragraph === idx && !pendingDeleteTheoryImages.includes(img.path));
+                const pendingImgs = pendingNewTheoryImages
+                    .map((pi, pidx) => ({ ...pi, pidx }))
+                    .filter(pi => pi.after_paragraph === idx);
+
+                const existingImgsHtml = existingImgs.map(img => `
+<div class="img-card">
+<span>📷 ${img.path}</span>
+<button type="button" class="btn btn-secondary btn-sm" onclick="markDeleteTheoryImage('${img.path}')">✕ Удалить</button>
+</div>`).join('');
+
+                const pendingImgsHtml = pendingImgs.map(pi => `
+<div class="img-card">
+<span>🆕 ${pi.file.name} (ещё не сохранено)</span>
+<button type="button" class="btn btn-secondary btn-sm" onclick="removePendingTheoryImage(${pi.pidx})">✕ Убрать</button>
+</div>`).join('');
+
+                div.innerHTML = `
+<div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+<span style="color: #a855f7; font-weight: bold;">Абзац ${idx + 1}</span>
+<button class="btn btn-danger btn-sm" onclick="removeTheoryParagraph(${idx})">✕</button>
+</div>
+<textarea rows="8" onchange="updateTheoryParagraph(${idx}, this.value)">${para}</textarea>
+<div class="theory-img-list">${existingImgsHtml}${pendingImgsHtml}</div>
+<button type="button" class="btn btn-secondary btn-sm" onclick="toggleTheoryImageForm(${idx})">📷 Добавить картинку</button>
+<div class="new-img-block" id="theory-img-form-${idx}" style="display:none;">
+    <div class="form-group">
+        <label>Файл:</label>
+        <input type="file" accept=".png,.jpg,.jpeg,.gif" id="theory-img-file-${idx}">
+    </div>
+    <div class="form-group">
+        <label>Размер:</label>
+        <select id="theory-img-size-${idx}">
+            <option value="img-small">Маленький</option>
+            <option value="img-medium" selected>Средний</option>
+            <option value="img-large">Большой</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Alt-текст:</label>
+        <input type="text" id="theory-img-alt-${idx}" placeholder="Описание для accessibility">
+    </div>
+    <button type="button" class="btn btn-primary btn-sm" onclick="confirmAddTheoryImage(${idx})">✓ Прикрепить</button>
+</div>
+`;
+                container.appendChild(div);
+                attachToolbar(div.querySelector('textarea'), (val) => updateTheoryParagraph(idx, val));
+            });
+        }
+
+        // === Картинки под абзацами теории ===
+        function toggleTheoryImageForm(idx) {
+            const block = document.getElementById(`theory-img-form-${idx}`);
+            block.style.display = block.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function confirmAddTheoryImage(idx) {
+            const fileInput = document.getElementById(`theory-img-file-${idx}`);
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Выберите файл!');
+                return;
+            }
+            const size = document.getElementById(`theory-img-size-${idx}`).value;
+            const alt = document.getElementById(`theory-img-alt-${idx}`).value;
+            pendingNewTheoryImages.push({ file, after_paragraph: idx, size, alt });
+            renderTheoryParagraphs();
+        }
+
+        function removePendingTheoryImage(pendingIdx) {
+            pendingNewTheoryImages.splice(pendingIdx, 1);
+            renderTheoryParagraphs();
+        }
+
+        function markDeleteTheoryImage(path) {
+            if (!pendingDeleteTheoryImages.includes(path)) {
+                pendingDeleteTheoryImages.push(path);
+            }
+            renderTheoryParagraphs();
+        }
+
+        function addTheoryParagraph() {
+            theoryData.theory.description.push('');
+            renderTheoryParagraphs();
+        }
+
+        function updateTheoryParagraph(idx, value) {
+            theoryData.theory.description[idx] = value;
+        }
+
+        function removeTheoryParagraph(idx) {
+            theoryData.theory.description.splice(idx, 1);
+            // Картинки, привязанные к удаляемому абзацу, переезжают к предыдущему;
+            // картинки после удаляемого абзаца сдвигаются на одну позицию назад.
+            const shiftAfterParagraph = (arr) => {
+                arr.forEach(item => {
+                    if (item.after_paragraph === idx) {
+                        item.after_paragraph = Math.max(0, idx - 1);
+                    } else if (item.after_paragraph > idx) {
+                        item.after_paragraph -= 1;
+                    }
+                });
+            };
+            shiftAfterParagraph(theoryData.theory.images || []);
+            shiftAfterParagraph(pendingNewTheoryImages);
+            renderTheoryParagraphs();
+        }
+
+        function renderPracticeTasks() {
+            const container = document.getElementById('practice-tasks');
+            container.innerHTML = '';
+            theoryData.practice.tasks.forEach((task, idx) => {
+                task.images = task.images || [];
+                if (!task.answer_type) {
+                    task.answer_type = task.answer_grid ? 'grid' : (task.answers && task.answers.length === 2 ? 'double' : 'single');
+                }
+                const collapsed = collapsedPracticeTasks.has(idx);
+
+                const existingFile = (task.file && !pendingDeletePracticeFileTaskIdx.has(idx)) ? task.file : null;
+                const pendingFile = pendingNewPracticeFiles[idx];
+
+                let fileBlockHtml;
+                if (existingFile) {
+                    fileBlockHtml = `
+<div class="img-card">
+<span>📄 ${existingFile.name || existingFile.path}</span>
+<button type="button" class="btn btn-secondary btn-sm" onclick="markDeletePracticeFile(${idx})">✕ Удалить</button>
+</div>`;
+                } else if (pendingFile) {
+                    fileBlockHtml = `
+<div class="img-card">
+<span>🆕 ${pendingFile.file.name} (ещё не сохранено)</span>
+<button type="button" class="btn btn-secondary btn-sm" onclick="removePendingPracticeFile(${idx})">✕ Убрать</button>
+</div>`;
+                } else {
+                    fileBlockHtml = `
+<input type="file" id="practice-file-input-${idx}" accept=".xlsx,.xls,.csv,.txt,.zip,.db,.sqlite,.ods,.odt">
+<input type="text" id="practice-file-name-${idx}" placeholder="Название файла" style="margin-top:8px;">
+<input type="text" id="practice-file-desc-${idx}" placeholder="Описание (необязательно)" style="margin-top:8px;">
+<button type="button" class="btn btn-secondary btn-sm" style="margin-top:8px;" onclick="confirmAddPracticeFile(${idx})">📎 Прикрепить файл</button>`;
+                }
+
+                const div = document.createElement('div');
+                div.className = 'task-item';
+                div.innerHTML = `
+<div class="practice-task-header" onclick="togglePracticeTaskCollapse(${idx})">
+<span style="color: #a855f7; font-weight: bold;">${collapsed ? '▶' : '▼'} Задание ${idx + 1}${task.title ? ' — ' + task.title : ''}</span>
+<button type="button" class="btn btn-danger btn-sm" onclick="event.stopPropagation(); removePracticeTask(${idx})">✕</button>
+</div>
+<div class="practice-task-body" style="${collapsed ? 'display:none;' : ''}">
+    <div class="form-group">
+        <label>Название:</label>
+        <input type="text" value="${task.title || ''}" onchange="updatePracticeTask(${idx}, 'title', this.value)">
+    </div>
+
+    <div class="form-group">
+        <label>📝 Массовый ввод (текст разделится на абзацы):</label>
+        <textarea rows="4" id="practice-bulk-${idx}" placeholder="Вставьте текст целиком. Абзацы разделяются пустой строкой."></textarea>
+        <button type="button" class="btn btn-secondary btn-sm" style="margin-top:8px;" onclick="splitPracticeBulkText(${idx})">🔄 Разделить на абзацы</button>
+    </div>
+
+    <div id="practice-paragraphs-${idx}"></div>
+    <button type="button" class="btn btn-secondary btn-sm" onclick="addPracticeParagraph(${idx})">+ Добавить абзац</button>
+
+    <div class="form-group" style="margin-top: 16px;">
+        <label>Прикреплённый файл:</label>
+        ${fileBlockHtml}
+    </div>
+
+    <div class="form-group" style="margin-top: 16px;">
+        <label>Тип ответа:</label>
+        <div class="answer-type-selector">
+            <div class="answer-type-btn ${task.answer_type === 'single' ? 'active' : ''}" onclick="selectPracticeAnswerType(${idx}, 'single')">1️⃣ Один</div>
+            <div class="answer-type-btn ${task.answer_type === 'double' ? 'active' : ''}" onclick="selectPracticeAnswerType(${idx}, 'double')">2️⃣ Два</div>
+            <div class="answer-type-btn ${task.answer_type === 'grid' ? 'active' : ''}" onclick="selectPracticeAnswerType(${idx}, 'grid')">📊 Таблица</div>
+        </div>
+
+        <div id="practice-answer-single-${idx}" style="${task.answer_type === 'single' ? 'display:block;' : 'display:none;'}">
+            <input type="text" value="${task.correct_answer || ''}" placeholder="Правильный ответ" onchange="updatePracticeTask(${idx}, 'correct_answer', this.value)">
+        </div>
+
+        <div id="practice-answer-double-${idx}" style="${task.answer_type === 'double' ? 'display:flex; gap:10px;' : 'display:none;'}">
+            <input type="text" value="${(task.answers && task.answers[0]) || ''}" placeholder="Ответ 1" onchange="updatePracticeAnswerPart(${idx}, 0, this.value)">
+            <input type="text" value="${(task.answers && task.answers[1]) || ''}" placeholder="Ответ 2" onchange="updatePracticeAnswerPart(${idx}, 1, this.value)">
+        </div>
+
+        <div id="practice-answer-grid-${idx}" style="${task.answer_type === 'grid' ? 'display:block;' : 'display:none;'}">
+            <div style="display:flex; gap:15px; margin-bottom:10px;">
+                <div class="form-group" style="flex:1;">
+                    <label>Строки:</label>
+                    <input type="number" id="practice-grid-rows-${idx}" value="${(task.answer_grid && task.answer_grid.rows) || 1}" min="1" max="10" onchange="updatePracticeGrid(${idx})">
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label>Столбцы:</label>
+                    <input type="number" id="practice-grid-cols-${idx}" value="${(task.answer_grid && task.answer_grid.cols) || 1}" min="1" max="10" onchange="updatePracticeGrid(${idx})">
+                </div>
+            </div>
+            <div id="practice-grid-container-${idx}" class="grid-inputs"></div>
+        </div>
+    </div>
+</div>
+`;
+                container.appendChild(div);
+
+                if (!collapsed) {
+                    renderPracticeTaskParagraphs(idx);
+                    if (task.answer_type === 'grid') {
+                        updatePracticeGridInputs(idx);
+                    }
+                }
+            });
+        }
+
+        function togglePracticeTaskCollapse(idx) {
+            if (collapsedPracticeTasks.has(idx)) {
+                collapsedPracticeTasks.delete(idx);
+            } else {
+                collapsedPracticeTasks.add(idx);
+            }
+            renderPracticeTasks();
+        }
+
+        function addPracticeTask() {
+            theoryData.practice.tasks.push({
+                title: "",
+                description: [],
+                images: [],
+                file: null,
+                answer_type: 'single',
+                correct_answer: ""
+            });
+            // Новую задачу НЕ добавляем в collapsedPracticeTasks — она сразу развёрнута
+            renderPracticeTasks();
+        }
+
+        function updatePracticeTask(idx, field, value) {
+            theoryData.practice.tasks[idx][field] = value;
+        }
+
+        function removePracticeTask(idx) {
+            theoryData.practice.tasks.splice(idx, 1);
+
+            // Переиндексируем всё, что привязано к task_idx, иначе после удаления
+            // задачи из середины списка pending-картинки/файлы/свёрнутость съедут.
+            pendingNewPracticeImages = pendingNewPracticeImages
+                .filter(pi => pi.task_idx !== idx)
+                .map(pi => pi.task_idx > idx ? { ...pi, task_idx: pi.task_idx - 1 } : pi);
+
+            const reindexMap = (obj) => {
+                const result = {};
+                Object.keys(obj).forEach(k => {
+                    const ki = parseInt(k);
+                    if (ki === idx) return;
+                    result[ki > idx ? ki - 1 : ki] = obj[k];
+                });
+                return result;
+            };
+            pendingNewPracticeFiles = reindexMap(pendingNewPracticeFiles);
+
+            const reindexSet = (set) => {
+                const result = new Set();
+                set.forEach(i => {
+                    if (i === idx) return;
+                    result.add(i > idx ? i - 1 : i);
+                });
+                return result;
+            };
+            pendingDeletePracticeFileTaskIdx = reindexSet(pendingDeletePracticeFileTaskIdx);
+            collapsedPracticeTasks = reindexSet(collapsedPracticeTasks);
+
+            renderPracticeTasks();
+        }
+
+        // === Абзацы внутри задачи практики (аналогично renderTheoryParagraphs, но с индексом задачи) ===
+        function renderPracticeTaskParagraphs(taskIdx) {
+            const container = document.getElementById(`practice-paragraphs-${taskIdx}`);
+            if (!container) return;
+            container.innerHTML = '';
+            const task = theoryData.practice.tasks[taskIdx];
+
+            task.description.forEach((para, pIdx) => {
+                const existingImgs = (task.images || [])
+                    .filter(img => img.after_paragraph === pIdx && !pendingDeletePracticeImages.includes(img.path));
+                const pendingImgs = pendingNewPracticeImages
+                    .map((pi, gidx) => ({ ...pi, gidx }))
+                    .filter(pi => pi.task_idx === taskIdx && pi.after_paragraph === pIdx);
+
+                const existingImgsHtml = existingImgs.map(img => `
+<div class="img-card">
+<span>📷 ${img.path}</span>
+<button type="button" class="btn btn-secondary btn-sm" onclick="markDeletePracticeImage('${img.path}')">✕ Удалить</button>
+</div>`).join('');
+
+                const pendingImgsHtml = pendingImgs.map(pi => `
+<div class="img-card">
+<span>🆕 ${pi.file.name} (ещё не сохранено)</span>
+<button type="button" class="btn btn-secondary btn-sm" onclick="removePendingPracticeImage(${pi.gidx})">✕ Убрать</button>
+</div>`).join('');
+
+                const div = document.createElement('div');
+                div.className = 'paragraph-item';
+                div.innerHTML = `
+<div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+<span style="color: #a855f7; font-weight: bold;">Абзац ${pIdx + 1}</span>
+<button type="button" class="btn btn-danger btn-sm" onclick="removePracticeParagraph(${taskIdx}, ${pIdx})">✕</button>
+</div>
+<textarea rows="8" onchange="updatePracticeParagraph(${taskIdx}, ${pIdx}, this.value)">${para}</textarea>
+<div class="theory-img-list">${existingImgsHtml}${pendingImgsHtml}</div>
+<button type="button" class="btn btn-secondary btn-sm" onclick="togglePracticeImageForm(${taskIdx}, ${pIdx})">📷 Добавить картинку</button>
+<div class="new-img-block" id="practice-img-form-${taskIdx}-${pIdx}" style="display:none;">
+    <div class="form-group">
+        <label>Файл:</label>
+        <input type="file" accept=".png,.jpg,.jpeg,.gif" id="practice-img-file-${taskIdx}-${pIdx}">
+    </div>
+    <div class="form-group">
+        <label>Размер:</label>
+        <select id="practice-img-size-${taskIdx}-${pIdx}">
+            <option value="img-small">Маленький</option>
+            <option value="img-medium" selected>Средний</option>
+            <option value="img-large">Большой</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Alt-текст:</label>
+        <input type="text" id="practice-img-alt-${taskIdx}-${pIdx}" placeholder="Описание для accessibility">
+    </div>
+    <button type="button" class="btn btn-primary btn-sm" onclick="confirmAddPracticeImage(${taskIdx}, ${pIdx})">✓ Прикрепить</button>
+</div>
+`;
+                container.appendChild(div);
+                attachToolbar(div.querySelector('textarea'), (val) => updatePracticeParagraph(taskIdx, pIdx, val));
+            });
+        }
+
+        function addPracticeParagraph(taskIdx) {
+            theoryData.practice.tasks[taskIdx].description.push('');
+            renderPracticeTaskParagraphs(taskIdx);
+        }
+
+        function updatePracticeParagraph(taskIdx, pIdx, value) {
+            theoryData.practice.tasks[taskIdx].description[pIdx] = value;
+        }
+
+        function removePracticeParagraph(taskIdx, pIdx) {
+            const task = theoryData.practice.tasks[taskIdx];
+            task.description.splice(pIdx, 1);
+            const shift = (arr) => {
+                arr.forEach(item => {
+                    if (item.after_paragraph === pIdx) {
+                        item.after_paragraph = Math.max(0, pIdx - 1);
+                    } else if (item.after_paragraph > pIdx) {
+                        item.after_paragraph -= 1;
+                    }
+                });
+            };
+            shift(task.images || []);
+            shift(pendingNewPracticeImages.filter(pi => pi.task_idx === taskIdx));
+            renderPracticeTaskParagraphs(taskIdx);
+        }
+
+        function splitPracticeBulkText(taskIdx) {
+            const input = document.getElementById(`practice-bulk-${taskIdx}`);
+            const bulkText = input.value.trim();
+            if (!bulkText) {
+                alert('Вставьте текст для разделения!');
+                return;
+            }
+            const paragraphs = bulkText.split(/\r?\n\s*\r?\n/).map(p => p.trim()).filter(p => p.length > 0);
+            if (paragraphs.length === 0) {
+                alert('Не удалось выделить абзацы. Проверьте форматирование текста.');
+                return;
+            }
+            theoryData.practice.tasks[taskIdx].description = paragraphs;
+            input.value = '';
+            renderPracticeTaskParagraphs(taskIdx);
+        }
+
+        // === Картинки задач практики ===
+        function togglePracticeImageForm(taskIdx, pIdx) {
+            const block = document.getElementById(`practice-img-form-${taskIdx}-${pIdx}`);
+            block.style.display = block.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function confirmAddPracticeImage(taskIdx, pIdx) {
+            const fileInput = document.getElementById(`practice-img-file-${taskIdx}-${pIdx}`);
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Выберите файл!');
+                return;
+            }
+            const size = document.getElementById(`practice-img-size-${taskIdx}-${pIdx}`).value;
+            const alt = document.getElementById(`practice-img-alt-${taskIdx}-${pIdx}`).value;
+            pendingNewPracticeImages.push({ file, task_idx: taskIdx, after_paragraph: pIdx, size, alt });
+            renderPracticeTaskParagraphs(taskIdx);
+        }
+
+        function removePendingPracticeImage(globalIdx) {
+            pendingNewPracticeImages.splice(globalIdx, 1);
+            renderPracticeTasks();
+        }
+
+        function markDeletePracticeImage(path) {
+            if (!pendingDeletePracticeImages.includes(path)) {
+                pendingDeletePracticeImages.push(path);
+            }
+            renderPracticeTasks();
+        }
+
+        // === Прикреплённый файл задачи практики ===
+        function confirmAddPracticeFile(taskIdx) {
+            const fileInput = document.getElementById(`practice-file-input-${taskIdx}`);
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Выберите файл!');
+                return;
+            }
+            const name = document.getElementById(`practice-file-name-${taskIdx}`).value;
+            const description = document.getElementById(`practice-file-desc-${taskIdx}`).value;
+            pendingNewPracticeFiles[taskIdx] = { file, name, description };
+            renderPracticeTasks();
+        }
+
+        function removePendingPracticeFile(taskIdx) {
+            delete pendingNewPracticeFiles[taskIdx];
+            renderPracticeTasks();
+        }
+
+        function markDeletePracticeFile(taskIdx) {
+            pendingDeletePracticeFileTaskIdx.add(taskIdx);
+            renderPracticeTasks();
+        }
+
+        // === Тип ответа задачи практики (один / два / таблица) ===
+        function selectPracticeAnswerType(taskIdx, type) {
+            const task = theoryData.practice.tasks[taskIdx];
+            task.answer_type = type;
+            // Сохраняем взаимоисключаемость полей ответа — как и у задач из базы,
+            // одновременно должно быть заполнено только одно из трёх.
+            if (type === 'single') {
+                delete task.answers;
+                delete task.answer_grid;
+                if (task.correct_answer === undefined) task.correct_answer = '';
+            } else if (type === 'double') {
+                delete task.correct_answer;
+                delete task.answer_grid;
+                if (!task.answers) task.answers = ['', ''];
+            } else if (type === 'grid') {
+                delete task.correct_answer;
+                delete task.answers;
+                if (!task.answer_grid) task.answer_grid = { rows: 1, cols: 1, answers: [['']] };
+            }
+            renderPracticeTasks();
+        }
+
+        function updatePracticeAnswerPart(taskIdx, partIdx, value) {
+            const task = theoryData.practice.tasks[taskIdx];
+            if (!task.answers) task.answers = ['', ''];
+            task.answers[partIdx] = value;
+        }
+
+        function updatePracticeGrid(taskIdx) {
+            const rows = parseInt(document.getElementById(`practice-grid-rows-${taskIdx}`).value) || 1;
+            const cols = parseInt(document.getElementById(`practice-grid-cols-${taskIdx}`).value) || 1;
+            const task = theoryData.practice.tasks[taskIdx];
+            const oldAnswers = (task.answer_grid && task.answer_grid.answers) || [];
+            const newAnswers = [];
+            for (let r = 0; r < rows; r++) {
+                const row = [];
+                for (let c = 0; c < cols; c++) {
+                    row.push((oldAnswers[r] && oldAnswers[r][c]) || '');
+                }
+                newAnswers.push(row);
+            }
+            task.answer_grid = { rows, cols, answers: newAnswers };
+            updatePracticeGridInputs(taskIdx);
+        }
+
+        function updatePracticeGridInputs(taskIdx) {
+            const task = theoryData.practice.tasks[taskIdx];
+            const container = document.getElementById(`practice-grid-container-${taskIdx}`);
+            if (!container || !task.answer_grid) return;
+            container.innerHTML = '';
+            for (let r = 0; r < task.answer_grid.rows; r++) {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'grid-row';
+                for (let c = 0; c < task.answer_grid.cols; c++) {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.value = (task.answer_grid.answers[r] && task.answer_grid.answers[r][c]) || '';
+                    input.placeholder = `R${r + 1}C${c + 1}`;
+                    input.addEventListener('change', (e) => {
+                        task.answer_grid.answers[r][c] = e.target.value;
+                    });
+                    rowDiv.appendChild(input);
+                }
+                container.appendChild(rowDiv);
+            }
+        }
+
+        function saveTheory() {
+            if (!currentTaskNum) {
+                alert('Выберите урок!');
+                return;
+            }
+
+            theoryData.lesson_id = currentTaskNum;
+            theoryData.title = document.getElementById('theory-title').value;
+            theoryData.description = document.getElementById('lesson-description').value;
+            theoryData.practice.description = document.getElementById('practice-description').value;
+
+            // answer_type — служебное поле только для UI-переключателя;
+            // в сохранённом JSON его быть не должно (как и у answer_type
+            // в admin_task_form.html, который тоже никогда не попадает в tasks.json).
+            // video — старый одиночный формат больше не создаётся конструктором;
+            // урок сохраняется только с массивом videos (см. renderVideos/selectTaskNumber).
+            const payload = JSON.parse(JSON.stringify(theoryData));
+            (payload.practice.tasks || []).forEach(t => delete t.answer_type);
+            delete payload.video;
+
+            const formData = new FormData();
+            formData.append('data', JSON.stringify(payload));
+            pendingDeleteTheoryImages.forEach(path => formData.append('delete_lesson_image', path));
+            pendingNewTheoryImages.forEach(pi => {
+                formData.append('new_lesson_image_file', pi.file);
+                formData.append('new_lesson_image_after_paragraph', pi.after_paragraph);
+                formData.append('new_lesson_image_size', pi.size);
+                formData.append('new_lesson_image_alt', pi.alt);
+            });
+
+            pendingDeletePracticeImages.forEach(path => formData.append('delete_practice_image', path));
+            pendingNewPracticeImages.forEach(pi => {
+                formData.append('new_practice_image_file', pi.file);
+                formData.append('new_practice_image_task_idx', pi.task_idx);
+                formData.append('new_practice_image_after_paragraph', pi.after_paragraph);
+                formData.append('new_practice_image_size', pi.size);
+                formData.append('new_practice_image_alt', pi.alt);
+            });
+
+            pendingDeletePracticeFileTaskIdx.forEach(idx => formData.append('delete_practice_file_task_idx', idx));
+            Object.keys(pendingNewPracticeFiles).forEach(idx => {
+                const pf = pendingNewPracticeFiles[idx];
+                formData.append('new_practice_file', pf.file);
+                formData.append('new_practice_file_task_idx', idx);
+                formData.append('new_practice_file_name', pf.name);
+                formData.append('new_practice_file_description', pf.description);
+            });
+
+            // Content-Type не указываем — браузер сам проставит multipart-границу для FormData
+            fetch('/api/uroki/save', {
+                method: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token() }}' },
+                body: formData
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        filledTaskNums.add(currentTaskNum);
+                        lessonTitles[currentTaskNum] = theoryData.title;
+                        updateTaskNumbersVisual();
+                        alert('✅ Урок сохранён!');
+                        selectTaskNumber(currentTaskNum);
+                    } else {
+                        alert('❌ Ошибка: ' + data.error);
+                    }
+                })
+                .catch(err => {
+                    console.error('Error saving lesson:', err);
+                    alert('❌ Ошибка при сохранении');
+                });
+        }
+
+        function clearTheory() {
+            if (confirm('Очистить весь урок?')) {
+                resetTheoryData();
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -9,7 +9,41 @@ EGEvolution — учебная платформа для подготовки к
 решают практические задачи в уроках. Администратор управляет контентом
 через встроенную панель.
 
-**Текущая версия: v1.13.0** — после завершения всего диапазона теории (v1.12.27)
+**Текущая версия: v1.14.0** — первый шаг наполнения уроков начальной подготовки
+(следующий фронт пункта 4 из v1.11.0 после завершения всей теории в v1.12.27):
+согласован и структурно реализован учебный план из 12 уроков «Python с нуля»
+(установка Python/PyCharm → ввод/вывод, типы, переменные → строки → условия →
+циклы → списки и множества → функции → понимание и исправление ошибок → работа
+с визуализатором кода → двумерные списки/таблицы-матрицы → чтение файлов кодом →
+работа в Excel напрямую), составленный по присланной пользователем презентации
+(разделы 1–5, независимо перепроверенной запуском кода) и расширенный по итогам
+обсуждения. Старое содержимое `urok_01`/`urok_02` (обе — тестовая тема «Системы
+счисления», одна из них незаконченная заглушка) полностью удалено и заменено на
+12 пустых уроков-скелетов (только заголовки, без текста теории/практики —
+наполнение контентом — следующий шаг). Одновременно с этим построен админский
+конструктор уроков — `templates/constructor_uroki.html`, самостоятельный клон
+конструктора теории (не единый мультирежимный инструмент — разница в схеме
+слишком существенная), доведённый до полной функциональной параллели: выбор
+урока из списка, массовый ввод текста с разбиением на абзацы, тулбар
+форматирования, картинки к любому абзацу теории и практики, полный редактор
+практических задач (заголовок/описание/картинки/файл/переключатель типа ответа
+один-два-таблица). По ходу построения конструктора схема урока обновлена по
+явному запросу пользователя: видео заменено с одиночного `video` на массив
+`videos` (несколько видео на урок, как уже было у теории), добавлено новое поле
+`description` (короткий блурб для каталога `/preparation`, которого нет у
+теории), и впервые заведена папка `practice_files/` для прикреплённых файлов
+практических задач урока (раньше не существовала вообще). `preparation_lesson.html`
+обновлён под оба новых поля — рендерит несколько видео (с обратной
+совместимостью на старый одиночный формат) и заголовок/файл практической
+задачи, которые раньше в шаблоне не отображались, даже если бы были заданы
+вручную в JSON. Новые backend-роуты: `GET/POST /api/uroki/*`,
+`GET /preparation_files/<lesson_id>/<filename>`, `GET /constructor_uroki`;
+третья карточка в `constructor_gate.html`. Весь новый функционал (конструктор,
+сохранение, отображение) проверен сквозным сценарием через `Flask test_client()`
+— 37 проверок, включая реальную загрузку картинки и прикреплённого файла с
+последующей проверкой их на диске и на отрендеренной странице урока.
+
+v1.13.0 — после завершения всего диапазона теории (v1.12.27)
 проведён аудит сайта глазами незарегистрированного нового посетителя, по
 итогам которого закрыт главный найденный барьер конверсии: самостоятельная
 регистрация требовала пароль сайта, который можно было узнать только лично
@@ -472,10 +506,11 @@ webpl with base/
 │   ├── start.html          # Главная страница — автономная, не наследует base.html
 │   ├── exam.html           # Экзаменационный режим — автономный, вне scope редизайна
 │   ├── visualizer.html     # Визуализатор Python-кода — автономный (visual-code), только для авторизованных
-│   ├── [9 admin/constructor-шаблонов] — автономные, вне scope редизайна
+│   ├── [12 admin/constructor-шаблонов] — автономные, вне scope редизайна
 │   │   # admin_panel, admin_task_form, admin_tasks_list, admin_tasks_view,
-│   │   # admin_user_stats, constructor_gate, constructor_from_base,
-│   │   # constructor_theory, constructor_editor
+│   │   # admin_user_stats, admin_create_user, admin_practice_detail,
+│   │   # constructor_gate, constructor_from_base, constructor_theory,
+│   │   # constructor_uroki, constructor_editor
 │   └── [16 пользовательских страниц — {% extends "base.html" %}]
 │       # login, register, csrf_error, variant_list, teoria, preparation,
 │       # tasks_list, profile, stats, attempt_detail, choose_mode,
@@ -665,7 +700,19 @@ webpl with base/
 
 ### Уроки (uroki/)
 
-`uroki/urok_XX/lesson.json` — подготовительный урок.
+`uroki/urok_XX/urok_XX.json` — подготовительный урок (номер id встроен в имя файла,
+в отличие от `theory/task_XX/theory.json`, где имя файла фиксировано, а номер лежит
+внутри JSON как `task_id`). Формат (с v1.14.0, зеркально теории):
+- `lesson_id` — номер урока, дублируется в самом JSON (зеркально `task_id`)
+- `description` — короткое описание для карточки в каталоге `/preparation` (поля
+  нет у теории)
+- `theory.description` / `theory.images` — абзацы теории и картинки к ним
+- `videos` — массив видео (`{path, title}`), несколько на урок — старый одиночный
+  `video` поддерживается в шаблоне только для обратной совместимости
+- `practice.tasks` — практические задания (заголовок, абзацы, картинки,
+  прикреплённый файл в `uroki/urok_XX/practice_files/`, один из
+  `correct_answer`/`answers`/`answer_grid`)
+
 Доступ управляется через таблицу `user_lesson_access` (админ открывает/закрывает).
 
 ### Система сложности задач (DIFFICULTY_INFO)
@@ -770,11 +817,14 @@ webpl with base/
 | `GET /api/tasks/<task_num>` | Список задач из базы (JSON) |
 | `GET /api/theory/<task_num>` | Данные теории (JSON) |
 | `POST /api/theory/save` | Сохранение теории (JSON) |
+| `GET /api/uroki/<lesson_id>` | Данные урока (JSON) |
+| `POST /api/uroki/save` | Сохранение урока (JSON) |
 | `POST /api/variants/save` | Сохранение нового варианта (JSON) |
 | `POST /api/variant/preview` | Предпросмотр варианта (JSON; не используется в шаблонах) |
 | `GET /constructor_gate` | Выбор типа конструктора |
 | `GET /constructor_from_base` | Конструктор из базы задач |
 | `GET /constructor_theory` | Редактор теории |
+| `GET /constructor_uroki` | Редактор уроков начальной подготовки |
 | `GET /constructor_editor` | Редактор варианта |
 
 ### Файловые маршруты (раздача статики контента)
@@ -788,7 +838,8 @@ webpl with base/
 | `GET /theory_videos/<task_num>/<filename>` | `theory/task_XX/videos/` |
 | `GET /theory_files/<task_num>/<filename>` | `theory/task_XX/` |
 | `GET /preparation_images/<lesson_id>/<filename>` | `uroki/urok_XX/images/` |
-| `GET /preparation_videos/<lesson_id>/<filename>` | `uroki/urok_XX/` |
+| `GET /preparation_videos/<lesson_id>/<filename>` | `uroki/urok_XX/videos/` |
+| `GET /preparation_files/<lesson_id>/<filename>` | `uroki/urok_XX/practice_files/` |
 
 ---
 
@@ -917,9 +968,10 @@ git-репозиторий, работа ведётся прямо в нём.
    (`reshenie.html` переведён на `base.html` в v1.11.0 — больше не в этом списке.)
 10. **`start.html`** — автономная главная страница со своей дизайн-системой (v1.6.0–1.6.4);
     navbar встроен напрямую. Любые изменения — только отдельным согласованием.
-11. **Admin-шаблоны** (9 файлов: `admin_panel`, `admin_task_form`, `admin_tasks_list`,
-    `admin_tasks_view`, `admin_user_stats`, `constructor_gate`, `constructor_from_base`,
-    `constructor_theory`, `constructor_editor`) — автономные, вне scope редизайна v1.6.5.
+11. **Admin-шаблоны** (12 файлов: `admin_panel`, `admin_task_form`, `admin_tasks_list`,
+    `admin_tasks_view`, `admin_user_stats`, `admin_create_user`, `admin_practice_detail`,
+    `constructor_gate`, `constructor_from_base`, `constructor_theory`, `constructor_uroki`,
+    `constructor_editor`) — автономные, вне scope редизайна v1.6.5.
 12. **`design-system.css`** — изменение токенов затронет все 16 пользовательских страниц одновременно.
 13. **`base.html` и `components/`** — изменение затронет все 16 пользовательских страниц.
 

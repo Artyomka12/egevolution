@@ -54,7 +54,7 @@ def handle_csrf_error(e):
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-APP_VERSION = "1.13.0"
+APP_VERSION = "1.14.0"
 
 
 @app.context_processor
@@ -398,6 +398,49 @@ def save_practice_file(file, task_num, practice_idx, name, description):
     os.makedirs(files_dir, exist_ok=True)
     safe_name = secure_filename(file.filename)
     unique_name = f"practice_{task_num}_{practice_idx}_{int(time.time())}_{safe_name}"
+    file.save(os.path.join(files_dir, unique_name))
+    return {
+        "path": unique_name,
+        "name": name or safe_name,
+        "description": description or "",
+    }
+
+
+def save_lesson_image(file, lesson_id, after_paragraph, size, alt):
+    img_dir = os.path.join(PREPARATION_FOLDER, f"urok_{lesson_id:02d}", "images")
+    os.makedirs(img_dir, exist_ok=True)
+    safe_name = secure_filename(file.filename)
+    unique_name = f"urok_{lesson_id}_{int(time.time())}_{safe_name}"
+    file.save(os.path.join(img_dir, unique_name))
+    return {
+        "path": unique_name,
+        "after_paragraph": int(after_paragraph),
+        "size": size or "img-medium",
+        "alt": alt or "",
+    }
+
+
+def save_lesson_practice_image(file, lesson_id, practice_idx, after_paragraph, size, alt):
+    # Картинки практики лежат в той же папке, что и картинки теории урока
+    # (uroki/urok_XX/images/), но с префиксом "practice_" — как у theory/practice.
+    img_dir = os.path.join(PREPARATION_FOLDER, f"urok_{lesson_id:02d}", "images")
+    os.makedirs(img_dir, exist_ok=True)
+    safe_name = secure_filename(file.filename)
+    unique_name = f"practice_{lesson_id}_{practice_idx}_{int(time.time())}_{safe_name}"
+    file.save(os.path.join(img_dir, unique_name))
+    return {
+        "path": unique_name,
+        "after_paragraph": int(after_paragraph),
+        "size": size or "img-medium",
+        "alt": alt or "",
+    }
+
+
+def save_lesson_practice_file(file, lesson_id, practice_idx, name, description):
+    files_dir = os.path.join(PREPARATION_FOLDER, f"urok_{lesson_id:02d}", "practice_files")
+    os.makedirs(files_dir, exist_ok=True)
+    safe_name = secure_filename(file.filename)
+    unique_name = f"practice_{lesson_id}_{practice_idx}_{int(time.time())}_{safe_name}"
     file.save(os.path.join(files_dir, unique_name))
     return {
         "path": unique_name,
@@ -1506,6 +1549,12 @@ def preparation_videos(lesson_id, filename):
     return send_from_directory(folder, filename)
 
 
+@app.route("/preparation_files/<int:lesson_id>/<path:filename>")
+def preparation_files(lesson_id, filename):
+    folder = os.path.join(PREPARATION_FOLDER, f"urok_{lesson_id:02d}", "practice_files")
+    return send_from_directory(folder, filename, as_attachment=True)
+
+
 @app.route("/check_lesson_task", methods=["POST"])
 def check_lesson_task():
     """Проверка задания урока и обновление прогресса"""
@@ -1879,6 +1928,22 @@ def constructor_theory():
     return render_template("constructor_theory.html")
 
 
+@app.route("/constructor_uroki")
+def constructor_uroki():
+    """Страница конструктора уроков начальной подготовки"""
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+    db = get_db()
+    user = db.execute(
+        "SELECT * FROM users WHERE id = ?", (session["user_id"],)
+    ).fetchone()
+    db.close()
+    if not user or user["is_admin"] != 1:
+        flash("🚫 Доступ только для администраторов", "error")
+        return redirect(url_for("profile"))
+    return render_template("constructor_uroki.html")
+
+
 @app.route("/api/theory/<int:task_num>")
 def get_theory_api(task_num):
     """API для получения теории по заданию"""
@@ -2053,6 +2118,182 @@ def save_theory_api():
         return jsonify({"success": True})
     except Exception:
         return jsonify({"error": "Не удалось сохранить теорию"}), 500
+
+
+@app.route("/api/uroki/<int:lesson_id>")
+def get_lesson_api(lesson_id):
+    """API для получения урока начальной подготовки"""
+    if "user_id" not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    folder = f"urok_{lesson_id:02d}"
+    path = os.path.join(PREPARATION_FOLDER, folder, f"{folder}.json")
+
+    if os.path.exists(path):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                lesson = json.load(f)
+            return jsonify({"exists": True, "lesson": lesson})
+        except Exception:
+            pass
+
+    return jsonify({"exists": False})
+
+
+@app.route("/api/uroki/save", methods=["POST"])
+def save_lesson_api():
+    """API для сохранения урока начальной подготовки"""
+    if "user_id" not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    db = get_db()
+    current_user = db.execute(
+        "SELECT is_admin FROM users WHERE id = ?", (session["user_id"],)
+    ).fetchone()
+    db.close()
+    if not current_user or current_user["is_admin"] != 1:
+        return jsonify({"error": "Forbidden"}), 403
+
+    try:
+        data = json.loads(request.form.get("data", "{}"))
+    except (TypeError, ValueError):
+        return jsonify({"error": "Некорректные данные"}), 400
+
+    lesson_id = data.get("lesson_id")
+
+    if not lesson_id:
+        return jsonify({"error": "No lesson_id"}), 400
+
+    # Создаем папку если нет
+    folder = f"urok_{lesson_id:02d}"
+    folder_path = os.path.join(PREPARATION_FOLDER, folder)
+    os.makedirs(folder_path, exist_ok=True)
+
+    # Создаем подпапки
+    img_dir = os.path.join(folder_path, "images")
+    os.makedirs(img_dir, exist_ok=True)
+    os.makedirs(os.path.join(folder_path, "videos"), exist_ok=True)
+    os.makedirs(os.path.join(folder_path, "practice_files"), exist_ok=True)
+
+    theory_block = data.get("theory") or {}
+    images = theory_block.get("images", [])
+
+    # Удаляем отмеченные картинки (только те, что реально принадлежат этому уроку)
+    to_delete = set(request.form.getlist("delete_lesson_image"))
+    existing_paths = {img.get("path") for img in images}
+    safe_to_delete = to_delete & existing_paths
+    for fn in safe_to_delete:
+        try:
+            os.remove(os.path.join(img_dir, fn))
+        except (FileNotFoundError, OSError):
+            pass
+    images = [img for img in images if img.get("path") not in to_delete]
+
+    # Загружаем новые картинки
+    new_image_files = request.files.getlist("new_lesson_image_file")
+    new_image_paragraphs = request.form.getlist("new_lesson_image_after_paragraph")
+    new_image_sizes = request.form.getlist("new_lesson_image_size")
+    new_image_alts = request.form.getlist("new_lesson_image_alt")
+    for i, img_file in enumerate(new_image_files):
+        if not img_file or not img_file.filename:
+            continue
+        if not allowed_file(img_file.filename):
+            return jsonify({"error": "Недопустимый формат изображения (разрешены: png, jpg, jpeg, gif)"}), 400
+        if not is_valid_image(img_file.stream):
+            return jsonify({"error": "Файл не является изображением"}), 400
+        after = int(new_image_paragraphs[i]) if i < len(new_image_paragraphs) else 0
+        size = new_image_sizes[i] if i < len(new_image_sizes) else "img-medium"
+        alt = new_image_alts[i] if i < len(new_image_alts) else ""
+        images.append(save_lesson_image(img_file, lesson_id, after, size, alt))
+
+    theory_block["images"] = images
+    data["theory"] = theory_block
+
+    # === Практика: картинки и файлы вложенных задач ===
+    practice_block = data.get("practice") or {}
+    practice_tasks = practice_block.get("tasks", [])
+    practice_files_dir = os.path.join(folder_path, "practice_files")
+
+    # Удаляем отмеченные картинки практики (ищем среди всех задач по пути)
+    to_delete_practice_images = set(request.form.getlist("delete_practice_image"))
+    if to_delete_practice_images:
+        for task in practice_tasks:
+            task_images = task.get("images", [])
+            existing_task_paths = {img.get("path") for img in task_images}
+            safe_task_delete = to_delete_practice_images & existing_task_paths
+            for fn in safe_task_delete:
+                try:
+                    os.remove(os.path.join(img_dir, fn))
+                except (FileNotFoundError, OSError):
+                    pass
+            task["images"] = [img for img in task_images if img.get("path") not in to_delete_practice_images]
+
+    # Удаляем отмеченные прикреплённые файлы практики (по индексу задачи)
+    for idx_str in request.form.getlist("delete_practice_file_task_idx"):
+        try:
+            idx = int(idx_str)
+        except ValueError:
+            continue
+        if 0 <= idx < len(practice_tasks):
+            existing_file = practice_tasks[idx].get("file")
+            if existing_file and existing_file.get("path"):
+                try:
+                    os.remove(os.path.join(practice_files_dir, existing_file["path"]))
+                except (FileNotFoundError, OSError):
+                    pass
+            practice_tasks[idx]["file"] = None
+
+    # Загружаем новые картинки практики
+    new_pimg_files = request.files.getlist("new_practice_image_file")
+    new_pimg_task_idx = request.form.getlist("new_practice_image_task_idx")
+    new_pimg_paragraphs = request.form.getlist("new_practice_image_after_paragraph")
+    new_pimg_sizes = request.form.getlist("new_practice_image_size")
+    new_pimg_alts = request.form.getlist("new_practice_image_alt")
+    for i, img_file in enumerate(new_pimg_files):
+        if not img_file or not img_file.filename:
+            continue
+        if not allowed_file(img_file.filename):
+            return jsonify({"error": "Недопустимый формат изображения (разрешены: png, jpg, jpeg, gif)"}), 400
+        if not is_valid_image(img_file.stream):
+            return jsonify({"error": "Файл не является изображением"}), 400
+        task_idx = int(new_pimg_task_idx[i]) if i < len(new_pimg_task_idx) else -1
+        if not (0 <= task_idx < len(practice_tasks)):
+            continue
+        after = int(new_pimg_paragraphs[i]) if i < len(new_pimg_paragraphs) else 0
+        size = new_pimg_sizes[i] if i < len(new_pimg_sizes) else "img-medium"
+        alt = new_pimg_alts[i] if i < len(new_pimg_alts) else ""
+        practice_tasks[task_idx].setdefault("images", []).append(
+            save_lesson_practice_image(img_file, lesson_id, task_idx, after, size, alt)
+        )
+
+    # Загружаем новые прикреплённые файлы практики
+    new_pfile_files = request.files.getlist("new_practice_file")
+    new_pfile_task_idx = request.form.getlist("new_practice_file_task_idx")
+    new_pfile_names = request.form.getlist("new_practice_file_name")
+    new_pfile_descriptions = request.form.getlist("new_practice_file_description")
+    for i, pfile in enumerate(new_pfile_files):
+        if not pfile or not pfile.filename:
+            continue
+        if not allowed_task_file(pfile.filename):
+            return jsonify({"error": "Недопустимый формат файла"}), 400
+        task_idx = int(new_pfile_task_idx[i]) if i < len(new_pfile_task_idx) else -1
+        if not (0 <= task_idx < len(practice_tasks)):
+            continue
+        name = new_pfile_names[i] if i < len(new_pfile_names) else ""
+        desc = new_pfile_descriptions[i] if i < len(new_pfile_descriptions) else ""
+        practice_tasks[task_idx]["file"] = save_lesson_practice_file(pfile, lesson_id, task_idx, name, desc)
+
+    practice_block["tasks"] = practice_tasks
+    data["practice"] = practice_block
+
+    # Сохраняем JSON
+    lesson_file_path = os.path.join(folder_path, f"{folder}.json")
+    try:
+        with open(lesson_file_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=1)
+        return jsonify({"success": True})
+    except Exception:
+        return jsonify({"error": "Не удалось сохранить урок"}), 500
 
 
 @app.route("/constructor_editor")

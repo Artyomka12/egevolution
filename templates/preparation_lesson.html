@@ -57,7 +57,28 @@
     {% endif %}
 
     <!-- Видеоразбор -->
-    {% if lesson.video %}
+    {% if lesson.videos %}
+    <div class="card reveal">
+        <h2 class="lesson-card-title">🎬 Видеоразбор</h2>
+        <div class="videos-list">
+            {% for video in lesson.videos %}
+            <div class="video-container">
+                <video controls controlsList="nodownload" oncontextmenu="return false;" style="width: 100%;">
+                    <source src="{{ url_for('preparation_videos', lesson_id=lesson_id, filename=video.path) }}"
+                        type="video/mp4">
+                    Ваш браузер не поддерживает видео.
+                </video>
+                {% if video.title %}
+                <div class="video-title">
+                    <h3>{{ video.title }}</h3>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% elif lesson.video %}
+    <!-- Для обратной совместимости со старой структурой -->
     <div class="card reveal">
         <h2 class="lesson-card-title">🎬 Видеоразбор</h2>
         <div class="video-container">
@@ -66,6 +87,7 @@
                     type="video/mp4">
                 Ваш браузер не поддерживает видео.
             </video>
+            {% if lesson.video.title %}<h3 class="video-title-old">{{ lesson.video.title }}</h3>{% endif %}
         </div>
     </div>
     {% endif %}
@@ -77,7 +99,7 @@
 
         {% for task in lesson.practice.tasks %}
         <div class="task-block" id="task-{{ loop.index }}">
-            <div class="task-title">Задание {{ loop.index }}</div>
+            <div class="task-title">{{ task.title or 'Задание ' + loop.index|string }}</div>
 
             {% if task.description %}
             <div class="task-description">
@@ -98,6 +120,19 @@
                 {% endfor %}
                 {% endif %}
                 {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Прикреплённый файл задания -->
+            {% if task.file %}
+            <div class="file-download">
+                <a href="{{ url_for('preparation_files', lesson_id=lesson_id, filename=task.file.path) }}" download
+                    class="file-link">
+                    📄 {{ task.file.name }}
+                </a>
+                {% if task.file.description %}
+                <span class="file-desc">{{ task.file.description }}</span>
+                {% endif %}
             </div>
             {% endif %}
 
