@@ -341,6 +341,7 @@
                         <th>Прогресс</th>
                         <th>Статус</th>
                         <th>Доступ</th>
+                        <th>Детали</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -374,6 +375,10 @@
                                 </button>
                             </form>
                         </td>
+                        <td>
+                            <a href="/admin/user/{{ target_user.id }}/lesson/{{ lesson.id }}"
+                                style="color: #a855f7; text-decoration: none; font-weight: 600; white-space: nowrap;">🔍 Задачи</a>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -394,6 +399,7 @@
                         <th>Решено</th>
                         <th>Статус</th>
                         <th>Доступ</th>
+                        <th>Детали</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -426,6 +432,10 @@
                                     {% endif %}
                                 </button>
                             </form>
+                        </td>
+                        <td>
+                            <a href="/admin/user/{{ target_user.id }}/theory/{{ task.num }}"
+                                style="color: #a855f7; text-decoration: none; font-weight: 600; white-space: nowrap;">🔍 Задачи</a>
                         </td>
                     </tr>
                     {% endfor %}

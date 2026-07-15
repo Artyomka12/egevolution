@@ -14,6 +14,8 @@ import json
 import os
 import sqlite3
 import time
+import urllib.request
+import urllib.parse
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
@@ -52,7 +54,7 @@ def handle_csrf_error(e):
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-APP_VERSION = "1.12.27"
+APP_VERSION = "1.13.0"
 
 
 @app.context_processor
@@ -61,6 +63,11 @@ def inject_app_version():
 
 
 SITE_PASSWORD = os.environ["SITE_PASSWORD"]
+
+# Уведомления о новых заявках в Telegram — необязательные,
+# если не заданы, отправка просто пропускается (не ломает заявку).
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
+TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
 
 VARIANTS_FOLDER = os.path.join(basedir, "variants")
 PREPARATION_FOLDER = os.path.join(basedir, "uroki")
@@ -255,6 +262,18 @@ def init_db():
         used_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )""")
 
+    # Таблица заявок с сайта (лид-форма вместо самостоятельной регистрации)
+    db.execute("""CREATE TABLE IF NOT EXISTS site_applications (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        last_name TEXT NOT NULL,
+        first_name TEXT NOT NULL,
+        phone TEXT NOT NULL,
+        contact_type TEXT NOT NULL,
+        contact_value TEXT NOT NULL,
+        is_processed INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )""")
+
     # 2. Проверяем, есть ли уже админ
     admin_exists = db.execute("SELECT id FROM users WHERE is_admin = 1").fetchone()
 
@@ -435,41 +454,66 @@ def login():
     return render_template("login.html")
 
 
+def notify_new_application(last_name, first_name, phone, contact_type, contact_value):
+    """Отправляет уведомление о новой заявке в Telegram (если бот настроен в .env)."""
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        return
+
+    contact_label = {"telegram": "Telegram", "vk": "VK", "max": "MAX"}.get(
+        contact_type, contact_type
+    )
+    text = (
+        "📋 Новая заявка на сайте\n"
+        f"{last_name} {first_name}\n"
+        f"Телефон: {phone}\n"
+        f"{contact_label}: {contact_value}"
+    )
+    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+    data = urllib.parse.urlencode({"chat_id": TELEGRAM_CHAT_ID, "text": text}).encode()
+    try:
+        urllib.request.urlopen(urllib.request.Request(url, data=data), timeout=5)
+    except Exception:
+        pass  # Уведомление не должно ломать отправку заявки, если Telegram недоступен
+
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
-        name = request.form.get("name", "").strip()
-        site_password = request.form.get("site_password", "")
+        last_name = request.form.get("last_name", "").strip()
+        first_name = request.form.get("first_name", "").strip()
+        phone = request.form.get("phone", "").strip()
+        contact_type = request.form.get("contact_type", "").strip()
+        contact_value = request.form.get("contact_value", "").strip()
 
-        # 1. Проверяем имя
-        if not name:
-            flash("⚠️ Укажите имя", "error")
+        # 1. Проверяем обязательные поля
+        if not last_name or not first_name or not phone:
+            flash("⚠️ Заполните фамилию, имя и номер телефона", "error")
             return render_template("register.html")
 
-        # 2. Проверяем пароль сайта
-        if site_password != SITE_PASSWORD:
-            flash("❌ Неверный пароль сайта", "error")
+        # 2. Проверяем способ связи
+        if contact_type not in ("telegram", "vk", "max"):
+            flash("⚠️ Выберите способ связи", "error")
             return render_template("register.html")
 
-        # 3. Проверяем логин
+        if not contact_value:
+            flash("⚠️ Укажите контакт для выбранного способа связи", "error")
+            return render_template("register.html")
+
+        # 3. Сохраняем заявку
         db = get_db()
-        if db.execute(
-            "SELECT id FROM users WHERE username = ?", (username,)
-        ).fetchone():
-            flash("⚠️ Такой логин уже занят", "error")
-        else:
-            # 4. Создаем пользователя
-            hashed_pw = generate_password_hash(password)
-            db.execute(
-                "INSERT INTO users (username, password_hash, name, avatar) VALUES (?, ?, ?, 'default.png')",
-                (username, hashed_pw, name),
-            )
-            db.commit()
-            flash("✅ Регистрация успешна! Теперь войдите.", "success")
-            return redirect(url_for("login"))
+        db.execute(
+            """INSERT INTO site_applications
+               (last_name, first_name, phone, contact_type, contact_value)
+               VALUES (?, ?, ?, ?, ?)""",
+            (last_name, first_name, phone, contact_type, contact_value),
+        )
+        db.commit()
         db.close()
+
+        notify_new_application(last_name, first_name, phone, contact_type, contact_value)
+
+        flash("✅ Заявка отправлена! Мы свяжемся с вами в ближайшее время.", "success")
+        return redirect(url_for("register"))
 
     return render_template("register.html")
 
@@ -2584,11 +2628,98 @@ def admin_panel():
 
     # Получаем список всех пользователей
     all_users = db.execute("SELECT * FROM users ORDER BY id DESC").fetchall()
+
+    # Получаем заявки с сайта
+    pending_applications = db.execute(
+        "SELECT * FROM site_applications WHERE is_processed = 0 ORDER BY created_at DESC"
+    ).fetchall()
+    processed_applications = db.execute(
+        "SELECT * FROM site_applications WHERE is_processed = 1 ORDER BY created_at DESC"
+    ).fetchall()
+
     db.close()
 
     return render_template(
-        "admin_panel.html", users=all_users, current_user=current_user
+        "admin_panel.html",
+        users=all_users,
+        current_user=current_user,
+        pending_applications=pending_applications,
+        processed_applications=processed_applications,
     )
+
+
+@app.route("/admin/application/<int:application_id>/toggle", methods=["POST"])
+def toggle_application_processed(application_id):
+    """Переключение статуса заявки (обработана / не обработана), только для админа"""
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    db = get_db()
+    current_user = db.execute(
+        "SELECT * FROM users WHERE id = ?", (session["user_id"],)
+    ).fetchone()
+
+    if not current_user or current_user["is_admin"] != 1:
+        db.close()
+        return "Access Denied", 403
+
+    db.execute(
+        "UPDATE site_applications SET is_processed = NOT is_processed WHERE id = ?",
+        (application_id,),
+    )
+    db.commit()
+    db.close()
+
+    return redirect(url_for("admin_panel"))
+
+
+@app.route("/admin/create_user", methods=["GET", "POST"])
+def admin_create_user():
+    """Ручное создание аккаунта пользователя администратором"""
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    db = get_db()
+    current_user = db.execute(
+        "SELECT * FROM users WHERE id = ?", (session["user_id"],)
+    ).fetchone()
+
+    if not current_user or current_user["is_admin"] != 1:
+        db.close()
+        flash("🚫 У вас нет прав администратора", "error")
+        return redirect(url_for("profile"))
+
+    if request.method == "POST":
+        name = request.form.get("name", "").strip()
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "")
+
+        if not name or not username or not password:
+            db.close()
+            flash("⚠️ Заполните все поля", "error")
+            return render_template("admin_create_user.html", prefill_name=name)
+
+        existing = db.execute(
+            "SELECT id FROM users WHERE username = ?", (username,)
+        ).fetchone()
+        if existing:
+            db.close()
+            flash("⚠️ Такой логин уже занят", "error")
+            return render_template("admin_create_user.html", prefill_name=name)
+
+        hashed_pw = generate_password_hash(password)
+        db.execute(
+            "INSERT INTO users (username, password_hash, name, avatar) VALUES (?, ?, ?, 'default.png')",
+            (username, hashed_pw, name),
+        )
+        db.commit()
+        db.close()
+        flash(f"✅ Пользователь {username} создан", "success")
+        return redirect(url_for("admin_panel"))
+
+    db.close()
+    prefill_name = request.args.get("name", "")
+    return render_template("admin_create_user.html", prefill_name=prefill_name)
 
 
 @app.route("/admin/delete_user/<int:user_id>", methods=["POST"])
@@ -2741,6 +2872,86 @@ def get_user_theory_stats(user_id):
     return theory_stats
 
 
+def get_lesson_task_detail(user_id, lesson_id):
+    """Детализация прогресса пользователя по каждой практической задаче урока"""
+    lesson_data = load_lesson(lesson_id)
+    if not lesson_data:
+        return None
+
+    db = get_db()
+    rows = db.execute(
+        "SELECT task_id, attempts, is_correct, last_attempt FROM user_lesson_progress WHERE user_id=? AND lesson_id=?",
+        (user_id, lesson_id),
+    ).fetchall()
+    db.close()
+
+    progress_by_task = {row["task_id"]: row for row in rows}
+
+    tasks_detail = []
+    for idx, task in enumerate(lesson_data.get("practice", {}).get("tasks", []), start=1):
+        progress = progress_by_task.get(idx)
+        tasks_detail.append(
+            {
+                "task_id": idx,
+                "title": task.get("title") or f"Задача {idx}",
+                "description": task.get("description", []),
+                "attempts": progress["attempts"] if progress else 0,
+                "is_correct": progress["is_correct"] if progress else 0,
+                "attempted": progress is not None,
+                "last_attempt": progress["last_attempt"] if progress else None,
+            }
+        )
+
+    return {
+        "lesson_id": lesson_id,
+        "lesson_title": lesson_data.get("title", f"Урок {lesson_id}"),
+        "tasks": tasks_detail,
+    }
+
+
+def get_theory_task_detail(user_id, task_num):
+    """Детализация прогресса пользователя по каждой практической задаче теории"""
+    folder = f"task_{task_num:02d}"
+    path = os.path.join(basedir, "theory", folder, "theory.json")
+    if not os.path.exists(path):
+        return None
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            theory_data = json.load(f)
+    except Exception:
+        return None
+
+    db = get_db()
+    rows = db.execute(
+        "SELECT practice_task_id, attempts, is_correct, last_attempt FROM user_theory_progress WHERE user_id=? AND task_num=?",
+        (user_id, task_num),
+    ).fetchall()
+    db.close()
+
+    progress_by_task = {row["practice_task_id"]: row for row in rows}
+
+    tasks_detail = []
+    for idx, task in enumerate(theory_data.get("practice", {}).get("tasks", []), start=1):
+        progress = progress_by_task.get(idx)
+        tasks_detail.append(
+            {
+                "task_id": idx,
+                "title": task.get("title") or f"Задача {idx}",
+                "description": task.get("description", []),
+                "attempts": progress["attempts"] if progress else 0,
+                "is_correct": progress["is_correct"] if progress else 0,
+                "attempted": progress is not None,
+                "last_attempt": progress["last_attempt"] if progress else None,
+            }
+        )
+
+    return {
+        "task_num": task_num,
+        "theory_title": theory_data.get("title", f"Задание {task_num}"),
+        "tasks": tasks_detail,
+    }
+
+
 @app.route("/admin/user/<int:user_id>")
 def admin_view_user(user_id):
     """Просмотр статистики конкретного пользователя админом"""
@@ -2796,6 +3007,78 @@ def admin_view_user(user_id):
         theory_stats=theory_stats,
         task_stats=task_stats,
         has_task_stats=has_task_stats,
+    )
+
+
+@app.route("/admin/user/<int:user_id>/lesson/<int:lesson_id>")
+def admin_view_lesson_detail(user_id, lesson_id):
+    """Постатейная детализация прогресса пользователя по уроку (только для админа)"""
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    db = get_db()
+    current_user = db.execute(
+        "SELECT * FROM users WHERE id = ?", (session["user_id"],)
+    ).fetchone()
+
+    if not current_user or current_user["is_admin"] != 1:
+        db.close()
+        flash("🚫 У вас нет прав администратора", "error")
+        return redirect(url_for("profile"))
+
+    target_user = db.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+    db.close()
+
+    if not target_user:
+        flash("❌ Пользователь не найден", "error")
+        return redirect(url_for("admin_panel"))
+
+    detail = get_lesson_task_detail(user_id, lesson_id)
+    if not detail:
+        flash("❌ Урок не найден", "error")
+        return redirect(url_for("admin_view_user", user_id=user_id))
+
+    return render_template(
+        "admin_practice_detail.html",
+        target_user=target_user,
+        detail=detail,
+        mode="lesson",
+    )
+
+
+@app.route("/admin/user/<int:user_id>/theory/<int:task_num>")
+def admin_view_theory_detail(user_id, task_num):
+    """Постатейная детализация прогресса пользователя по теории задания (только для админа)"""
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    db = get_db()
+    current_user = db.execute(
+        "SELECT * FROM users WHERE id = ?", (session["user_id"],)
+    ).fetchone()
+
+    if not current_user or current_user["is_admin"] != 1:
+        db.close()
+        flash("🚫 У вас нет прав администратора", "error")
+        return redirect(url_for("profile"))
+
+    target_user = db.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+    db.close()
+
+    if not target_user:
+        flash("❌ Пользователь не найден", "error")
+        return redirect(url_for("admin_panel"))
+
+    detail = get_theory_task_detail(user_id, task_num)
+    if not detail:
+        flash("❌ Тема теории не найдена", "error")
+        return redirect(url_for("admin_view_user", user_id=user_id))
+
+    return render_template(
+        "admin_practice_detail.html",
+        target_user=target_user,
+        detail=detail,
+        mode="theory",
     )
 
 

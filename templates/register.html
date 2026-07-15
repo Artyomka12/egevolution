@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Регистрация | ЕГЭволюция{% endblock %}
+{% block title %}Заявка на доступ | ЕГЭволюция{% endblock %}
 
 {% block extra_head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/auth.css') }}?v={{ app_version }}">
@@ -15,8 +15,8 @@
     <div class="auth-card">
 
         <div class="auth-logo">📝</div>
-        <h1 class="auth-title">Регистрация</h1>
-        <p class="auth-subtitle">Создай свой аккаунт</p>
+        <h1 class="auth-title">Оставить заявку</h1>
+        <p class="auth-subtitle">Расскажите немного о себе — мы свяжемся с вами и вышлем доступ к платформе</p>
 
         {% include 'components/flash.html' %}
 
@@ -24,40 +24,70 @@
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
             <div class="form-field">
-                <label class="form-label" for="name">Имя</label>
-                <input class="form-input" type="text" id="name" name="name"
+                <label class="form-label" for="last_name">Фамилия</label>
+                <input class="form-input" type="text" id="last_name" name="last_name"
+                       placeholder="Твоя фамилия" maxlength="32" required autocomplete="off">
+            </div>
+
+            <div class="form-field">
+                <label class="form-label" for="first_name">Имя</label>
+                <input class="form-input" type="text" id="first_name" name="first_name"
                        placeholder="Твоё имя" maxlength="32" required autocomplete="off">
             </div>
 
             <div class="form-field">
-                <label class="form-label" for="username">Логин</label>
-                <input class="form-input" type="text" id="username" name="username"
-                       placeholder="Придумай логин" maxlength="16" required autocomplete="off">
+                <label class="form-label" for="phone">Номер телефона</label>
+                <input class="form-input" type="tel" id="phone" name="phone"
+                       placeholder="+7 900 000-00-00" maxlength="20" required autocomplete="off">
             </div>
 
             <div class="form-field">
-                <label class="form-label" for="password">Пароль</label>
-                <input class="form-input" type="password" id="password" name="password"
-                       placeholder="Придумай пароль" maxlength="16" required>
+                <label class="form-label">Удобный способ связи</label>
+                <div class="contact-type-options">
+                    <label class="contact-type-option">
+                        <input type="radio" name="contact_type" value="telegram" checked onchange="updateContactField()">
+                        Telegram
+                    </label>
+                    <label class="contact-type-option">
+                        <input type="radio" name="contact_type" value="vk" onchange="updateContactField()">
+                        VK
+                    </label>
+                    <label class="contact-type-option">
+                        <input type="radio" name="contact_type" value="max" onchange="updateContactField()">
+                        MAX
+                    </label>
+                </div>
             </div>
 
             <div class="form-field">
-                <label class="form-label site-password-label" for="site_password">🔑 Пароль сайта</label>
-                <input class="form-input site-password-input" type="password" id="site_password" name="site_password"
-                       placeholder="Пароль для регистрации" maxlength="16" required>
-                <p class="site-password-hint">
-                    Пароль сайта можно узнать только у меня лично — напишите в
-                    <a href="https://t.me/Tyomkinss" target="_blank">Telegram</a> или
-                    <a href="https://max.ru/u/f9LHodD0cOIojiO0gNWRLNP_as6P10M9ij53KQDQmY0CRLnpzpAaW07gVTg" target="_blank">MAX</a>,
-                    либо позвоните.
-                </p>
+                <label class="form-label" for="contact_value" id="contact_value_label">Username в Telegram</label>
+                <input class="form-input" type="text" id="contact_value" name="contact_value"
+                       placeholder="@username" maxlength="64" required autocomplete="off">
             </div>
 
-            <button type="submit" class="btn btn-primary btn--full">Зарегистрироваться</button>
+            <button type="submit" class="btn btn-primary btn--full">Отправить заявку</button>
         </form>
 
         <p class="auth-footer-link">Уже есть аккаунт? <a href="/login">Войти</a></p>
 
     </div>
 </div>
+
+<script>
+    function updateContactField() {
+        var type = document.querySelector('input[name="contact_type"]:checked').value;
+        var label = document.getElementById('contact_value_label');
+        var input = document.getElementById('contact_value');
+        if (type === 'telegram') {
+            label.textContent = 'Username в Telegram';
+            input.placeholder = '@username';
+        } else if (type === 'vk') {
+            label.textContent = 'Ссылка на профиль VK';
+            input.placeholder = 'https://vk.com/username';
+        } else {
+            label.textContent = 'Контакт в MAX';
+            input.placeholder = 'Ссылка или номер';
+        }
+    }
+</script>
 {% endblock %}

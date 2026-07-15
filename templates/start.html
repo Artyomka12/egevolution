@@ -1260,6 +1260,11 @@
             border: 1px solid rgba(37, 99, 235, 0.2);
         }
 
+        .iz-cta-btn-apply {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #fff;
+        }
+
         /* ============================================================
            МАРШРУТ ПОДГОТОВКИ
         ============================================================ */
@@ -2012,6 +2017,11 @@
             border: 1px solid rgba(37, 99, 235, 0.18);
         }
 
+        .floating-contact-link-apply {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #fff;
+        }
+
         /* ============================================================
            FOOTER
         ============================================================ */
@@ -2705,7 +2715,7 @@
                 </form>
                 {% else %}
                 <a href="/login" class="nav-btn">🔐 Войти</a>
-                <a href="/register" class="nav-btn nav-btn-primary">📝 Регистрация</a>
+                <a href="/register" class="nav-btn nav-btn-primary">📝 Оставить заявку</a>
                 {% endif %}
             </div>
 
@@ -2977,6 +2987,7 @@
             <h3 class="iz-cta-title">Запишись на первое бесплатное вводное занятие</h3>
             <p class="iz-cta-sub">Разберём твой уровень, составим план подготовки и ответим на вопросы.</p>
             <div class="iz-cta-buttons">
+                <a href="/register" class="iz-cta-btn iz-cta-btn-apply">Оставить заявку</a>
                 <a href="https://t.me/Tyomkinss" target="_blank" class="iz-cta-btn iz-cta-btn-tg">Telegram</a>
                 <a href="https://max.ru/u/f9LHodD0cOIojiO0gNWRLNP_as6P10M9ij53KQDQmY0CRLnpzpAaW07gVTg" target="_blank" class="iz-cta-btn iz-cta-btn-max">MAX</a>
             </div>
@@ -2995,7 +3006,7 @@
                 <!-- Левый постер -->
                 <div class="video-side video-side-left">
                     <div class="video-side-thumb">
-                        <img src="/static/images/video-preview-left.jpg"
+                        <img src="/static/images/video-preview-left.jpg?v={{ app_version }}"
                              alt="Видеоразбор по ЕГЭ по информатике"
                              class="video-side-img"
                              loading="lazy">
@@ -3021,7 +3032,7 @@
                 <!-- Правый постер -->
                 <div class="video-side video-side-right">
                     <div class="video-side-thumb">
-                        <img src="/static/images/video-preview-right.jpg"
+                        <img src="/static/images/video-preview-right.jpg?v={{ app_version }}"
                              alt="Видеопрактика по информатике"
                              class="video-side-img"
                              loading="lazy">
@@ -3107,7 +3118,7 @@
                 <!-- Левый постер -->
                 <div class="visualizer-side visualizer-side-left">
                     <div class="visualizer-side-thumb">
-                        <img src="/static/images/visualizer-preview-left.jpg"
+                        <img src="/static/images/visualizer-preview-left.jpg?v={{ app_version }}"
                              alt="Визуализатор кода — Classic View"
                              class="visualizer-side-img"
                              loading="lazy">
@@ -3133,7 +3144,7 @@
                 <!-- Правый постер -->
                 <div class="visualizer-side visualizer-side-right">
                     <div class="visualizer-side-thumb">
-                        <img src="/static/images/visualizer-preview-right.jpg"
+                        <img src="/static/images/visualizer-preview-right.jpg?v={{ app_version }}"
                              alt="Визуализатор кода — Block Scheme"
                              class="visualizer-side-img"
                              loading="lazy">
@@ -3181,9 +3192,9 @@
         <section class="guest-cta-section">
             <div class="guest-cta-card reveal">
                 <h2 class="guest-cta-title">Начните подготовку уже сегодня</h2>
-                <p class="guest-cta-desc">Создайте аккаунт и отслеживайте результаты, прогресс и историю решений.</p>
+                <p class="guest-cta-desc">Оставьте заявку — мы свяжемся с вами и настроим доступ к платформе: отслеживанию результатов, прогресса и истории решений.</p>
                 <div class="guest-cta-buttons">
-                    <a href="/register" class="hero-btn hero-btn-primary">Регистрация</a>
+                    <a href="/register" class="hero-btn hero-btn-primary">Оставить заявку</a>
                     <a href="/login" class="hero-btn hero-btn-secondary">Войти</a>
                 </div>
             </div>
@@ -3265,6 +3276,7 @@
         <div class="floating-contact-title">Есть вопросы?</div>
         <p class="floating-contact-text">Напиши — отвечу лично и помогу с началом подготовки.</p>
         <div class="floating-contact-links">
+            <a href="/register" class="floating-contact-link floating-contact-link-apply">Оставить заявку</a>
             <a href="https://t.me/Tyomkinss" target="_blank" class="floating-contact-link floating-contact-link-tg">Telegram</a>
             <a href="https://max.ru/u/f9LHodD0cOIojiO0gNWRLNP_as6P10M9ij53KQDQmY0CRLnpzpAaW07gVTg" target="_blank" class="floating-contact-link floating-contact-link-max">MAX</a>
         </div>
