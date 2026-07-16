@@ -32,7 +32,7 @@
 
     <!-- Теоретический материал -->
     {% if lesson.theory %}
-    <div class="card reveal">
+    <div class="card">
         <h2 class="lesson-card-title">📚 Теоретический материал</h2>
         <div class="theory-content">
             {% for para in lesson.theory.description %}
@@ -94,7 +94,7 @@
 
     <!-- Практические задания -->
     {% if lesson.practice and lesson.practice.tasks %}
-    <div class="card lesson-practice-card reveal">
+    <div class="card lesson-practice-card">
         <h2 class="lesson-card-title">📝 Практические задания</h2>
 
         {% for task in lesson.practice.tasks %}
