@@ -3,7 +3,15 @@
  "lesson_id": 1,
  "practice": {
   "description": "",
-  "tasks": []
+  "tasks": [
+   {
+    "title": "Итог",
+    "description": [],
+    "images": [],
+    "file": null,
+    "correct_answer": "Да"
+   }
+  ]
  },
  "theory": {
   "description": [
@@ -156,10 +164,10 @@
     "size": "img-medium"
    },
    {
-    "path": "urok_1_1784195869_2026-07-16_125301.png",
     "after_paragraph": 16,
-    "size": "img-medium",
-    "alt": ""
+    "alt": "",
+    "path": "urok_1_1784195869_2026-07-16_125301.png",
+    "size": "img-medium"
    }
   ]
  },
