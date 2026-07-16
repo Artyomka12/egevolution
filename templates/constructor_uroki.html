@@ -117,6 +117,30 @@
             background: rgba(255, 255, 255, 0.08);
         }
 
+        /* Поле абзаца (теория/практика) — вне .form-group, стилизуется отдельно */
+        .paragraph-textarea {
+            display: block;
+            width: 100%;
+            min-height: 180px;
+            padding: 14px;
+            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-family: inherit;
+            font-size: 15px;
+            line-height: 1.6;
+            resize: vertical;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .paragraph-textarea:focus {
+            outline: none;
+            border-color: #a855f7;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
         .btn {
             padding: 12px 24px;
             border: none;
@@ -753,7 +777,7 @@
 <span style="color: #a855f7; font-weight: bold;">Абзац ${idx + 1}</span>
 <button class="btn btn-danger btn-sm" onclick="removeTheoryParagraph(${idx})">✕</button>
 </div>
-<textarea rows="8" onchange="updateTheoryParagraph(${idx}, this.value)">${para}</textarea>
+<textarea class="paragraph-textarea" rows="8" onchange="updateTheoryParagraph(${idx}, this.value)">${para}</textarea>
 <div class="theory-img-list">${existingImgsHtml}${pendingImgsHtml}</div>
 <button type="button" class="btn btn-secondary btn-sm" onclick="toggleTheoryImageForm(${idx})">📷 Добавить картинку</button>
 <div class="new-img-block" id="theory-img-form-${idx}" style="display:none;">
@@ -1037,7 +1061,7 @@
 <span style="color: #a855f7; font-weight: bold;">Абзац ${pIdx + 1}</span>
 <button type="button" class="btn btn-danger btn-sm" onclick="removePracticeParagraph(${taskIdx}, ${pIdx})">✕</button>
 </div>
-<textarea rows="8" onchange="updatePracticeParagraph(${taskIdx}, ${pIdx}, this.value)">${para}</textarea>
+<textarea class="paragraph-textarea" rows="8" onchange="updatePracticeParagraph(${taskIdx}, ${pIdx}, this.value)">${para}</textarea>
 <div class="theory-img-list">${existingImgsHtml}${pendingImgsHtml}</div>
 <button type="button" class="btn btn-secondary btn-sm" onclick="togglePracticeImageForm(${taskIdx}, ${pIdx})">📷 Добавить картинку</button>
 <div class="new-img-block" id="practice-img-form-${taskIdx}-${pIdx}" style="display:none;">

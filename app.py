@@ -54,7 +54,7 @@ def handle_csrf_error(e):
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-APP_VERSION = "1.15.1"
+APP_VERSION = "1.16.0"
 
 
 @app.context_processor
@@ -142,6 +142,8 @@ def replace_markers(text):
         ("</li>",     "[/li]",     "\x00PH20\x00"),
         ("<code>",    "[code]",    "\x00PH21\x00"),
         ("</code>",   "[/code]",   "\x00PH22\x00"),
+        ("<pre>",     "[pre]",     "\x00PH23\x00"),
+        ("</pre>",    "[/pre]",    "\x00PH24\x00"),
     ]
 
     has_markup = any(html in text or bbcode in text for html, bbcode, _ in ALLOWED)

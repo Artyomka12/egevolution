@@ -82,6 +82,41 @@ code {
     border-radius: 5px;
 }
 
+/* Многострочный блок кода — приходит из replace_markers() как разрешённый тег <pre>.
+   Отдельно от <code> (тот — инлайн-чип для короткого упоминания в прозе), <pre> — цельный
+   блок на несколько строк; white-space: pre сохраняет переносы и пробелы автора буквально.
+   Тёмная Darcula-тема (в тон PyCharm из урока №1) — сознательно контрастирует со светлой
+   страницей, как «окно редактора». Три кружка сверху — декоративная шапка через ::before/
+   box-shadow, без лишней разметки в HTML. */
+pre {
+    display: block;
+    position: relative;
+    font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 0.88em;
+    line-height: 1.6;
+    background: #2b2b2b;
+    border: 1px solid rgba(204, 120, 50, 0.18);
+    border-radius: 10px;
+    padding: 40px 18px 16px;
+    margin: 12px 0 16px;
+    color: #a9b7c6;
+    white-space: pre;
+    overflow-x: auto;
+    text-indent: 0;
+}
+
+pre::before {
+    content: "";
+    position: absolute;
+    top: 16px;
+    left: 18px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #ff5f56;
+    box-shadow: 20px 0 0 #ffbd2e, 40px 0 0 #27c93f;
+}
+
 
 /* ============================================================
    4. NAVBAR

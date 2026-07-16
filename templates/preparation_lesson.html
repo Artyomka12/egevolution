@@ -37,7 +37,7 @@
         <div class="theory-content">
             {% for para in lesson.theory.description %}
             {% set stripped_para = para.strip() %}
-            {% if stripped_para in ['<ul>', '</ul>', '<ol>', '</ol>'] or (stripped_para.startswith('<li>') and stripped_para.endswith('</li>')) %}
+            {% if stripped_para in ['<ul>', '</ul>', '<ol>', '</ol>'] or (stripped_para.startswith('<li>') and stripped_para.endswith('</li>')) or (stripped_para.startswith('<pre>') and stripped_para.endswith('</pre>')) %}
             {{ para | replace_markers }}
             {% else %}
             <p>{{ para | replace_markers }}</p>
@@ -105,7 +105,7 @@
             <div class="task-description">
                 {% for para in task.description %}
                 {% set stripped_para = para.strip() %}
-                {% if stripped_para in ['<ul>', '</ul>', '<ol>', '</ol>'] or (stripped_para.startswith('<li>') and stripped_para.endswith('</li>')) %}
+                {% if stripped_para in ['<ul>', '</ul>', '<ol>', '</ol>'] or (stripped_para.startswith('<li>') and stripped_para.endswith('</li>')) or (stripped_para.startswith('<pre>') and stripped_para.endswith('</pre>')) %}
                 {{ para | replace_markers }}
                 {% else %}
                 <p>{{ para | replace_markers }}</p>
