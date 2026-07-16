@@ -54,7 +54,7 @@ def handle_csrf_error(e):
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-APP_VERSION = "1.15.0"
+APP_VERSION = "1.15.1"
 
 
 @app.context_processor
@@ -459,6 +459,8 @@ def check_auth():
         "static",
         "tasks_list",
         "tasks_view",
+        "task_images",
+        "task_files",
         "theory",
         "preparation",
         "check_theory_answer",
@@ -471,6 +473,13 @@ def check_auth():
     if endpoint == "preparation_lesson" and view_args.get("lesson_id") == 1:
         always_open = True
     if endpoint == "theory_task" and view_args.get("task_num") == 1:
+        always_open = True
+    # Файлы/картинки/видео открытой темы теории и открытого урока должны быть
+    # доступны гостю так же, как и сама страница — иначе гость видит страницу,
+    # но каждая картинка на ней бьётся редиректом на /login.
+    if endpoint in ("theory_images", "theory_videos", "theory_files") and view_args.get("task_num") == 1:
+        always_open = True
+    if endpoint in ("preparation_images", "preparation_videos", "preparation_files") and view_args.get("lesson_id") == 1:
         always_open = True
 
     if not always_open and "user_id" not in session:
