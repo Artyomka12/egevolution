@@ -9,23 +9,26 @@
     <!-- Open Graph / соцсети -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="ЕГЭволюция — подготовка к ЕГЭ по информатике">
-    <meta property="og:description" content="Теория, практика и варианты ЕГЭ в одном месте — с интерактивным визуализатором кода и удобным отслеживанием прогресса.">
+    <meta property="og:description"
+        content="Теория, практика и варианты ЕГЭ в одном месте — с интерактивным визуализатором кода и удобным отслеживанием прогресса.">
     <meta property="og:image" content="https://egevolution.ru/static/images/video-preview-left.jpg">
     <meta property="og:url" content="{{ request.url }}">
     <meta name="twitter:card" content="summary_large_image">
 
     <!-- Yandex.Metrika counter -->
     <script type="text/javascript">
-        (function(m,e,t,r,i,k,a){
-            m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-            m[i].l=1*new Date();
-            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=110453873', 'ym');
+        (function (m, e, t, r, i, k, a) {
+            m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments) };
+            m[i].l = 1 * new Date();
+            for (var j = 0; j < document.scripts.length; j++) { if (document.scripts[j].src === r) { return; } }
+            k = e.createElement(t), a = e.getElementsByTagName(t)[0], k.async = 1, k.src = r, a.parentNode.insertBefore(k, a)
+        })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js?id=110453873', 'ym');
 
-        ym(110453873, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+        ym(110453873, 'init', { ssr: true, webvisor: true, clickmap: true, ecommerce: "dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce: true, trackLinks: true });
     </script>
-    <noscript><div><img src="https://mc.yandex.ru/watch/110453873" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <noscript>
+        <div><img src="https://mc.yandex.ru/watch/110453873" style="position:absolute; left:-9999px;" alt="" /></div>
+    </noscript>
     <!-- /Yandex.Metrika counter -->
 
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
@@ -39,12 +42,10 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(
-                180deg,
-                #eaf6ff 0%,
-                #f5fbff 40%,
-                #eef8ff 100%
-            );
+            background: linear-gradient(180deg,
+                    #eaf6ff 0%,
+                    #f5fbff 40%,
+                    #eef8ff 100%);
             color: #0f172a;
             min-height: 100vh;
             overflow-x: hidden;
@@ -65,7 +66,8 @@
         }
 
         .navbar-inner {
-            position: relative; /* для абсолютного центрирования nav-center */
+            position: relative;
+            /* для абсолютного центрирования nav-center */
             max-width: 1200px;
             margin: 0 auto;
             height: 62px;
@@ -288,9 +290,9 @@
             width: 58%;
             height: 100%;
             background: radial-gradient(ellipse at right center,
-                rgba(56, 189, 248, 0.07) 0%,
-                rgba(129, 140, 248, 0.04) 45%,
-                transparent 70%);
+                    rgba(56, 189, 248, 0.07) 0%,
+                    rgba(129, 140, 248, 0.04) 45%,
+                    transparent 70%);
             pointer-events: none;
         }
 
@@ -355,7 +357,7 @@
             text-decoration: none;
             display: inline-block;
             transition: transform 0.18s, opacity 0.18s, background 0.18s,
-                        border-color 0.18s, color 0.18s;
+                border-color 0.18s, color 0.18s;
         }
 
         .hero-btn-primary {
@@ -414,9 +416,17 @@
             background: rgba(255, 255, 255, 0.15);
         }
 
-        .mockup-dot:first-child  { background: rgba(248, 113, 113, 0.5); }
-        .mockup-dot:nth-child(2) { background: rgba(250, 204,  21, 0.4); }
-        .mockup-dot:nth-child(3) { background: rgba( 74, 222, 128, 0.4); }
+        .mockup-dot:first-child {
+            background: rgba(248, 113, 113, 0.5);
+        }
+
+        .mockup-dot:nth-child(2) {
+            background: rgba(250, 204, 21, 0.4);
+        }
+
+        .mockup-dot:nth-child(3) {
+            background: rgba(74, 222, 128, 0.4);
+        }
 
         .mockup-bar-label {
             flex: 1;
@@ -767,9 +777,17 @@
             letter-spacing: 0.08em;
         }
 
-        .start-card-level-1 { color: #0284c7; }
-        .start-card-level-2 { color: #6366f1; }
-        .start-card-level-3 { color: #16a34a; }
+        .start-card-level-1 {
+            color: #0284c7;
+        }
+
+        .start-card-level-2 {
+            color: #6366f1;
+        }
+
+        .start-card-level-3 {
+            color: #16a34a;
+        }
 
         .start-card-title {
             font-size: 1.05em;
@@ -819,9 +837,17 @@
             border: 1px solid rgba(22, 163, 74, 0.22);
         }
 
-        .start-card-1 { border-left: 3px solid rgba(56, 189, 248, 0.5); }
-        .start-card-2 { border-left: 3px solid rgba(129, 140, 248, 0.5); }
-        .start-card-3 { border-left: 3px solid rgba(74, 222, 128, 0.5); }
+        .start-card-1 {
+            border-left: 3px solid rgba(56, 189, 248, 0.5);
+        }
+
+        .start-card-2 {
+            border-left: 3px solid rgba(129, 140, 248, 0.5);
+        }
+
+        .start-card-3 {
+            border-left: 3px solid rgba(74, 222, 128, 0.5);
+        }
 
         /* ============================================================
            МИНИ-ЗАДАЧА
@@ -1352,8 +1378,8 @@
             width: 2px;
             height: 36px;
             background: linear-gradient(to bottom,
-                rgba(37, 99, 235, 0.2),
-                rgba(99, 102, 241, 0.12));
+                    rgba(37, 99, 235, 0.2),
+                    rgba(99, 102, 241, 0.12));
             margin: 5px 0;
         }
 
@@ -1581,9 +1607,17 @@
             border-left: 3.5px solid var(--stripe, rgba(37, 99, 235, 0.85));
         }
 
-        .card-stripe--blue   { --stripe: rgba(37, 99, 235, 0.85); }
-        .card-stripe--purple { --stripe: rgba(168, 85, 247, 0.85); }
-        .card-stripe--green  { --stripe: rgba(34, 197, 94, 0.85);  }
+        .card-stripe--blue {
+            --stripe: rgba(37, 99, 235, 0.85);
+        }
+
+        .card-stripe--purple {
+            --stripe: rgba(168, 85, 247, 0.85);
+        }
+
+        .card-stripe--green {
+            --stripe: rgba(34, 197, 94, 0.85);
+        }
 
         /* При hover update-card меняет border-color шортхэндом —
            восстанавливаем цвет полоски повышенной специфичностью */
@@ -1623,8 +1657,8 @@
             background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 55%, #c7d2fe 100%);
             box-shadow: 0 8px 32px rgba(37, 99, 235, 0.11);
             transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1),
-                        opacity 0.55s ease,
-                        box-shadow 0.3s ease;
+                opacity 0.55s ease,
+                box-shadow 0.3s ease;
         }
 
         .slideshow-slide.no-transition {
@@ -1675,6 +1709,7 @@
             .slideshow-stage {
                 padding-top: 0;
             }
+
             .slideshow-slide.pos-left,
             .slideshow-slide.pos-right,
             .slideshow-slide.pos-hidden-right {
@@ -1821,7 +1856,8 @@
             position: fixed;
             bottom: 28px;
             right: 24px;
-            z-index: 50;      /* ниже navbar(100) и dropdown(200) */
+            z-index: 50;
+            /* ниже navbar(100) и dropdown(200) */
             width: 260px;
             background: #fff;
             border: 1px solid rgba(37, 99, 235, 0.18);
@@ -2002,6 +2038,7 @@
            BREAKPOINT 900px
         ============================================================ */
         @media (max-width: 900px) {
+
             /* Hero: коллапс в одну колонку */
             .hero {
                 grid-template-columns: 1fr;
@@ -2053,6 +2090,7 @@
            BREAKPOINT 768px — планшет
         ============================================================ */
         @media (max-width: 768px) {
+
             /* Dropdown: убираем transform, фиксируем к экрану */
             .nav-center {
                 position: static;
@@ -2154,33 +2192,80 @@
         }
 
         /* Stagger: start cards */
-        .start-card-1.reveal { transition-delay: 0ms; }
-        .start-card-2.reveal { transition-delay: 85ms; }
-        .start-card-3.reveal { transition-delay: 170ms; }
+        .start-card-1.reveal {
+            transition-delay: 0ms;
+        }
+
+        .start-card-2.reveal {
+            transition-delay: 85ms;
+        }
+
+        .start-card-3.reveal {
+            transition-delay: 170ms;
+        }
 
         /* Stagger: features grid */
-        .features-grid .reveal:nth-child(1) { transition-delay: 0ms; }
-        .features-grid .reveal:nth-child(2) { transition-delay: 80ms; }
-        .features-grid .reveal:nth-child(3) { transition-delay: 160ms; }
-        .features-grid .reveal:nth-child(4) { transition-delay: 240ms; }
+        .features-grid .reveal:nth-child(1) {
+            transition-delay: 0ms;
+        }
+
+        .features-grid .reveal:nth-child(2) {
+            transition-delay: 80ms;
+        }
+
+        .features-grid .reveal:nth-child(3) {
+            transition-delay: 160ms;
+        }
+
+        .features-grid .reveal:nth-child(4) {
+            transition-delay: 240ms;
+        }
 
         /* Stagger: advantages */
-        .advantages-list .reveal:nth-child(1) { transition-delay: 0ms; }
-        .advantages-list .reveal:nth-child(2) { transition-delay: 80ms; }
-        .advantages-list .reveal:nth-child(3) { transition-delay: 160ms; }
-        .advantages-list .reveal:nth-child(4) { transition-delay: 240ms; }
+        .advantages-list .reveal:nth-child(1) {
+            transition-delay: 0ms;
+        }
+
+        .advantages-list .reveal:nth-child(2) {
+            transition-delay: 80ms;
+        }
+
+        .advantages-list .reveal:nth-child(3) {
+            transition-delay: 160ms;
+        }
+
+        .advantages-list .reveal:nth-child(4) {
+            transition-delay: 240ms;
+        }
 
         /* Stagger: updates */
-        .updates-grid .reveal:nth-child(1) { transition-delay: 0ms; }
-        .updates-grid .reveal:nth-child(2) { transition-delay: 80ms; }
-        .updates-grid .reveal:nth-child(3) { transition-delay: 160ms; }
+        .updates-grid .reveal:nth-child(1) {
+            transition-delay: 0ms;
+        }
+
+        .updates-grid .reveal:nth-child(2) {
+            transition-delay: 80ms;
+        }
+
+        .updates-grid .reveal:nth-child(3) {
+            transition-delay: 160ms;
+        }
 
         /* Stagger: progress cards */
-        .progress-cards .reveal:nth-child(1) { transition-delay: 0ms; }
-        .progress-cards .reveal:nth-child(2) { transition-delay: 80ms; }
-        .progress-cards .reveal:nth-child(3) { transition-delay: 160ms; }
+        .progress-cards .reveal:nth-child(1) {
+            transition-delay: 0ms;
+        }
+
+        .progress-cards .reveal:nth-child(2) {
+            transition-delay: 80ms;
+        }
+
+        .progress-cards .reveal:nth-child(3) {
+            transition-delay: 160ms;
+        }
 
         @media (max-width: 480px) {
+
             /* Navbar */
             .navbar-site-title {
                 display: none;
@@ -2464,6 +2549,7 @@
                 text-align: center;
             }
         }
+
         /* ============================================================
            INTERACTIVE ZONE — ПЕРЕХОДНЫЕ АНИМАЦИИ (v1.6.2)
         ============================================================ */
@@ -2500,15 +2586,16 @@
             .iz-step-connector::after {
                 transition: none;
             }
+
             .iz-dot {
                 transition: background 0.15s ease;
             }
+
             .iz-slide-out-left {
                 transition: opacity 0.18s ease !important;
                 transform: none !important;
             }
         }
-
     </style>
 </head>
 
@@ -2538,7 +2625,8 @@
                         <a href="/variants" class="nav-dropdown-item">📝 Решать варианты</a>
                         <a href="/stats" class="nav-dropdown-item">📊 Статистика</a>
                         <a href="/tasks" class="nav-dropdown-item">🎯 База заданий</a>
-                        <a href="/visualizer" class="nav-dropdown-item nav-dropdown-item-mobile-only">⚡ Визуализатор кода</a>
+                        <a href="/visualizer" class="nav-dropdown-item nav-dropdown-item-mobile-only">⚡ Визуализатор
+                            кода</a>
                     </div>
                 </div>
                 <a href="/visualizer" class="nav-visualizer-btn">⚡ Визуализатор кода</a>
@@ -2550,7 +2638,8 @@
                 <a href="/profile" class="nav-btn">👤 Профиль</a>
                 <form method="POST" action="{{ url_for('logout') }}" style="display:contents">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <button type="submit" class="nav-btn nav-btn-logout" style="font:inherit;cursor:pointer">🚪 Выйти</button>
+                    <button type="submit" class="nav-btn nav-btn-logout" style="font:inherit;cursor:pointer">🚪
+                        Выйти</button>
                 </form>
                 {% else %}
                 <a href="/login" class="nav-btn">🔐 Войти</a>
@@ -2649,7 +2738,8 @@
                 <div class="start-card start-card-1 reveal">
                     <span class="start-card-level start-card-level-1">Уровень 1</span>
                     <div class="start-card-title">Начинаю с нуля</div>
-                    <div class="start-card-desc">Для тех, кто ещё не изучал информатику или хочет пройти базу заново.</div>
+                    <div class="start-card-desc">Для тех, кто ещё не изучал информатику или хочет пройти базу заново.
+                    </div>
                     <a href="/preparation" class="start-card-btn start-card-btn-1">Перейти</a>
                 </div>
                 <div class="start-arrow">→</div>
@@ -2663,7 +2753,8 @@
                 <div class="start-card start-card-3 reveal">
                     <span class="start-card-level start-card-level-3">Уровень 3</span>
                     <div class="start-card-title">Готов решать варианты</div>
-                    <div class="start-card-desc">Переходите сразу к полноценным вариантам ЕГЭ и отслеживайте результаты.</div>
+                    <div class="start-card-desc">Переходите сразу к полноценным вариантам ЕГЭ и отслеживайте результаты.
+                    </div>
                     <a href="/variants" class="start-card-btn start-card-btn-3">Решать варианты</a>
                 </div>
             </div>
@@ -2672,165 +2763,170 @@
         <!-- ИНТЕРАКТИВНАЯ ЗОНА: мини-задача + калькулятор + маршрут -->
         <div class="interactive-zone">
 
-        <!-- ИНДИКАТОР ПРОГРЕССА -->
-        <div class="iz-progress reveal" id="izProgress">
-            <div class="iz-steps-row">
-                <div class="iz-step-item">
-                    <span class="iz-dot iz-dot-active"></span>
-                    <span class="iz-step-label">Задача</span>
-                </div>
-                <div class="iz-step-connector"></div>
-                <div class="iz-step-item">
-                    <span class="iz-dot"></span>
-                    <span class="iz-step-label">Готовность</span>
-                </div>
-                <div class="iz-step-connector"></div>
-                <div class="iz-step-item">
-                    <span class="iz-dot"></span>
-                    <span class="iz-step-label">Маршрут</span>
+            <!-- ИНДИКАТОР ПРОГРЕССА -->
+            <div class="iz-progress reveal" id="izProgress">
+                <div class="iz-steps-row">
+                    <div class="iz-step-item">
+                        <span class="iz-dot iz-dot-active"></span>
+                        <span class="iz-step-label">Задача</span>
+                    </div>
+                    <div class="iz-step-connector"></div>
+                    <div class="iz-step-item">
+                        <span class="iz-dot"></span>
+                        <span class="iz-step-label">Готовность</span>
+                    </div>
+                    <div class="iz-step-connector"></div>
+                    <div class="iz-step-item">
+                        <span class="iz-dot"></span>
+                        <span class="iz-step-label">Маршрут</span>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- МИНИ-ЗАДАЧА -->
-        <section class="minitask-section">
-            <div class="section-heading reveal">
-                <span class="section-tag section-tag-blue">Задание</span>
-                <h2>Попробуйте задачу прямо сейчас</h2>
-                <p>Так выглядит проверка знаний на платформе.</p>
-            </div>
-            <div class="minitask-card reveal">
-                <div class="minitask-question">Сколько бит требуется для кодирования 256 различных символов?</div>
-                <div class="minitask-options" id="minitask-options">
-                    <label class="minitask-option">
-                        <input type="radio" name="minitask" value="6">
-                        <span class="minitask-option-label">6</span>
-                    </label>
-                    <label class="minitask-option">
-                        <input type="radio" name="minitask" value="7">
-                        <span class="minitask-option-label">7</span>
-                    </label>
-                    <label class="minitask-option">
-                        <input type="radio" name="minitask" value="8">
-                        <span class="minitask-option-label">8</span>
-                    </label>
-                    <label class="minitask-option">
-                        <input type="radio" name="minitask" value="9">
-                        <span class="minitask-option-label">9</span>
-                    </label>
+            <!-- МИНИ-ЗАДАЧА -->
+            <section class="minitask-section">
+                <div class="section-heading reveal">
+                    <span class="section-tag section-tag-blue">Задание</span>
+                    <h2>Попробуйте задачу прямо сейчас</h2>
+                    <p>Так выглядит проверка знаний на платформе.</p>
                 </div>
-                <button class="minitask-check-btn" onclick="checkMiniTask()">Проверить</button>
-                <div class="minitask-result" id="minitask-result"></div>
-                <button class="iz-next-btn" id="izNextToCalc" style="display:none" onclick="goToStep2()">Оценить свою готовность →</button>
-            </div>
-        </section>
+                <div class="minitask-card reveal">
+                    <div class="minitask-question">Сколько бит требуется для кодирования 256 различных символов?</div>
+                    <div class="minitask-options" id="minitask-options">
+                        <label class="minitask-option">
+                            <input type="radio" name="minitask" value="6">
+                            <span class="minitask-option-label">6</span>
+                        </label>
+                        <label class="minitask-option">
+                            <input type="radio" name="minitask" value="7">
+                            <span class="minitask-option-label">7</span>
+                        </label>
+                        <label class="minitask-option">
+                            <input type="radio" name="minitask" value="8">
+                            <span class="minitask-option-label">8</span>
+                        </label>
+                        <label class="minitask-option">
+                            <input type="radio" name="minitask" value="9">
+                            <span class="minitask-option-label">9</span>
+                        </label>
+                    </div>
+                    <button class="minitask-check-btn" onclick="checkMiniTask()">Проверить</button>
+                    <div class="minitask-result" id="minitask-result"></div>
+                    <button class="iz-next-btn" id="izNextToCalc" style="display:none" onclick="goToStep2()">Оценить
+                        свою готовность →</button>
+                </div>
+            </section>
 
-        <!-- КАЛЬКУЛЯТОР ГОТОВНОСТИ -->
-        <section class="calculator-section" style="display:none">
-            <div class="section-heading">
-                <span class="section-tag section-tag-purple">Калькулятор</span>
-                <h2>Оцените свою готовность</h2>
-            </div>
-            <div class="calculator-card">
-                <div class="calc-questions">
-                    <div class="calc-question">
-                        <span class="calc-q-text">Изучили ли вы всю теорию?</span>
-                        <div class="calc-options">
-                            <label class="calc-option"><input type="radio" name="cq1" value="1">Да</label>
-                            <label class="calc-option"><input type="radio" name="cq1" value="0">Нет</label>
+            <!-- КАЛЬКУЛЯТОР ГОТОВНОСТИ -->
+            <section class="calculator-section" style="display:none">
+                <div class="section-heading">
+                    <span class="section-tag section-tag-purple">Калькулятор</span>
+                    <h2>Оцените свою готовность</h2>
+                </div>
+                <div class="calculator-card">
+                    <div class="calc-questions">
+                        <div class="calc-question">
+                            <span class="calc-q-text">Изучили ли вы всю теорию?</span>
+                            <div class="calc-options">
+                                <label class="calc-option"><input type="radio" name="cq1" value="1">Да</label>
+                                <label class="calc-option"><input type="radio" name="cq1" value="0">Нет</label>
+                            </div>
+                        </div>
+                        <div class="calc-question">
+                            <span class="calc-q-text">Решали ли вы полные варианты?</span>
+                            <div class="calc-options">
+                                <label class="calc-option"><input type="radio" name="cq2" value="1">Да</label>
+                                <label class="calc-option"><input type="radio" name="cq2" value="0">Нет</label>
+                            </div>
+                        </div>
+                        <div class="calc-question">
+                            <span class="calc-q-text">Решаете ли задания без подсказок?</span>
+                            <div class="calc-options">
+                                <label class="calc-option"><input type="radio" name="cq3" value="1">Да</label>
+                                <label class="calc-option"><input type="radio" name="cq3" value="0">Нет</label>
+                            </div>
                         </div>
                     </div>
-                    <div class="calc-question">
-                        <span class="calc-q-text">Решали ли вы полные варианты?</span>
-                        <div class="calc-options">
-                            <label class="calc-option"><input type="radio" name="cq2" value="1">Да</label>
-                            <label class="calc-option"><input type="radio" name="cq2" value="0">Нет</label>
+                    <button class="calc-btn" onclick="checkReadiness()">Показать результат</button>
+                    <div class="calc-result" id="calc-result"></div>
+                    <button class="iz-next-btn" id="izNextToRoadmap" style="display:none"
+                        onclick="goToStep3()">Посмотреть маршрут подготовки →</button>
+                </div>
+            </section>
+
+            <!-- МАРШРУТ ПОДГОТОВКИ -->
+            <section class="roadmap-section" style="display:none">
+                <div class="iz-result-header">
+                    <div class="iz-result-check">✓</div>
+                    <div class="iz-result-title">Ваш маршрут подготовки готов</div>
+                </div>
+                <div class="roadmap">
+                    <div class="roadmap-step">
+                        <div class="roadmap-indicator">
+                            <div class="roadmap-circle">①</div>
+                            <div class="roadmap-connector"></div>
+                        </div>
+                        <div class="roadmap-content">
+                            <div class="roadmap-step-title">Начальная подготовка</div>
+                            <div class="roadmap-step-desc">Базовые понятия, алгоритмы и первые шаги в информатике</div>
                         </div>
                     </div>
-                    <div class="calc-question">
-                        <span class="calc-q-text">Решаете ли задания без подсказок?</span>
-                        <div class="calc-options">
-                            <label class="calc-option"><input type="radio" name="cq3" value="1">Да</label>
-                            <label class="calc-option"><input type="radio" name="cq3" value="0">Нет</label>
+                    <div class="roadmap-step">
+                        <div class="roadmap-indicator">
+                            <div class="roadmap-circle">②</div>
+                            <div class="roadmap-connector"></div>
+                        </div>
+                        <div class="roadmap-content">
+                            <div class="roadmap-step-title">Теория</div>
+                            <div class="roadmap-step-desc">Изучение тем по каждому из 27 номеров ЕГЭ</div>
+                        </div>
+                    </div>
+                    <div class="roadmap-step">
+                        <div class="roadmap-indicator">
+                            <div class="roadmap-circle">③</div>
+                            <div class="roadmap-connector"></div>
+                        </div>
+                        <div class="roadmap-content">
+                            <div class="roadmap-step-title">Практика по номерам</div>
+                            <div class="roadmap-step-desc">Отработка задач из базы по каждому заданию отдельно</div>
+                        </div>
+                    </div>
+                    <div class="roadmap-step">
+                        <div class="roadmap-indicator">
+                            <div class="roadmap-circle">④</div>
+                            <div class="roadmap-connector"></div>
+                        </div>
+                        <div class="roadmap-content">
+                            <div class="roadmap-step-title">Полные варианты</div>
+                            <div class="roadmap-step-desc">Тренировочные варианты в режиме обучения с разбором ошибок
+                            </div>
+                        </div>
+                    </div>
+                    <div class="roadmap-step">
+                        <div class="roadmap-indicator">
+                            <div class="roadmap-circle roadmap-circle-goal">⑤</div>
+                            <div class="roadmap-connector"></div>
+                        </div>
+                        <div class="roadmap-content">
+                            <div class="roadmap-step-title">Экзамен</div>
+                            <div class="roadmap-step-desc">Симуляция реального ЕГЭ — таймер, без подсказок, итоговый
+                                балл</div>
                         </div>
                     </div>
                 </div>
-                <button class="calc-btn" onclick="checkReadiness()">Показать результат</button>
-                <div class="calc-result" id="calc-result"></div>
-                <button class="iz-next-btn" id="izNextToRoadmap" style="display:none" onclick="goToStep3()">Посмотреть маршрут подготовки →</button>
-            </div>
-        </section>
+            </section>
 
-        <!-- МАРШРУТ ПОДГОТОВКИ -->
-        <section class="roadmap-section" style="display:none">
-            <div class="iz-result-header">
-                <div class="iz-result-check">✓</div>
-                <div class="iz-result-title">Ваш маршрут подготовки готов</div>
-            </div>
-            <div class="roadmap">
-                <div class="roadmap-step">
-                    <div class="roadmap-indicator">
-                        <div class="roadmap-circle">①</div>
-                        <div class="roadmap-connector"></div>
-                    </div>
-                    <div class="roadmap-content">
-                        <div class="roadmap-step-title">Начальная подготовка</div>
-                        <div class="roadmap-step-desc">Базовые понятия, алгоритмы и первые шаги в информатике</div>
-                    </div>
-                </div>
-                <div class="roadmap-step">
-                    <div class="roadmap-indicator">
-                        <div class="roadmap-circle">②</div>
-                        <div class="roadmap-connector"></div>
-                    </div>
-                    <div class="roadmap-content">
-                        <div class="roadmap-step-title">Теория</div>
-                        <div class="roadmap-step-desc">Изучение тем по каждому из 27 номеров ЕГЭ</div>
-                    </div>
-                </div>
-                <div class="roadmap-step">
-                    <div class="roadmap-indicator">
-                        <div class="roadmap-circle">③</div>
-                        <div class="roadmap-connector"></div>
-                    </div>
-                    <div class="roadmap-content">
-                        <div class="roadmap-step-title">Практика по номерам</div>
-                        <div class="roadmap-step-desc">Отработка задач из базы по каждому заданию отдельно</div>
-                    </div>
-                </div>
-                <div class="roadmap-step">
-                    <div class="roadmap-indicator">
-                        <div class="roadmap-circle">④</div>
-                        <div class="roadmap-connector"></div>
-                    </div>
-                    <div class="roadmap-content">
-                        <div class="roadmap-step-title">Полные варианты</div>
-                        <div class="roadmap-step-desc">Тренировочные варианты в режиме обучения с разбором ошибок</div>
-                    </div>
-                </div>
-                <div class="roadmap-step">
-                    <div class="roadmap-indicator">
-                        <div class="roadmap-circle roadmap-circle-goal">⑤</div>
-                        <div class="roadmap-connector"></div>
-                    </div>
-                    <div class="roadmap-content">
-                        <div class="roadmap-step-title">Экзамен</div>
-                        <div class="roadmap-step-desc">Симуляция реального ЕГЭ — таймер, без подсказок, итоговый балл</div>
-                    </div>
+            <!-- CTA: БЕСПЛАТНОЕ ВВОДНОЕ ЗАНЯТИЕ -->
+            <div class="iz-cta" id="izCta" style="display:none">
+                <h3 class="iz-cta-title">Запишись на первое бесплатное вводное занятие</h3>
+                <p class="iz-cta-sub">Разберём твой уровень, составим план подготовки и ответим на вопросы.</p>
+                <div class="iz-cta-buttons">
+                    <a href="/register" class="iz-cta-btn iz-cta-btn-apply">Оставить заявку</a>
+                    <a href="https://t.me/Tyomkinss" target="_blank" class="iz-cta-btn iz-cta-btn-tg">Telegram</a>
+                    <a href="https://max.ru/u/f9LHodD0cOIojiO0gNWRLNP_as6P10M9ij53KQDQmY0CRLnpzpAaW07gVTg"
+                        target="_blank" class="iz-cta-btn iz-cta-btn-max">MAX</a>
                 </div>
             </div>
-        </section>
-
-        <!-- CTA: БЕСПЛАТНОЕ ВВОДНОЕ ЗАНЯТИЕ -->
-        <div class="iz-cta" id="izCta" style="display:none">
-            <h3 class="iz-cta-title">Запишись на первое бесплатное вводное занятие</h3>
-            <p class="iz-cta-sub">Разберём твой уровень, составим план подготовки и ответим на вопросы.</p>
-            <div class="iz-cta-buttons">
-                <a href="/register" class="iz-cta-btn iz-cta-btn-apply">Оставить заявку</a>
-                <a href="https://t.me/Tyomkinss" target="_blank" class="iz-cta-btn iz-cta-btn-tg">Telegram</a>
-                <a href="https://max.ru/u/f9LHodD0cOIojiO0gNWRLNP_as6P10M9ij53KQDQmY0CRLnpzpAaW07gVTg" target="_blank" class="iz-cta-btn iz-cta-btn-max">MAX</a>
-            </div>
-        </div>
 
         </div><!-- /.interactive-zone -->
 
@@ -2867,28 +2963,32 @@
                         <div class="advantage-item-icon">🗺️</div>
                         <div>
                             <div class="advantage-item-title">Готовый маршрут от нуля до ЕГЭ</div>
-                            <div class="advantage-item-desc">Пошаговый путь: базовые уроки → теория по темам → практика → полные варианты.</div>
+                            <div class="advantage-item-desc">Пошаговый путь: базовые уроки → теория по темам → практика
+                                → полные варианты.</div>
                         </div>
                     </div>
                     <div class="advantage-item reveal">
                         <div class="advantage-item-icon">📚</div>
                         <div>
                             <div class="advantage-item-title">Все 27 тем — без пробелов</div>
-                            <div class="advantage-item-desc">Теория разбита по каждому из 27 номеров ЕГЭ. Изучай только то, что нужно именно тебе.</div>
+                            <div class="advantage-item-desc">Теория разбита по каждому из 27 номеров ЕГЭ. Изучай только
+                                то, что нужно именно тебе.</div>
                         </div>
                     </div>
                     <div class="advantage-item reveal">
                         <div class="advantage-item-icon">📊</div>
                         <div>
                             <div class="advantage-item-title">Видишь, где проваливаешься</div>
-                            <div class="advantage-item-desc">Статистика по каждому заданию показывает проблемные темы и историю твоих попыток.</div>
+                            <div class="advantage-item-desc">Статистика по каждому заданию показывает проблемные темы и
+                                историю твоих попыток.</div>
                         </div>
                     </div>
                     <div class="advantage-item reveal">
                         <div class="advantage-item-icon">⏱️</div>
                         <div>
                             <div class="advantage-item-title">Экзамен без страха</div>
-                            <div class="advantage-item-desc">Полные варианты в экзаменационном режиме: таймер, без подсказок, итоговый балл как на ЕГЭ.</div>
+                            <div class="advantage-item-desc">Полные варианты в экзаменационном режиме: таймер, без
+                                подсказок, итоговый балл как на ЕГЭ.</div>
                         </div>
                     </div>
                 </div>
@@ -2927,7 +3027,8 @@
             <div class="section-heading reveal">
                 <span class="section-tag section-tag-cyan">Уникально</span>
                 <h2>Визуализатор Python-кода</h2>
-                <p>Пиши код и смотри, как он выполняется шаг за шагом: переменные, вывод и анимированная блок-схема — в реальном времени. Такого больше нет нигде.</p>
+                <p>Пиши код и смотри, как он выполняется шаг за шагом: переменные, вывод и анимированная блок-схема — в
+                    реальном времени. Такого больше нет нигде.</p>
             </div>
             <div class="slideshow-stage reveal" id="visualizerSlideshow">
                 <div class="slideshow-track">
@@ -2983,7 +3084,8 @@
         <section class="guest-cta-section">
             <div class="guest-cta-card reveal">
                 <h2 class="guest-cta-title">Начните подготовку уже сегодня</h2>
-                <p class="guest-cta-desc">Оставьте заявку — мы свяжемся с вами и настроим доступ к платформе: отслеживанию результатов, прогресса и истории решений.</p>
+                <p class="guest-cta-desc">Оставьте заявку — мы свяжемся с вами и настроим доступ к платформе:
+                    отслеживанию результатов, прогресса и истории решений.</p>
                 <div class="guest-cta-buttons">
                     <a href="/register" class="hero-btn hero-btn-primary">Оставить заявку</a>
                     <a href="/login" class="hero-btn hero-btn-secondary">Войти</a>
@@ -2999,17 +3101,20 @@
                 <div class="update-card card-stripe card-stripe--blue reveal">
                     <div class="update-icon">📹</div>
                     <div class="update-title">Уроки с видеоразборами</div>
-                    <div class="update-desc">Каждая тема сопровождается видеообъяснением — смотри и сразу решай задачи.</div>
+                    <div class="update-desc">Каждая тема сопровождается видеообъяснением — смотри и сразу решай задачи.
+                    </div>
                 </div>
                 <div class="update-card card-stripe card-stripe--purple reveal">
                     <div class="update-icon">📊</div>
                     <div class="update-title">Статистика твоего прогресса</div>
-                    <div class="update-desc">Видишь, сколько задач решено, какие темы западают и как растёт результат.</div>
+                    <div class="update-desc">Видишь, сколько задач решено, какие темы западают и как растёт результат.
+                    </div>
                 </div>
                 <div class="update-card card-stripe card-stripe--green reveal">
                     <div class="update-icon">🚀</div>
                     <div class="update-title">Начни с нуля — без пробелов</div>
-                    <div class="update-desc">Базовые уроки ведут с самых основ: понятно даже тем, кто раньше не изучал информатику.</div>
+                    <div class="update-desc">Базовые уроки ведут с самых основ: понятно даже тем, кто раньше не изучал
+                        информатику.</div>
                 </div>
             </div>
         </div>
@@ -3019,11 +3124,14 @@
             <div class="contact-cta-card reveal">
                 <span class="contact-cta-badge">Индивидуальные занятия</span>
                 <h2 class="contact-cta-title">Готов начать подготовку?</h2>
-                <p class="contact-cta-text">Напиши мне в Telegram или MAX — покажу платформу, расскажу как проходят занятия и помогу выбрать маршрут подготовки под твой уровень.</p>
+                <p class="contact-cta-text">Напиши мне в Telegram или MAX — покажу платформу, расскажу как проходят
+                    занятия и помогу выбрать маршрут подготовки под твой уровень.</p>
                 <p class="contact-cta-note">Первое вводное занятие — бесплатно.</p>
                 <div class="contact-cta-actions">
-                    <a href="https://t.me/Tyomkinss" target="_blank" class="contact-cta-btn contact-cta-btn-tg">Telegram</a>
-                    <a href="https://max.ru/u/f9LHodD0cOIojiO0gNWRLNP_as6P10M9ij53KQDQmY0CRLnpzpAaW07gVTg" target="_blank" class="contact-cta-btn contact-cta-btn-max">MAX</a>
+                    <a href="https://t.me/Tyomkinss" target="_blank"
+                        class="contact-cta-btn contact-cta-btn-tg">Telegram</a>
+                    <a href="https://max.ru/u/f9LHodD0cOIojiO0gNWRLNP_as6P10M9ij53KQDQmY0CRLnpzpAaW07gVTg"
+                        target="_blank" class="contact-cta-btn contact-cta-btn-max">MAX</a>
                 </div>
             </div>
         </section>
@@ -3043,17 +3151,15 @@
                 <span class="footer-socials-label">Соцсети и контакты</span>
                 <div class="footer-socials-row">
                     <a href="https://t.me/Tyomkinss" target="_blank">Telegram</a>
-                    <a href="https://vk.com/tyomik.fedoseev" target="_blank">VK</a>
-                    <a href="https://max.ru/u/f9LHodD0cOIojiO0gNWRLNP_as6P10M9ij53KQDQmY0CRLnpzpAaW07gVTg" target="_blank">MAX</a>
-                    <a href="https://www.tiktok.com/@top_gg012?_r=1&_t=ZS-96vdB0LxIbU" target="_blank">TikTok</a>
-                    <a href="https://instagram.com/tyoma_lch" target="_blank">Instagram</a>
+                    <a href="https://max.ru/u/f9LHodD0cOIojiO0gNWRLNP_as6P10M9ij53KQDQmY0CRLnpzpAaW07gVTg"
+                        target="_blank">MAX</a>
+                    <a href="https://www.instagram.com/ege_evolution?igsh=MW11eDBwcWlwa2dweA==">Instagram</a>
                     <a href="https://t.me/+OyPoOPO3uc9lMjE6" target="_blank">Telegram-канал</a>
                 </div>
             </div>
 
             <div class="footer-phone-group">
                 <span class="footer-phone-label">Телефоны</span>
-                <a href="tel:89608365837" class="footer-phone-link">📞 8 960 836-58-37</a>
                 <a href="tel:89963636884" class="footer-phone-link">📱 8 996 363-68-84</a>
             </div>
 
@@ -3068,8 +3174,10 @@
         <p class="floating-contact-text">Напиши — отвечу лично и помогу с началом подготовки.</p>
         <div class="floating-contact-links">
             <a href="/register" class="floating-contact-link floating-contact-link-apply">Оставить заявку</a>
-            <a href="https://t.me/Tyomkinss" target="_blank" class="floating-contact-link floating-contact-link-tg">Telegram</a>
-            <a href="https://max.ru/u/f9LHodD0cOIojiO0gNWRLNP_as6P10M9ij53KQDQmY0CRLnpzpAaW07gVTg" target="_blank" class="floating-contact-link floating-contact-link-max">MAX</a>
+            <a href="https://t.me/Tyomkinss" target="_blank"
+                class="floating-contact-link floating-contact-link-tg">Telegram</a>
+            <a href="https://max.ru/u/f9LHodD0cOIojiO0gNWRLNP_as6P10M9ij53KQDQmY0CRLnpzpAaW07gVTg" target="_blank"
+                class="floating-contact-link floating-contact-link-max">MAX</a>
         </div>
     </div>
 
@@ -3090,10 +3198,10 @@
         }
 
         /* Закрыть при клике вне */
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             var wrap = document.getElementById('navDropdownWrap');
-            var dd   = document.getElementById('navDropdown');
-            var btn  = document.getElementById('navDropdownBtn');
+            var dd = document.getElementById('navDropdown');
+            var btn = document.getElementById('navDropdownBtn');
             if (wrap && !wrap.contains(e.target)) {
                 dd.classList.remove('open');
                 btn.classList.remove('active');
@@ -3101,8 +3209,8 @@
         });
 
         /* Закрыть при клике на пункт меню */
-        document.querySelectorAll('.nav-dropdown-item').forEach(function(item) {
-            item.addEventListener('click', function() {
+        document.querySelectorAll('.nav-dropdown-item').forEach(function (item) {
+            item.addEventListener('click', function () {
                 document.getElementById('navDropdown').classList.remove('open');
                 document.getElementById('navDropdownBtn').classList.remove('active');
             });
@@ -3111,9 +3219,9 @@
         /* ================================================================
            МИНИ-ЗАДАЧА
         ================================================================ */
-        document.querySelectorAll('.minitask-option').forEach(function(label) {
-            label.addEventListener('click', function() {
-                document.querySelectorAll('.minitask-option').forEach(function(o) {
+        document.querySelectorAll('.minitask-option').forEach(function (label) {
+            label.addEventListener('click', function () {
+                document.querySelectorAll('.minitask-option').forEach(function (o) {
                     o.classList.remove('selected');
                 });
                 this.classList.add('selected');
@@ -3147,11 +3255,11 @@
         /* ================================================================
            КАЛЬКУЛЯТОР ГОТОВНОСТИ
         ================================================================ */
-        document.querySelectorAll('.calc-option').forEach(function(label) {
-            label.addEventListener('click', function() {
+        document.querySelectorAll('.calc-option').forEach(function (label) {
+            label.addEventListener('click', function () {
                 var radio = this.querySelector('input[type="radio"]');
                 if (!radio) return;
-                document.querySelectorAll('input[name="' + radio.name + '"]').forEach(function(inp) {
+                document.querySelectorAll('input[name="' + radio.name + '"]').forEach(function (inp) {
                     inp.closest('.calc-option').classList.remove('calc-selected');
                 });
                 this.classList.add('calc-selected');
@@ -3192,7 +3300,7 @@
            ПОСЛЕДОВАТЕЛЬНАЯ ИНТЕРАКТИВНАЯ ЗОНА
         ================================================================ */
         function updateIzProgress(step) {
-            document.querySelectorAll('.iz-dot').forEach(function(dot, i) {
+            document.querySelectorAll('.iz-dot').forEach(function (dot, i) {
                 if (i < step) {
                     dot.classList.add('iz-dot-active');
                 } else {
@@ -3200,7 +3308,7 @@
                 }
             });
             // Заливка коннекторов: коннектор i заполняется когда step >= i+2
-            document.querySelectorAll('.iz-step-connector').forEach(function(conn, i) {
+            document.querySelectorAll('.iz-step-connector').forEach(function (conn, i) {
                 if (i < step - 1) {
                     conn.classList.add('iz-connector-filled');
                 } else {
@@ -3228,15 +3336,15 @@
                 minitask.classList.add('iz-slide-out-left');
             }
 
-            setTimeout(function() {
+            setTimeout(function () {
                 minitask.style.display = 'none';
                 minitask.classList.remove('iz-slide-out-left');
                 minitask.style.opacity = '';
                 minitask.style.transform = '';
 
                 // Приезд calculator справа
-                requestAnimationFrame(function() {
-                    requestAnimationFrame(function() {
+                requestAnimationFrame(function () {
+                    requestAnimationFrame(function () {
                         calculator.style.transition = 'opacity 0.32s ease-out, transform 0.32s ease-out';
                         calculator.style.opacity = '1';
                         calculator.style.transform = 'translateX(0)';
@@ -3266,7 +3374,7 @@
                 calculator.classList.add('iz-slide-out-left');
             }
 
-            setTimeout(function() {
+            setTimeout(function () {
                 calculator.style.display = 'none';
                 calculator.classList.remove('iz-slide-out-left');
                 calculator.style.opacity = '';
@@ -3298,7 +3406,7 @@
                 cta.style.transform = 'translateX(0)';
 
                 // Снять фиксацию высоты после завершения анимации
-                setTimeout(function() {
+                setTimeout(function () {
                     zone.style.minHeight = '';
                 }, 520);
 
