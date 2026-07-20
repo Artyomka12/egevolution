@@ -12,6 +12,7 @@ from flask import (
 import markupsafe
 import json
 import os
+import re
 import sqlite3
 import time
 import urllib.request
@@ -54,7 +55,7 @@ def handle_csrf_error(e):
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-APP_VERSION = "1.16.1"
+APP_VERSION = "1.16.3"
 
 
 @app.context_processor
@@ -107,6 +108,34 @@ def get_next_task_id(task_num):
     return max(t.get("id", 0) for t in tasks) + 1
 
 
+# Автоссылки на голые URL (https://...) в уже готовом тексте. Работает как
+# отдельный финальный шаг replace_markers() — не пересекается с плейсхолдерами
+# остальных тегов, поэтому не может повторить их баги коллизий (v1.8.3, v1.12.18).
+_URL_RE = re.compile(r'https?://[^\s<>"]+')
+_URL_TRAILING_PUNCT = ").,;:!?]}»\"'"
+# Ссылки внутри <code>/<pre> не трогаем — там это часть примера (напр. в теории
+# задания №13 разбирается фиктивный адрес http://txt.org/ftp.net, кликать по
+# нему не нужно), а не настоящий переход.
+_CODE_BLOCK_RE = re.compile(r"(<code>.*?</code>|<pre>.*?</pre>)", re.DOTALL)
+
+
+def _linkify_match(match):
+    url = match.group(0)
+    trimmed = url.rstrip(_URL_TRAILING_PUNCT)
+    if not trimmed:
+        return url
+    tail = url[len(trimmed):]
+    return f'<a href="{trimmed}" target="_blank" rel="noopener noreferrer">{trimmed}</a>{tail}'
+
+
+def _linkify_urls(text):
+    parts = _CODE_BLOCK_RE.split(text)
+    for i, part in enumerate(parts):
+        if i % 2 == 0:  # чётные части — обычный текст вне <code>/<pre>
+            parts[i] = _URL_RE.sub(_linkify_match, part)
+    return "".join(parts)
+
+
 # === ФИЛЬТР ДЛЯ ОБРАБОТКИ ИНДЕКСОВ ===
 @app.template_filter("replace_markers")
 def replace_markers(text):
@@ -148,7 +177,8 @@ def replace_markers(text):
 
     has_markup = any(html in text or bbcode in text for html, bbcode, _ in ALLOWED)
     if not has_markup:
-        return markupsafe.Markup(markupsafe.escape(text))
+        text = str(markupsafe.escape(text))
+        return markupsafe.Markup(_linkify_urls(text))
 
     # Шаг 1: оба формата → плейсхолдеры (до экранирования)
     for html_tag, bbcode_tag, placeholder in ALLOWED:
@@ -161,6 +191,9 @@ def replace_markers(text):
     # Шаг 3: восстанавливаем только разрешённые теги из плейсхолдеров
     for html_tag, _, placeholder in ALLOWED:
         text = text.replace(placeholder, html_tag)
+
+    # Шаг 4: голые URL вне <code>/<pre> становятся кликабельными ссылками
+    text = _linkify_urls(text)
 
     return markupsafe.Markup(text)
 

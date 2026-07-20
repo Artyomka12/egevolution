@@ -95,6 +95,18 @@
     text-indent: 20px;
 }
 
+.theory-content a,
+.task-description a {
+    color: var(--color-accent-blue);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.theory-content a:hover,
+.task-description a:hover {
+    color: var(--color-accent-blue-dark);
+}
+
 .theory-img {
     display: block;
     margin: 18px auto;
