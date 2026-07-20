@@ -1,5 +1,5 @@
 {
- "description": "",
+ "description": "Строки",
  "lesson_id": 3,
  "practice": {
   "description": "",
@@ -211,6 +211,6 @@
   ],
   "images": []
  },
- "title": "Работа со строками",
+ "title": "Основы python",
  "videos": []
 }

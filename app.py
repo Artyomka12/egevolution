@@ -55,7 +55,7 @@ def handle_csrf_error(e):
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-APP_VERSION = "1.16.3"
+APP_VERSION = "1.16.6"
 
 
 @app.context_processor

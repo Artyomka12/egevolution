@@ -1,42 +1,175 @@
 {
-  "title": "Python: циклы",
+ "description": "Циклы",
+ "lesson_id": 5,
+ "practice": {
   "description": "",
-  "theory": {
+  "tasks": [
+   {
+    "correct_answer": "1",
     "description": [
-      "Сегодня разберём циклы — конструкции, которые позволяют повторять один и тот же код несколько раз, не копируя его вручную.",
-      "<b>Циклы с условием (while)</b>",
-      "Цикл <code>while</code> («пока») выполняется до тех пор, пока истинно задающее его условие. Часто используется, когда заранее неизвестно, сколько раз нужно повторить тело цикла.",
-      "Шаблон: <code>while (условие):</code> — а строкой ниже, с отступом, — тело цикла (действия, которые повторяются).",
-      "Пример:",
-      "<pre>a = 0\nwhile a < 5:\n    print(a)\n    a += 1</pre>",
-      "Эта программа выведет на экран числа от 0 до 5 не включительно — то есть <code>0, 1, 2, 3, 4</code>. Если забыть строку <code>a += 1</code>, условие <code>a < 5</code> никогда не станет ложным, и цикл будет выполняться бесконечно.",
-      "<b>«Количественные» циклы (for)</b>",
-      "Структура цикла: <code>for i in range(a, b, k)</code>, где <code>i</code> — переменная цикла (имя может быть любым), <code>a</code> — начальное значение (включительно), <code>b</code> — конечное значение (не включительно), <code>k</code> — шаг.",
-      "Как изменяется переменная в цикле — несколько примеров:",
-      "<code>for i in range(1, 10)</code> → <code>1, 2, 3, 4, 5, 6, 7, 8, 9</code>",
-      "<code>for i in range(1, 10, 2)</code> → <code>1, 3, 5, 7, 9</code>",
-      "<code>for i in range(10, 7, -1)</code> → <code>10, 9, 8</code>",
-      "<code>for i in range(5, 2, -1)</code> → <code>5, 4, 3</code>",
-      "<code>for i in range(5, 0, -1)</code> → <code>5, 4, 3, 2, 1</code>",
-      "Пример:",
-      "<pre>for i in range(1, 10):\n    print(i)</pre>",
-      "<b>range() с одним аргументом</b>",
-      "Если передать в <code>range()</code> только одно число, старт по умолчанию будет <code>0</code>, а шаг — <code>1</code>: <code>range(b)</code> равносильно <code>range(0, b, 1)</code>.",
-      "Пример: <code>for i in range(5): print(i)</code> выведет <code>0, 1, 2, 3, 4</code> — то же самое, что <code>range(0, 5)</code>.",
-      "<b>break и continue</b>",
-      "<code>break</code> — досрочно прерывает цикл целиком, даже если условие ещё верно (или числа в <code>range()</code> ещё не закончились).",
-      "<code>continue</code> — прерывает только текущую итерацию и сразу переходит к следующей, пропуская оставшийся код тела цикла.",
-      "Пример с <code>break</code>:",
-      "<pre>for i in range(10):\n    if i == 5:\n        break\n    print(i)</pre>",
-      "Эта программа выведет <code>0, 1, 2, 3, 4</code> — как только <code>i</code> станет равно <code>5</code>, цикл прервётся досрочно, число <code>5</code> и дальше уже не выведутся.",
-      "Пример с <code>continue</code>:",
-      "<pre>for i in range(5):\n    if i == 2:\n        continue\n    print(i)</pre>",
-      "Эта программа выведет <code>0, 1, 3, 4</code> — при <code>i == 2</code> команда <code>continue</code> пропустит <code>print(i)</code> для этого шага, но цикл продолжится дальше."
+     "Какое последнее число выведется на экран?",
+     "<pre>a = 10\nwhile a > 0:\n    print(a)\n    a -= 3</pre>"
     ],
-    "images": []
-  },
-  "practice": {
-    "description": "",
-    "tasks": []
-  }
+    "file": null,
+    "images": [],
+    "title": "Циклы с условием (while)"
+   },
+   {
+    "correct_answer": "10",
+    "description": [
+     "Чему будет равен total после выполнения цикла?",
+     "<pre>total = 0\nn = 1\nwhile n <= 4:\n    total += n\n    n += 1</pre>"
+    ],
+    "file": null,
+    "images": [],
+    "title": "Циклы с условием (while)"
+   },
+   {
+    "correct_answer": "6",
+    "description": [
+     "Сколько чисел выведет этот код?",
+     "<pre>for i in range(2, 8):\n    print(i)</pre>"
+    ],
+    "file": null,
+    "images": [],
+    "title": "«Количественные» циклы (for)"
+   },
+   {
+    "correct_answer": "4",
+    "description": [
+     "Сколько чисел выведет этот код?",
+     "<pre>for i in range(2, 12, 3):\n    print(i)</pre>"
+    ],
+    "file": null,
+    "images": [],
+    "title": "«Количественные» циклы (for)"
+   },
+   {
+    "correct_answer": "4",
+    "description": [
+     "Сколько чисел выведет этот код?",
+     "<pre>for i in range(9, 5, -1):\n    print(i)</pre>"
+    ],
+    "file": null,
+    "images": [],
+    "title": "«Количественные» циклы (for)"
+   },
+   {
+    "correct_answer": "3",
+    "description": [
+     "Сколько чисел выведет этот код?",
+     "<pre>for i in range(8, 3, -2):\n    print(i)</pre>"
+    ],
+    "file": null,
+    "images": [],
+    "title": "«Количественные» циклы (for)"
+   },
+   {
+    "correct_answer": "5",
+    "description": [
+     "Сколько чисел выведет этот код?",
+     "<pre>for i in range(4, -1, -1):\n    print(i)</pre>"
+    ],
+    "file": null,
+    "images": [],
+    "title": "«Количественные» циклы (for)"
+   },
+   {
+    "correct_answer": "6",
+    "description": [
+     "Сколько чисел выведет этот код?",
+     "<pre>for i in range(6):\n    print(i)</pre>"
+    ],
+    "file": null,
+    "images": [],
+    "title": "range() с одним аргументом"
+   },
+   {
+    "correct_answer": "3",
+    "description": [
+     "Сколько чисел выведется до прерывания цикла?",
+     "<pre>for i in range(10):\n    if i == 3:\n        break\n    print(i)</pre>"
+    ],
+    "file": null,
+    "images": [],
+    "title": "break"
+   },
+   {
+    "correct_answer": "7",
+    "description": [
+     "Сколько чисел выведется?",
+     "<pre>for i in range(20):\n    if i == 7:\n        break\n    print(i)</pre>"
+    ],
+    "file": null,
+    "images": [],
+    "title": "break"
+   },
+   {
+    "correct_answer": "5",
+    "description": [
+     "Сколько всего чисел выведется на экран?",
+     "<pre>for i in range(6):\n    if i == 3:\n        continue\n    print(i)</pre>"
+    ],
+    "file": null,
+    "images": [],
+    "title": "continue"
+   },
+   {
+    "correct_answer": "2",
+    "description": [
+     "Сколько всего чисел выведется на экран?",
+     "<pre>for i in range(5):\n    if i % 2 == 0:\n        continue\n    print(i)</pre>"
+    ],
+    "file": null,
+    "images": [],
+    "title": "continue"
+   },
+   {
+    "correct_answer": "9",
+    "description": [
+     "Что выведет на экран следующий код?",
+     "<pre>total = 0\nfor i in range(1, 10):\n    if i == 6:\n        break\n    if i % 2 == 0:\n        continue\n    total += i\nprint(total)</pre>"
+    ],
+    "file": null,
+    "images": [],
+    "title": "Контрольный вопрос"
+   }
+  ]
+ },
+ "theory": {
+  "description": [
+   "Сегодня разберём циклы — конструкции, которые позволяют повторять один и тот же код несколько раз, не копируя его вручную.",
+   "<b>Циклы с условием (while)</b>",
+   "Цикл <code>while</code> («пока») выполняется до тех пор, пока истинно задающее его условие. Часто используется, когда заранее неизвестно, сколько раз нужно повторить тело цикла.",
+   "Шаблон: <code>while (условие):</code> — а строкой ниже, с отступом, — тело цикла (действия, которые повторяются).",
+   "Пример:",
+   "<pre>a = 0\nwhile a < 5:\n    print(a)\n    a += 1</pre>",
+   "Эта программа выведет на экран числа от 0 до 5 не включительно — <code>0, 1, 2, 3, 4</code>. Если забыть строку <code>a += 1</code>, условие <code>a < 5</code> никогда не станет ложным, и цикл будет выполняться бесконечно.",
+   "<b>«Количественные» циклы (for)</b>",
+   "Структура цикла: <code>for i in range(a, b, k)</code>, где <code>i</code> — переменная цикла (имя может быть любым), <code>a</code> — начальное значение (включительно), <code>b</code> — конечное значение (не включительно), <code>k</code> — шаг.",
+   "Как изменяется переменная в цикле — несколько примеров:",
+   "<code>for i in range(1, 10)</code> → <code>1, 2, 3, 4, 5, 6, 7, 8, 9</code>",
+   "<code>for i in range(1, 10, 2)</code> → <code>1, 3, 5, 7, 9</code>",
+   "<code>for i in range(10, 7, -1)</code> → <code>10, 9, 8</code>",
+   "<code>for i in range(5, 2, -1)</code> → <code>5, 4, 3</code>",
+   "<code>for i in range(5, 0, -1)</code> → <code>5, 4, 3, 2, 1</code>",
+   "Пример:",
+   "<pre>for i in range(1, 10):\n    print(i)</pre>",
+   "<b>range() с одним аргументом</b>",
+   "Если передать в <code>range()</code> только одно число, старт по умолчанию будет <code>0</code>, а шаг — <code>1</code>: <code>range(b)</code> равносильно <code>range(0, b, 1)</code>.",
+   "Пример: <code>for i in range(5): print(i)</code> выведет <code>0, 1, 2, 3, 4</code> — то же самое, что <code>range(5)</code>.",
+   "<b>break и continue</b>",
+   "<code>break</code> — досрочно прерывает цикл целиком, даже если условие ещё верно (или числа в <code>range()</code> ещё не закончились).",
+   "<code>continue</code> — прерывает только текущую итерацию и сразу переходит к следующей, пропуская оставшийся код тела цикла.",
+   "Пример с <code>break</code>:",
+   "<pre>for i in range(10):\n    if i == 5:\n        break\n    print(i)</pre>",
+   "Эта программа выведет <code>0, 1, 2, 3, 4</code> — как только <code>i</code> станет равно <code>5</code>, цикл прервётся досрочно, число <code>5</code> и дальше уже не выведутся.",
+   "Пример с <code>continue</code>:",
+   "<pre>for i in range(5):\n    if i == 2:\n        continue\n    print(i)</pre>",
+   "Эта программа выведет <code>0, 1, 3, 4</code> — при <code>i == 2</code> команда <code>continue</code> пропустит <code>print(i)</code> для этого шага, но цикл продолжится дальше."
+  ],
+  "images": []
+ },
+ "title": "Основы python",
+ "videos": []
 }
