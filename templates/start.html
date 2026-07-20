@@ -1592,233 +1592,105 @@
         }
 
         /* ============================================================
-           ВИДЕОРАЗБОРЫ
+           СКРИНШОТЫ ПЛАТФОРМЫ (временное слайд-шоу вместо видеоразборов,
+           см. .video-preview-section ниже — секция сохранила имя класса
+           ради отступов, содержимое временно заменено на карусель фото)
         ============================================================ */
         .video-preview-section {
             margin-bottom: 72px;
             /* overflow-x контролируется body { overflow-x: hidden } — clip здесь не нужен */
         }
 
-        /* Позиционный контекст.
-           padding-top создаёт зону: боковые постеры (top:0) торчат
-           на 34px выше центрального видео (которое начинается после padding). */
-        .video-stage {
+        .slideshow-stage {
             position: relative;
-            max-width: 720px;
+            max-width: 900px;
             margin: 0 auto;
             padding-top: 34px;
         }
 
-        /* Центральная карточка — передний план */
-        .video-main {
+        /* Задаёт реальную высоту .slideshow-stage — дети внутри абсолютны */
+        .slideshow-track {
             position: relative;
-            z-index: 2;
-            background: #fff;
-            border: 1px solid rgba(37, 99, 235, 0.12);
-            border-radius: 18px;
-            overflow: hidden;
-            box-shadow: 0 8px 32px rgba(37, 99, 235, 0.11);
-            transition: transform 0.22s ease-out, box-shadow 0.22s ease-out;
-        }
-
-        .video-stage:hover .video-main {
-            transform: translateY(-3px);
-            box-shadow: 0 16px 48px rgba(37, 99, 235, 0.16);
-        }
-
-        /* Боковые постеры — задний план */
-        .video-side {
-            position: absolute;
-            top: 0;            /* стартуют на 34px выше .video-main */
-            width: 83%;
-            border-radius: 24px;
-            overflow: hidden;
-            pointer-events: none;
-            z-index: 1;        /* под центральной карточкой */
-            opacity: 1;        /* естественные цвета, без засветки */
-            box-shadow: 0 6px 24px rgba(15, 23, 42, 0.14);
-            transition: transform 0.3s ease-out;
-        }
-
-        .video-side-left {
-            right: calc(100% - 280px); /* 280px заходят под центральную карточку */
-        }
-
-        .video-side-right {
-            left: calc(100% - 280px);
-        }
-
-        /* Hover: постеры мягко уходят наружу */
-        .video-stage:hover .video-side-left {
-            transform: translateX(-10px);
-        }
-
-        .video-stage:hover .video-side-right {
-            transform: translateX(10px);
-        }
-
-        /* Thumbnail: задаёт пропорцию и fallback-фон */
-        .video-side-thumb {
+            width: 100%;
             aspect-ratio: 16 / 9;
-            position: relative;
-            overflow: hidden;
         }
 
-        /* Fallback-градиент до загрузки изображения */
-        .video-side-left .video-side-thumb {
-            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 55%, #c7d2fe 100%);
-        }
-
-        .video-side-right .video-side-thumb {
-            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 55%, #a5b4fc 100%);
-        }
-
-        /* Реальное изображение-постер */
-        .video-side-img {
+        .slideshow-slide {
             position: absolute;
             inset: 0;
+            border-radius: 18px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 55%, #c7d2fe 100%);
+            box-shadow: 0 8px 32px rgba(37, 99, 235, 0.11);
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+                        opacity 0.55s ease,
+                        box-shadow 0.3s ease;
+        }
+
+        .slideshow-slide.no-transition {
+            transition: none !important;
+        }
+
+        .slideshow-img {
+            display: block;
             width: 100%;
             height: 100%;
             object-fit: cover;
-            object-position: center;
-            display: block;
+            object-position: top center;
         }
 
-        /* Видеоплеер центральной карточки */
-        .video-overview-player {
-            display: block;
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            background: linear-gradient(155deg, #eff6ff 0%, #dbeafe 28%, #bfdbfe 58%, #e0e7ff 100%);
-            max-width: 100%;
+        /* Три видимые роли — центр/лево/право — плюс скрытая позиция,
+           из которой новый кадр проявляется на месте правого. */
+        .slideshow-slide.pos-center {
+            transform: translate(0, 0) scale(1);
+            z-index: 3;
+            opacity: 1;
         }
 
-        /* Подпись под видео */
-        .video-overview-info {
-            padding: 20px 28px 24px;
-            border-top: 1px solid rgba(37, 99, 235, 0.08);
+        .slideshow-slide.pos-left {
+            transform: translate(-46%, 5%) scale(0.82);
+            z-index: 2;
+            opacity: 1;
         }
 
-        .video-overview-title {
-            font-size: 1.02em;
-            font-weight: 700;
-            color: #0f172a;
-            margin-bottom: 7px;
+        .slideshow-slide.pos-right {
+            transform: translate(46%, 5%) scale(0.82);
+            z-index: 1;
+            opacity: 1;
         }
 
-        .video-overview-desc {
-            font-size: 0.87em;
-            color: #475569;
-            line-height: 1.55;
+        .slideshow-slide.pos-hidden-right {
+            transform: translate(58%, 5%) scale(0.7);
+            z-index: 0;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* На телефоне боковые карточки визуально мешают (см. правку
+           пользователя от 2026-07-20) — прячем их, остаётся одна
+           фотография в центре, смена кадра выглядит как кроссфейд
+           (JS-логика ролей не меняется, левая/правая просто невидимы
+           и находятся в той же точке, что и центр). */
+        @media (max-width: 640px) {
+            .slideshow-stage {
+                padding-top: 0;
+            }
+            .slideshow-slide.pos-left,
+            .slideshow-slide.pos-right,
+            .slideshow-slide.pos-hidden-right {
+                transform: translate(0, 0) scale(1);
+                opacity: 0;
+                z-index: 1;
+            }
         }
 
         /* ============================================================
-           ВИЗУАЛИЗАТОР КОДА (тот же паттерн, что video-preview-section)
+           ВИЗУАЛИЗАТОР КОДА — та же карусель скриншотов, что и в
+           .video-preview-section (переиспользует .slideshow-* классы,
+           см. блок "СКРИНШОТЫ ПЛАТФОРМЫ" выше), временно вместо видео
         ============================================================ */
         .visualizer-preview-section {
             margin-bottom: 72px;
-        }
-
-        .visualizer-stage {
-            position: relative;
-            max-width: 720px;
-            margin: 0 auto;
-            padding-top: 34px;
-        }
-
-        .visualizer-main {
-            position: relative;
-            z-index: 2;
-            background: #fff;
-            border: 1px solid rgba(56, 189, 248, 0.18);
-            border-radius: 18px;
-            overflow: hidden;
-            box-shadow: 0 8px 32px rgba(56, 189, 248, 0.14);
-            transition: transform 0.22s ease-out, box-shadow 0.22s ease-out;
-        }
-
-        .visualizer-stage:hover .visualizer-main {
-            transform: translateY(-3px);
-            box-shadow: 0 16px 48px rgba(56, 189, 248, 0.2);
-        }
-
-        .visualizer-side {
-            position: absolute;
-            top: 0;
-            width: 83%;
-            border-radius: 24px;
-            overflow: hidden;
-            pointer-events: none;
-            z-index: 1;
-            opacity: 1;
-            box-shadow: 0 6px 24px rgba(15, 23, 42, 0.14);
-            transition: transform 0.3s ease-out;
-        }
-
-        .visualizer-side-left {
-            right: calc(100% - 280px);
-        }
-
-        .visualizer-side-right {
-            left: calc(100% - 280px);
-        }
-
-        .visualizer-stage:hover .visualizer-side-left {
-            transform: translateX(-10px);
-        }
-
-        .visualizer-stage:hover .visualizer-side-right {
-            transform: translateX(10px);
-        }
-
-        .visualizer-side-thumb {
-            aspect-ratio: 16 / 9;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .visualizer-side-left .visualizer-side-thumb {
-            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 55%, #c7d2fe 100%);
-        }
-
-        .visualizer-side-right .visualizer-side-thumb {
-            background: linear-gradient(135deg, #dbeafe 0%, #bae6fd 55%, #a5f3fc 100%);
-        }
-
-        .visualizer-side-img {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
-            display: block;
-        }
-
-        .visualizer-overview-player {
-            display: block;
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            background: linear-gradient(155deg, #f0f9ff 0%, #e0f2fe 28%, #bae6fd 58%, #e0e7ff 100%);
-            max-width: 100%;
-        }
-
-        .visualizer-overview-info {
-            padding: 20px 28px 24px;
-            border-top: 1px solid rgba(56, 189, 248, 0.14);
-        }
-
-        .visualizer-overview-title {
-            font-size: 1.02em;
-            font-weight: 700;
-            color: #0f172a;
-            margin-bottom: 7px;
-        }
-
-        .visualizer-overview-desc {
-            font-size: 0.87em;
-            color: #475569;
-            line-height: 1.55;
         }
 
         .visualizer-cta {
@@ -2175,31 +2047,6 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            .video-side {
-                width: 72%;
-                opacity: 0.9;
-            }
-
-            .video-side-left {
-                right: calc(100% - 220px);
-            }
-
-            .video-side-right {
-                left: calc(100% - 220px);
-            }
-
-            .visualizer-side {
-                width: 72%;
-                opacity: 0.9;
-            }
-
-            .visualizer-side-left {
-                right: calc(100% - 220px);
-            }
-
-            .visualizer-side-right {
-                left: calc(100% - 220px);
-            }
         }
 
         /* ============================================================
@@ -2272,14 +2119,6 @@
             .footer-inner {
                 flex-direction: column;
                 gap: 24px;
-            }
-
-            .video-side {
-                display: none;
-            }
-
-            .visualizer-side {
-                display: none;
             }
 
             /* Contact CTA */
@@ -2995,47 +2834,23 @@
 
         </div><!-- /.interactive-zone -->
 
-        <!-- ВИДЕОРАЗБОРЫ -->
+        <!-- СКРИНШОТЫ ПЛАТФОРМЫ (временная карусель вместо видеоразборов) -->
         <section class="video-preview-section">
             <div class="section-heading reveal">
-                <span class="section-tag section-tag-blue">Видеоуроки</span>
-                <h2>Видеоразборы и уроки</h2>
-                <p>Каждая тема сопровождается подробным объяснением на видео и примерами решений — чтобы понять, а не просто запомнить.</p>
+                <span class="section-tag section-tag-blue">Платформа</span>
+                <h2>Как это выглядит внутри</h2>
+                <p>Варианты ЕГЭ, теория, практика по урокам и визуализатор кода — несколько скриншотов платформы.</p>
             </div>
-            <div class="video-stage reveal">
-                <!-- Левый постер -->
-                <div class="video-side video-side-left">
-                    <div class="video-side-thumb">
-                        <img src="/static/images/video-preview-left.jpg?v={{ app_version }}"
-                             alt="Видеоразбор по ЕГЭ по информатике"
-                             class="video-side-img"
-                             loading="lazy">
+            <div class="slideshow-stage reveal" id="homeSlideshow">
+                <div class="slideshow-track">
+                    <div class="slideshow-slide">
+                        <img class="slideshow-img" alt="Скриншот платформы ЕГЭволюция" loading="lazy">
                     </div>
-                </div>
-
-                <!-- Основной видеоплеер -->
-                <div class="video-main">
-                    <video
-                        class="video-overview-player"
-                        controls
-                        preload="metadata"
-                    >
-                        <source src="/static/videos/platform-overview.mp4" type="video/mp4">
-                        Ваш браузер не поддерживает видео.
-                    </video>
-                    <div class="video-overview-info">
-                        <div class="video-overview-title">Обзор платформы и видеоуроков</div>
-                        <div class="video-overview-desc">Посмотрите, как устроены занятия: понятные объяснения, разбор задач и пошаговая подготовка к ЕГЭ.</div>
+                    <div class="slideshow-slide">
+                        <img class="slideshow-img" alt="Скриншот платформы ЕГЭволюция" loading="lazy">
                     </div>
-                </div>
-
-                <!-- Правый постер -->
-                <div class="video-side video-side-right">
-                    <div class="video-side-thumb">
-                        <img src="/static/images/video-preview-right.jpg?v={{ app_version }}"
-                             alt="Видеопрактика по информатике"
-                             class="video-side-img"
-                             loading="lazy">
+                    <div class="slideshow-slide">
+                        <img class="slideshow-img" alt="Скриншот платформы ЕГЭволюция" loading="lazy">
                     </div>
                 </div>
             </div>
@@ -3114,40 +2929,16 @@
                 <h2>Визуализатор Python-кода</h2>
                 <p>Пиши код и смотри, как он выполняется шаг за шагом: переменные, вывод и анимированная блок-схема — в реальном времени. Такого больше нет нигде.</p>
             </div>
-            <div class="visualizer-stage reveal">
-                <!-- Левый постер -->
-                <div class="visualizer-side visualizer-side-left">
-                    <div class="visualizer-side-thumb">
-                        <img src="/static/images/visualizer-preview-left.jpg?v={{ app_version }}"
-                             alt="Визуализатор кода — Classic View"
-                             class="visualizer-side-img"
-                             loading="lazy">
+            <div class="slideshow-stage reveal" id="visualizerSlideshow">
+                <div class="slideshow-track">
+                    <div class="slideshow-slide">
+                        <img class="slideshow-img" alt="Скриншот визуализатора Python-кода" loading="lazy">
                     </div>
-                </div>
-
-                <!-- Основное видео -->
-                <div class="visualizer-main">
-                    <video
-                        class="visualizer-overview-player"
-                        controls
-                        preload="metadata"
-                    >
-                        <source src="/static/videos/visualizer-overview.mp4" type="video/mp4">
-                        Ваш браузер не поддерживает видео.
-                    </video>
-                    <div class="visualizer-overview-info">
-                        <div class="visualizer-overview-title">Код оживает на глазах</div>
-                        <div class="visualizer-overview-desc">Classic View показывает scope-блоки и «шарики» данных, Block Scheme — анимированную блок-схему выполнения. Обе версии — в одном инструменте.</div>
+                    <div class="slideshow-slide">
+                        <img class="slideshow-img" alt="Скриншот визуализатора Python-кода" loading="lazy">
                     </div>
-                </div>
-
-                <!-- Правый постер -->
-                <div class="visualizer-side visualizer-side-right">
-                    <div class="visualizer-side-thumb">
-                        <img src="/static/images/visualizer-preview-right.jpg?v={{ app_version }}"
-                             alt="Визуализатор кода — Block Scheme"
-                             class="visualizer-side-img"
-                             loading="lazy">
+                    <div class="slideshow-slide">
+                        <img class="slideshow-img" alt="Скриншот визуализатора Python-кода" loading="lazy">
                     </div>
                 </div>
             </div>
@@ -3514,6 +3305,91 @@
                 updateIzProgress(3);
             }, 280);
         }
+
+        /* ================================================================
+           СЛАЙД-ШОУ СКРИНШОТОВ (временно вместо видео) — переиспользуемый
+           инициализатор карусели, вызывается отдельно для каждого блока
+           (обзор платформы, визуализатор кода).
+           Три DOM-узла крутят роли лево/центр/право по кругу; узел,
+           уходящий с позиции "лево", мгновенно (без transition) прячется
+           за правым краем с новой картинкой и следующим кадром плавно
+           проявляется в позиции "право" — так очередь бесконечна при
+           любом количестве картинок в SLIDESHOW_IMAGES.
+        ================================================================ */
+        function initSlideshow(stageId, images, intervalMs) {
+            var stage = document.getElementById(stageId);
+            if (!stage || images.length < 3) return;
+
+            var slides = Array.prototype.slice.call(stage.querySelectorAll('.slideshow-slide'));
+            if (slides.length !== 3) return;
+
+            var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            function setImg(el, src) {
+                var img = el.querySelector('.slideshow-img');
+                if (img) img.src = src + '?v={{ app_version }}';
+            }
+
+            function setRole(el, role) {
+                el.classList.remove('pos-left', 'pos-center', 'pos-right', 'pos-hidden-right');
+                el.classList.add(role);
+            }
+
+            // order[0]=лево, order[1]=центр, order[2]=право
+            var order = [slides[0], slides[1], slides[2]];
+            var nextImageIndex = 3;
+
+            setImg(order[0], images[0]);
+            setRole(order[0], 'pos-left');
+            setImg(order[1], images[1]);
+            setRole(order[1], 'pos-center');
+            setImg(order[2], images[2]);
+            setRole(order[2], 'pos-right');
+
+            function tick() {
+                var oldLeft = order[0], oldCenter = order[1], oldRight = order[2];
+
+                setRole(oldRight, 'pos-center');
+                setRole(oldCenter, 'pos-left');
+
+                oldLeft.classList.add('no-transition');
+                setRole(oldLeft, 'pos-hidden-right');
+                setImg(oldLeft, images[nextImageIndex % images.length]);
+                nextImageIndex++;
+                void oldLeft.offsetWidth; // flush — фиксирует скрытое состояние без анимации
+                oldLeft.classList.remove('no-transition');
+
+                requestAnimationFrame(function () {
+                    setRole(oldLeft, 'pos-right');
+                });
+
+                order = [oldCenter, oldRight, oldLeft];
+            }
+
+            if (!reducedMotion) {
+                setInterval(tick, intervalMs);
+            }
+        }
+
+        initSlideshow('homeSlideshow', [
+            '/static/images/slideshow/slide-1.jpg',
+            '/static/images/slideshow/slide-2.jpg',
+            '/static/images/slideshow/slide-3.jpg',
+            '/static/images/slideshow/slide-4.jpg',
+            '/static/images/slideshow/slide-5.jpg',
+            '/static/images/slideshow/slide-6.jpg',
+            '/static/images/slideshow/slide-7.jpg',
+            '/static/images/slideshow/slide-8.jpg'
+        ], 3200);
+
+        initSlideshow('visualizerSlideshow', [
+            '/static/images/slideshow/visualizer-1.jpg',
+            '/static/images/slideshow/visualizer-2.jpg',
+            '/static/images/slideshow/visualizer-3.jpg',
+            '/static/images/slideshow/visualizer-4.jpg',
+            '/static/images/slideshow/visualizer-5.jpg',
+            '/static/images/slideshow/visualizer-6.jpg'
+        ], 3200);
 
         /* ================================================================
            SCROLL REVEAL
