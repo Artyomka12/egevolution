@@ -3,7 +3,7 @@ import io
 import copy
 import builtins as _real_builtins
 
-MAX_STEPS = 600
+MAX_STEPS = 1000
 
 # Модули, которые песочница разрешает реально импортировать (см. validator.py
 # ALLOWED_IMPORT_MODULES — списки должны совпадать). 'sys' сюда не входит:
@@ -25,7 +25,7 @@ def _restricted_import(name, globals=None, locals=None, fromlist=(), level=0):
 # без падения процесса на активном sys.settrace()), реальный запас огромный;
 # 10000 выбран не из соображений безопасности, а чтобы не создавать иллюзию
 # полезности большего значения — MAX_STEPS всё равно обрывает трассировку
-# на паре сотен уровней рекурсии.
+# на нескольких сотнях уровней рекурсии.
 SYS_RECURSION_LIMIT_CAP = 10000
 
 

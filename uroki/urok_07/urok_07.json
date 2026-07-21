@@ -1,167 +1,168 @@
 {
  "description": "Функции",
+ "lesson_id": 7,
  "practice": {
   "description": "",
   "tasks": [
    {
-    "title": "Функции с параметрами и без",
+    "correct_answer": "5",
     "description": [
      "Что выведет на экран этот код?",
      "<pre>def summ(a, b):\n    return a + b\n\nprint(summ(2, 3))</pre>"
     ],
     "file": null,
     "images": [],
-    "correct_answer": "5"
+    "title": "Функции с параметрами и без"
    },
    {
-    "title": "Функции с параметрами и без",
+    "correct_answer": "36",
     "description": [
      "Что выведет на экран этот код?",
      "<pre>def square(x):\n    return x * x\n\nprint(square(6))</pre>"
     ],
     "file": null,
     "images": [],
-    "correct_answer": "36"
+    "title": "Функции с параметрами и без"
    },
    {
-    "title": "Функции с параметрами и без",
+    "correct_answer": "Привет",
     "description": [
      "Что выведет на экран этот код?",
      "<pre>def hello():\n    return \"Привет\"\n\nprint(hello())</pre>"
     ],
     "file": null,
     "images": [],
-    "correct_answer": "Привет"
+    "title": "Функции с параметрами и без"
    },
    {
-    "title": "return: функция с результатом",
+    "correct_answer": "24",
     "description": [
      "Что выведет на экран этот код?",
      "<pre>def mul(a, b, c):\n    return a * b * c\n\nprint(mul(2, 3, 4))</pre>"
     ],
     "file": null,
     "images": [],
-    "correct_answer": "24"
+    "title": "return: функция с результатом"
    },
    {
-    "title": "return: функция с результатом",
+    "correct_answer": "12",
     "description": [
      "Что выведет на экран этот код?",
      "<pre>def diff(a, b):\n    return a - b\n\nresult = diff(10, 4)\nprint(result * 2)</pre>"
     ],
     "file": null,
     "images": [],
-    "correct_answer": "12"
+    "title": "return: функция с результатом"
    },
    {
-    "title": "Функции без return",
+    "correct_answer": "10",
     "description": [
      "Что выведет на экран этот код?",
      "<pre>def show(x):\n    print(x * 2)\n\nshow(5)</pre>"
     ],
     "file": null,
     "images": [],
-    "correct_answer": "10"
+    "title": "Функции без return"
    },
    {
-    "title": "Функции без return",
+    "correct_answer": "None",
     "description": [
-     "Чему будет равно значение переменной <code>result</code> (что выведет вторая строка)?",
+     "Чему будет равно значение переменной <code>result</code>?",
      "<pre>def greet(name):\n    print(\"Привет, \" + name)\n\nresult = greet(\"Настя\")\nprint(result)</pre>"
     ],
     "file": null,
     "images": [],
-    "correct_answer": "None"
+    "title": "Функции без return"
    },
    {
-    "title": "Локальные и глобальные переменные",
+    "correct_answer": "20",
     "description": [
      "Что выведет вторая строка (<code>print(x)</code>)?",
      "<pre>x = 20\n\ndef change():\n    x = 100\n    return x\n\nprint(change())\nprint(x)</pre>"
     ],
     "file": null,
     "images": [],
-    "correct_answer": "20"
+    "title": "Локальные и глобальные переменные"
    },
    {
-    "title": "Локальные и глобальные переменные",
+    "correct_answer": "7",
     "description": [
      "Что выведет вторая строка (<code>print(n)</code>)?",
      "<pre>n = 7\n\ndef double(n):\n    n = n * 2\n    return n\n\nprint(double(3))\nprint(n)</pre>"
     ],
     "file": null,
     "images": [],
-    "correct_answer": "7"
+    "title": "Локальные и глобальные переменные"
    },
    {
-    "title": "Рекурсия",
+    "correct_answer": "120",
     "description": [
      "Что выведет на экран этот код?",
      "<pre>def factorial(n):\n    if n == 1:\n        return 1\n    return n * factorial(n - 1)\n\nprint(factorial(5))</pre>"
     ],
     "file": null,
     "images": [],
-    "correct_answer": "120"
+    "title": "Рекурсия"
    },
    {
-    "title": "Рекурсия",
+    "correct_answer": "16",
     "description": [
      "Что выведет на экран этот код?",
      "<pre>def power2(n):\n    if n == 0:\n        return 1\n    return 2 * power2(n - 1)\n\nprint(power2(4))</pre>"
     ],
     "file": null,
     "images": [],
-    "correct_answer": "16"
+    "title": "Рекурсия"
    },
    {
-    "title": "Рекурсия",
+    "correct_answer": "21",
     "description": [
      "Что выведет на экран этот код?",
      "<pre>def sum_to(n):\n    if n == 1:\n        return 1\n    return n + sum_to(n - 1)\n\nprint(sum_to(6))</pre>"
     ],
     "file": null,
     "images": [],
-    "correct_answer": "21"
+    "title": "Рекурсия"
    },
    {
-    "title": "import (библиотеки)",
+    "correct_answer": "9.0",
     "description": [
      "Что выведет на экран этот код?",
      "<pre>import math\n\nprint(math.sqrt(81))</pre>"
     ],
     "file": null,
     "images": [],
-    "correct_answer": "9.0"
+    "title": "import (библиотеки)"
    },
    {
-    "title": "import (библиотеки)",
+    "correct_answer": "8.0",
     "description": [
      "Что выведет на экран этот код?",
      "<pre>import math\n\nprint(math.sqrt(49) + 1)</pre>"
     ],
     "file": null,
     "images": [],
-    "correct_answer": "8.0"
+    "title": "import (библиотеки)"
    },
    {
-    "title": "Функции с параметрами и без",
+    "correct_answer": "5",
     "description": [
      "Что выведет на экран этот код?",
      "<pre>def add_one(x):\n    return x + 1\n\na = add_one(add_one(add_one(2)))\nprint(a)</pre>"
     ],
     "file": null,
     "images": [],
-    "correct_answer": "5"
+    "title": "Функции с параметрами и без"
    },
    {
-    "title": "Контрольный вопрос",
+    "correct_answer": "0",
     "description": [
      "Что выведет на экран этот код?",
      "<pre>count = 0\n\ndef increment():\n    count = 1\n    return count\n\nfor i in range(5):\n    increment()\n\nprint(count)</pre>"
     ],
     "file": null,
     "images": [],
-    "correct_answer": "0"
+    "title": "Контрольный вопрос"
    }
   ]
  },
@@ -209,6 +210,5 @@
   ]
  },
  "title": "Основы python",
- "videos": [],
- "lesson_id": 7
+ "videos": []
 }

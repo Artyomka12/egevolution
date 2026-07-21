@@ -244,7 +244,7 @@ runBtn.addEventListener('click', async () => {
     // ── Classic mode ──
     buildCodeDisplay(code);
     if (result.truncated) {
-      truncWarn.textContent = '⚠ Код содержит более 600 шагов — показаны первые 600';
+      truncWarn.textContent = '⚠ Код содержит более 1000 шагов — показаны первые 1000';
       truncWarn.classList.remove('hidden');
     } else if (result.error) {
       const lineInfo = result.error.line ? ` (строка ${result.error.line})` : '';

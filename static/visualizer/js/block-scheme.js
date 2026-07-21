@@ -1004,7 +1004,7 @@ async function loadBlockSchemeTrace(code, fileContent) {
     if (bsTrace.error) {
       bsShowTraceStatus(`Трассировка недоступна: ${bsTrace.error.message}`, true);
     } else if (bsTrace.truncated) {
-      bsShowTraceStatus('Код содержит более 600 шагов — показаны первые 600', false);
+      bsShowTraceStatus('Код содержит более 1000 шагов — показаны первые 1000', false);
     }
     if (bsTrace.steps.length) {
       renderBlockSchemeStep(0);   // also refreshes control button states
@@ -1021,8 +1021,8 @@ async function loadBlockSchemeTrace(code, fileContent) {
 }
 
 /* Trace status banner — surfaces runtime errors, validation errors, and
-   600-step truncation that loadBlockSchemeTrace() already detects but
-   previously left unreported in the UI. */
+   step-limit (MAX_STEPS) truncation that loadBlockSchemeTrace() already
+   detects but previously left unreported in the UI. */
 function bsShowTraceStatus(message, isError) {
   const el  = document.getElementById('bs-trace-warn');
   const txt = document.getElementById('bs-trace-warn-text');
