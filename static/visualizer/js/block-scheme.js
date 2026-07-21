@@ -31,11 +31,61 @@ const uid = () => 'b' + (++_uid);
    LAYER 1 — PARSER
    ═══════════════════════════════════════════════════════════════════ */
 
+/* Находит позицию двоеточия, завершающего заголовок составного оператора
+   (if/elif/else/for/while/def) — первое ':' вне строковых литералов, вне
+   скобок ()[]{} и вне комментария. Двоеточие среза (a[1:2]), словаря
+   ({1:2}) или аннотации параметра def f(x: int) всегда на глубине скобок
+   > 0 и корректно пропускается. Возвращает -1, если такого ':' нет. */
+function findTopLevelColon(s) {
+  let depth = 0, quote = null;
+  for (let i = 0; i < s.length; i++) {
+    const ch = s[i];
+    if (quote) {
+      if (ch === '\\') { i++; continue; }
+      if (ch === quote) quote = null;
+      continue;
+    }
+    if (ch === '"' || ch === "'") { quote = ch; continue; }
+    if (ch === '#') break;
+    if (ch === '(' || ch === '[' || ch === '{') { depth++; continue; }
+    if (ch === ')' || ch === ']' || ch === '}') { depth--; continue; }
+    if (ch === ':' && depth === 0) return i;
+  }
+  return -1;
+}
+
+/* Разворачивает однострочные составные операторы (if x: y, for i in ...: y,
+   while c: y, def f(): y) в стандартную двухстрочную форму, которую уже
+   умеет разбирать остальной парсер — заголовок и синтетическая строка тела
+   с отступом +4. Обе строки помечаются ТЕМ ЖЕ индексом исходной строки (i):
+   Python выполняет и проверку условия, и тело такой строки как одно
+   'line'-событие трассировки под одним номером строки, поэтому подсветка
+   активного шага должна остаться привязана к реальному номеру строки, а не
+   к синтетическому. Строки без keyword-заголовка (в т.ч. return с
+   тернарником — return X if C else Y) не трогаются вообще — это
+   отдельный, более сложный случай, сознательно не в scope этой правки. */
+function expandInlineBodies(lines) {
+  const KEYWORD_RE = /^(if|elif|else|for|while|def)\b/;
+  const out = [];
+  for (const l of lines) {
+    if (!KEYWORD_RE.test(l.s)) { out.push(l); continue; }
+    const colonPos = findTopLevelColon(l.s);
+    if (colonPos === -1) { out.push(l); continue; }
+    const header = l.s.slice(0, colonPos + 1);
+    const body = l.s.slice(colonPos + 1).trim();
+    if (!body || body.startsWith('#')) { out.push(l); continue; }
+    out.push({ s: header, ind: l.ind, i: l.i });
+    out.push({ s: body, ind: l.ind + 4, i: l.i });
+  }
+  return out;
+}
+
 function parseCode(src) {
   _uid = 0;
-  const lines = src.split('\n')
+  const rawLines = src.split('\n')
     .map((t, i) => ({ s: t.trimStart(), ind: t.length - t.trimStart().length, i }))
     .filter(l => l.s.length > 0);
+  const lines = expandInlineBodies(rawLines);
   const { nodes, functions } = parseBlock(lines, 0, 0);
   return { tree: nodes, functions };
 }
@@ -241,6 +291,18 @@ function layoutSeq(nodes, cx, y0, loopCtx, lnodes, edges) {
       if (hasNext) y += BS.V_GAP;
     }
   }
+
+  // Диаграммы функций не имеют завершающего овала «Конец» (обрываются на
+  // последнем блоке) — если условие без else оказалось последним оператором
+  // тела функции, join-точка «Нет» остаётся не подключена ни к чему, т.к.
+  // addFromJoin() вызывается только при обработке следующего узла, а его
+  // здесь нет. Закрываем такой «повисший» join отдельным отрезком со
+  // стрелкой, чтобы «Нет» не обрывалось в пустоте без наконечника.
+  if (joinY !== null) {
+    edges.push(ePath([P(cx, joinY), P(cx, joinY + BS.V_GAP)]));
+    joinY = null;
+  }
+
   return y;
 }
 
@@ -1074,11 +1136,24 @@ function bsSetActiveLine(lineNum) {
   }
 }
 
-function bsSetActiveBlock(lineNum) {
+/* isReturn — true, когда текущий шаг трассировки сам является событием
+   'return' (не просто 'line'). Условие с однострочным телом (if x: return y)
+   делит номер строки со своим return — на обычном 'line'-шаге ветка ещё
+   могла не сработать (условие ложно), поэтому по умолчанию подсвечивается
+   заголовок условия; но если это именно 'return'-событие, ветка точно
+   взята, и подсветку нужно переключить на сам блок return (по вложенному
+   элементу с классом .bs-return — сам data-line стоит на обёртке <g>,
+   у которой своего класса формы нет). */
+function bsSetActiveBlock(lineNum, isReturn) {
   const svg = document.getElementById('bs-svg');
   if (!svg) return;
   svg.querySelectorAll('.bs-block-active').forEach(el => el.classList.remove('bs-block-active'));
-  const target = svg.querySelector(`[data-line="${lineNum}"]`);
+  const matches = svg.querySelectorAll(`[data-line="${lineNum}"]`);
+  let target = matches[0] || null;
+  if (isReturn) {
+    const returnMatch = Array.from(matches).find(el => el.querySelector('.bs-return'));
+    if (returnMatch) target = returnMatch;
+  }
   if (target) {
     target.classList.add('bs-block-active');
     target.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
@@ -1094,7 +1169,7 @@ function renderBlockSchemeStep(index) {
 
   if (step.line != null) {
     bsSetActiveLine(step.line);
-    bsSetActiveBlock(step.line);
+    bsSetActiveBlock(step.line, step.event === 'return');
   }
 
   const vars   = step.variables || {};
@@ -1242,12 +1317,18 @@ function bsNearNode(pt, node) {
          pt.y <= node.cy + node.h / 2 + BS_FLOW_MARGIN;
 }
 
-/* Единственный узел с данным номером строки — используется для перелётов
-   вызов/возврат, которые идут не по нарисованным рёбрам, а напрямую между
-   двумя блоками (в т.ч. на разных диаграммах, или из блока в него же самого
-   при рекурсии). */
+/* Узел с данным номером строки — используется для перелётов вызов/возврат,
+   которые идут не по нарисованным рёбрам, а напрямую между двумя блоками
+   (в т.ч. на разных диаграммах, или из блока в него же самого при
+   рекурсии). Условие/цикл с однострочным телом (if x: y) делят номер
+   строки со своим телом — оба вызывающих места (вход в call/return) уже
+   вызываются ПОСЛЕ того, как известно, что ветка реально взята, поэтому
+   среди нескольких узлов с одинаковой строкой всегда нужен содержательный
+   узел тела (return/action/assignment), а не сам заголовок условия/цикла. */
 function bsFindNodeByLine(line) {
-  return bsLnodes.find(n => n.line === line);
+  const candidates = bsLnodes.filter(n => n.line === line);
+  if (candidates.length <= 1) return candidates[0];
+  return candidates.find(n => n.type !== 'condition' && n.type !== 'loop') || candidates[0];
 }
 
 function bsFindEdgePath(fromLine, toLine) {
