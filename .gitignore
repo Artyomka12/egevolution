@@ -22,3 +22,6 @@ static/uploads/*
 # IDE
 .vscode/
 .idea/
+
+# Claude Code — личные настройки, не для команды
+.claude/settings.local.json

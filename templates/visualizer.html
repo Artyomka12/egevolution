@@ -52,6 +52,12 @@
               <button class="bs-mode-btn" data-mode="blockscheme">Блок-схема</button>
             </div>
           </div>
+          <div class="file-upload-row">
+            <span class="bs-mode-label">Файл для <code>open()</code>:</span>
+            <input type="file" id="file-input" class="file-input" accept=".txt,.csv">
+            <span id="file-input-name" class="file-input-name"></span>
+            <button type="button" id="file-input-clear" class="file-input-clear hidden" title="Убрать файл">✕</button>
+          </div>
           <div class="editor-footer">
             <div id="syntax-hint" class="syntax-hint">
               Доступно: переменные, if/elif/else, for, while, print, списки

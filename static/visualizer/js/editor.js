@@ -152,6 +152,31 @@ document.getElementById('example-select').addEventListener('change', function ()
   this.value = '';
 });
 
+/* ===== Virtual file for open() ===== */
+let uploadedFileContent = '';
+const fileInput      = document.getElementById('file-input');
+const fileInputName   = document.getElementById('file-input-name');
+const fileInputClear  = document.getElementById('file-input-clear');
+
+fileInput.addEventListener('change', () => {
+  const file = fileInput.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    uploadedFileContent = reader.result;
+    fileInputName.textContent = file.name;
+    fileInputClear.classList.remove('hidden');
+  };
+  reader.readAsText(file);
+});
+
+fileInputClear.addEventListener('click', () => {
+  uploadedFileContent = '';
+  fileInput.value = '';
+  fileInputName.textContent = '';
+  fileInputClear.classList.add('hidden');
+});
+
 /* ===== Visualization mode ===== */
 let vizMode = 'classic';
 
@@ -196,7 +221,7 @@ runBtn.addEventListener('click', async () => {
       inputView.classList.remove('active');
       bsView.classList.add('active');
       startBlockScheme(code);
-      loadBlockSchemeTrace(code);   // background: powers highlighting/playback (3.3+)
+      loadBlockSchemeTrace(code, uploadedFileContent);   // background: powers highlighting/playback (3.3+)
     } catch (err) {
       showError('Ошибка построения схемы: ' + err.message);
     } finally {
@@ -207,7 +232,7 @@ runBtn.addEventListener('click', async () => {
   }
 
   try {
-    const result = await traceCode(code);
+    const result = await traceCode(code, uploadedFileContent);
 
     if (result.error && result.steps.length === 0) {
       showError(result.error.message);

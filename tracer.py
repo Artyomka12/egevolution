@@ -1,7 +1,58 @@
 import sys
+import io
 import copy
+import builtins as _real_builtins
 
 MAX_STEPS = 600
+
+# Модули, которые песочница разрешает реально импортировать (см. validator.py
+# ALLOWED_IMPORT_MODULES — списки должны совпадать). 'sys' сюда не входит:
+# строка 'import sys' физически вырезается из кода до компиляции (см. ниже),
+# поэтому настоящий __import__ для 'sys' никогда не вызывается.
+ALLOWED_IMPORT_MODULES = {'re', 'itertools'}
+
+
+def _restricted_import(name, globals=None, locals=None, fromlist=(), level=0):
+    """Заменяет builtins.__import__ в песочнице — namespace['__builtins__'] пуст,
+    поэтому без этой замены 'import ...' падает с ImportError: __import__ not found.
+    Разрешает только модули из ALLOWED_IMPORT_MODULES, остальное — ImportError."""
+    if name not in ALLOWED_IMPORT_MODULES:
+        raise ImportError(f"Импорт модуля '{name}' не разрешён в песочнице")
+    return _real_builtins.__import__(name, globals, locals, fromlist, level)
+
+
+# Потолок sys.setrecursionlimit() в песочнице — проверен эмпирически (до 3 000 000
+# без падения процесса на активном sys.settrace()), реальный запас огромный;
+# 10000 выбран не из соображений безопасности, а чтобы не создавать иллюзию
+# полезности большего значения — MAX_STEPS всё равно обрывает трассировку
+# на паре сотен уровней рекурсии.
+SYS_RECURSION_LIMIT_CAP = 10000
+
+
+class _FakeSys:
+    """Заглушка вместо настоящего модуля sys — единственная разрешённая
+    операция намеренно узкая (setrecursionlimit), никакого sys.exit/sys.path/
+    sys.modules и т.д. Строка 'import sys' в пользовательском коде физически
+    вырезается перед компиляцией (см. _strip_sys_import) — реальный модуль
+    sys никогда не попадает в namespace, эта заглушка всегда там вместо него."""
+
+    def setrecursionlimit(self, n):
+        if isinstance(n, bool) or not isinstance(n, int):
+            raise TypeError('setrecursionlimit() argument must be an integer')
+        if n > SYS_RECURSION_LIMIT_CAP:
+            raise ValueError(
+                f'В песочнице лимит рекурсии не может быть выше {SYS_RECURSION_LIMIT_CAP}'
+            )
+        sys.setrecursionlimit(n)
+
+
+def _strip_sys_import(code: str) -> str:
+    """Удаляет строку 'import sys' (ровно эту форму — без as/from, см. validator.py),
+    заменяя её пустой строкой, чтобы не сбить нумерацию строк для остального кода.
+    Реального импорта sys в песочнице не происходит — namespace['sys'] всегда
+    заранее заполнен _FakeSys()."""
+    lines = code.split('\n')
+    return '\n'.join('' if line.strip() == 'import sys' else line for line in lines)
 
 SAFE_BUILTINS = {
     'print': None,  # replaced at runtime
@@ -26,9 +77,15 @@ SAFE_BUILTINS = {
     'enumerate': enumerate,
     'zip': zip,
     'type': type,
+    'any': any,
+    'all': all,
     'True': True,
     'False': False,
     'None': None,
+    # Заглушка вместо настоящего sys — всегда доступна, с 'import sys' или без
+    # (как и остальные SAFE_BUILTINS, не требующие явного импорта). Единственный
+    # экземпляр безопасно переиспользуется между запросами — не хранит состояния.
+    'sys': _FakeSys(),
 }
 
 
@@ -53,7 +110,7 @@ def _serialize(value, depth=0):
     return str(value)[:100]
 
 
-def trace_code(code: str) -> dict:
+def trace_code(code: str, file_content: str = '') -> dict:
     steps = []
     error_info = None
 
@@ -67,9 +124,16 @@ def trace_code(code: str) -> dict:
         text = sep.join(str(a) for a in args)
         captured_output.append(text)
 
+    def fake_open(filename, mode='r', *args, **kwargs):
+        # Имя/режим файла игнорируются намеренно — открывается всегда одно и то
+        # же реально загруженное студентом содержимое (см. app.py), только в
+        # памяти (io.StringIO), без доступа к настоящей файловой системе.
+        return io.StringIO(file_content)
+
     namespace = dict(SAFE_BUILTINS)
     namespace['print'] = custom_print
-    namespace['__builtins__'] = {}
+    namespace['open'] = fake_open
+    namespace['__builtins__'] = {'__import__': _restricted_import}
 
     def make_tracer():
         step_count    = [0]
@@ -179,8 +243,12 @@ def trace_code(code: str) -> dict:
 
     tracer_fn, limit_hit = make_tracer()
 
+    # sys.setrecursionlimit() внутри пользовательского кода меняет лимит всего
+    # процесса (общий на Flask-воркер) — сохраняем и восстанавливаем вокруг
+    # каждой трассировки, чтобы не задеть параллельные запросы.
+    saved_recursion_limit = sys.getrecursionlimit()
     try:
-        compiled = compile(code, 'user_code', 'exec')
+        compiled = compile(_strip_sys_import(code), 'user_code', 'exec')
         sys.settrace(tracer_fn)
         exec(compiled, namespace)
     except Exception as e:
@@ -191,6 +259,7 @@ def trace_code(code: str) -> dict:
         }
     finally:
         sys.settrace(None)
+        sys.setrecursionlimit(saved_recursion_limit)
 
     # Final global variable state
     final_vars = {}

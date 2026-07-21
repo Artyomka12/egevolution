@@ -29,6 +29,7 @@
   --bs-cond-fill:       #fef9c3;  --bs-cond-stroke:     #ca8a04;  --bs-cond-text:       #78350f;
   --bs-loop-fill:       #ede9fe;  --bs-loop-stroke:     #7c3aed;  --bs-loop-text:       #3b0764;
   --bs-return-fill:     #ccfbf1;  --bs-return-stroke:   #0d9488;  --bs-return-text:     #134e4a;
+  --bs-import-fill:     #e0e7ff;  --bs-import-stroke:   #4f46e5;  --bs-import-text:     #312e81;
   --bs-edge:            #4b5563;
   --bs-yes:             #16a34a;
   --bs-no:              #dc2626;
@@ -931,6 +932,7 @@ body {
   --bs-cond-fill:       #422006;  --bs-cond-stroke:     #f59e0b;  --bs-cond-text:       #fde68a;
   --bs-loop-fill:       #2e1065;  --bs-loop-stroke:     #a78bfa;  --bs-loop-text:       #ddd6fe;
   --bs-return-fill:     #042f2e;  --bs-return-stroke:   #2dd4bf;  --bs-return-text:     #99f6e4;
+  --bs-import-fill:     #1e1b4b;  --bs-import-stroke:   #818cf8;  --bs-import-text:     #c7d2fe;
   --bs-edge:            #8b949e;
   --bs-yes:             #4ade80;
   --bs-no:              #f87171;
@@ -1007,6 +1009,39 @@ body, .card, .scope-block, .card-header, .editor-footer,
   color: var(--text-mid);
   font-weight: 500;
 }
+
+/* ===== File upload row (open() virtual file, input view) ===== */
+.file-upload-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  border-top: 1px solid var(--border);
+  background: #F8FAFF;
+}
+.file-input {
+  font-size: 13px;
+  max-width: 220px;
+}
+.file-input-name {
+  font-size: 12px;
+  color: var(--text-mid);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.file-input-clear {
+  font-family: var(--font);
+  font-size: 12px;
+  line-height: 1;
+  padding: 3px 7px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-mid);
+}
+.file-input-clear:hover { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
 .bs-mode-toggle {
   display: flex;
   background: var(--border);
@@ -1284,6 +1319,7 @@ body, .card, .scope-block, .card-header, .editor-footer,
 
 /* Dark mode overrides */
 .dark .bs-mode-selector { background: #161F2E; border-color: #1E2D45; }
+.dark .file-upload-row  { background: #161F2E; border-color: #1E2D45; }
 .dark .bs-mode-toggle   { background: #0F172A; }
 .dark .bs-mode-btn.active { background: #1E2D45; }
 .dark #bs-canvas { background: #0F172A; border-color: #1E2D45; }

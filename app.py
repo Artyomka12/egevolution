@@ -55,7 +55,7 @@ def handle_csrf_error(e):
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-APP_VERSION = "2.0.0"
+APP_VERSION = "2.1.0"
 
 
 @app.context_processor
@@ -3496,11 +3496,7 @@ def api_visualizer_trace():
     if "user_id" not in session:
         return jsonify({"error": "Unauthorized"}), 401
 
-    try:
-        data = request.get_json()
-        code = (data or {}).get("code", "").strip()
-    except Exception:
-        return jsonify({"error": {"type": "ParseError", "message": "Неверный JSON", "line": None}, "steps": [], "truncated": False}), 400
+    code = (request.form.get("code") or "").strip()
 
     if not code:
         return jsonify({"error": {"type": "ValidationError", "message": "Код не может быть пустым", "line": None}, "steps": [], "truncated": False})
@@ -3509,7 +3505,17 @@ def api_visualizer_trace():
     if not valid:
         return jsonify({"error": {"type": "ValidationError", "message": err_msg, "line": None}, "steps": [], "truncated": False})
 
-    result = trace_code(code)
+    # Виртуальный файл для open() — необязательный, читается целиком в память
+    # (io.StringIO в tracer.py), реальный файл на диске никогда не создаётся
+    file_content = ""
+    uploaded = request.files.get("file")
+    if uploaded and uploaded.filename:
+        try:
+            file_content = uploaded.read().decode("utf-8", errors="replace")
+        except Exception:
+            file_content = ""
+
+    result = trace_code(code, file_content)
     return jsonify(result)
 
 

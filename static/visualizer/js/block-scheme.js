@@ -63,6 +63,9 @@ function parseBlock(lines, si, indent) {
 
 function parseStmt(l) {
   const s = l.s;
+  if (s.startsWith('import ') || s.startsWith('from ')) {
+    return { id: uid(), type: 'import', label: s, line: l.i + 1 };
+  }
   const m = !s.startsWith('print') && s.match(/^(\w+)\s*=\s*(.+)$/);
   if (m) {
     const rhs = m[2].trim();
@@ -253,6 +256,7 @@ function bsz(type) {
   if (type === 'loop')       return { w: BS.LOOP_W,   h: BS.LOOP_H   };
   if (type === 'terminal')   return { w: BS.TERM_W,   h: BS.TERM_H   };
   if (type === 'return')     return { w: BS.RETURN_W, h: BS.RETURN_H };
+  if (type === 'import')     return { w: BS.ACTION_W, h: BS.ACTION_H };
   return { w: BS.ACTION_W, h: BS.ACTION_H };
 }
 
@@ -679,12 +683,15 @@ function renderSVG(lnodes, edges) {
       .bs-condition {fill:var(--bs-cond-fill);stroke:var(--bs-cond-stroke);stroke-width:1.5}
       .bs-loop      {fill:var(--bs-loop-fill);stroke:var(--bs-loop-stroke);stroke-width:1.5}
       .bs-return    {fill:var(--bs-return-fill);stroke:var(--bs-return-stroke);stroke-width:1.5}
+      .bs-import    {fill:var(--bs-import-fill);stroke:var(--bs-import-stroke);stroke-width:1.5}
+      .bs-import-bar{stroke:var(--bs-import-stroke);stroke-width:1.5}
       .bs-terminal-txt  {fill:var(--bs-terminal-text)}
       .bs-assignment-txt{fill:var(--bs-assign-text)}
       .bs-action-txt    {fill:var(--bs-action-text)}
       .bs-condition-txt {fill:var(--bs-cond-text)}
       .bs-loop-txt      {fill:var(--bs-loop-text)}
       .bs-return-txt    {fill:var(--bs-return-text)}
+      .bs-import-txt    {fill:var(--bs-import-text)}
       .bs-edge      {fill:none;stroke:var(--bs-edge);stroke-width:1.5}
       .bs-arrowhead {fill:var(--bs-edge)}
       .bs-label-yes {fill:var(--bs-yes);font-size:12px;font-weight:600;font-family:Inter,sans-serif}
@@ -746,6 +753,7 @@ function drawBlock(n) {
     case 'loop':       return drawHex(n);
     case 'terminal':   return drawOval(n);
     case 'return':     return drawTrap(n);
+    case 'import':     return drawPredefinedProcess(n);
     default:           return drawRect(n);
   }
 }
@@ -754,12 +762,12 @@ function drawBlock(n) {
 const TYPE_CLS = {
   terminal: 'bs-terminal', assignment: 'bs-assignment',
   action: 'bs-action', condition: 'bs-condition', loop: 'bs-loop',
-  return: 'bs-return',
+  return: 'bs-return', import: 'bs-import',
 };
 const TXT_CLS = {
   terminal: 'bs-terminal-txt', assignment: 'bs-assignment-txt',
   action: 'bs-action-txt', condition: 'bs-condition-txt', loop: 'bs-loop-txt',
-  return: 'bs-return-txt',
+  return: 'bs-return-txt', import: 'bs-import-txt',
 };
 
 function drawOval(n) {
@@ -792,6 +800,18 @@ function drawTrap(n) {
   const pts=`${f(cx-topHalf)},${f(cy-h/2)} ${f(cx+topHalf)},${f(cy-h/2)} ${f(cx+botHalf)},${f(cy+h/2)} ${f(cx-botHalf)},${f(cy+h/2)}`;
   return `<polygon class="${TYPE_CLS[n.type]||'bs-action'}" points="${pts}"/>${drawTxt(n)}`;
 }
+/* «Предопределённый процесс» — прямоугольник с двумя вертикальными чертами
+   у краёв (классический флоучарт-символ вызова готового модуля/подпрограммы).
+   Используется для строк import ... / from ... import ... */
+function drawPredefinedProcess(n) {
+  const {cx,cy,w,h}=n, inset=8;
+  const rect = `<rect class="${TYPE_CLS[n.type]||'bs-action'}" x="${f(cx-w/2)}" y="${f(cy-h/2)}" width="${w}" height="${h}" rx="${BS.ACTION_RX}" ry="${BS.ACTION_RX}"/>`;
+  const bars = [cx-w/2+inset, cx+w/2-inset]
+    .map(x => `<line class="bs-import-bar" x1="${f(x)}" y1="${f(cy-h/2)}" x2="${f(x)}" y2="${f(cy+h/2)}"/>`)
+    .join('');
+  return `${rect}${bars}${drawTxt(n)}`;
+}
+
 /* ── Typography helpers ───────────────────────────────────────────── */
 
 // Max chars per line and max lines per block type
@@ -802,6 +822,7 @@ const TYPE_WRAP = {
   condition:  { maxChars: 15, maxLines: 2 },
   loop:       { maxChars: 22, maxLines: 2 },
   return:     { maxChars: 20, maxLines: 2 },
+  import:     { maxChars: 18, maxLines: 2 },
 };
 
 // Split into "words" for wrapping, but spaces inside ( ) or [ ] never split
@@ -967,12 +988,12 @@ function buildCallSiteMap(steps) {
 }
 let bsCallSiteLine = new Map();
 
-async function loadBlockSchemeTrace(code) {
+async function loadBlockSchemeTrace(code, fileContent) {
   const gen = ++bsTraceGen;
   bsTrace = { steps: null, error: null, truncated: false };
   bsHideTraceStatus();
   try {
-    const result = await traceCode(code);
+    const result = await traceCode(code, fileContent);
     if (gen !== bsTraceGen) return;   // a newer call already superseded this one
     bsTrace = {
       steps:     result.steps || [],
