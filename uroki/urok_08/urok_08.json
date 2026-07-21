@@ -11,7 +11,8 @@
       "<b>Ошибки отступов (IndentationError)</b>",
       "В Python отступы — часть синтаксиса, а не просто оформление: именно они определяют, какой код относится к <code>if</code>, <code>for</code>, <code>def</code> и так далее. Если внутри блока не поставить отступ, Python не поймёт, где начинается тело этого блока.",
       "<pre>def f():\nprint(\"привет\")</pre>",
-      "Тело функции написано без отступа — Python сообщит: <code>IndentationError: expected an indented block after function definition on line 1</code>.",
+      "Тело функции написано без отступа — Python сообщит:",
+      "<code>IndentationError: expected an indented block after function definition on line 1</code>.",
       "<b>Ошибки выполнения и как читать сообщение об ошибке</b>",
       "В отличие от синтаксических, такие ошибки Python находит не сразу, а только во время выполнения программы — когда доходит до конкретной строки. Пример:",
       "<pre>a = 5\nprint(a + b)</pre>",
@@ -21,7 +22,8 @@
       "<b>Частые типы ошибок выполнения</b>",
       "<code>TypeError</code> — операция применена к несовместимым типам, например попытка сложить строку и число: <code>\"Счёт: \" + 5</code> → <code>TypeError: can only concatenate str (not \"int\") to str</code>.",
       "<code>ValueError</code> — значение подходящего типа, но с неверным содержимым: <code>int(\"abc\")</code> → <code>ValueError: invalid literal for int() with base 10: 'abc'</code>.",
-      "<code>IndexError</code> — обращение к элементу списка по несуществующему индексу: <code>A = [1, 2, 3]</code>, затем <code>A[5]</code> → <code>IndexError: list index out of range</code>.",
+      "<code>IndexError</code> — обращение к элементу списка по несуществующему индексу:",
+      "<code>A = [1, 2, 3]</code>, затем <code>A[5]</code> → <code>IndexError: list index out of range</code>.",
       "<code>ZeroDivisionError</code> — деление на ноль: <code>10 / 0</code> → <code>ZeroDivisionError: division by zero</code>.",
       "<b>Логические ошибки — самые коварные</b>",
       "Такой код работает без единого сообщения об ошибке, но выдаёт неверный результат — потому что Python выполнил именно то, что написано, а не то, что имелось в виду. Пример — ошибка на единицу в границах <code>range()</code>:",
@@ -30,12 +32,163 @@
       "<b>Как искать и исправлять ошибки</b>",
       "Если есть сообщение об ошибке — внимательно прочитать его текст и номер строки: Python почти всегда прямо называет тип проблемы. Если ошибки нет, а результат неверный — добавить <code>print()</code> в подозрительных местах, чтобы увидеть, какие значения получаются на самом деле на каждом шаге.",
       "<b>Дальше — визуализатор кода</b>",
-      "В следующем уроке разберём визуализатор кода платформы — инструмент, который показывает выполнение программы шаг за шагом, и на нём наглядно видно, где именно она расходится с ожиданиями."
+      "В следующем уроке разберём визуализатор кода на платформе — инструмент, который показывает выполнение программы шаг за шагом, и на нём наглядно видно, где именно она расходится с ожиданиями."
     ],
     "images": []
   },
   "practice": {
     "description": "",
-    "tasks": []
+    "tasks": [
+      {
+        "title": "Синтаксические ошибки (SyntaxError)",
+        "description": [
+          "Какая ошибка возникнет при попытке запустить этот код?",
+          "<pre>for i in range(5)\n    print(i)</pre>"
+        ],
+        "file": null,
+        "images": [],
+        "correct_answer": "SyntaxError"
+      },
+      {
+        "title": "Синтаксические ошибки (SyntaxError)",
+        "description": [
+          "Какая ошибка возникнет при попытке запустить этот код?",
+          "<pre>print(\"Привет)</pre>"
+        ],
+        "file": null,
+        "images": [],
+        "correct_answer": "SyntaxError"
+      },
+      {
+        "title": "Ошибки отступов (IndentationError)",
+        "description": [
+          "Какая ошибка возникнет при попытке запустить этот код?",
+          "<pre>for i in range(3):\nprint(i)</pre>"
+        ],
+        "file": null,
+        "images": [],
+        "correct_answer": "IndentationError"
+      },
+      {
+        "title": "Ошибки отступов (IndentationError)",
+        "description": [
+          "Какая ошибка возникнет при попытке запустить этот код?",
+          "<pre>def show():\nprint(\"готово\")</pre>"
+        ],
+        "file": null,
+        "images": [],
+        "correct_answer": "IndentationError"
+      },
+      {
+        "title": "Частые типы ошибок выполнения",
+        "description": [
+          "Какая ошибка возникнет при выполнении этого кода?",
+          "<pre>a = 5\nprint(a + c)</pre>"
+        ],
+        "file": null,
+        "images": [],
+        "correct_answer": "NameError"
+      },
+      {
+        "title": "Частые типы ошибок выполнения",
+        "description": [
+          "Какая ошибка возникнет при выполнении этого кода?",
+          "<pre>print(\"Возраст: \" + 10)</pre>"
+        ],
+        "file": null,
+        "images": [],
+        "correct_answer": "TypeError"
+      },
+      {
+        "title": "Частые типы ошибок выполнения",
+        "description": [
+          "Какая ошибка возникнет при выполнении этого кода?",
+          "<pre>n = 5\nprint(len(n))</pre>"
+        ],
+        "file": null,
+        "images": [],
+        "correct_answer": "TypeError"
+      },
+      {
+        "title": "Частые типы ошибок выполнения",
+        "description": [
+          "Какая ошибка возникнет при выполнении этого кода?",
+          "<pre>print(int(\"hello\"))</pre>"
+        ],
+        "file": null,
+        "images": [],
+        "correct_answer": "ValueError"
+      },
+      {
+        "title": "Частые типы ошибок выполнения",
+        "description": [
+          "Какая ошибка возникнет при выполнении этого кода?",
+          "<pre>A = [1, 2, 3]\nprint(A[10])</pre>"
+        ],
+        "file": null,
+        "images": [],
+        "correct_answer": "IndexError"
+      },
+      {
+        "title": "Частые типы ошибок выполнения",
+        "description": [
+          "Какая ошибка возникнет при выполнении этого кода?",
+          "<pre>x = 8\nprint(x / 0)</pre>"
+        ],
+        "file": null,
+        "images": [],
+        "correct_answer": "ZeroDivisionError"
+      },
+      {
+        "title": "Как читать сообщение об ошибке",
+        "description": [
+          "Что успеет вывестись на экран до того, как программа упадёт с ошибкой?",
+          "<pre>print(\"Старт\")\nA = [1, 2, 3]\nprint(A[5])\nprint(\"Конец\")</pre>"
+        ],
+        "file": null,
+        "images": [],
+        "correct_answer": "Старт"
+      },
+      {
+        "title": "Как читать сообщение об ошибке",
+        "description": [
+          "Какое последнее число будет выведено на экран до того, как программа упадёт с ошибкой?",
+          "<pre>for i in range(5):\n    print(i)\n    if i == 2:\n        print(10 / 0)</pre>"
+        ],
+        "file": null,
+        "images": [],
+        "correct_answer": "2"
+      },
+      {
+        "title": "Логические ошибки — самые коварные",
+        "description": [
+          "Что выведет этот код (ошибок при выполнении не будет)?",
+          "<pre>A = [5, 15, 25, 35]\ntotal = 0\nfor k in range(1, len(A)):\n    total += A[k]\nprint(total)</pre>"
+        ],
+        "file": null,
+        "images": [],
+        "correct_answer": "75"
+      },
+      {
+        "title": "Логические ошибки — самые коварные",
+        "description": [
+          "Что выведет этот код (ошибок при выполнении не будет)?",
+          "<pre>age = 5\nif age > 12 or age < 18:\n    print(\"подросток\")\nelse:\n    print(\"не подросток\")</pre>"
+        ],
+        "file": null,
+        "images": [],
+        "correct_answer": "подросток"
+      },
+      {
+        "title": "Контрольный вопрос",
+        "description": [
+          "Какая ошибка возникнет при выполнении этого кода?",
+          "<pre>def divide(a, b):\n    return a / b\n\nprint(\"Результат:\", divide(10, 2))\nprint(\"Результат:\", divide(5, 0))</pre>"
+        ],
+        "file": null,
+        "images": [],
+        "correct_answer": "ZeroDivisionError"
+      }
+    ]
   }
 }
