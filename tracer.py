@@ -3,7 +3,7 @@ import io
 import copy
 import builtins as _real_builtins
 
-MAX_STEPS = 1000
+MAX_STEPS = 1500
 
 # Модули, которые песочница разрешает реально импортировать (см. validator.py
 # ALLOWED_IMPORT_MODULES — списки должны совпадать). 'sys' сюда не входит:
@@ -27,6 +27,13 @@ def _restricted_import(name, globals=None, locals=None, fromlist=(), level=0):
 # полезности большего значения — MAX_STEPS всё равно обрывает трассировку
 # на нескольких сотнях уровней рекурсии.
 SYS_RECURSION_LIMIT_CAP = 10000
+
+
+class _StepLimitReached(Exception):
+    """Поднимается из tracer() при достижении MAX_STEPS — сознательно
+    прерывает выполнение трассируемого кода (не только запись шагов), см.
+    комментарий у make_tracer(). Пользовательский код не может её поймать —
+    try/except запрещён валидатором (validator.py)."""
 
 
 class _FakeSys:
@@ -79,6 +86,8 @@ SAFE_BUILTINS = {
     'type': type,
     'any': any,
     'all': all,
+    'map': map,
+    'filter': filter,
     'True': True,
     'False': False,
     'None': None,
@@ -161,6 +170,21 @@ def trace_code(code: str, file_content: str = '') -> dict:
             if frame.f_code.co_name == '<module>' and event in ('call', 'return'):
                 return tracer
 
+            # Общий лимит на ВСЕ типы событий (line/call/return), проверяется
+            # ДО диспетчеризации по event. Раньше лимит проверялся только для
+            # 'line' — call/return от генераторных выражений внутри any()/all()
+            # (whitelist с v2.1.0) создают свой фрейм на каждый вызов и росли
+            # неограниченно на каждой итерации цикла (напр. all(f(x) for x in ox)
+            # внутри for), даже когда 'line' уже давно упёрся в MAX_STEPS.
+            # raise (а не тихий return) здесь не просто прекращает запись
+            # шагов — sys.settrace пробрасывает исключение из трассера в саму
+            # трассируемую программу и реально обрывает её выполнение (try/except
+            # запрещён валидатором, поймать это в пользовательском коде нельзя).
+            if step_count[0] >= MAX_STEPS:
+                limit_hit[0] = True
+                raise _StepLimitReached()
+            step_count[0] += 1
+
             if event == 'call':
                 scope_counter[0] += 1
                 sid   = scope_counter[0]
@@ -209,11 +233,6 @@ def trace_code(code: str, file_content: str = '') -> dict:
                 return tracer
 
             if event == 'line':
-                if step_count[0] >= MAX_STEPS:
-                    limit_hit[0] = True
-                    return tracer
-
-                step_count[0] += 1
                 sid   = scope_stack[-1][0] if scope_stack else 0
                 name  = scope_stack[-1][1] if scope_stack else '<module>'
                 depth = scope_stack[-1][2] if scope_stack else 0
@@ -251,6 +270,8 @@ def trace_code(code: str, file_content: str = '') -> dict:
         compiled = compile(_strip_sys_import(code), 'user_code', 'exec')
         sys.settrace(tracer_fn)
         exec(compiled, namespace)
+    except _StepLimitReached:
+        pass
     except Exception as e:
         error_info = {
             'type': type(e).__name__,

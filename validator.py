@@ -33,21 +33,36 @@ ALLOWED_BUILTIN_CALLS = {
     'enumerate', 'zip', 'type',
     'open',
     'any', 'all',
+    'map', 'filter',
+}
+
+# re — как функции модуля (re.findall(...)), так и методы Pattern/Match объектов
+# (re.compile(...).findall(...), match.group()) — проверка по имени атрибута общая,
+# отдельно от того, на каком объекте вызвано.
+RE_FUNCS = {
+    'findall', 'finditer', 'match', 'fullmatch', 'search', 'sub', 'compile',
+    'group', 'groups', 'span', 'start', 'end',
+}
+# itertools — функции модуля
+ITERTOOLS_FUNCS = {
+    'permutations', 'combinations', 'product', 'count', 'chain', 'groupby', 'accumulate',
+}
+# Отдельные наборы выше нужны не только для ALLOWED_METHODS, но и чтобы
+# 'from re import *'/'from itertools import *' могли подставить сюда же
+# реальные имена вместо буквального '*' (см. validate()).
+WILDCARD_MODULE_NAMES = {
+    're': RE_FUNCS,
+    'itertools': ITERTOOLS_FUNCS,
 }
 
 ALLOWED_METHODS = {
     'append', 'pop', 'insert', 'remove', 'sort', 'reverse',
-    'count', 'index', 'extend', 'clear', 'copy',
+    'count', 'index', 'extend', 'clear', 'copy', 'add',
     'upper', 'lower', 'strip', 'split', 'join', 'replace',
     'find', 'startswith', 'endswith',
     'keys', 'values', 'items', 'get',
-    # re — как функции модуля (re.findall(...)), так и методы Pattern/Match объектов
-    # (re.compile(...).findall(...), match.group()) — проверка по имени атрибута общая,
-    # отдельно от того, на каком объекте вызвано.
-    'findall', 'finditer', 'match', 'fullmatch', 'search', 'sub', 'compile',
-    'group', 'groups', 'span', 'start', 'end',
-    # itertools — функции модуля
-    'permutations', 'combinations', 'product', 'count', 'chain', 'groupby', 'accumulate',
+    *RE_FUNCS,
+    *ITERTOOLS_FUNCS,
     # sys — единственный разрешённый метод фейковой заглушки (см. tracer.py)
     'setrecursionlimit',
     # open() — методы файлового объекта (io.StringIO, см. tracer.py)
@@ -108,12 +123,18 @@ def validate(code: str) -> tuple[bool, str]:
     # Имена, попавшие в locals через 'from re import findall' — далее вызываются
     # голым именем (findall(...)), а не через атрибут, поэтому это не покрывается
     # проверкой ALLOWED_METHODS и должно отдельно попасть в список разрешённых имён.
-    imported_names = {
-        alias.asname or alias.name
-        for node in ast.walk(tree)
-        if isinstance(node, ast.ImportFrom)
-        for alias in node.names
-    }
+    # 'from itertools import *' даёт в AST не список реальных имён, а буквальный
+    # alias.name == '*' — в этом случае подставляем весь известный whitelist
+    # соответствующего модуля вместо самого токена '*'.
+    imported_names = set()
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.ImportFrom):
+            continue
+        for alias in node.names:
+            if alias.name == '*':
+                imported_names |= WILDCARD_MODULE_NAMES.get(node.module, set())
+            else:
+                imported_names.add(alias.asname or alias.name)
 
     for node in ast.walk(tree):
         node_type = type(node)

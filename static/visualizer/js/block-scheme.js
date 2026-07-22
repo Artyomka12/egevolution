@@ -27,6 +27,50 @@ const BS = {
 let _uid = 0;
 const uid = () => 'b' + (++_uid);
 
+/* break всегда ведёт туда же, куда вёл бы естественный (небрейкнутый) выход
+   из охватывающего цикла — просто раньше. Поэтому вместо того, чтобы решать
+   геометрию break сразу при его размещении (когда цель ещё не известна —
+   она определяется позже, когда обрабатывается то, что идёт ПОСЛЕ цикла),
+   каждый break регистрируется здесь по id цикла и разрешается в реальное
+   ребро в момент, когда для этого же цикла разрешается его собственный
+   естественный выход (loopExitArrow/nestedLoopBackArrow/остаток тела).
+   Сбрасывается в layoutProgram() на каждый новый разбор кода. */
+let _pendingBreaks = new Map();   // loopNode.id -> [{fromCx, fromBottomY}]
+
+function registerBreak(loopNode, fromCx, fromBottomY) {
+  const arr = _pendingBreaks.get(loopNode.id) || [];
+  arr.push({ fromCx, fromBottomY });
+  _pendingBreaks.set(loopNode.id, arr);
+}
+
+function resolveBreaks(loopNode, targetCx, targetY, edges) {
+  const pending = _pendingBreaks.get(loopNode.id);
+  if (!pending) return;
+  const D = BS.BACK_DOWN;
+  for (const { fromCx, fromBottomY } of pending) {
+    // Когда цель НИЖЕ точки break (обычный случай — выход из цикла к коду
+    // после него/«Концу»), держим вертикальный участок на исходной колонке
+    // (fromCx) максимально долго — вплоть до низа рамки цикла целиком — и
+    // поворачиваем к targetCx только у самой цели. targetCx обычно совпадает
+    // с колонкой того самого условия, что зарегистрировало break, а на ней
+    // же лежат её «Нет»-стрелка и обратная стрелка цикла — начать движение к
+    // targetCx РАНЬШЕ означало бы идти вдоль/через них на приличном участке
+    // (запутанный «пучок» линий, из-за которого возник этот баг). При такой
+    // геометрии единственное место, где путь break обязан коснуться той же
+    // колонки — доля секунды у самого нижнего наконечника обратной стрелки
+    // цикла (её курс уже давно свёрнул в сторону) — короткое, чёткое
+    // перпендикулярное пересечение вместо развёрнутого наложения линий.
+    // Когда цель ВЫШЕ (break внутри вложенного цикла, ведущий к продолжению
+    // внешнего) — прежняя геометрия (ранний поворот) сохранена без изменений.
+    const turnY = targetY >= fromBottomY
+      ? Math.max(fromBottomY + D, loopNode.frameBot + D)
+      : fromBottomY + D;
+    edges.push(ePath([P(fromCx, fromBottomY), P(fromCx, turnY),
+                      P(targetCx, turnY), P(targetCx, targetY)]));
+  }
+  _pendingBreaks.delete(loopNode.id);
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    LAYER 1 — PARSER
    ═══════════════════════════════════════════════════════════════════ */
@@ -106,6 +150,8 @@ function parseBlock(lines, si, indent) {
     else if (l.s.startsWith('while ')) { const r = parseWhile(lines, i, indent); nodes.push(r.node); functions.push(...r.functions); i = r.next; }
     else if (l.s.startsWith('if '))    { const r = parseCond(lines, i, indent);  nodes.push(r.node); functions.push(...r.functions); i = r.next; }
     else if (l.s === 'return' || l.s.startsWith('return ')) { nodes.push(parseReturn(l)); i++; }
+    else if (l.s === 'break')    { nodes.push({ id: uid(), type: 'break',    label: 'break',    line: l.i + 1 }); i++; }
+    else if (l.s === 'continue') { nodes.push({ id: uid(), type: 'continue', label: 'continue', line: l.i + 1 }); i++; }
     else                               { nodes.push(parseStmt(l)); i++; }
   }
   return { nodes, next: i, functions };
@@ -180,6 +226,7 @@ function parseCond(lines, i, indent) {
    У диаграмм функций нет "Конец" — они просто обрываются на последнем
    блоке (обычно на return-трапеции). */
 function layoutProgram(mainNodes, functions) {
+  _pendingBreaks = new Map();
   const lnodes = [], edges = [];
   const startNode = { id: uid(), type: 'terminal', label: 'Начало' };
   const endNode   = { id: uid(), type: 'terminal', label: 'Конец'  };
@@ -231,23 +278,41 @@ function leftExtent(lnodes, edges) {
   return minX;
 }
 
-/* True, если последний оператор ветки — return (тупиковый блок:
-   вниз по этой ветке дальше рисовать нечего). */
+/* True, если последний оператор ветки — return/break/continue (тупиковый
+   блок: вниз по этой ветке дальше рисовать нечего, поток покидает
+   последовательность целиком). Имя не переименовано в endsInJump и т.п.,
+   чтобы не расширять диф на 6+ мест — семантика описана здесь. */
 function endsInReturn(branchNodes) {
-  return branchNodes.length > 0 && branchNodes[branchNodes.length - 1].type === 'return';
+  if (branchNodes.length === 0) return false;
+  const t = branchNodes[branchNodes.length - 1].type;
+  return t === 'return' || t === 'break' || t === 'continue';
 }
 
 /* Lay out a sequence of siblings. loopCtx = enclosing LayoutNode or null.
    Returns bottom Y of the last placed item (no trailing V_GAP). */
+/* Стрелка выхода из цикла в верх произвольного следующего узла — переиспользуется
+   в layoutSeq()/linSeq() для узла ЛЮБОГО типа (loop/condition/обычный), идущего
+   сразу за циклом. Раньше эта проверка (if lastLoop) была только в ветке
+   "обычный узел" каждой из двух функций — переход "цикл → условие" и
+   "цикл → цикл" терял стрелку выхода (баг, найденный пользователем). */
+function loopExitArrow(lastLoop, toCx, toTopY) {
+  const rx = lastLoop.cx + lastLoop.w / 2;
+  const D  = BS.BACK_DOWN;
+  return ePath([P(rx, lastLoop.cy), P(lastLoop.frameRight, lastLoop.cy),
+                P(lastLoop.frameRight, toTopY - D), P(toCx, toTopY - D), P(toCx, toTopY)]);
+}
+
 function layoutSeq(nodes, cx, y0, loopCtx, lnodes, edges) {
   let y        = y0;
   let lastLoop = null;    // LayoutNode of last loop, for exit arrow
   let joinY    = null;    // Y of condition join point, for join→next arrow
+  let joinReachable = false;   // false when joinY has no real incoming edge (dead-end branches)
 
   const addFromJoin = (toY) => {
     if (joinY !== null) {
-      edges.push(ePath([P(cx, joinY), P(cx, toY)]));
+      if (joinReachable) edges.push(ePath([P(cx, joinY), P(cx, toY)]));
       joinY = null;
+      joinReachable = false;
     }
   };
 
@@ -257,6 +322,7 @@ function layoutSeq(nodes, cx, y0, loopCtx, lnodes, edges) {
 
     if (node.type === 'loop') {
       addFromJoin(y);   // connect condition join → loop top (if applicable)
+      if (lastLoop) { edges.push(loopExitArrow(lastLoop, cx, y)); resolveBreaks(lastLoop, cx, y, edges); lastLoop = null; }
       const visBot = placeLoop(node, cx, y, lnodes, edges);
       lastLoop = lnodes.find(n => n.id === node.id);
       y = visBot;
@@ -264,8 +330,9 @@ function layoutSeq(nodes, cx, y0, loopCtx, lnodes, edges) {
 
     } else if (node.type === 'condition') {
       addFromJoin(y);   // connect prior condition join → this condition top
-      const j = layoutCond(node, cx, y, loopCtx, lnodes, edges);
-      if (!loopCtx) joinY = j;   // track join for top-level conditions
+      if (lastLoop) { edges.push(loopExitArrow(lastLoop, cx, y)); resolveBreaks(lastLoop, cx, y, edges); lastLoop = null; }
+      const { y: j, reachable } = layoutCond(node, cx, y, loopCtx, lnodes, edges);
+      if (!loopCtx) { joinY = j; joinReachable = reachable; }   // track join for top-level conditions
       lastLoop = null;
       y = j;
       if (hasNext) y += BS.V_GAP;
@@ -276,11 +343,8 @@ function layoutSeq(nodes, cx, y0, loopCtx, lnodes, edges) {
       const top = ln.cy - ln.h / 2;
 
       if (lastLoop) {
-        // Loop exit arrow: right tip → frameRight border → down → above node → down into node top
-        const rx = lastLoop.cx + lastLoop.w / 2;
-        const D  = BS.BACK_DOWN;
-        edges.push(ePath([P(rx, lastLoop.cy), P(lastLoop.frameRight, lastLoop.cy),
-                          P(lastLoop.frameRight, top - D), P(ln.cx, top - D), P(ln.cx, top)]));
+        edges.push(loopExitArrow(lastLoop, ln.cx, top));
+        resolveBreaks(lastLoop, ln.cx, top, edges);
         lastLoop = null;
       } else {
         addFromJoin(top);   // connect condition join → this node top
@@ -297,10 +361,23 @@ function layoutSeq(nodes, cx, y0, loopCtx, lnodes, edges) {
   // тела функции, join-точка «Нет» остаётся не подключена ни к чему, т.к.
   // addFromJoin() вызывается только при обработке следующего узла, а его
   // здесь нет. Закрываем такой «повисший» join отдельным отрезком со
-  // стрелкой, чтобы «Нет» не обрывалось в пустоте без наконечника.
-  if (joinY !== null) {
+  // стрелкой — но только если в него реально что-то втекает (joinReachable),
+  // иначе получаем "дух"-стрелку из пустоты (баг №8, найден пользователем:
+  // если/else, где ОБЕ ветки заканчиваются return, ничего не подключает
+  // joinY, а прежняя версия этой правки рисовала стрелку всё равно).
+  if (joinY !== null && joinReachable) {
     edges.push(ePath([P(cx, joinY), P(cx, joinY + BS.V_GAP)]));
     joinY = null;
+  }
+
+  // Если последний оператор — сам цикл, и внутри него остались break без
+  // разрешённой цели (т.к. дальше в последовательности ничего нет, естественный
+  // выход из цикла тоже никуда не ведёт) — закрываем их той же заглушкой,
+  // что и висящий joinY выше, вместо того чтобы молча потерять эти рёбра.
+  if (lastLoop !== null && _pendingBreaks.has(lastLoop.id)) {
+    const stubY = y + BS.V_GAP;
+    edges.push(ePath([P(cx, y), P(cx, stubY)]));
+    resolveBreaks(lastLoop, cx, stubY, edges);
   }
 
   return y;
@@ -342,6 +419,7 @@ function layoutCond(node, cx, topY, loopCtx, lnodes, edges, isLastInLoop = true)
   const mergeFrom = (lastLoop, fx, fy, tx, ty) => {
     if (lastLoop) {
       edges.push(loopExitConnector(lastLoop, tx, ty));
+      resolveBreaks(lastLoop, tx, ty, edges);
     } else {
       const pts = Math.abs(fx - tx) < 2 ? [P(fx, fy), P(tx, ty)] : [P(fx, fy), P(fx, ty), P(tx, ty)];
       edges.push({ points: pts, noArrow: true });
@@ -371,7 +449,10 @@ function layoutCond(node, cx, topY, loopCtx, lnodes, edges, isLastInLoop = true)
         mergeFrom(yesLastLoop, yesCX, yesBot, cx, joinY);
       }
       if (!noReturns) mergeFrom(noLastLoop, noCX, noBot, cx, joinY);
-      return joinY;
+      // reachable: хотя бы одна ветка реально доходит до joinY. Если обе (yes
+      // непустая и заканчивается return, no непустая и заканчивается return) —
+      // joinY существует только как координата, в неё ничего не втекает.
+      return { y: joinY, reachable: (node.yes.length === 0 || !yesReturns) || !noReturns };
 
     } else {
       const stubX = cx + w / 2 + 8;
@@ -385,7 +466,9 @@ function layoutCond(node, cx, topY, loopCtx, lnodes, edges, isLastInLoop = true)
       }
       edges.push(ePath([P(cx + w/2, cy), P(cx + w/2, cy + D), P(stubX, cy + D)], 'Нет', 'right', true));
       edges.push({ points: [P(stubX, cy + D), P(stubX, joinY), P(cx, joinY)], noArrow: true });
-      return joinY;
+      // Без else «Нет» всегда проходит насквозь (см. edges.push выше) — joinY
+      // всегда достижим независимо от того, чем заканчивается ветка «Да».
+      return { y: joinY, reachable: true };
     }
   }
 
@@ -412,8 +495,12 @@ function layoutCond(node, cx, topY, loopCtx, lnodes, edges, isLastInLoop = true)
         mergeFrom(yesLastLoop, yesCX, yesBot, cx, joinY);
       }
       if (!noReturns) mergeFrom(noLastLoop, noCX, noBot, cx, joinY);
-      edges.push(backArrow(cx, joinY, loopCtx));
-      return joinY;
+      // Если обе ветки заканчиваются return — условие последнее в теле цикла,
+      // и цикл на самом деле никогда не "продолжается" через эту точку:
+      // обратная стрелка к началу цикла была бы висящей (см. баг №8).
+      const reachableLast = (node.yes.length === 0 || !yesReturns) || !noReturns;
+      if (reachableLast) edges.push(backArrow(cx, joinY, loopCtx));
+      return { y: joinY, reachable: reachableLast };
 
     } else {
       const stubX = cx + w / 2 + 8;
@@ -427,8 +514,10 @@ function layoutCond(node, cx, topY, loopCtx, lnodes, edges, isLastInLoop = true)
       }
       edges.push(ePath([P(cx + w/2, cy), P(cx + w/2, cy + D), P(stubX, cy + D)], 'Нет', 'right', true));
       edges.push({ points: [P(stubX, cy + D), P(stubX, joinY), P(cx, joinY)], noArrow: true });
+      // Без else «Нет» всегда проходит насквозь — joinY всегда достижим,
+      // обратная стрелка к началу цикла всегда нужна.
       edges.push(backArrow(cx, joinY, loopCtx));
-      return joinY;
+      return { y: joinY, reachable: true };
     }
   }
 
@@ -467,7 +556,13 @@ function layoutCond(node, cx, topY, loopCtx, lnodes, edges, isLastInLoop = true)
     edges.push({ points: [P(bpX, cy), P(bpX, joinY), P(cx, joinY)], noArrow: true });
   }
 
-  return joinY;
+  // reachable: хотя бы одна ветка реально доходит до joinY. Если есть явный
+  // else и обе ветки (yes и no) непустые и заканчиваются return — joinY
+  // существует только как координата для позиционирования, но в неё ничего
+  // не втекает (баг №8 — "дух"-стрелка между диаграммами функций).
+  const yesReachable = node.yes.length === 0 || !yesReturns;
+  const noReachable  = !node.hasElse || node.no.length === 0 || !noReturns;
+  return { y: joinY, reachable: yesReachable || noReachable };
 }
 
 /* Lay out a branch sequence — pushes directly to lnodes/edges, returns bottom Y */
@@ -475,9 +570,14 @@ function linSeq(nodes, cx, y, loopCtx, lnodes, edges) {
   let bot      = y;
   let lastLoop = null;
   let joinY    = null;
+  let joinReachable = false;   // false when joinY has no real incoming edge (dead-end branches)
 
   const flushJoin = (toY) => {
-    if (joinY !== null) { edges.push(ePath([P(cx, joinY), P(cx, toY)])); joinY = null; }
+    if (joinY !== null) {
+      if (joinReachable) edges.push(ePath([P(cx, joinY), P(cx, toY)]));
+      joinY = null;
+      joinReachable = false;
+    }
   };
 
   for (let i = 0; i < nodes.length; i++) {
@@ -486,6 +586,7 @@ function linSeq(nodes, cx, y, loopCtx, lnodes, edges) {
 
     if (n.type === 'loop') {
       flushJoin(bot);
+      if (lastLoop) { edges.push(loopExitArrow(lastLoop, cx, bot)); resolveBreaks(lastLoop, cx, bot, edges); lastLoop = null; }
       const visBot = placeLoop(n, cx, bot, lnodes, edges);
       lastLoop = lnodes.find(ln => ln.id === n.id);
       bot = visBot;
@@ -493,10 +594,29 @@ function linSeq(nodes, cx, y, loopCtx, lnodes, edges) {
 
     } else if (n.type === 'condition') {
       flushJoin(bot);
-      const j = layoutCond(n, cx, bot, loopCtx, lnodes, edges, false);
+      if (lastLoop) { edges.push(loopExitArrow(lastLoop, cx, bot)); resolveBreaks(lastLoop, cx, bot, edges); lastLoop = null; }
+      const { y: j, reachable } = layoutCond(n, cx, bot, loopCtx, lnodes, edges, false);
       joinY    = j;
+      joinReachable = reachable;
       lastLoop = null;
       bot = j;
+      if (hasNext) bot += BS.V_GAP;
+
+    } else if (n.type === 'break' || n.type === 'continue') {
+      const ln  = mkNode(n, cx, bot);
+      lnodes.push(ln);
+      const top = ln.cy - ln.h / 2;
+      if (lastLoop) { edges.push(loopExitArrow(lastLoop, cx, top)); resolveBreaks(lastLoop, cx, top, edges); lastLoop = null; }
+
+      // Тупиковый узел — независимо от того, последний ли он в этой
+      // последовательности, поток покидает её целиком.
+      if (n.type === 'continue' && loopCtx) {
+        edges.push(backArrow(cx, ln.cy + ln.h / 2, loopCtx));
+      } else if (n.type === 'break' && loopCtx) {
+        registerBreak(loopCtx, cx, ln.cy + ln.h / 2);
+      }
+
+      bot = ln.cy + ln.h / 2;
       if (hasNext) bot += BS.V_GAP;
 
     } else {
@@ -505,10 +625,8 @@ function linSeq(nodes, cx, y, loopCtx, lnodes, edges) {
       const top = ln.cy - ln.h / 2;
 
       if (lastLoop) {
-        const rx = lastLoop.cx + lastLoop.w / 2;
-        const D  = BS.BACK_DOWN;
-        edges.push(ePath([P(rx, lastLoop.cy), P(lastLoop.frameRight, lastLoop.cy),
-                          P(lastLoop.frameRight, top - D), P(cx, top - D), P(cx, top)]));
+        edges.push(loopExitArrow(lastLoop, cx, top));
+        resolveBreaks(lastLoop, cx, top, edges);
         lastLoop = null;
       } else {
         flushJoin(top);
@@ -539,6 +657,7 @@ function placeLoop(node, cx, topY, lnodes, edges) {
   let bodyBot      = bodyY;
   let visBot       = bodyY;
   let pendingJoinY  = null;   // join Y from a non-last condition → arrow to next element
+  let pendingJoinReachable = false;   // false when pendingJoinY has no real incoming edge
   let lastInnerLoop = null;   // nested loop node → exit arrow to next element
 
   for (let bi = 0; bi < node.body.length; bi++) {
@@ -547,8 +666,9 @@ function placeLoop(node, cx, topY, lnodes, edges) {
 
     // Flush pending condition join
     if (pendingJoinY !== null) {
-      edges.push(ePath([P(cx, pendingJoinY), P(cx, bodyBot)]));
+      if (pendingJoinReachable) edges.push(ePath([P(cx, pendingJoinY), P(cx, bodyBot)]));
       pendingJoinY = null;
+      pendingJoinReachable = false;
     }
 
     // Flush exit arrow from previous nested loop
@@ -557,6 +677,7 @@ function placeLoop(node, cx, topY, lnodes, edges) {
       const D  = BS.BACK_DOWN;
       edges.push(ePath([P(rx, lastInnerLoop.cy), P(lastInnerLoop.frameRight, lastInnerLoop.cy),
                         P(lastInnerLoop.frameRight, bodyBot - D), P(cx, bodyBot - D), P(cx, bodyBot)]));
+      resolveBreaks(lastInnerLoop, cx, bodyBot, edges);
       lastInnerLoop = null;
     }
 
@@ -564,13 +685,14 @@ function placeLoop(node, cx, topY, lnodes, edges) {
       const beforeLen = lnodes.length;
 
       if (isLast) {
-        const condJoinY = layoutCond(bn, cx, bodyBot, ln, lnodes, edges);
+        const { y: condJoinY } = layoutCond(bn, cx, bodyBot, ln, lnodes, edges);
         const { h: ch } = bsz('condition');
         bodyBot += ch;
         visBot = Math.max(visBot, condJoinY);
       } else {
-        const joinY = layoutCond(bn, cx, bodyBot, ln, lnodes, edges, false);
+        const { y: joinY, reachable } = layoutCond(bn, cx, bodyBot, ln, lnodes, edges, false);
         pendingJoinY = joinY;
+        pendingJoinReachable = reachable;
         bodyBot = joinY;
       }
 
@@ -589,9 +711,28 @@ function placeLoop(node, cx, topY, lnodes, edges) {
         // (its exit point), not from the last action inside its body.
         const innerLoopNode = lnodes.find(n => n.id === bn.id);
         edges.push(nestedLoopBackArrow(innerLoopNode, ln));
+        // break внутри вложенного цикла, если сам он — последний оператор
+        // внешнего, ведёт туда же, куда естественное завершение вложенного
+        // цикла — к продолжению итерации внешнего (его собственный хексагон).
+        resolveBreaks(innerLoopNode, ln.cx, ln.cy, edges);
       } else {
         // Track for exit arrow to next body element
         lastInnerLoop = lnodes.find(n => n.id === bn.id);
+      }
+
+    } else if (bn.type === 'break' || bn.type === 'continue') {
+      const bln = mkNode(bn, cx, bodyBot);
+      lnodes.push(bln);
+      bodyBot = bln.cy + bln.h / 2;
+      visBot  = Math.max(visBot, bodyBot);
+
+      // Оба — тупиковые узлы: поток покидает эту последовательность целиком,
+      // независимо от того, последний ли это оператор тела (в отличие от
+      // обычных операторов, где стрелка вниз рисуется только когда isLast).
+      if (bn.type === 'continue') {
+        edges.push(backArrow(cx, bodyBot, ln));
+      } else {
+        registerBreak(ln, cx, bodyBot);
       }
 
     } else {
@@ -1066,7 +1207,7 @@ async function loadBlockSchemeTrace(code, fileContent) {
     if (bsTrace.error) {
       bsShowTraceStatus(`Трассировка недоступна: ${bsTrace.error.message}`, true);
     } else if (bsTrace.truncated) {
-      bsShowTraceStatus('Код содержит более 1000 шагов — показаны первые 1000', false);
+      bsShowTraceStatus('Код содержит более 1500 шагов — показаны первые 1500', false);
     }
     if (bsTrace.steps.length) {
       renderBlockSchemeStep(0);   // also refreshes control button states
@@ -1214,12 +1355,15 @@ function bsStepNext(onDone) {
   );
   const newLines = nextOut.slice(curOut.length);
 
-  // Flow cursor: purely decorative, runs in parallel, never gates the step
-  // commit below — autoplay pacing (3.5) stays exactly as already tuned.
-  // Each changed variable rides its own labeled chip (name=value), staggered
-  // in time so simultaneous changes (e.g. a, b = b, a) read as a short
-  // "train" rather than one illegible overlapping blob. No change at all →
-  // a single plain unlabeled dot.
+  // Flow cursor (вариант A, баг №10): раньше был "чисто декоративным",
+  // запускался параллельно и не учитывался при переходе к следующему шагу —
+  // на длинных стрелках (длительность растёт с длиной пути, см.
+  // BS_FLOW_MAX_MS) серый шарик мог долетать позже, чем уже стартовали
+  // шарики следующего шага. Теперь каждый запуск кладётся в pending[] и
+  // считается наравне с шариками переменных/консоли — следующий шаг стартует
+  // только когда реально приземлилось всё, включая серый шарик.
+  const pending = [];   // each: (done) => void — done() вызывается по приземлению
+
   if (nextStep.event === 'call') {
     // Entering a function (incl. recursive self-calls and calls made from
     // inside another function's own diagram) — args fly on an invisible
@@ -1230,12 +1374,12 @@ function bsStepNext(onDone) {
       const path = [P(fromNode.cx, fromNode.cy), P(toNode.cx, toNode.cy)];
       const args = Object.entries(nextStep.args || {});
       if (args.length === 0) {
-        bsAnimateFlowCursor(path, null);
+        pending.push(done => bsAnimateFlowCursor(path, null, done));
       } else {
         const stagger = BS_FLOW_STAGGER_MS / bsSpeed;
         args.forEach(([name, val], i) => {
           const label = `${name}=${formatValue(val)}`;
-          setTimeout(() => bsAnimateFlowCursor(path, label), i * stagger);
+          pending.push(done => setTimeout(() => bsAnimateFlowCursor(path, label, done), i * stagger));
         });
       }
     }
@@ -1248,18 +1392,18 @@ function bsStepNext(onDone) {
     const toNode   = callSiteLine != null ? bsFindNodeByLine(callSiteLine) : null;
     if (fromNode && toNode) {
       const path = [P(fromNode.cx, fromNode.cy), P(toNode.cx, toNode.cy)];
-      bsAnimateFlowCursor(path, formatValue(nextStep.return_value));
+      pending.push(done => bsAnimateFlowCursor(path, formatValue(nextStep.return_value), done));
     }
   } else if (curStep.line != null && nextStep.line != null && curStep.line !== nextStep.line) {
     const path = bsFindEdgePath(curStep.line, nextStep.line);
     if (path) {
       if (changedVars.length === 0) {
-        bsAnimateFlowCursor(path, null);
+        pending.push(done => bsAnimateFlowCursor(path, null, done));
       } else {
         const stagger = BS_FLOW_STAGGER_MS / bsSpeed;   // 4.4: relay pacing follows playback speed too
         changedVars.forEach((varName, i) => {
           const label = `${varName}=${formatValue(nextVars[varName])}`;
-          setTimeout(() => bsAnimateFlowCursor(path, label), i * stagger);
+          pending.push(done => setTimeout(() => bsAnimateFlowCursor(path, label, done), i * stagger));
         });
       }
     }
@@ -1280,7 +1424,7 @@ function bsStepNext(onDone) {
   }
   const hasCon = newLines.length > 0 && !!srcEl;
   const memBalls  = srcEl ? changedVars : [];
-  const ballCount = memBalls.length + (hasCon ? 1 : 0);
+  const ballCount = memBalls.length + (hasCon ? 1 : 0) + pending.length;
 
   if (ballCount === 0) { renderBlockSchemeStep(nextIdx); if (onDone) onDone(); return; }
 
@@ -1296,6 +1440,7 @@ function bsStepNext(onDone) {
   const fast = bsSpeed >= 2;   // scale the flight itself, not just the inter-step pause
   memBalls.forEach(() => animateBall(srcEl, document.getElementById('bs-vars-body'), '#4F7EF7', onLand, fast));
   if (hasCon) animateBall(srcEl, document.getElementById('bs-console-body'), '#059669', onLand, fast);
+  pending.forEach(start => start(onLand));
 }
 
 /* ── Flow cursor — travels the real arrow geometry, block to block (4.1) ──
@@ -1376,9 +1521,14 @@ const BS_FLOW_CHIP_MAX_CHARS = 12;   // longer values are truncated with an elli
 
 /* points: polyline in SVG-space to travel. label: optional "name=value" text —
    when present, rides a small chip instead of a plain dot (step 4.2). */
-function bsAnimateFlowCursor(points, label) {
+/* onComplete — вызывается, когда шарик реально долетел (или сразу, если
+   лететь некуда/нечем). С варианта A (баг №10) вызывающая сторона
+   (bsStepNext) считает эти вызовы наравне с шариками переменных/консоли —
+   раньше эта анимация была "чисто декоративной, не блокирующей" и могла
+   всё ещё лететь по длинной стрелке, когда уже стартовал следующий шаг. */
+function bsAnimateFlowCursor(points, label, onComplete) {
   const svg = document.getElementById('bs-svg');
-  if (!svg || points.length < 2) return;
+  if (!svg || points.length < 2) { if (onComplete) onComplete(); return; }
 
   const NS = 'http://www.w3.org/2000/svg';
   const baseMs = Math.min(BS_FLOW_MAX_MS, Math.max(BS_FLOW_MIN_MS, bsPathLength(points) / BS_FLOW_PX_PER_MS));
@@ -1393,7 +1543,7 @@ function bsAnimateFlowCursor(points, label) {
     dot.setAttribute('cy', points[0].y);
     svg.appendChild(dot);
 
-    const tl = gsap.timeline({ onComplete: () => dot.remove() });
+    const tl = gsap.timeline({ onComplete: () => { dot.remove(); if (onComplete) onComplete(); } });
     for (let i = 1; i < points.length; i++) {
       tl.to(dot, { attr: { cx: points[i].x, cy: points[i].y }, duration: segDur, ease: 'none' });
     }
@@ -1426,7 +1576,7 @@ function bsAnimateFlowCursor(points, label) {
   svg.appendChild(g);
   gsap.set(g, { x: points[0].x, y: points[0].y });   // GSAP translates SVG elements via x/y natively
 
-  const tl = gsap.timeline({ onComplete: () => g.remove() });
+  const tl = gsap.timeline({ onComplete: () => { g.remove(); if (onComplete) onComplete(); } });
   for (let i = 1; i < points.length; i++) {
     tl.to(g, { x: points[i].x, y: points[i].y, duration: segDur, ease: 'none' });
   }
