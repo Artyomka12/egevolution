@@ -1,12 +1,178 @@
 {
-  "title": "Чтение файлов кодом",
+ "description": "Работа с файлами",
+ "lesson_id": 11,
+ "practice": {
   "description": "",
-  "theory": {
-    "description": [],
-    "images": []
-  },
-  "practice": {
-    "description": "",
-    "tasks": []
-  }
+  "tasks": [
+   {
+    "correct_answer": "Привет, мир!",
+    "description": [
+     "Файл \"data.txt\" содержит:",
+     "<pre>Привет, мир!</pre>",
+     "Код:",
+     "<pre>f = open(\"data.txt\")\ntext = f.read()\nprint(text)\nf.close()</pre>",
+     "Что выведет программа?"
+    ],
+    "file": null,
+    "images": [],
+    "title": "Чтение файла целиком — read()"
+   },
+   {
+    "correct_answer": "Вторая",
+    "description": [
+     "Файл \"data.txt\" содержит:",
+     "<pre>Первая\nВторая\nТретья</pre>",
+     "Код:",
+     "<pre>f = open(\"data.txt\")\nf.readline()\nline = f.readline()\nprint(line.strip())\nf.close()</pre>",
+     "Что выведет программа?"
+    ],
+    "file": null,
+    "images": [],
+    "title": "Построчное чтение — readline()"
+   },
+   {
+    "correct_answer": "зелёный",
+    "description": [
+     "Файл \"colors.txt\" содержит:",
+     "<pre>красный\nсиний\nзелёный\nжёлтый</pre>",
+     "Код:",
+     "<pre>f = open(\"colors.txt\")\nf.readline()\nf.readline()\nline = f.readline()\nprint(line.strip())\nf.close()</pre>",
+     "Что выведет программа?"
+    ],
+    "file": null,
+    "images": [],
+    "title": "Построчное чтение — readline()"
+   },
+   {
+    "correct_answer": "4",
+    "description": [
+     "Файл \"numbers.txt\" содержит:",
+     "<pre>10\n20\n30\n40</pre>",
+     "Код:",
+     "<pre>f = open(\"numbers.txt\")\nlines = f.readlines()\nprint(len(lines))\nf.close()</pre>",
+     "Что выведет программа?"
+    ],
+    "file": null,
+    "images": [],
+    "title": "readlines() — список строк"
+   },
+   {
+    "correct_answer": "30",
+    "description": [
+     "Тот же файл \"numbers.txt\":",
+     "<pre>10\n20\n30\n40</pre>",
+     "Код:",
+     "<pre>f = open(\"numbers.txt\")\nlines = f.readlines()\nprint(lines[2].strip())\nf.close()</pre>",
+     "Что выведет программа?"
+    ],
+    "file": null,
+    "images": [],
+    "title": "readlines() — список строк"
+   },
+   {
+    "correct_answer": "3",
+    "description": [
+     "Файл \"fruits.txt\" содержит:",
+     "<pre>яблоко\nбанан\nгруша</pre>",
+     "Код:",
+     "<pre>f = open(\"fruits.txt\")\ncount = 0\nfor line in f:\n    count += 1\nprint(count)\nf.close()</pre>",
+     "Что выведет программа?"
+    ],
+    "file": null,
+    "images": [],
+    "title": "Перебор файла циклом for"
+   },
+   {
+    "correct_answer": "яблоко-банан-груша-",
+    "description": [
+     "Тот же файл \"fruits.txt\":",
+     "<pre>яблоко\nбанан\nгруша</pre>",
+     "Код:",
+     "<pre>f = open(\"fruits.txt\")\nresult = \"\"\nfor line in f:\n    result += line.strip() + \"-\"\nprint(result)\nf.close()</pre>",
+     "Что выведет программа?"
+    ],
+    "file": null,
+    "images": [],
+    "title": "Перебор файла циклом for"
+   },
+   {
+    "correct_answer": "привет",
+    "description": [
+     "Чему равно значение этого выражения?",
+     "<pre>\"  привет  \n\".strip()</pre>"
+    ],
+    "file": null,
+    "images": [],
+    "title": "Лишний перевод строки — strip()"
+   },
+   {
+    "correct_answer": "['5', '10', '15']",
+    "description": [
+     "Что выведет этот код?",
+     "<pre>line = \"  5 10 15  \n\"\nparts = line.strip().split()\nprint(parts)</pre>"
+    ],
+    "file": null,
+    "images": [],
+    "title": "strip() и разбиение строки"
+   },
+   {
+    "correct_answer": "[[1, 2, 3], [4, 5, 6]]",
+    "description": [
+     "Файл \"table.txt\" содержит:",
+     "<pre>1 2 3\n4 5 6</pre>",
+     "Код:",
+     "<pre>f = open(\"table.txt\")\nA = []\nfor line in f:\n    parts = line.strip().split()\n    row = []\n    for part in parts:\n        row.append(int(part))\n    A.append(row)\nf.close()\nprint(A)</pre>",
+     "Что выведет программа?"
+    ],
+    "file": null,
+    "images": [],
+    "title": "Загрузка таблицы из файла"
+   },
+   {
+    "correct_answer": "20",
+    "description": [
+     "Файл \"table.txt\" содержит:",
+     "<pre>2 4\n6 8</pre>",
+     "Код:",
+     "<pre>f = open(\"table.txt\")\nA = []\nfor line in f:\n    parts = line.strip().split()\n    row = []\n    for part in parts:\n        row.append(int(part))\n    A.append(row)\nf.close()\ntotal = 0\nfor row in A:\n    for element in row:\n        total += element\nprint(total)</pre>",
+     "Что выведет программа?"
+    ],
+    "file": null,
+    "images": [],
+    "title": "Загрузка таблицы из файла"
+   }
+  ]
+ },
+ "theory": {
+  "description": [
+   "В этом уроке мы разберём, как взять данные из настоящего файла, а не набирать их каждый раз заново.",
+   "Файлы удобны, когда данных много — сотни и тысячи строк — или когда одни и те же данные используются в разных программах: не нужно вводить их заново при каждом запуске.",
+   "<b>Открытие файла</b>",
+   "Чтобы прочитать содержимое файла, его сначала нужно открыть функцией <code>open()</code>. Первый аргумент — имя файла, если он лежит в той же папке, что и сама программа, или путь к нему.",
+   "<pre>f = open(\"data.txt\")</pre>",
+   "Результат — это не сразу текст файла, а специальный объект-файл, через который этот текст можно прочитать.",
+   "<b>Способы чтения</b>",
+   "<code>read()</code> — прочитать сразу весь файл одной строкой текста.",
+   "<pre>text = f.read()\nprint(text)</pre>",
+   "<code>readline()</code> — прочитать только одну строку файла. При каждом новом вызове <code>readline()</code> читает следующую строку — файл «помнит», докуда уже прочитан.",
+   "<pre>line1 = f.readline()\nline2 = f.readline()</pre>",
+   "<code>readlines()</code> — прочитать сразу все строки файла и вернуть их списком, где каждый элемент — отдельная строка.",
+   "<pre>lines = f.readlines()\nprint(lines)</pre>",
+   "Файл можно перебрать и прямо в цикле <code>for</code> — тогда на каждом шаге в переменную попадает очередная строка, без явного вызова <code>readline()</code>:",
+   "<pre>for line in f:\n    print(line)</pre>",
+   "<b>Закрытие файла</b>",
+   "После того как файл прочитан, его нужно закрыть — освободить занятые системой ресурсы:",
+   "<pre>f.close()</pre>",
+   "<b>Лишний перевод строки — strip()</b>",
+   "У каждой строки, полученной через <code>readline()</code>/<code>readlines()</code>/перебор в цикле, на конце обычно остаётся невидимый символ переноса строки (кроме, возможно, самой последней строки файла). Если строка потом используется, например, для сравнения или превращения в число, этот символ мешает. Убрать его помогает метод строки <code>strip()</code> — он удаляет пробелы и переносы строк по краям текста.",
+   "<pre>line = f.readline()\nline = line.strip()</pre>",
+   "<b>Загрузка данных таблицы из файла</b>",
+   "Частая задача — файл содержит таблицу: в каждой строке через пробел записаны числа одной строки будущего двумерного списка (см. прошлый урок). Собрать такую таблицу можно тем же способом, что и при вводе с клавиатуры, только источником строк служит не <code>input()</code>, а сам файл:",
+   "<pre>f = open(\"table.txt\")\nA = []\nfor line in f:\n    parts = line.strip().split()\n    row = []\n    for part in parts:\n        row.append(int(part))\n    A.append(row)\nf.close()</pre>",
+   "Единственное отличие от построчного ввода с клавиатуры — здесь не нужно заранее знать количество строк: цикл <code>for line in f</code> сам проходит по всем строкам файла до самого конца."
+  ],
+  "images": []
+ },
+ "title": "Основы python",
+ "videos": []
 }
