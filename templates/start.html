@@ -1137,10 +1137,7 @@
             padding: 36px 0;
             margin-bottom: 72px;
             overflow: hidden;
-        }
-
-        .interactive-zone .roadmap-section {
-            margin-bottom: 0;
+            scroll-margin-top: 80px;
         }
 
         .interactive-zone .section-heading {
@@ -1158,50 +1155,37 @@
         .iz-steps-row {
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-        }
-
-        .iz-step-item {
-            display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 8px;
         }
 
         .iz-step-connector {
-            width: 72px;
+            width: 16px;
             height: 2px;
             background: rgba(37, 99, 235, 0.22);
             flex-shrink: 0;
-            align-self: flex-start;
-            margin-top: 6px;
             position: relative;
             overflow: hidden;
         }
 
-        .iz-step-label {
-            font-size: 0.73em;
-            color: #94a3b8;
-            font-weight: 500;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        .iz-step-item:has(.iz-dot.iz-dot-active) .iz-step-label {
-            color: #334155;
-        }
-
         .iz-dot {
-            width: 14px;
-            height: 14px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
             background: rgba(37, 99, 235, 0.18);
+            flex-shrink: 0;
             transition: background 0.3s ease, transform 0.3s ease;
         }
 
         .iz-dot.iz-dot-active {
             background: #2563eb;
             transform: scale(1.25);
+        }
+
+        .iz-progress-caption {
+            margin-top: 14px;
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #475569;
         }
 
         .iz-next-btn {
@@ -1225,39 +1209,6 @@
             background: rgba(255, 255, 255, 0.99);
             color: #0f172a;
             border-color: rgba(37, 99, 235, 0.35);
-        }
-
-        .iz-cta {
-            text-align: center;
-            max-width: 580px;
-            margin: 0 auto;
-            padding: 28px 36px 32px;
-            background: rgba(255, 255, 255, 0.96);
-            border: 1px solid rgba(37, 99, 235, 0.14);
-            border-top: none;
-            border-radius: 0 0 20px 20px;
-            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.09);
-        }
-
-        .iz-cta-title {
-            font-size: 1.15em;
-            font-weight: 700;
-            color: #0f172a;
-            margin-bottom: 10px;
-        }
-
-        .iz-cta-sub {
-            color: #475569;
-            font-size: 0.92em;
-            line-height: 1.6;
-            margin-bottom: 22px;
-        }
-
-        .iz-cta-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
         }
 
         .iz-cta-btn {
@@ -1286,24 +1237,142 @@
             border: 1px solid rgba(37, 99, 235, 0.2);
         }
 
-        .iz-cta-btn-apply {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            color: #fff;
+        /* ============================================================
+           МАРШРУТ ПОДГОТОВКИ + ЗАЯВКА
+        ============================================================ */
+        .roadmap-final-section {
+            margin-bottom: 72px;
         }
 
-        /* ============================================================
-           МАРШРУТ ПОДГОТОВКИ
-        ============================================================ */
-        .roadmap-section {
-            margin-bottom: 72px;
-            margin-left: auto;
-            margin-right: auto;
-            max-width: 580px;
+        .iz-final-columns {
+            display: flex;
+            align-items: stretch;
+            gap: 24px;
+            max-width: 980px;
+            margin: 0 auto;
+        }
+
+        .roadmap-card {
+            flex: 1 1 0;
+            min-width: 0;
             background: rgba(255, 255, 255, 0.96);
             border: 1px solid rgba(37, 99, 235, 0.14);
-            border-radius: 20px 20px 0 0;
+            border-radius: 20px;
             padding: 32px 36px 28px;
             box-shadow: 0 6px 24px rgba(37, 99, 235, 0.09);
+        }
+
+        .iz-apply-card {
+            flex: 1 1 0;
+            min-width: 0;
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid rgba(37, 99, 235, 0.14);
+            border-radius: 20px;
+            padding: 28px 32px 30px;
+            box-shadow: 0 6px 24px rgba(37, 99, 235, 0.09);
+        }
+
+        .iz-apply-title {
+            font-size: 1.05em;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .iz-apply-sub {
+            color: #475569;
+            font-size: 0.88em;
+            line-height: 1.55;
+            margin-bottom: 20px;
+        }
+
+        .iz-form-field {
+            margin-bottom: 14px;
+        }
+
+        .iz-form-label {
+            display: block;
+            font-size: 0.82em;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 6px;
+        }
+
+        .iz-form-input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-family: inherit;
+            color: #0f172a;
+            background: rgba(255, 255, 255, 0.85);
+            transition: border-color 0.18s;
+        }
+
+        .iz-form-input:focus {
+            outline: none;
+            border-color: rgba(37, 99, 235, 0.55);
+        }
+
+        .iz-contact-type-options {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .iz-contact-type-option {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            border: 1px solid rgba(37, 99, 235, 0.18);
+            border-radius: 8px;
+            font-size: 0.85em;
+            color: #475569;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .iz-form-submit {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.925em;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: opacity 0.18s, transform 0.15s;
+            margin-top: 6px;
+        }
+
+        .iz-form-submit:hover {
+            opacity: 0.88;
+            transform: translateY(-1px);
+        }
+
+        .iz-apply-alt {
+            margin-top: 18px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(37, 99, 235, 0.1);
+            text-align: center;
+        }
+
+        .iz-apply-alt span {
+            display: block;
+            font-size: 0.82em;
+            color: #94a3b8;
+            margin-bottom: 10px;
+        }
+
+        .iz-apply-alt-links {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
         }
 
         .iz-result-header {
@@ -2039,6 +2108,11 @@
         ============================================================ */
         @media (max-width: 900px) {
 
+            /* Маршрут + заявка: коллапс в одну колонку */
+            .iz-final-columns {
+                flex-direction: column;
+            }
+
             /* Hero: коллапс в одну колонку */
             .hero {
                 grid-template-columns: 1fr;
@@ -2387,7 +2461,7 @@
             .start-section,
             .minitask-section,
             .calculator-section,
-            .roadmap-section,
+            .roadmap-final-section,
             .advantages-section {
                 margin-bottom: 48px;
             }
@@ -2509,24 +2583,15 @@
                 margin-bottom: 32px;
             }
 
-            .roadmap-section {
+            .roadmap-card,
+            .iz-apply-card {
                 padding: 24px 20px 20px;
-                border-radius: 14px 14px 0 0;
+                border-radius: 14px;
             }
 
-            .iz-cta {
-                padding: 20px 20px 26px;
-                margin-top: 0;
-                border-radius: 0 0 14px 14px;
-            }
-
-            .iz-cta-title {
-                font-size: 1em;
-            }
-
-            .iz-cta-buttons {
+            .iz-apply-alt-links {
                 flex-direction: column;
-                align-items: center;
+                align-items: stretch;
             }
 
             .iz-cta-btn {
@@ -2574,7 +2639,7 @@
 
         /* Уход карточки влево (шаг 1 → 2) */
         .iz-slide-out-left {
-            transition: opacity 0.26s ease-in, transform 0.26s ease-in !important;
+            transition: opacity 0.42s ease-in-out, transform 0.42s ease-in-out !important;
             opacity: 0 !important;
             transform: translateX(-48px) !important;
         }
@@ -2761,26 +2826,30 @@
         </section>
 
         <!-- ИНТЕРАКТИВНАЯ ЗОНА: мини-задача + калькулятор + маршрут -->
-        <div class="interactive-zone">
+        <div class="interactive-zone" id="tryTaskSection">
 
-            <!-- ИНДИКАТОР ПРОГРЕССА -->
+            <!-- ИНДИКАТОР ПРОГРЕССА: 9 шагов — 6 простых вопросов + готовность + сложный вопрос + маршрут -->
             <div class="iz-progress reveal" id="izProgress">
                 <div class="iz-steps-row">
-                    <div class="iz-step-item">
-                        <span class="iz-dot iz-dot-active"></span>
-                        <span class="iz-step-label">Задача</span>
-                    </div>
+                    <span class="iz-dot iz-dot-active"></span>
                     <div class="iz-step-connector"></div>
-                    <div class="iz-step-item">
-                        <span class="iz-dot"></span>
-                        <span class="iz-step-label">Готовность</span>
-                    </div>
+                    <span class="iz-dot"></span>
                     <div class="iz-step-connector"></div>
-                    <div class="iz-step-item">
-                        <span class="iz-dot"></span>
-                        <span class="iz-step-label">Маршрут</span>
-                    </div>
+                    <span class="iz-dot"></span>
+                    <div class="iz-step-connector"></div>
+                    <span class="iz-dot"></span>
+                    <div class="iz-step-connector"></div>
+                    <span class="iz-dot"></span>
+                    <div class="iz-step-connector"></div>
+                    <span class="iz-dot"></span>
+                    <div class="iz-step-connector"></div>
+                    <span class="iz-dot"></span>
+                    <div class="iz-step-connector"></div>
+                    <span class="iz-dot"></span>
+                    <div class="iz-step-connector"></div>
+                    <span class="iz-dot"></span>
                 </div>
+                <div class="iz-progress-caption" id="izProgressCaption">Вопрос 1 из 6</div>
             </div>
 
             <!-- МИНИ-ЗАДАЧА -->
@@ -2791,7 +2860,7 @@
                     <p>Так выглядит проверка знаний на платформе.</p>
                 </div>
                 <div class="minitask-card reveal">
-                    <div class="minitask-question">Сколько бит требуется для кодирования 256 различных символов?</div>
+                    <div class="minitask-question" id="minitask-question">Сколько бит требуется для кодирования 256 различных символов?</div>
                     <div class="minitask-options" id="minitask-options">
                         <label class="minitask-option">
                             <input type="radio" name="minitask" value="6">
@@ -2812,8 +2881,8 @@
                     </div>
                     <button class="minitask-check-btn" onclick="checkMiniTask()">Проверить</button>
                     <div class="minitask-result" id="minitask-result"></div>
-                    <button class="iz-next-btn" id="izNextToCalc" style="display:none" onclick="goToStep2()">Оценить
-                        свою готовность →</button>
+                    <button class="iz-next-btn" id="izQuizNextBtn" style="display:none" onclick="advanceQuiz()">Следующий
+                        вопрос →</button>
                 </div>
             </section>
 
@@ -2850,83 +2919,139 @@
                     <button class="calc-btn" onclick="checkReadiness()">Показать результат</button>
                     <div class="calc-result" id="calc-result"></div>
                     <button class="iz-next-btn" id="izNextToRoadmap" style="display:none"
-                        onclick="goToStep3()">Посмотреть маршрут подготовки →</button>
+                        onclick="goToHardQuestion()">Ответить на сложный вопрос →</button>
                 </div>
             </section>
 
-            <!-- МАРШРУТ ПОДГОТОВКИ -->
-            <section class="roadmap-section" style="display:none">
-                <div class="iz-result-header">
-                    <div class="iz-result-check">✓</div>
-                    <div class="iz-result-title">Ваш маршрут подготовки готов</div>
-                </div>
-                <div class="roadmap">
-                    <div class="roadmap-step">
-                        <div class="roadmap-indicator">
-                            <div class="roadmap-circle">①</div>
-                            <div class="roadmap-connector"></div>
+            <!-- МАРШРУТ ПОДГОТОВКИ + ЗАЯВКА -->
+            <section class="roadmap-final-section" style="display:none">
+                <div class="iz-final-columns">
+                    <div class="roadmap-card">
+                        <div class="iz-result-header">
+                            <div class="iz-result-check">✓</div>
+                            <div class="iz-result-title">Ваш маршрут подготовки готов</div>
                         </div>
-                        <div class="roadmap-content">
-                            <div class="roadmap-step-title">Начальная подготовка</div>
-                            <div class="roadmap-step-desc">Базовые понятия, алгоритмы и первые шаги в информатике</div>
-                        </div>
-                    </div>
-                    <div class="roadmap-step">
-                        <div class="roadmap-indicator">
-                            <div class="roadmap-circle">②</div>
-                            <div class="roadmap-connector"></div>
-                        </div>
-                        <div class="roadmap-content">
-                            <div class="roadmap-step-title">Теория</div>
-                            <div class="roadmap-step-desc">Изучение тем по каждому из 27 номеров ЕГЭ</div>
-                        </div>
-                    </div>
-                    <div class="roadmap-step">
-                        <div class="roadmap-indicator">
-                            <div class="roadmap-circle">③</div>
-                            <div class="roadmap-connector"></div>
-                        </div>
-                        <div class="roadmap-content">
-                            <div class="roadmap-step-title">Практика по номерам</div>
-                            <div class="roadmap-step-desc">Отработка задач из базы по каждому заданию отдельно</div>
-                        </div>
-                    </div>
-                    <div class="roadmap-step">
-                        <div class="roadmap-indicator">
-                            <div class="roadmap-circle">④</div>
-                            <div class="roadmap-connector"></div>
-                        </div>
-                        <div class="roadmap-content">
-                            <div class="roadmap-step-title">Полные варианты</div>
-                            <div class="roadmap-step-desc">Тренировочные варианты в режиме обучения с разбором ошибок
+                        <div class="roadmap">
+                            <div class="roadmap-step">
+                                <div class="roadmap-indicator">
+                                    <div class="roadmap-circle">①</div>
+                                    <div class="roadmap-connector"></div>
+                                </div>
+                                <div class="roadmap-content">
+                                    <div class="roadmap-step-title">Начальная подготовка</div>
+                                    <div class="roadmap-step-desc">Базовые понятия, алгоритмы и первые шаги в информатике</div>
+                                </div>
+                            </div>
+                            <div class="roadmap-step">
+                                <div class="roadmap-indicator">
+                                    <div class="roadmap-circle">②</div>
+                                    <div class="roadmap-connector"></div>
+                                </div>
+                                <div class="roadmap-content">
+                                    <div class="roadmap-step-title">Теория</div>
+                                    <div class="roadmap-step-desc">Изучение тем по каждому из 27 номеров ЕГЭ</div>
+                                </div>
+                            </div>
+                            <div class="roadmap-step">
+                                <div class="roadmap-indicator">
+                                    <div class="roadmap-circle">③</div>
+                                    <div class="roadmap-connector"></div>
+                                </div>
+                                <div class="roadmap-content">
+                                    <div class="roadmap-step-title">Практика по номерам</div>
+                                    <div class="roadmap-step-desc">Отработка задач из базы по каждому заданию отдельно</div>
+                                </div>
+                            </div>
+                            <div class="roadmap-step">
+                                <div class="roadmap-indicator">
+                                    <div class="roadmap-circle">④</div>
+                                    <div class="roadmap-connector"></div>
+                                </div>
+                                <div class="roadmap-content">
+                                    <div class="roadmap-step-title">Полные варианты</div>
+                                    <div class="roadmap-step-desc">Тренировочные варианты в режиме обучения с разбором ошибок
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="roadmap-step">
+                                <div class="roadmap-indicator">
+                                    <div class="roadmap-circle roadmap-circle-goal">⑤</div>
+                                    <div class="roadmap-connector"></div>
+                                </div>
+                                <div class="roadmap-content">
+                                    <div class="roadmap-step-title">Экзамен</div>
+                                    <div class="roadmap-step-desc">Симуляция реального ЕГЭ — таймер, без подсказок, итоговый
+                                        балл</div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="roadmap-step">
-                        <div class="roadmap-indicator">
-                            <div class="roadmap-circle roadmap-circle-goal">⑤</div>
-                            <div class="roadmap-connector"></div>
-                        </div>
-                        <div class="roadmap-content">
-                            <div class="roadmap-step-title">Экзамен</div>
-                            <div class="roadmap-step-desc">Симуляция реального ЕГЭ — таймер, без подсказок, итоговый
-                                балл</div>
+
+                    <div class="iz-apply-card">
+                        <h3 class="iz-apply-title">Запишись на первое бесплатное занятие</h3>
+                        <p class="iz-apply-sub">Разберём твой уровень, составим план подготовки и ответим на вопросы.</p>
+                        <form class="iz-apply-form" method="POST" action="{{ url_for('register') }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                            <div class="iz-form-field">
+                                <label class="iz-form-label" for="iz_last_name">Фамилия</label>
+                                <input class="iz-form-input" type="text" id="iz_last_name" name="last_name"
+                                    placeholder="Твоя фамилия" maxlength="32" required autocomplete="off">
+                            </div>
+
+                            <div class="iz-form-field">
+                                <label class="iz-form-label" for="iz_first_name">Имя</label>
+                                <input class="iz-form-input" type="text" id="iz_first_name" name="first_name"
+                                    placeholder="Твоё имя" maxlength="32" required autocomplete="off">
+                            </div>
+
+                            <div class="iz-form-field">
+                                <label class="iz-form-label" for="iz_phone">Номер телефона</label>
+                                <input class="iz-form-input" type="tel" id="iz_phone" name="phone"
+                                    placeholder="+7 900 000-00-00" maxlength="20" required autocomplete="off">
+                            </div>
+
+                            <div class="iz-form-field">
+                                <label class="iz-form-label">Удобный способ связи</label>
+                                <div class="iz-contact-type-options">
+                                    <label class="iz-contact-type-option">
+                                        <input type="radio" name="contact_type" value="telegram" checked
+                                            onchange="updateIzContactField()">
+                                        Telegram
+                                    </label>
+                                    <label class="iz-contact-type-option">
+                                        <input type="radio" name="contact_type" value="vk"
+                                            onchange="updateIzContactField()">
+                                        VK
+                                    </label>
+                                    <label class="iz-contact-type-option">
+                                        <input type="radio" name="contact_type" value="max"
+                                            onchange="updateIzContactField()">
+                                        MAX
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="iz-form-field">
+                                <label class="iz-form-label" for="iz_contact_value" id="izContactValueLabel">Username в Telegram</label>
+                                <input class="iz-form-input" type="text" id="iz_contact_value" name="contact_value"
+                                    placeholder="@username" maxlength="64" required autocomplete="off">
+                            </div>
+
+                            <button type="submit" class="iz-form-submit">Отправить заявку</button>
+                        </form>
+
+                        <div class="iz-apply-alt">
+                            <span>или сразу написать:</span>
+                            <div class="iz-apply-alt-links">
+                                <a href="https://t.me/Tyomkinss" target="_blank" class="iz-cta-btn iz-cta-btn-tg">Telegram</a>
+                                <a href="https://max.ru/u/f9LHodD0cOIojiO0gNWRLNP_as6P10M9ij53KQDQmY0CRLnpzpAaW07gVTg"
+                                    target="_blank" class="iz-cta-btn iz-cta-btn-max">MAX</a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
-
-            <!-- CTA: БЕСПЛАТНОЕ ВВОДНОЕ ЗАНЯТИЕ -->
-            <div class="iz-cta" id="izCta" style="display:none">
-                <h3 class="iz-cta-title">Запишись на первое бесплатное вводное занятие</h3>
-                <p class="iz-cta-sub">Разберём твой уровень, составим план подготовки и ответим на вопросы.</p>
-                <div class="iz-cta-buttons">
-                    <a href="/register" class="iz-cta-btn iz-cta-btn-apply">Оставить заявку</a>
-                    <a href="https://t.me/Tyomkinss" target="_blank" class="iz-cta-btn iz-cta-btn-tg">Telegram</a>
-                    <a href="https://max.ru/u/f9LHodD0cOIojiO0gNWRLNP_as6P10M9ij53KQDQmY0CRLnpzpAaW07gVTg"
-                        target="_blank" class="iz-cta-btn iz-cta-btn-max">MAX</a>
-                </div>
-            </div>
 
         </div><!-- /.interactive-zone -->
 
@@ -3217,8 +3342,57 @@
         });
 
         /* ================================================================
-           МИНИ-ЗАДАЧА
+           МИНИ-ВИКТОРИНА: 6 простых вопросов + 1 сложный
         ================================================================ */
+        const easyQuestions = [
+            {
+                text: 'Сколько бит требуется для кодирования 256 различных символов?',
+                options: ['6', '7', '8', '9'],
+                correct: '8',
+                explain: '256 = 2<sup>8</sup>, значит нужно 8 бит.'
+            },
+            {
+                text: 'Переведите число 12 в двоичную систему счисления.',
+                options: ['1100', '1010', '1001', '1110'],
+                correct: '1100',
+                explain: '12 = 8 + 4 = 2<sup>3</sup> + 2<sup>2</sup>, то есть 1100.'
+            },
+            {
+                text: 'Чему равно логическое «1 И 0» (конъюнкция)?',
+                options: ['0', '1', 'неопределено', 'ошибка'],
+                correct: '0',
+                explain: 'Конъюнкция истинна только тогда, когда истинны оба операнда — здесь один из них 0.'
+            },
+            {
+                text: 'Сколько бит нужно для кодирования одного пикселя при палитре из 16 цветов?',
+                options: ['2', '4', '8', '16'],
+                correct: '4',
+                explain: '16 = 2<sup>4</sup>, значит нужно 4 бита на пиксель.'
+            },
+            {
+                text: 'Чему равно 5 // 2 в Python (целочисленное деление)?',
+                options: ['1', '2', '2.5', '3'],
+                correct: '2',
+                explain: '// отбрасывает дробную часть: 5 / 2 = 2.5, значит результат — 2.'
+            },
+            {
+                text: 'Сколько байт в 1 килобайте (по стандарту ЕГЭ, 1 Кбайт = 2¹⁰ байт)?',
+                options: ['1000', '1024', '1048576', '100'],
+                correct: '1024',
+                explain: '1 Кбайт = 2<sup>10</sup> байт = 1024 байта.'
+            }
+        ];
+
+        const hardQuestion = {
+            text: 'Существует ли алгоритм, который для ЛЮБОЙ программы и любых входных данных всегда правильно определит, завершится она или зависнет?',
+            options: ['Да', 'Нет', 'Только для коротких программ', 'Только на суперкомпьютере'],
+            correct: 'Нет',
+            explain: 'Это проблема остановки — Алан Тьюринг доказал, что такого универсального алгоритма не существует.'
+        };
+
+        let quizPhase = 'easy'; // 'easy' | 'hard'
+        let easyIndex = 0;
+
         document.querySelectorAll('.minitask-option').forEach(function (label) {
             label.addEventListener('click', function () {
                 document.querySelectorAll('.minitask-option').forEach(function (o) {
@@ -3227,6 +3401,34 @@
                 this.classList.add('selected');
             });
         });
+
+        function currentQuizQuestion() {
+            return quizPhase === 'easy' ? easyQuestions[easyIndex] : hardQuestion;
+        }
+
+        function renderQuizQuestion(question) {
+            document.getElementById('minitask-question').innerHTML = question.text;
+            document.querySelectorAll('#minitask-options .minitask-option').forEach(function (label, i) {
+                var input = label.querySelector('input');
+                var span = label.querySelector('.minitask-option-label');
+                input.value = question.options[i];
+                input.checked = false;
+                input.disabled = false;
+                span.textContent = question.options[i];
+                label.classList.remove('selected');
+            });
+            var resultEl = document.getElementById('minitask-result');
+            resultEl.style.display = 'none';
+            resultEl.textContent = '';
+            document.getElementById('izQuizNextBtn').style.display = 'none';
+        }
+
+        function nextButtonLabel() {
+            if (quizPhase === 'easy') {
+                return easyIndex < easyQuestions.length - 1 ? 'Следующий вопрос →' : 'Оценить свою готовность →';
+            }
+            return 'Посмотреть маршрут подготовки →';
+        }
 
         function checkMiniTask() {
             var selected = document.querySelector('input[name="minitask"]:checked');
@@ -3239,17 +3441,53 @@
                 return;
             }
 
+            var question = currentQuizQuestion();
             resultEl.style.display = 'block';
 
-            if (selected.value === '8') {
+            if (selected.value === question.correct) {
                 resultEl.className = 'minitask-result correct';
-                resultEl.innerHTML = 'Верно ✅&nbsp;&nbsp;256 = 2<sup>8</sup>, значит нужно 8 бит.';
+                resultEl.innerHTML = 'Верно ✅&nbsp;&nbsp;' + question.explain;
+                document.querySelectorAll('#minitask-options input').forEach(function (inp) {
+                    inp.disabled = true;
+                });
+                setTimeout(advanceQuiz, 750);
             } else {
                 resultEl.className = 'minitask-result incorrect';
-                resultEl.innerHTML = 'Неверно ❌&nbsp;&nbsp;Правильный ответ: 8 (256 = 2<sup>8</sup>).';
+                resultEl.innerHTML = 'Неверно ❌&nbsp;&nbsp;Правильный ответ: ' + question.correct + '. ' + question.explain;
+                var nextBtn = document.getElementById('izQuizNextBtn');
+                nextBtn.textContent = nextButtonLabel();
+                nextBtn.style.display = 'block';
+            }
+        }
+
+        function fadeSwapQuestion(question) {
+            var card = document.querySelector('.minitask-card');
+            var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            if (reducedMotion) {
+                renderQuizQuestion(question);
+                return;
             }
 
-            document.getElementById('izNextToCalc').style.display = 'block';
+            card.style.transition = 'opacity 0.35s ease-in-out';
+            card.style.opacity = '0';
+            setTimeout(function () {
+                renderQuizQuestion(question);
+                card.style.opacity = '1';
+            }, 350);
+        }
+
+        function advanceQuiz() {
+            if (quizPhase === 'easy' && easyIndex < easyQuestions.length - 1) {
+                easyIndex++;
+                updateIzProgress(easyIndex + 1);
+                updateIzCaption('Вопрос ' + (easyIndex + 1) + ' из ' + easyQuestions.length);
+                fadeSwapQuestion(easyQuestions[easyIndex]);
+            } else if (quizPhase === 'easy') {
+                goToCalculatorStep();
+            } else {
+                goToRoadmapStep();
+            }
         }
 
         /* ================================================================
@@ -3317,101 +3555,122 @@
             });
         }
 
-        function goToStep2() {
-            var minitask = document.querySelector('.minitask-section');
-            var calculator = document.querySelector('.calculator-section');
-            var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        function updateIzCaption(text) {
+            var caption = document.getElementById('izProgressCaption');
+            if (caption) {
+                caption.textContent = text;
+            }
+        }
 
-            // Подготовить calculator до показа: спрятать справа
-            calculator.style.transition = 'none';
-            calculator.style.opacity = '0';
-            calculator.style.transform = reducedMotion ? '' : 'translateX(48px)';
-            calculator.style.display = 'block';
-
-            // Уход minitask влево (или просто fade при reduced-motion)
+        // Общий переход между "страницами" интерактивной зоны: outgoing уезжает
+        // влево (или тухнет при reduced-motion), затем вызывается onDone —
+        // там incoming обычно уже подготовлен через izPrepareIncoming() и его
+        // остаётся только показать через izSlideIn().
+        function izSlideOut(el, reducedMotion, onDone) {
             if (reducedMotion) {
-                minitask.style.transition = 'opacity 0.22s ease';
-                minitask.style.opacity = '0';
+                el.style.transition = 'opacity 0.22s ease';
+                el.style.opacity = '0';
             } else {
-                minitask.classList.add('iz-slide-out-left');
+                el.classList.add('iz-slide-out-left');
             }
 
             setTimeout(function () {
-                minitask.style.display = 'none';
-                minitask.classList.remove('iz-slide-out-left');
-                minitask.style.opacity = '';
-                minitask.style.transform = '';
-
-                // Приезд calculator справа
-                requestAnimationFrame(function () {
-                    requestAnimationFrame(function () {
-                        calculator.style.transition = 'opacity 0.32s ease-out, transform 0.32s ease-out';
-                        calculator.style.opacity = '1';
-                        calculator.style.transform = 'translateX(0)';
-                    });
-                });
-
-                updateIzProgress(2);
-            }, 280);
+                el.style.display = 'none';
+                el.classList.remove('iz-slide-out-left');
+                el.style.opacity = '';
+                el.style.transform = '';
+                el.style.transition = '';
+                onDone();
+            }, 440);
         }
 
-        function goToStep3() {
-            var calculator = document.querySelector('.calculator-section');
-            var roadmap = document.querySelector('.roadmap-section');
-            var cta = document.getElementById('izCta');
+        // Подготовить incoming ДО начала анимации outgoing: спрятать его справа,
+        // без transition — иначе первый кадр появления будет виден пользователю.
+        function izPrepareIncoming(el, reducedMotion) {
+            el.style.transition = 'none';
+            el.style.opacity = '0';
+            el.style.transform = reducedMotion ? '' : 'translateX(48px)';
+            el.style.display = 'block';
+        }
+
+        // Показать уже подготовленный incoming — въезд справа налево.
+        function izSlideIn(el) {
+            requestAnimationFrame(function () {
+                requestAnimationFrame(function () {
+                    el.style.transition = 'opacity 0.48s ease-out, transform 0.48s ease-out';
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateX(0)';
+                });
+            });
+        }
+
+        function goToCalculatorStep() {
+            var outgoing = document.querySelector('.minitask-section');
+            var incoming = document.querySelector('.calculator-section');
+            var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            izPrepareIncoming(incoming, reducedMotion);
+
+            izSlideOut(outgoing, reducedMotion, function () {
+                izSlideIn(incoming);
+                updateIzProgress(7);
+                updateIzCaption('Оцените свою готовность');
+            });
+        }
+
+        function goToHardQuestion() {
+            var outgoing = document.querySelector('.calculator-section');
+            var incoming = document.querySelector('.minitask-section');
+            var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            quizPhase = 'hard';
+            renderQuizQuestion(hardQuestion);
+            izPrepareIncoming(incoming, reducedMotion);
+
+            izSlideOut(outgoing, reducedMotion, function () {
+                izSlideIn(incoming);
+                updateIzProgress(8);
+                updateIzCaption('Сложный вопрос');
+            });
+        }
+
+        function goToRoadmapStep() {
+            var outgoing = document.querySelector('.minitask-section');
+            var incoming = document.querySelector('.roadmap-final-section');
             var zone = document.querySelector('.interactive-zone');
             var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-            // Зафиксировать минимальную высоту зоны — roadmap выше calculator,
-            // без этого при скрытии calculator зона схлопывается
+            // Зафиксировать минимальную высоту зоны — итоговая секция выше вопроса,
+            // без этого при скрытии outgoing зона схлопывается
             zone.style.minHeight = zone.offsetHeight + 'px';
 
-            // Calculator уходит влево (та же логика, что minitask в goToStep2)
-            if (reducedMotion) {
-                calculator.style.transition = 'opacity 0.22s ease';
-                calculator.style.opacity = '0';
-            } else {
-                calculator.classList.add('iz-slide-out-left');
-            }
+            izPrepareIncoming(incoming, reducedMotion);
 
-            setTimeout(function () {
-                calculator.style.display = 'none';
-                calculator.classList.remove('iz-slide-out-left');
-                calculator.style.opacity = '';
-                calculator.style.transform = '';
-                calculator.style.transition = '';
+            izSlideOut(outgoing, reducedMotion, function () {
+                izSlideIn(incoming);
+                updateIzProgress(9);
+                updateIzCaption('Ваш маршрут готов');
 
-                // Начальное состояние: roadmap и CTA справа, невидимые
-                roadmap.style.display = 'block';
-                roadmap.style.transition = 'none';
-                roadmap.style.opacity = '0';
-                roadmap.style.transform = reducedMotion ? '' : 'translateX(48px)';
-
-                cta.style.display = 'block';
-                cta.style.transition = 'none';
-                cta.style.opacity = '0';
-                cta.style.transform = reducedMotion ? '' : 'translateX(48px)';
-
-                // Forced layout flush — гарантирует, что браузер зафиксировал
-                // translateX(48px) как стартовое состояние перед transition
-                void roadmap.offsetHeight;
-
-                // Roadmap и CTA въезжают справа налево
-                roadmap.style.transition = 'opacity 0.32s ease-out, transform 0.32s ease-out';
-                roadmap.style.opacity = '1';
-                roadmap.style.transform = 'translateX(0)';
-
-                cta.style.transition = 'opacity 0.32s ease-out 0.06s, transform 0.32s ease-out 0.06s';
-                cta.style.opacity = '1';
-                cta.style.transform = 'translateX(0)';
-
-                // Снять фиксацию высоты после завершения анимации
                 setTimeout(function () {
                     zone.style.minHeight = '';
-                }, 520);
+                }, 620);
+            });
+        }
 
-                updateIzProgress(3);
-            }, 280);
+        function updateIzContactField() {
+            var type = document.querySelector('input[name="contact_type"]:checked').value;
+            var label = document.getElementById('izContactValueLabel');
+            var input = document.getElementById('iz_contact_value');
+            if (type === 'telegram') {
+                label.textContent = 'Username в Telegram';
+                input.placeholder = '@username';
+            } else if (type === 'vk') {
+                label.textContent = 'Ссылка на профиль VK';
+                input.placeholder = 'https://vk.com/username';
+            } else {
+                label.textContent = 'Контакт в MAX';
+                input.placeholder = 'Ссылка или номер';
+            }
         }
 
         /* ================================================================

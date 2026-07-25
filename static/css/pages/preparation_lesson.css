@@ -28,7 +28,8 @@
 }
 
 /* Практика — без всплытия (содержит кнопки) */
-.lesson-practice-card:hover {
+.lesson-practice-card:hover,
+.lesson-practice-cta:hover {
     transform: none;
 }
 
@@ -166,6 +167,22 @@
 .file-desc {
     font-size: 0.88em;
     color: var(--color-text-muted);
+}
+
+
+/* ── Практика урока №1: ссылка на опрос на главной ───────── */
+.lesson-practice-cta {
+    text-align: center;
+}
+
+.lesson-practice-cta .lesson-card-title {
+    justify-content: center;
+}
+
+.lesson-practice-cta p {
+    color: var(--color-text-primary);
+    line-height: 1.7;
+    margin-bottom: 20px;
 }
 
 

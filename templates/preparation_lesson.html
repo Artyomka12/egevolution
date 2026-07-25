@@ -92,6 +92,16 @@
     </div>
     {% endif %}
 
+    <!-- Практика урока №1 — вместо задач ссылка на опрос на главной -->
+    {% if lesson_id == 1 %}
+    <div class="card lesson-practice-cta reveal">
+        <h2 class="lesson-card-title">📝 Практика</h2>
+        <p>Практика для этого урока — короткий опрос на главной странице: несколько
+            вопросов по темам ЕГЭ, которые можно решить прямо сейчас.</p>
+        <a href="{{ url_for('start') }}#tryTaskSection" class="btn btn-primary">Пройти опрос на главной →</a>
+    </div>
+    {% endif %}
+
     <!-- Практические задания -->
     {% if lesson.practice and lesson.practice.tasks %}
     <div class="card lesson-practice-card">

@@ -32,7 +32,9 @@
                     {% endif %}
                 </span>
                 <div class="lesson-meta">
+                    {% if lesson.total_tasks %}
                     <span class="lesson-progress">{{ lesson.correct_tasks }} / {{ lesson.total_tasks }}</span>
+                    {% endif %}
                     {% if lesson.is_unlocked %}
                     <span class="badge badge--green">🔓 Открыто</span>
                     {% else %}

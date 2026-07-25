@@ -3,15 +3,7 @@
  "lesson_id": 1,
  "practice": {
   "description": "",
-  "tasks": [
-   {
-    "correct_answer": "Да",
-    "description": [],
-    "file": null,
-    "images": [],
-    "title": "Итог"
-   }
-  ]
+  "tasks": []
  },
  "theory": {
   "description": [
