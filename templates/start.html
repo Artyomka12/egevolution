@@ -2729,7 +2729,7 @@
                 <p class="hero-tagline">от первых уроков до высоких баллов</p>
                 <p class="hero-desc">Теория, практика, варианты и отслеживание прогресса в одном месте</p>
                 <div class="hero-cta">
-                    <a href="/preparation" class="hero-btn hero-btn-primary">Начать подготовку</a>
+                    <a href="/preparation" id="hero-start-btn" class="hero-btn hero-btn-primary">Начать подготовку</a>
                 </div>
             </div>
 
@@ -2860,7 +2860,8 @@
                     <p>Так выглядит проверка знаний на платформе.</p>
                 </div>
                 <div class="minitask-card reveal">
-                    <div class="minitask-question" id="minitask-question">Сколько бит требуется для кодирования 256 различных символов?</div>
+                    <div class="minitask-question" id="minitask-question">Сколько бит требуется для кодирования 256
+                        различных символов?</div>
                     <div class="minitask-options" id="minitask-options">
                         <label class="minitask-option">
                             <input type="radio" name="minitask" value="6">
@@ -2881,7 +2882,8 @@
                     </div>
                     <button class="minitask-check-btn" onclick="checkMiniTask()">Проверить</button>
                     <div class="minitask-result" id="minitask-result"></div>
-                    <button class="iz-next-btn" id="izQuizNextBtn" style="display:none" onclick="advanceQuiz()">Следующий
+                    <button class="iz-next-btn" id="izQuizNextBtn" style="display:none"
+                        onclick="advanceQuiz()">Следующий
                         вопрос →</button>
                 </div>
             </section>
@@ -2939,7 +2941,8 @@
                                 </div>
                                 <div class="roadmap-content">
                                     <div class="roadmap-step-title">Начальная подготовка</div>
-                                    <div class="roadmap-step-desc">Базовые понятия, алгоритмы и первые шаги в информатике</div>
+                                    <div class="roadmap-step-desc">Базовые понятия, алгоритмы и первые шаги в
+                                        информатике</div>
                                 </div>
                             </div>
                             <div class="roadmap-step">
@@ -2959,7 +2962,8 @@
                                 </div>
                                 <div class="roadmap-content">
                                     <div class="roadmap-step-title">Практика по номерам</div>
-                                    <div class="roadmap-step-desc">Отработка задач из базы по каждому заданию отдельно</div>
+                                    <div class="roadmap-step-desc">Отработка задач из базы по каждому заданию отдельно
+                                    </div>
                                 </div>
                             </div>
                             <div class="roadmap-step">
@@ -2969,7 +2973,8 @@
                                 </div>
                                 <div class="roadmap-content">
                                     <div class="roadmap-step-title">Полные варианты</div>
-                                    <div class="roadmap-step-desc">Тренировочные варианты в режиме обучения с разбором ошибок
+                                    <div class="roadmap-step-desc">Тренировочные варианты в режиме обучения с разбором
+                                        ошибок
                                     </div>
                                 </div>
                             </div>
@@ -2980,7 +2985,8 @@
                                 </div>
                                 <div class="roadmap-content">
                                     <div class="roadmap-step-title">Экзамен</div>
-                                    <div class="roadmap-step-desc">Симуляция реального ЕГЭ — таймер, без подсказок, итоговый
+                                    <div class="roadmap-step-desc">Симуляция реального ЕГЭ — таймер, без подсказок,
+                                        итоговый
                                         балл</div>
                                 </div>
                             </div>
@@ -2989,7 +2995,8 @@
 
                     <div class="iz-apply-card">
                         <h3 class="iz-apply-title">Запишись на первое бесплатное занятие</h3>
-                        <p class="iz-apply-sub">Разберём твой уровень, составим план подготовки и ответим на вопросы.</p>
+                        <p class="iz-apply-sub">Разберём твой уровень, составим план подготовки и ответим на вопросы.
+                        </p>
                         <form class="iz-apply-form" method="POST" action="{{ url_for('register') }}">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
@@ -3033,7 +3040,8 @@
                             </div>
 
                             <div class="iz-form-field">
-                                <label class="iz-form-label" for="iz_contact_value" id="izContactValueLabel">Username в Telegram</label>
+                                <label class="iz-form-label" for="iz_contact_value" id="izContactValueLabel">Username в
+                                    Telegram</label>
                                 <input class="iz-form-input" type="text" id="iz_contact_value" name="contact_value"
                                     placeholder="@username" maxlength="64" required autocomplete="off">
                             </div>
@@ -3044,7 +3052,8 @@
                         <div class="iz-apply-alt">
                             <span>или сразу написать:</span>
                             <div class="iz-apply-alt-links">
-                                <a href="https://t.me/Tyomkinss" target="_blank" class="iz-cta-btn iz-cta-btn-tg">Telegram</a>
+                                <a href="https://t.me/Tyomkinss" target="_blank"
+                                    class="iz-cta-btn iz-cta-btn-tg">Telegram</a>
                                 <a href="https://max.ru/u/f9LHodD0cOIojiO0gNWRLNP_as6P10M9ij53KQDQmY0CRLnpzpAaW07gVTg"
                                     target="_blank" class="iz-cta-btn iz-cta-btn-max">MAX</a>
                             </div>
@@ -3275,11 +3284,15 @@
             <div class="footer-socials">
                 <span class="footer-socials-label">Соцсети и контакты</span>
                 <div class="footer-socials-row">
-                    <a href="https://t.me/Tyomkinss" target="_blank">Telegram</a>
+                    <a href="https://t.me/Artemiy_Fedoseev" target="_blank">Telegram</a>
                     <a href="https://max.ru/u/f9LHodD0cOIojiO0gNWRLNP_as6P10M9ij53KQDQmY0CRLnpzpAaW07gVTg"
                         target="_blank">MAX</a>
                     <a href="https://www.instagram.com/ege_evolution?igsh=MW11eDBwcWlwa2dweA==">Instagram</a>
                     <a href="https://t.me/+OyPoOPO3uc9lMjE6" target="_blank">Telegram-канал</a>
+                    <a href="https://www.tiktok.com/@ege_evolution?_r=1&amp;_t=ZS-98P9KPCujSu" target="_blank">TikTok</a>
+                    <a href="https://www.youtube.com/channel/UC7N0OFdzMW_lbgLWAlhK3Ig" target="_blank">YouTube</a>
+                    <a href="https://vk.ru/club240521284" target="_blank">ВКонтакте</a>
+                    <a href="https://vkvideo.ru/@club240521284" target="_blank">VK Видео</a>
                 </div>
             </div>
 
