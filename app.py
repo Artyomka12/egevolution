@@ -53,9 +53,16 @@ def handle_csrf_error(e):
     return render_template("csrf_error.html", reason=e.description), 400
 
 
+@app.errorhandler(404)
+def handle_not_found(e):
+    if request.is_json:
+        return jsonify({"error": "Not found"}), 404
+    return render_template("error_404.html"), 404
+
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-APP_VERSION = "2.6.0"
+APP_VERSION = "2.6.1"
 
 
 @app.context_processor

@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Страница не найдена | ЕГЭволюция{% endblock %}
+
+{% block extra_head %}
+<style>
+    .error-404-wrap {
+        min-height: calc(100vh - 260px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+    }
+
+    .card-404 {
+        max-width: 560px;
+        width: 100%;
+        padding: 44px 40px 40px;
+        text-align: center;
+    }
+
+    .code-404 {
+        font-size: 0.78em;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--color-accent-blue);
+        margin-bottom: 6px;
+    }
+
+    .title-404 {
+        font-size: 1.5em;
+        font-weight: 700;
+        color: var(--color-text-primary);
+        margin-bottom: 20px;
+    }
+
+    .card-404 pre {
+        text-align: left;
+        margin-bottom: 24px;
+    }
+
+    .desc-404 {
+        color: var(--color-text-secondary);
+        margin-bottom: 30px;
+    }
+
+    .actions-404 {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    @media (max-width: 640px) {
+        .card-404 {
+            padding: 32px 22px 28px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="error-404-wrap">
+    <div class="card card-404">
+        <pre># консоль браузера
+Traceback (most recent call last):
+  File "{{ request.path }}", line 1, in &lt;module&gt;
+PageNotFoundError: страница по этому адресу не найдена</pre>
+
+        <div class="code-404">Ошибка 404</div>
+        <h1 class="title-404">Страница не найдена</h1>
+        <p class="desc-404">Похоже, такой страницы не существует, или она была перемещена. Проверьте адрес — либо вернитесь на главную.</p>
+
+        <div class="actions-404">
+            <a href="javascript:history.back()" class="btn btn-secondary">← Назад</a>
+            <a href="/" class="btn btn-primary">🏠 На главную</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
