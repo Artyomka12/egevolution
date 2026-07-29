@@ -14,7 +14,6 @@
         <div class="timer-label">⏱️ Время</div>
         <div id="timer-display">03:55:00</div>
         <div class="timer-controls">
-            <button onclick="resetTimer()" class="btn btn-secondary btn--sm timer-btn">🔄 Сброс</button>
             <button onclick="finishVariant()" id="finish-variant-btn" class="btn btn-primary btn--sm timer-btn">✅
                 Завершить</button>
         </div>
@@ -137,19 +136,12 @@
 <script>
     // === ТАЙМЕР ===
     let timerInterval;
-    let timeRemaining = 3 * 3600 + 55 * 60;
-    const TIMER_STORAGE_KEY = 'ege_timer_variant_{{ variant_num }}';
+    const DEFAULT_TIME_REMAINING = 3 * 3600 + 55 * 60;
+    let timeRemaining = DEFAULT_TIME_REMAINING;
 
-    function loadTimerFromStorage() {
-        const saved = localStorage.getItem(TIMER_STORAGE_KEY);
-        if (saved) {
-            timeRemaining = parseInt(saved);
-        }
-    }
-
-    function saveTimerToStorage() {
-        localStorage.setItem(TIMER_STORAGE_KEY, timeRemaining.toString());
-    }
+    // Черновик текущей попытки (проверенные ответы + результат), синхронизируется с сервером
+    // при каждой успешной проверке — переживает обновление страницы и смену устройства
+    let progressState = {};
 
     function formatTime(seconds) {
         const h = Math.floor(seconds / 3600);
@@ -162,7 +154,6 @@
         const display = document.getElementById('timer-display');
         if (display) {
             display.textContent = formatTime(timeRemaining);
-            saveTimerToStorage();
         }
     }
 
@@ -177,12 +168,109 @@
         }, 1000);
     }
 
-    function resetTimer() {
-        if (confirm('⚠️ Сбросить таймер на 3:55:00?')) {
-            timeRemaining = 3 * 3600 + 55 * 60;
-            updateTimerDisplay();
-            saveTimerToStorage();
+    // Текущее значение поля(ей) задания в том же формате, что ожидает /save_results
+    function collectTaskAnswerValue(form) {
+        const inputs = form.querySelectorAll('input[type="text"]');
+        const table = form.querySelector('.answer-grid-table');
+
+        if (table) {
+            const rows = table.querySelectorAll('tr');
+            const gridAnswers = [];
+            rows.forEach(row => {
+                const rowInputs = row.querySelectorAll('input');
+                const rowValues = [];
+                rowInputs.forEach(input => rowValues.push(input.value.trim()));
+                gridAnswers.push(rowValues);
+            });
+            return gridAnswers;
+        } else if (inputs.length === 2) {
+            return [inputs[0].value.trim(), inputs[1].value.trim()];
+        } else if (inputs.length === 1) {
+            return inputs[0].value.trim();
         }
+        return null;
+    }
+
+    // Красит поля по результату проверки — тот же формат, что отдаёт /check,
+    // используется и для свежего ответа, и для восстановления сохранённого прогресса
+    function applyCheckResult(taskId, hasGrid, data) {
+        if (hasGrid) {
+            const gridResults = data.grid_results;
+            const rows = gridResults.length;
+            const cols = gridResults[0].length;
+            for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols; j++) {
+                    const input = document.getElementById(`answer-${taskId}-${i}-${j}`);
+                    if (input) {
+                        input.classList.remove('is-success', 'is-error');
+                        input.classList.add(gridResults[i][j] ? 'is-success' : 'is-error');
+                    }
+                }
+            }
+        } else if (data.answer1_correct !== undefined) {
+            const input1 = document.getElementById(`answer1-input-${taskId}`);
+            const input2 = document.getElementById(`answer2-input-${taskId}`);
+            if (input1) {
+                input1.classList.remove('is-success', 'is-error');
+                input1.classList.add(data.answer1_correct ? 'is-success' : 'is-error');
+            }
+            if (input2) {
+                input2.classList.remove('is-success', 'is-error');
+                input2.classList.add(data.answer2_correct ? 'is-success' : 'is-error');
+            }
+        } else {
+            const input = document.getElementById(`answer-input-${taskId}`);
+            if (input) {
+                input.classList.remove('is-success', 'is-error');
+                input.classList.add(data.correct ? 'is-success' : 'is-error');
+            }
+        }
+    }
+
+    // Заполняет поля значениями + подсветкой из ранее сохранённого прогресса
+    function restoreTaskProgress(task, formId) {
+        const saved = progressState[task.id];
+        const form = document.getElementById(formId);
+        if (!saved || !form) return;
+
+        const value = saved.value;
+        const table = form.querySelector('.answer-grid-table');
+        if (table && Array.isArray(value)) {
+            const rows = table.querySelectorAll('tr');
+            rows.forEach((row, i) => {
+                const rowInputs = row.querySelectorAll('input');
+                rowInputs.forEach((input, j) => {
+                    if (value[i] && value[i][j] !== undefined) input.value = value[i][j];
+                });
+            });
+        } else {
+            const inputs = form.querySelectorAll('input[type="text"]');
+            if (inputs.length === 2 && Array.isArray(value)) {
+                inputs[0].value = value[0] || '';
+                inputs[1].value = value[1] || '';
+            } else if (inputs.length === 1 && typeof value === 'string') {
+                inputs[0].value = value;
+            }
+        }
+
+        applyCheckResult(task.id, !!task.answer_grid, saved.checked);
+    }
+
+    // Отправляет обновлённый черновик попытки на сервер (не влияет на статистику)
+    function saveTaskProgress(taskId, form, checkResult) {
+        progressState[taskId] = {
+            value: collectTaskAnswerValue(form),
+            checked: checkResult
+        };
+
+        fetch(`/api/variant_progress/{{ variant_num }}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token() }}' },
+            body: JSON.stringify({
+                answers: progressState,
+                time_remaining: timeRemaining
+            })
+        }).catch(error => console.error('Не удалось сохранить прогресс:', error));
     }
 
     // === ГЛАВНАЯ ФУНКЦИЯ ЗАВЕРШЕНИЯ ===
@@ -196,30 +284,11 @@
 
             forms.forEach(form => {
                 const taskId = form.id.replace('check-form-', '');
-                const inputs = form.querySelectorAll('input[type="text"]');
-                const table = form.querySelector('.answer-grid-table');
-
-                if (table) {
-                    const rows = table.querySelectorAll('tr');
-                    const gridAnswers = [];
-                    rows.forEach(row => {
-                        const rowInputs = row.querySelectorAll('input');
-                        const rowValues = [];
-                        rowInputs.forEach(input => {
-                            rowValues.push(input.value.trim());
-                        });
-                        gridAnswers.push(rowValues);
-                    });
-                    answers[taskId] = gridAnswers;
-                } else if (inputs.length === 2) {
-                    answers[taskId] = [inputs[0].value.trim(), inputs[1].value.trim()];
-                } else if (inputs.length === 1) {
-                    answers[taskId] = inputs[0].value.trim();
-                }
+                const value = collectTaskAnswerValue(form);
+                if (value !== null) answers[taskId] = value;
             });
 
-            const totalTime = 3 * 3600 + 55 * 60;
-            const timeSpent = totalTime - timeRemaining;
+            const timeSpent = DEFAULT_TIME_REMAINING - timeRemaining;
 
             // Сначала отправляем данные на сервер для сохранения в БД
             try {
@@ -263,41 +332,8 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    if (hasGrid) {
-                        const gridResults = data.grid_results;
-                        const rows = gridResults.length;
-                        const cols = gridResults[0].length;
-                        for (let i = 0; i < rows; i++) {
-                            for (let j = 0; j < cols; j++) {
-                                const input = document.getElementById(`answer-${taskId}-${i}-${j}`);
-                                if (input) {
-                                    input.classList.remove('is-success', 'is-error');
-                                    if (gridResults[i][j]) {
-                                        input.classList.add('is-success');
-                                    } else {
-                                        input.classList.add('is-error');
-                                    }
-                                }
-                            }
-                        }
-                    } else if (data.answer1_correct !== undefined) {
-                        const input1 = document.getElementById(`answer1-input-${taskId}`);
-                        const input2 = document.getElementById(`answer2-input-${taskId}`);
-                        if (input1) {
-                            input1.classList.remove('is-success', 'is-error');
-                            input1.classList.add(data.answer1_correct ? 'is-success' : 'is-error');
-                        }
-                        if (input2) {
-                            input2.classList.remove('is-success', 'is-error');
-                            input2.classList.add(data.answer2_correct ? 'is-success' : 'is-error');
-                        }
-                    } else {
-                        const input = document.getElementById(`answer-input-${taskId}`);
-                        if (input) {
-                            input.classList.remove('is-success', 'is-error');
-                            input.classList.add(data.correct ? 'is-success' : 'is-error');
-                        }
-                    }
+                    applyCheckResult(taskId, hasGrid, data);
+                    saveTaskProgress(taskId, form, data);
                 })
                 .catch(error => {
                     console.error('Ошибка:', error);
@@ -310,22 +346,31 @@
     }
 
     // === ИНИЦИАЛИЗАЦИЯ ===
-    document.addEventListener('DOMContentLoaded', function () {
-        loadTimerFromStorage();
+    document.addEventListener('DOMContentLoaded', async function () {
+        const tasks = {{ tasks | tojson }};
+
+        // Подтягиваем черновик попытки с сервера — общий для всех устройств пользователя
+        try {
+            const response = await fetch(`/api/variant_progress/{{ variant_num }}`);
+            if (response.ok) {
+                const data = await response.json();
+                if (data.found) {
+                    progressState = data.answers || {};
+                    timeRemaining = data.time_remaining;
+                }
+            }
+        } catch (error) {
+            console.error('Не удалось загрузить сохранённый прогресс:', error);
+        }
+
         updateTimerDisplay();
         startTimer();
 
-        const tasks = {{ tasks | tojson }};
-
         tasks.forEach(task => {
             const formId = `check-form-${task.id}`;
-            if (task.answer_grid) {
-                setupFormCheck(formId, task.id, true);
-            } else if (task.answers && task.answers.length === 2) {
-                setupFormCheck(formId, task.id, false);
-            } else {
-                setupFormCheck(formId, task.id, false);
-            }
+            const hasGrid = !!task.answer_grid;
+            setupFormCheck(formId, task.id, hasGrid);
+            restoreTaskProgress(task, formId);
         });
     });
 </script>

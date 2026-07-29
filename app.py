@@ -55,7 +55,7 @@ def handle_csrf_error(e):
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-APP_VERSION = "2.5.3"
+APP_VERSION = "2.6.0"
 
 
 @app.context_processor
@@ -265,6 +265,18 @@ def init_db():
         is_correct INTEGER DEFAULT 0,
         last_attempt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         UNIQUE(user_id, task_num, practice_task_id),
+        FOREIGN KEY (user_id) REFERENCES users (id)
+    )""")
+
+    # Черновик текущей попытки решения варианта (до нажатия "Завершить" в статистику не идёт)
+    db.execute("""CREATE TABLE IF NOT EXISTS user_variant_progress (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        variant_num INTEGER NOT NULL,
+        answers_json TEXT NOT NULL DEFAULT '{}',
+        time_remaining INTEGER NOT NULL,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(user_id, variant_num),
         FOREIGN KEY (user_id) REFERENCES users (id)
     )""")
 
@@ -1794,6 +1806,63 @@ def admin_view_attempt(user_id, attempt_id):
     )
 
 
+@app.route("/api/variant_progress/<int:variant_num>", methods=["GET"])
+def get_variant_progress(variant_num):
+    """Черновик текущей попытки (проверенные ответы + оставшееся время) — для восстановления на любом устройстве"""
+    if "user_id" not in session:
+        return jsonify({"success": False, "error": "Unauthorized"}), 401
+    user_id = session["user_id"]
+
+    db = get_db()
+    row = db.execute(
+        "SELECT answers_json, time_remaining FROM user_variant_progress WHERE user_id = ? AND variant_num = ?",
+        (user_id, variant_num),
+    ).fetchone()
+    db.close()
+
+    if not row:
+        return jsonify({"found": False})
+
+    return jsonify(
+        {
+            "found": True,
+            "answers": json.loads(row["answers_json"]),
+            "time_remaining": row["time_remaining"],
+        }
+    )
+
+
+@app.route("/api/variant_progress/<int:variant_num>", methods=["POST"])
+def save_variant_progress(variant_num):
+    """Сохраняет черновик текущей попытки. Вызывается вместе с каждой успешной проверкой ответа."""
+    if "user_id" not in session:
+        return jsonify({"success": False, "error": "Unauthorized"}), 401
+    user_id = session["user_id"]
+    data = request.json or {}
+
+    answers = data.get("answers", {})
+    time_remaining = data.get("time_remaining")
+    if time_remaining is None:
+        return jsonify({"success": False, "error": "time_remaining обязателен"}), 400
+
+    db = get_db()
+    db.execute(
+        """
+        INSERT INTO user_variant_progress (user_id, variant_num, answers_json, time_remaining)
+        VALUES (?, ?, ?, ?)
+        ON CONFLICT(user_id, variant_num) DO UPDATE SET
+            answers_json = excluded.answers_json,
+            time_remaining = excluded.time_remaining,
+            updated_at = CURRENT_TIMESTAMP
+        """,
+        (user_id, variant_num, json.dumps(answers), int(time_remaining)),
+    )
+    db.commit()
+    db.close()
+
+    return jsonify({"success": True})
+
+
 # ✅ ИСПРАВЛЕНО: Передается len(tasks)
 @app.route("/save_results/<int:variant_num>", methods=["POST"])
 def save_results(variant_num):
@@ -1832,6 +1901,16 @@ def save_results(variant_num):
         len(tasks),
         answers_dict=answers_dict,  # <--- ПЕРЕДАЕМ ОТВЕТЫ
     )
+
+    # Вариант завершён — черновик текущей попытки больше не нужен,
+    # следующее решение этого же варианта должно начинаться с чистого листа
+    db = get_db()
+    db.execute(
+        "DELETE FROM user_variant_progress WHERE user_id = ? AND variant_num = ?",
+        (user_id, variant_num),
+    )
+    db.commit()
+    db.close()
 
     return jsonify({"success": True, "message": "Результаты сохранены!"})
 
