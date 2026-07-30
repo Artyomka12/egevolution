@@ -124,6 +124,165 @@ function expandInlineBodies(lines) {
   return out;
 }
 
+/* ── Comprehension → loop/condition decomposition ─────────────────────
+   Сложные print(..., [comprehension]) (и другие статические выражения с
+   comprehension внутри) раньше рисовались одним плоским action-блоком с
+   текстом comprehension внутри — не как настоящая структура цикл+условие
+   +накопление. Ниже — детектор и синтезатор эквивалентных узлов loop/
+   condition/action, переиспользующих уже существующие фигуры и раскладку
+   (layoutSeq/placeLoop/layoutCond ничего не знают о том, что узлы
+   синтетические — просто раскладывают обычные loop/condition как всегда).
+
+   Scope v1 (согласовано с пользователем): только ОДИН `for`, максимум
+   ОДИН `if`, без вложенных comprehension. Всё сложнее — комментарий не
+   срабатывает, строка рисуется старым плоским блоком, как и раньше. */
+
+/* Находит первое вхождение keyword как отдельного слова (окружённого
+   пробелами) вне строк и вне скобок — та же техника глубины/кавычек, что
+   и в findTopLevelColon(), но для произвольного слова, а не ':'. */
+function findTopLevelKeyword(s, kw) {
+  let depth = 0, quote = null;
+  for (let i = 0; i <= s.length - kw.length; i++) {
+    const ch = s[i];
+    if (quote) { if (ch === '\\') { i++; continue; } if (ch === quote) quote = null; continue; }
+    if (ch === '"' || ch === "'") { quote = ch; continue; }
+    if (ch === '(' || ch === '[' || ch === '{') { depth++; continue; }
+    if (ch === ')' || ch === ']' || ch === '}') { depth--; continue; }
+    if (depth === 0 && s.slice(i, i + kw.length) === kw &&
+        (i === 0 || /\s/.test(s[i - 1])) &&
+        (i + kw.length >= s.length || /\s/.test(s[i + kw.length]))) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+/* Разбирает "EXPR for VAR in ITER[ if COND]" (тело одного comprehension —
+   без внешних скобок). Возвращает null, если это не простой одноуровневый
+   comprehension (нет 'for', VAR — не простое имя, или внутри ITER/COND
+   нашёлся ЕЩЁ один 'for' — вложенный comprehension, вне scope v1). */
+function scanComprehensionBody(s) {
+  const forIdx = findTopLevelKeyword(s, 'for');
+  if (forIdx === -1) return null;
+  const elementExpr = s.slice(0, forIdx).trim();
+  const rest = s.slice(forIdx + 3);
+  const inIdx = findTopLevelKeyword(rest, 'in');
+  if (inIdx === -1) return null;
+  const varName = rest.slice(0, inIdx).trim();
+  if (!/^\w+$/.test(varName)) return null;   // tuple-unpacking (for k, v in ...) — вне scope
+  const rest2 = rest.slice(inIdx + 2);
+  const ifIdx = findTopLevelKeyword(rest2, 'if');
+  const iterableExpr = (ifIdx === -1 ? rest2 : rest2.slice(0, ifIdx)).trim();
+  const condExpr = ifIdx === -1 ? null : rest2.slice(ifIdx + 2).trim();
+  if (!elementExpr || !varName || !iterableExpr) return null;
+  // Второй 'for' внутри iterable/cond — вложенный comprehension, не поддерживаем
+  if (findTopLevelKeyword(iterableExpr, 'for') !== -1) return null;
+  if (condExpr && findTopLevelKeyword(condExpr, 'for') !== -1) return null;
+  return { elementExpr, varName, iterableExpr, condExpr };
+}
+
+/* Находит первую пару [...] или {...} в строке, чьё содержимое — простой
+   comprehension (см. scanComprehensionBody). Возвращает позиции скобок +
+   разобранные части, либо null, если такой пары нет. */
+function findBracketComprehension(s) {
+  for (let i = 0; i < s.length; i++) {
+    if (s[i] !== '[' && s[i] !== '{') continue;
+    const closeCh = s[i] === '[' ? ']' : '}';
+    let depth = 1, quote = null, j = i + 1;
+    for (; j < s.length; j++) {
+      const ch = s[j];
+      if (quote) { if (ch === '\\') { j++; continue; } if (ch === quote) quote = null; continue; }
+      if (ch === '"' || ch === "'") { quote = ch; continue; }
+      if (ch === '(' || ch === '[' || ch === '{') depth++;
+      else if (ch === ')' || ch === ']' || ch === '}') { depth--; if (depth === 0) break; }
+    }
+    if (j >= s.length) continue;
+    const comp = scanComprehensionBody(s.slice(i + 1, j));
+    if (comp) return { openIdx: i, closeIdx: j, kind: s[i] === '[' ? 'list' : 'set', ...comp };
+  }
+  return null;
+}
+
+/* Находит any(...)/all(...), где ВЕСЬ аргумент — простой comprehension без
+   фильтра (ровно паттерн реальных заданий №19-21: any(f(x) for x in ...)).
+   Фильтр (if COND) внутри any/all — уже два условия сразу (фильтр + сама
+   проверка истинности), вне scope v1 — тогда возвращаем null. */
+function findCallComprehension(s) {
+  const re = /\b(any|all)\(/g;
+  let m;
+  while ((m = re.exec(s))) {
+    const openIdx = m.index + m[0].length - 1;
+    let depth = 1, quote = null, j = openIdx + 1;
+    for (; j < s.length; j++) {
+      const ch = s[j];
+      if (quote) { if (ch === '\\') { j++; continue; } if (ch === quote) quote = null; continue; }
+      if (ch === '"' || ch === "'") { quote = ch; continue; }
+      if (ch === '(' || ch === '[' || ch === '{') depth++;
+      else if (ch === ')' || ch === ']' || ch === '}') { depth--; if (depth === 0) break; }
+    }
+    if (j >= s.length) continue;
+    const comp = scanComprehensionBody(s.slice(openIdx + 1, j));
+    if (comp && !comp.condExpr) return { kind: m[1], nameIdx: m.index, openIdx, closeIdx: j, ...comp };
+  }
+  return null;
+}
+
+let _compAccCounter = 0;
+
+/* Строит loop(+condition) узлы для comprehension-присваивания/выражения
+   (bracket-форма). Если вся строка — простое "VAR = [comp]", накопителем
+   становится сама VAR (без придуманного имени); иначе — синтетический
+   аккумулятор + завершающая строка-подстановка (напр. "print(_acc1)"). */
+function buildBracketComprehensionNodes(l) {
+  const found = findBracketComprehension(l.s);
+  if (!found) return null;
+  const prefix = l.s.slice(0, found.openIdx);
+  const suffix = l.s.slice(found.closeIdx + 1);
+  const directAssign = prefix.match(/^(\w+)\s*=\s*$/);
+  const isDirect = directAssign && suffix.trim() === '';
+  const accVar = isDirect ? directAssign[1] : `_acc${++_compAccCounter}`;
+  const line = l.i + 1;
+
+  const initNode = { id: uid(), type: 'assignment', label: `${accVar} = ${found.kind === 'list' ? '[]' : 'set()'}`, line };
+  const addLabel = found.kind === 'list' ? `${accVar}.append(${found.elementExpr})` : `${accVar}.add(${found.elementExpr})`;
+  const actionNode = { id: uid(), type: 'action', label: addLabel, line };
+  const loopBody = found.condExpr
+    ? [{ id: uid(), type: 'condition', label: found.condExpr, yes: [actionNode], no: [], hasElse: false, line }]
+    : [actionNode];
+  const loopNode = { id: uid(), type: 'loop', label: `${found.varName} in ${found.iterableExpr}`, body: loopBody, line };
+
+  const nodes = [initNode, loopNode];
+  if (!isDirect) {
+    const tailText = (prefix + accVar + suffix).trim();
+    const tailLine = { s: tailText, ind: l.ind, i: l.i };
+    nodes.push(tailText.startsWith('return') ? parseReturn(tailLine) : parseStmt(tailLine));
+  }
+  return nodes;
+}
+
+/* Строит loop+condition для "return any(EXPR for VAR in ITER)"/"return
+   all(...)" — единственная реально встречающаяся форма в заданиях №19-21.
+   Любая другая обёртка (присваивание, print и т.п.) — вне scope v1. */
+function buildAnyAllComprehensionNodes(l) {
+  const m = l.s.match(/^return\s+(.+)$/);
+  if (!m) return null;
+  const found = findCallComprehension(m[1]);
+  if (!found) return null;
+  if (found.nameIdx !== 0 || found.closeIdx !== m[1].length - 1) return null;   // должно занимать ВСЮ return-строку
+  const line = l.i + 1;
+  const isAny = found.kind === 'any';
+  const earlyReturn = { id: uid(), type: 'return', label: isAny ? 'return True' : 'return False', line };
+  const condNode = {
+    id: uid(), type: 'condition', label: found.elementExpr, line,
+    yes: isAny ? [earlyReturn] : [],
+    no:  isAny ? [] : [earlyReturn],
+    hasElse: !isAny,   // "no"-ветка реально используется только для all() — иначе layoutCond её не отрисует (см. проверки node.hasElse && node.no.length>0)
+  };
+  const loopNode = { id: uid(), type: 'loop', label: `${found.varName} in ${found.iterableExpr}`, body: [condNode], line };
+  const finalReturn = { id: uid(), type: 'return', label: isAny ? 'return False' : 'return True', line };
+  return [loopNode, finalReturn];
+}
+
 function parseCode(src) {
   _uid = 0;
   const rawLines = src.split('\n')
@@ -149,10 +308,20 @@ function parseBlock(lines, si, indent) {
     else if (l.s.startsWith('for '))    { const r = parseLoop(lines, i, indent);  nodes.push(r.node); functions.push(...r.functions); i = r.next; }
     else if (l.s.startsWith('while ')) { const r = parseWhile(lines, i, indent); nodes.push(r.node); functions.push(...r.functions); i = r.next; }
     else if (l.s.startsWith('if '))    { const r = parseCond(lines, i, indent);  nodes.push(r.node); functions.push(...r.functions); i = r.next; }
-    else if (l.s === 'return' || l.s.startsWith('return ')) { nodes.push(parseReturn(l)); i++; }
+    else if (l.s === 'return' || l.s.startsWith('return ')) {
+      const compNodes = buildAnyAllComprehensionNodes(l) || buildBracketComprehensionNodes(l);
+      if (compNodes) nodes.push(...compNodes);
+      else nodes.push(parseReturn(l));
+      i++;
+    }
     else if (l.s === 'break')    { nodes.push({ id: uid(), type: 'break',    label: 'break',    line: l.i + 1 }); i++; }
     else if (l.s === 'continue') { nodes.push({ id: uid(), type: 'continue', label: 'continue', line: l.i + 1 }); i++; }
-    else                               { nodes.push(parseStmt(l)); i++; }
+    else {
+      const compNodes = buildBracketComprehensionNodes(l);
+      if (compNodes) nodes.push(...compNodes);
+      else nodes.push(parseStmt(l));
+      i++;
+    }
   }
   return { nodes, next: i, functions };
 }
@@ -228,8 +397,12 @@ function parseCond(lines, i, indent) {
 function layoutProgram(mainNodes, functions) {
   _pendingBreaks = new Map();
   const lnodes = [], edges = [];
-  const startNode = { id: uid(), type: 'terminal', label: 'Начало' };
-  const endNode   = { id: uid(), type: 'terminal', label: 'Конец'  };
+  // role: 'start'/'end' — только у ЭТИХ двух узлов главной программы (не у
+  // "Начало (имя_функции)"), чтобы step-анимация могла найти их напрямую по
+  // роли: у них нет своей строки кода, значит обычный поиск bsFindNodeByLine
+  // их не находит.
+  const startNode = { id: uid(), type: 'terminal', label: 'Начало', role: 'start' };
+  const endNode   = { id: uid(), type: 'terminal', label: 'Конец',  role: 'end'   };
   const mainCX = BS.SVG_PAD + 200;
   layoutSeq([startNode, ...mainNodes, endNode], mainCX, BS.SVG_PAD, null, lnodes, edges);
 
@@ -916,9 +1089,13 @@ function renderSVG(lnodes, edges) {
   });
   edges.forEach(e  => { s += drawEdge(e); });
   lnodes.forEach(n => {
-    s += n.line != null
-      ? `<g data-line="${n.line}">${drawBlock(n)}</g>`
-      : drawBlock(n);
+    if (n.line != null || n.role) {
+      const lineAttr = n.line != null ? ` data-line="${n.line}"` : '';
+      const roleAttr = n.role ? ` data-role="${n.role}"` : '';
+      s += `<g${lineAttr} data-type="${n.type}"${roleAttr}>${drawBlock(n)}</g>`;
+    } else {
+      s += drawBlock(n);
+    }
   });
   return s + '</svg>';
 }
@@ -1210,7 +1387,7 @@ async function loadBlockSchemeTrace(code, fileContent) {
       bsShowTraceStatus('Код содержит более 1500 шагов — показаны первые 1500', false);
     }
     if (bsTrace.steps.length) {
-      renderBlockSchemeStep(0);   // also refreshes control button states
+      bsShowStartState();   // стоп на "Начало" — первый клик "дальше" пустит шарик к первому блоку
     } else {
       bsUpdateControls();         // no steps at all — keep buttons disabled
     }
@@ -1285,12 +1462,42 @@ function bsSetActiveLine(lineNum) {
    взята, и подсветку нужно переключить на сам блок return (по вложенному
    элементу с классом .bs-return — сам data-line стоит на обёртке <g>,
    у которой своего класса формы нет). */
+/* "Начало"/"Конец" главной программы не привязаны ни к одной строке кода
+   (см. layoutProgram) — обычный bsFindNodeByLine их не находит, ищем по
+   отдельной метке role, проставленной только этим двум узлам. */
+function bsFindByRole(role) {
+  return bsLnodes.find(n => n.role === role);
+}
+
+function bsHighlightRole(role) {
+  const svg = document.getElementById('bs-svg');
+  if (!svg) return;
+  svg.querySelectorAll('.bs-block-active').forEach(el => el.classList.remove('bs-block-active'));
+  const target = svg.querySelector(`[data-role="${role}"]`);
+  if (target) target.classList.add('bs-block-active');
+}
+
+/* Несколько узлов на одной строке — обычный случай для однострочных
+   if/for (expandInlineBodies) и теперь ещё для decomposed comprehension
+   (loop+condition+action на line comprehension'а). И там, и там наиболее
+   содержательный узел — не сам loop/condition-"заголовок", а то, что
+   внутри (action/return/assignment) — если такого нет (напр. any()/all()
+   без action-узла), берём condition, и только потом loop как последний
+   резерв. */
+function bsPreferredMatch(matches) {
+  if (matches.length <= 1) return matches[0] || null;
+  const list = Array.from(matches);
+  return list.find(el => el.dataset.type !== 'condition' && el.dataset.type !== 'loop')
+      || list.find(el => el.dataset.type !== 'loop')
+      || list[0];
+}
+
 function bsSetActiveBlock(lineNum, isReturn) {
   const svg = document.getElementById('bs-svg');
   if (!svg) return;
   svg.querySelectorAll('.bs-block-active').forEach(el => el.classList.remove('bs-block-active'));
   const matches = svg.querySelectorAll(`[data-line="${lineNum}"]`);
-  let target = matches[0] || null;
+  let target = bsPreferredMatch(matches);
   if (isReturn) {
     const returnMatch = Array.from(matches).find(el => el.querySelector('.bs-return'));
     if (returnMatch) target = returnMatch;
@@ -1325,11 +1532,44 @@ function renderBlockSchemeStep(index) {
   bsUpdateControls();
 }
 
+/* Состояние "до первого шага" — bsStepIndex = -1, подсвечен овал "Начало",
+   панели пустые. Раньше запуск сразу подсвечивал первое действие, минуя
+   "Начало" целиком; теперь это отдельная остановка, с которой первый клик
+   "дальше" анимирует шарик от "Начало" к первому реальному блоку (см.
+   bsStepNext). */
+function bsShowStartState() {
+  bsStepIndex  = -1;
+  bsPrevVars   = {};
+  bsPrevOutput = [];
+  bsSetActiveLine(null);
+  bsHighlightRole('start');
+  bsRenderVars({}, []);
+  bsRenderConsole([]);
+  bsUpdateControls();
+}
+
+/* Симметричное состояние "после последнего шага" — bsStepIndex = steps.length
+   (на единицу больше последнего реального индекса), подсвечен овал "Конец".
+   Переменные/консоль оставляем как после последнего реального шага —
+   меняется только то, что подсвечено на диаграмме. */
+function bsShowEndState() {
+  const steps = bsTrace.steps;
+  if (!steps || !steps.length) return;
+  renderBlockSchemeStep(steps.length - 1);
+  bsStepIndex = steps.length;
+  bsSetActiveLine(null);
+  bsHighlightRole('end');
+  bsUpdateControls();
+}
+
 let bsAnimating = false;   // guards against overlapping token flights from rapid key presses
 
 function bsStepPrev() {
-  if (bsAnimating || bsStepIndex <= 0) return;
+  if (bsAnimating || bsStepIndex === -1) return;
+  if (bsStepIndex === 0) { bsShowStartState(); return; }   // назад в "Начало"
   renderBlockSchemeStep(bsStepIndex - 1);   // snap back, no token animation (mirrors Classic View)
+                                             // из состояния "Конец" (bsStepIndex===steps.length)
+                                             // корректно возвращает на последний реальный шаг
 }
 
 /* Forward step: diff current vs. next step, fly one token per changed
@@ -1339,7 +1579,50 @@ function bsStepPrev() {
 function bsStepNext(onDone) {
   if (bsAnimating) return;   // ignore presses while a token is mid-flight
   const steps = bsTrace.steps;
-  if (!steps || !steps.length || bsStepIndex >= steps.length - 1) { if (onDone) onDone(); return; }
+  if (!steps || !steps.length) { if (onDone) onDone(); return; }
+
+  // Уже на "Конец" (bsStepIndex === steps.length) — дальше идти некуда.
+  if (bsStepIndex >= steps.length) { if (onDone) onDone(); return; }
+
+  // "Начало" → первый реальный шаг: шарик летит от овала "Начало" к первому
+  // подсвеченному блоку, вместо того чтобы тот сразу оказывался подсвечен
+  // без всякого перехода.
+  if (bsStepIndex === -1) {
+    const startNode = bsFindByRole('start');
+    const firstStep = steps[0];
+    const toNode = firstStep.line != null ? bsFindNodeByLine(firstStep.line) : null;
+    const commit = () => { renderBlockSchemeStep(0); if (onDone) onDone(); };
+    if (startNode && toNode) {
+      bsAnimating = true;
+      bsAnimateFlowCursor([P(startNode.cx, startNode.cy), P(toNode.cx, toNode.cy)], null, () => {
+        bsAnimating = false;
+        commit();
+      });
+    } else {
+      commit();
+    }
+    return;
+  }
+
+  // Последний реальный шаг → "Конец": симметрично — шарик летит от последнего
+  // подсвеченного блока к овалу "Конец", вместо того чтобы работа тихо
+  // обрывалась на последнем действии без видимого завершения.
+  if (bsStepIndex === steps.length - 1) {
+    const lastStep  = steps[bsStepIndex];
+    const endNode   = bsFindByRole('end');
+    const fromNode  = lastStep.line != null ? bsFindNodeByLine(lastStep.line) : null;
+    const commit = () => { bsShowEndState(); if (onDone) onDone(); };
+    if (fromNode && endNode) {
+      bsAnimating = true;
+      bsAnimateFlowCursor([P(fromNode.cx, fromNode.cy), P(endNode.cx, endNode.cy)], null, () => {
+        bsAnimating = false;
+        commit();
+      });
+    } else {
+      commit();
+    }
+    return;
+  }
 
   const curStep  = steps[bsStepIndex];
   const nextIdx  = bsStepIndex + 1;
@@ -1473,7 +1756,9 @@ function bsNearNode(pt, node) {
 function bsFindNodeByLine(line) {
   const candidates = bsLnodes.filter(n => n.line === line);
   if (candidates.length <= 1) return candidates[0];
-  return candidates.find(n => n.type !== 'condition' && n.type !== 'loop') || candidates[0];
+  return candidates.find(n => n.type !== 'condition' && n.type !== 'loop')
+      || candidates.find(n => n.type !== 'loop')
+      || candidates[0];
 }
 
 function bsFindEdgePath(fromLine, toLine) {
@@ -1481,8 +1766,8 @@ function bsFindEdgePath(fromLine, toLine) {
   if (bsPathCache.has(cacheKey)) return bsPathCache.get(cacheKey);
 
   const result = (() => {
-    const fromNode = bsLnodes.find(n => n.line === fromLine);
-    const toNode   = bsLnodes.find(n => n.line === toLine);
+    const fromNode = bsFindNodeByLine(fromLine);
+    const toNode   = bsFindNodeByLine(toLine);
     if (!fromNode || !toNode) return null;
 
     const startEdges = bsEdges.filter(e => e.points && e.points.length >= 2 && bsNearNode(e.points[0], fromNode));
@@ -1596,8 +1881,8 @@ function bsUpdatePlayBtn() {
 function bsUpdateControls() {
   const steps   = bsTrace.steps;
   const len     = steps ? steps.length : 0;
-  const atStart = bsStepIndex <= 0;
-  const atEnd   = !len || bsStepIndex >= len - 1;
+  const atStart = bsStepIndex < 0;        // -1 = стоим на "Начало", дальше назад некуда
+  const atEnd   = !len || bsStepIndex >= len;   // len = стоим на "Конец", дальше вперёд некуда
   const first = document.getElementById('bs-ctrl-first');
   const prev  = document.getElementById('bs-ctrl-prev');
   const next  = document.getElementById('bs-ctrl-next');
@@ -1618,21 +1903,19 @@ function bsStopAutoplay() {
 function bsGotoStart() {
   bsStopAutoplay();
   if (!bsTrace.steps || !bsTrace.steps.length) return;
-  bsPrevVars   = {};
-  bsPrevOutput = [];
-  renderBlockSchemeStep(0);
+  bsShowStartState();
 }
 
 function bsGotoEnd() {
   bsStopAutoplay();
   if (!bsTrace.steps || !bsTrace.steps.length) return;
-  renderBlockSchemeStep(bsTrace.steps.length - 1);
+  bsShowEndState();
 }
 
 function bsScheduleNextStep() {
   if (!bsIsPlaying) return;
   const steps = bsTrace.steps;
-  if (!steps || bsStepIndex >= steps.length - 1) { bsStopAutoplay(); return; }
+  if (!steps || bsStepIndex >= steps.length) { bsStopAutoplay(); return; }
   bsStepNext(() => {
     if (!bsIsPlaying) return;
     bsPlayTimer = setTimeout(bsScheduleNextStep, BS_SPEED_PAUSE[bsSpeed] || 450);
@@ -1642,10 +1925,8 @@ function bsScheduleNextStep() {
 function bsTogglePlay() {
   if (bsIsPlaying) { bsStopAutoplay(); return; }
   if (!bsTrace.steps || !bsTrace.steps.length) return;
-  if (bsStepIndex >= bsTrace.steps.length - 1) {   // at the end — restart from the top
-    bsPrevVars   = {};
-    bsPrevOutput = [];
-    renderBlockSchemeStep(0);
+  if (bsStepIndex >= bsTrace.steps.length) {   // at the very end — restart from "Начало"
+    bsShowStartState();
   }
   bsIsPlaying = true;
   bsUpdatePlayBtn();
