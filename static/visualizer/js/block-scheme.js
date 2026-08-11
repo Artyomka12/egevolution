@@ -43,7 +43,7 @@ function registerBreak(loopNode, fromCx, fromBottomY) {
   _pendingBreaks.set(loopNode.id, arr);
 }
 
-function resolveBreaks(loopNode, targetCx, targetY, edges) {
+function resolveBreaks(loopNode, targetCx, targetY, edges, targetLoopNode) {
   const pending = _pendingBreaks.get(loopNode.id);
   if (!pending) return;
   const D = BS.BACK_DOWN;
@@ -61,12 +61,36 @@ function resolveBreaks(loopNode, targetCx, targetY, edges) {
     // цикла (её курс уже давно свёрнул в сторону) — короткое, чёткое
     // перпендикулярное пересечение вместо развёрнутого наложения линий.
     // Когда цель ВЫШЕ (break внутри вложенного цикла, ведущий к продолжению
-    // внешнего) — прежняя геометрия (ранний поворот) сохранена без изменений.
-    const turnY = targetY >= fromBottomY
-      ? Math.max(fromBottomY + D, loopNode.frameBot + D)
-      : fromBottomY + D;
-    edges.push(ePath([P(fromCx, fromBottomY), P(fromCx, turnY),
-                      P(targetCx, turnY), P(targetCx, targetY)]));
+    // внешнего) — старая геометрия ("повернуть сразу и идти по общей
+    // центральной колонке") резала диаграмму насквозь через условие/
+    // вложенный цикл, лежащие на той же колонке (баг №1, найден на реальном
+    // коде). Промежуточная версия вела линию вдоль границы рамки СВОЕГО
+    // (внутреннего) цикла — код уже не резала, но эта граница не совпадает с
+    // той, вдоль которой идёт родная стрелка возврата внешнего цикла
+    // (nestedLoopBackArrow всегда возвращается через targetLoopNode.frameLeft,
+    // а не через границу цикла, где стоит сам break) — рядом оказывались две
+    // почти параллельные, но не совпадающие линии (баг №2, тоже найден на
+    // реальном коде). Теперь break намеренно ведётся к ТОЙ ЖЕ границе, что и
+    // родная стрелка (targetLoopNode.frameLeft) — визуально сливается с ней
+    // вместо того, чтобы идти своим отдельным почти-параллельным путём.
+    // targetLoopNode известен только когда цель — хексагон внешнего цикла
+    // (резолвится лениво в resolveBackArrows(), т.к. на момент регистрации
+    // break его frameLeft ещё не вычислен — тот же приём, что и у
+    // nestedLoopBackArrow/isBackArrow ниже); если его нет — старый запасной
+    // вариант (граница СВОЕГО цикла), чтобы не потерять ребро совсем.
+    if (targetY >= fromBottomY) {
+      const turnY = Math.max(fromBottomY + D, loopNode.frameBot + D);
+      edges.push(ePath([P(fromCx, fromBottomY), P(fromCx, turnY),
+                        P(targetCx, turnY), P(targetCx, targetY)]));
+    } else if (targetLoopNode) {
+      edges.push({ isBreakToOuter: true, fromCx, fromBottomY, loopNode, targetCx, targetY, targetLoopNode });
+    } else {
+      const clearY = loopNode.frameBot + D;
+      const exitX = Math.abs(fromCx - loopNode.frameLeft) <= Math.abs(loopNode.frameRight - fromCx)
+        ? loopNode.frameLeft : loopNode.frameRight;
+      edges.push(ePath([P(fromCx, fromBottomY), P(fromCx, clearY),
+                        P(exitX, clearY), P(exitX, targetY), P(targetCx, targetY)]));
+    }
   }
   _pendingBreaks.delete(loopNode.id);
 }
@@ -887,7 +911,7 @@ function placeLoop(node, cx, topY, lnodes, edges) {
         // break внутри вложенного цикла, если сам он — последний оператор
         // внешнего, ведёт туда же, куда естественное завершение вложенного
         // цикла — к продолжению итерации внешнего (его собственный хексагон).
-        resolveBreaks(innerLoopNode, ln.cx, ln.cy, edges);
+        resolveBreaks(innerLoopNode, ln.cx, ln.cy, edges, ln);
       } else {
         // Track for exit arrow to next body element
         lastInnerLoop = lnodes.find(n => n.id === bn.id);
@@ -1015,6 +1039,31 @@ function resolveBackArrows(edges) {
       delete e.isNestedLoopBackArrow;
       delete e.innerLoopNode;
       delete e.outerLoopNode;
+
+    } else if (e.isBreakToOuter) {
+      // break внутри вложенного цикла, ведущий к продолжению внешнего —
+      // намеренно проведён к ТОЙ ЖЕ границе (targetLoopNode.frameLeft) и в
+      // ту же точку входа (левый кончик хексагона), что и родная стрелка
+      // возврата внешнего цикла выше (см. isNestedLoopBackArrow) — визуально
+      // сливается с ней, а не идёт рядом отдельной почти-параллельной линией.
+      const D = BS.BACK_DOWN;
+      const clearY  = e.loopNode.frameBot + D;   // ниже рамки СВОЕГО (внутреннего) цикла целиком
+      const outer   = e.targetLoopNode;
+      const outerLx = outer.cx - outer.w / 2;
+      e.points = [
+        P(e.fromCx, e.fromBottomY),
+        P(e.fromCx, clearY),
+        P(outer.frameLeft, clearY),
+        P(outer.frameLeft, e.targetY),
+        P(outerLx, e.targetY),
+      ];
+      delete e.isBreakToOuter;
+      delete e.fromCx;
+      delete e.fromBottomY;
+      delete e.loopNode;
+      delete e.targetCx;
+      delete e.targetY;
+      delete e.targetLoopNode;
 
     } else if (e.isLoopExitConnector) {
       const ln     = e.loopNode;
