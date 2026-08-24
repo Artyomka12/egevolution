@@ -14,6 +14,7 @@ import json
 import os
 import re
 import sqlite3
+import threading
 import time
 import urllib.request
 import urllib.parse
@@ -62,7 +63,7 @@ def handle_not_found(e):
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-APP_VERSION = "2.8.0"
+APP_VERSION = "2.9.0"
 
 
 @app.context_processor
@@ -271,6 +272,31 @@ def init_db():
         attempts INTEGER DEFAULT 0,
         is_correct INTEGER DEFAULT 0,
         last_attempt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(user_id, task_num, practice_task_id),
+        FOREIGN KEY (user_id) REFERENCES users (id)
+    )""")
+
+    # Последний проверенный ответ на задание урока (независимо от того, верный он или нет) —
+    # чтобы при повторном открытии урока поле ответа не было пустым
+    db.execute("""CREATE TABLE IF NOT EXISTS user_lesson_last_answer (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        lesson_id INTEGER NOT NULL,
+        task_id INTEGER NOT NULL,
+        answer_json TEXT NOT NULL,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(user_id, lesson_id, task_id),
+        FOREIGN KEY (user_id) REFERENCES users (id)
+    )""")
+
+    # Последний проверенный ответ на практическую задачу теории (аналогично user_lesson_last_answer)
+    db.execute("""CREATE TABLE IF NOT EXISTS user_theory_last_answer (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        task_num INTEGER NOT NULL,
+        practice_task_id INTEGER NOT NULL,
+        answer_json TEXT NOT NULL,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         UNIQUE(user_id, task_num, practice_task_id),
         FOREIGN KEY (user_id) REFERENCES users (id)
     )""")
@@ -616,7 +642,12 @@ def register():
         db.commit()
         db.close()
 
-        notify_new_application(last_name, first_name, phone, contact_type, contact_value)
+        # Уведомление в Telegram не должно задерживать ответ пользователю — отправляем в фоне
+        threading.Thread(
+            target=notify_new_application,
+            args=(last_name, first_name, phone, contact_type, contact_value),
+            daemon=True,
+        ).start()
 
         flash("✅ Заявка отправлена! Мы свяжемся с вами в ближайшее время.", "success")
         return redirect(url_for("register"))
@@ -1141,17 +1172,26 @@ def check_lesson_answer(task, user_answer):
 
 
 def get_lesson_task_progress(user_id, lesson_id, task_id):
-    """Получает прогресс конкретного задания урока"""
+    """Получает прогресс конкретного задания урока, включая последний проверенный ответ"""
     db = get_db()
     result = db.execute(
         """SELECT attempts, is_correct FROM user_lesson_progress
                            WHERE user_id=? AND lesson_id=? AND task_id=?""",
         (user_id, lesson_id, task_id),
     ).fetchone()
+    answer_row = db.execute(
+        "SELECT answer_json FROM user_lesson_last_answer WHERE user_id=? AND lesson_id=? AND task_id=?",
+        (user_id, lesson_id, task_id),
+    ).fetchone()
     db.close()
+    last_answer = json.loads(answer_row["answer_json"]) if answer_row else None
     if result:
-        return {"attempts": result["attempts"], "is_correct": result["is_correct"]}
-    return {"attempts": 0, "is_correct": 0}
+        return {
+            "attempts": result["attempts"],
+            "is_correct": result["is_correct"],
+            "last_answer": last_answer,
+        }
+    return {"attempts": 0, "is_correct": 0, "last_answer": last_answer}
 
 
 # === ЛОГИКА ТЕОРИИ ===
@@ -1250,6 +1290,17 @@ def check_theory_answer():
             (user_id, task_num, practice_task_id, 1 if is_correct else 0),
         )
         result = {"attempts": 1, "is_correct": 1 if is_correct else 0}
+
+    db.execute(
+        """
+        INSERT INTO user_theory_last_answer (user_id, task_num, practice_task_id, answer_json)
+        VALUES (?, ?, ?, ?)
+        ON CONFLICT(user_id, task_num, practice_task_id) DO UPDATE SET
+            answer_json = excluded.answer_json,
+            updated_at = CURRENT_TIMESTAMP
+        """,
+        (user_id, task_num, practice_task_id, json.dumps(user_answer)),
+    )
 
     db.commit()
     db.close()
@@ -1393,13 +1444,25 @@ def theory_task(task_num):
                         "SELECT attempts, is_correct FROM user_theory_progress WHERE user_id=? AND task_num=? AND practice_task_id=?",
                         (user_id, task_num, task_id),
                     ).fetchone()
+                    answer_row = db.execute(
+                        "SELECT answer_json FROM user_theory_last_answer WHERE user_id=? AND task_num=? AND practice_task_id=?",
+                        (user_id, task_num, task_id),
+                    ).fetchone()
+                    last_answer = (
+                        json.loads(answer_row["answer_json"]) if answer_row else None
+                    )
                     if res:
                         task_progress[task_id] = {
                             "attempts": res["attempts"],
                             "is_correct": res["is_correct"],
+                            "last_answer": last_answer,
                         }
                     else:
-                        task_progress[task_id] = {"attempts": 0, "is_correct": 0}
+                        task_progress[task_id] = {
+                            "attempts": 0,
+                            "is_correct": 0,
+                            "last_answer": last_answer,
+                        }
                 db.close()
         except:
             pass
@@ -1669,6 +1732,17 @@ def check_lesson_task():
             (user_id, lesson_id, task_id, 1 if is_correct else 0),
         )
         result = {"attempts": 1, "is_correct": 1 if is_correct else 0}
+
+    db.execute(
+        """
+        INSERT INTO user_lesson_last_answer (user_id, lesson_id, task_id, answer_json)
+        VALUES (?, ?, ?, ?)
+        ON CONFLICT(user_id, lesson_id, task_id) DO UPDATE SET
+            answer_json = excluded.answer_json,
+            updated_at = CURRENT_TIMESTAMP
+        """,
+        (user_id, lesson_id, task_id, json.dumps(user_answer)),
+    )
 
     db.commit()
     db.close()

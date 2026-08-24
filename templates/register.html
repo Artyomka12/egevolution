@@ -20,7 +20,7 @@
 
         {% include 'components/flash.html' %}
 
-        <form class="auth-form" method="POST">
+        <form class="auth-form" method="POST" onsubmit="return handleRegisterSubmit(this)">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
             <div class="form-field">
@@ -65,7 +65,7 @@
                        placeholder="@username" maxlength="64" required autocomplete="off">
             </div>
 
-            <button type="submit" class="btn btn-primary btn--full">Отправить заявку</button>
+            <button type="submit" class="btn btn-primary btn--full" id="registerSubmitBtn">Отправить заявку</button>
         </form>
 
         <p class="auth-footer-link">Уже есть аккаунт? <a href="/login">Войти</a></p>
@@ -74,6 +74,15 @@
 </div>
 
 <script>
+    // Защита от повторной отправки формы: блокируем кнопку сразу после клика,
+    // пока браузер не перейдёт на новую страницу (успех/ошибка/редирект)
+    function handleRegisterSubmit(form) {
+        var btn = document.getElementById('registerSubmitBtn');
+        btn.disabled = true;
+        btn.textContent = 'Отправляем...';
+        return true;
+    }
+
     function updateContactField() {
         var type = document.querySelector('input[name="contact_type"]:checked').value;
         var label = document.getElementById('contact_value_label');

@@ -179,12 +179,34 @@
 
 {% block scripts %}
 <script>
+    // Подставляет последний проверенный ответ обратно в поле (одно/два поля или таблица)
+    function applyLastAnswer(taskId, lastAnswer) {
+        if (lastAnswer === null || lastAnswer === undefined) return;
+        if (Array.isArray(lastAnswer) && Array.isArray(lastAnswer[0])) {
+            lastAnswer.forEach((row, r) => {
+                row.forEach((val, c) => {
+                    const cell = document.getElementById(`ans-${taskId}-${r}-${c}`);
+                    if (cell) cell.value = val;
+                });
+            });
+        } else if (Array.isArray(lastAnswer)) {
+            lastAnswer.forEach((val, i) => {
+                const input = document.getElementById(`ans-${taskId}-${i}`);
+                if (input) input.value = val;
+            });
+        } else {
+            const input = document.getElementById(`ans-${taskId}-0`);
+            if (input) input.value = lastAnswer;
+        }
+    }
+
     // Инициализация квадратиков прогресса
     const taskProgress = {{ task_progress | tojson }};
     for (const [taskId, progress] of Object.entries(taskProgress)) {
         const square = document.getElementById(`task-square-${taskId}`);
         if (progress.attempts > 0) square.classList.add('attempted');
         if (progress.is_correct == 1) square.classList.add('correct');
+        applyLastAnswer(taskId, progress.last_answer);
     }
 
     function checkTask(taskIndex, correctAnswerRaw) {

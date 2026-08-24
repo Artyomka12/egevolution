@@ -229,6 +229,28 @@
 
 {% block scripts %}
 <script>
+    // Подставляет последний проверенный ответ обратно в поле (одно/два поля или таблица)
+    const teoriaTaskNum = {{ task_num }};
+    function applyLastAnswer(taskNum, taskIdx, lastAnswer) {
+        if (lastAnswer === null || lastAnswer === undefined) return;
+        if (Array.isArray(lastAnswer) && Array.isArray(lastAnswer[0])) {
+            lastAnswer.forEach((row, r) => {
+                row.forEach((val, c) => {
+                    const cell = document.getElementById(`practice-grid-${taskNum}-${taskIdx}-${r}-${c}`);
+                    if (cell) cell.value = val;
+                });
+            });
+        } else if (Array.isArray(lastAnswer)) {
+            lastAnswer.forEach((val, i) => {
+                const input = document.getElementById(`practice-answer-${taskNum}-${taskIdx}-${i}`);
+                if (input) input.value = val;
+            });
+        } else {
+            const input = document.getElementById(`practice-answer-${taskNum}-${taskIdx}-0`);
+            if (input) input.value = lastAnswer;
+        }
+    }
+
     // Инициализация прогресса
     const progressData = {{ task_progress | tojson }};
     for (const [idx, data] of Object.entries(progressData)) {
@@ -237,6 +259,7 @@
             if (data.attempts > 0) sq.classList.add('attempted');
             if (data.is_correct == 1) sq.classList.add('correct');
         }
+        applyLastAnswer(teoriaTaskNum, idx, data.last_answer);
     }
 
     function checkPracticeTask(event, taskNum, taskIndex) {
