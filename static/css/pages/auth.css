@@ -71,6 +71,21 @@
 }
 
 
+/* ── Строки доверия под кнопкой отправки ────────────────── */
+.form-trust {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.form-trust span {
+    font-size: 0.8em;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+}
+
+
 /* ── Ссылка в низу карточки ─────────────────────────────── */
 .auth-footer-link {
     margin-top: 22px;

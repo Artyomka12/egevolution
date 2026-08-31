@@ -63,7 +63,7 @@ def handle_not_found(e):
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-APP_VERSION = "2.9.0"
+APP_VERSION = "2.10.0"
 
 
 @app.context_processor

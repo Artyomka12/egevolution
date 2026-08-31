@@ -710,6 +710,70 @@
         }
 
         /* ============================================================
+           ЛЕНТА КЛЮЧЕВЫХ СЛОВ — бесшовная бегущая строка, вырывается
+           на всю ширину экрана (overflow-x на body уже hidden)
+        ============================================================ */
+        .ribbon-sec {
+            width: 100vw;
+            margin-left: calc(50% - 50vw);
+            margin-right: calc(50% - 50vw);
+            margin-bottom: 56px;
+            overflow: hidden;
+        }
+
+        .ribbon {
+            border-top: 1px solid rgba(37, 99, 235, 0.14);
+            border-bottom: 1px solid rgba(37, 99, 235, 0.14);
+            background: rgba(219, 234, 254, 0.4);
+            padding: 13px 0;
+            overflow: hidden;
+        }
+
+        .ribbon-track {
+            display: flex;
+            width: max-content;
+            animation: ribbon-scroll 140s linear infinite;
+        }
+
+        .ribbon-group {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .ribbon-group span {
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #1d4ed8;
+            white-space: nowrap;
+            padding: 0 22px;
+        }
+
+        .ribbon-group i {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: rgba(37, 99, 235, 0.4);
+            flex-shrink: 0;
+        }
+
+        @keyframes ribbon-scroll {
+            from {
+                transform: translateX(0);
+            }
+
+            to {
+                transform: translateX(-50%);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .ribbon-track {
+                animation: none;
+            }
+        }
+
+        /* ============================================================
            С ЧЕГО НАЧАТЬ
         ============================================================ */
         .start-section {
@@ -1356,6 +1420,19 @@
             transform: translateY(-1px);
         }
 
+        .iz-form-trust {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 12px;
+        }
+
+        .iz-form-trust span {
+            font-size: 0.78em;
+            color: #94a3b8;
+            line-height: 1.4;
+        }
+
         .iz-apply-alt {
             margin-top: 18px;
             padding-top: 16px;
@@ -1541,6 +1618,62 @@
             font-size: 0.84em;
             color: #475569;
             line-height: 1.58;
+        }
+
+        /* ============================================================
+           КАК ПРОХОДИТ ПОДГОТОВКА
+        ============================================================ */
+        .how-section {
+            margin-bottom: 72px;
+        }
+
+        .how-steps {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 14px;
+        }
+
+        .how-step {
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(37, 99, 235, 0.13);
+            border-radius: 14px;
+            padding: 22px 18px;
+            text-align: center;
+            box-shadow: 0 4px 18px rgba(37, 99, 235, 0.07);
+            transition: border-color 0.22s, box-shadow 0.22s, transform 0.22s;
+        }
+
+        .how-step:hover {
+            border-color: rgba(37, 99, 235, 0.26);
+            box-shadow: 0 10px 28px rgba(37, 99, 235, 0.13);
+            transform: translateY(-3px);
+        }
+
+        .how-step-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(37, 99, 235, 0.09);
+            color: #1d4ed8;
+            font-size: 0.9em;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .how-step-title {
+            font-size: 0.95em;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        .how-step-desc {
+            font-size: 0.82em;
+            color: #475569;
+            line-height: 1.5;
         }
 
         /* ============================================================
@@ -1811,6 +1944,244 @@
         .visualizer-cta-btn:hover {
             transform: translateY(-2px);
             opacity: 0.9;
+        }
+
+        /* ============================================================
+           ОТЗЫВЫ — бегущая лента карточек (тот же приём, что и лента
+           ключевых слов выше: 2 группы по несколько повторов списка,
+           чтобы на любой ширине экрана не было видно места склейки)
+        ============================================================ */
+        .reviews-section {
+            margin-bottom: 72px;
+        }
+
+        .reviews-belt {
+            width: 100vw;
+            margin-left: calc(50% - 50vw);
+            margin-right: calc(50% - 50vw);
+            overflow: hidden;
+            padding: 6px 0 14px;
+        }
+
+        .reviews-track {
+            display: flex;
+            width: max-content;
+            animation: reviews-scroll 130s linear infinite;
+        }
+
+        .reviews-track:hover {
+            animation-play-state: paused;
+        }
+
+        .reviews-group {
+            display: flex;
+            flex-shrink: 0;
+        }
+
+        @keyframes reviews-scroll {
+            from {
+                transform: translateX(0);
+            }
+
+            to {
+                transform: translateX(-50%);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .reviews-track {
+                animation: none;
+            }
+        }
+
+        .review-card {
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(37, 99, 235, 0.13);
+            border-radius: 14px;
+            padding: 22px 22px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 4px 18px rgba(37, 99, 235, 0.07);
+            transition: border-color 0.22s, box-shadow 0.22s, transform 0.22s;
+            width: 340px;
+            flex-shrink: 0;
+            margin-right: 14px;
+            cursor: default;
+        }
+
+        .review-card:hover {
+            border-color: rgba(37, 99, 235, 0.26);
+            box-shadow: 0 10px 28px rgba(37, 99, 235, 0.13);
+            transform: translateY(-3px);
+        }
+
+        .review-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .review-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 800;
+            font-size: 0.95em;
+        }
+
+        .review-avatar-blue {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        }
+
+        .review-avatar-purple {
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+        }
+
+        .review-avatar-green {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+        }
+
+        .review-avatar-cyan {
+            background: linear-gradient(135deg, #38bdf8, #0284c7);
+        }
+
+        .review-name {
+            font-weight: 700;
+            color: #0f172a;
+            font-size: 0.92em;
+            line-height: 1.3;
+        }
+
+        .review-meta {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 0.76em;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+
+        .review-source {
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: rgba(37, 99, 235, 0.08);
+            color: #1d4ed8;
+            font-weight: 700;
+            font-size: 0.94em;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .review-stars {
+            color: #f59e0b;
+            font-size: 0.85em;
+            letter-spacing: 1px;
+        }
+
+        .review-text {
+            font-size: 0.86em;
+            color: #475569;
+            line-height: 1.62;
+        }
+
+        .reviews-more {
+            text-align: center;
+            margin-top: 26px;
+        }
+
+        .reviews-more a {
+            font-size: 0.88em;
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .reviews-more a:hover {
+            opacity: 0.78;
+        }
+
+        /* ============================================================
+           FAQ
+        ============================================================ */
+        .faq-section {
+            margin-bottom: 72px;
+        }
+
+        .faq-list {
+            max-width: 760px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .faq-item {
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(37, 99, 235, 0.13);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .faq-item.open {
+            border-color: rgba(37, 99, 235, 0.28);
+            box-shadow: 0 6px 22px rgba(37, 99, 235, 0.1);
+        }
+
+        .faq-q {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 18px 20px;
+            background: none;
+            border: none;
+            text-align: left;
+            font-family: inherit;
+            font-size: 0.95em;
+            font-weight: 600;
+            color: #0f172a;
+            cursor: pointer;
+        }
+
+        .faq-q-plus {
+            flex-shrink: 0;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(37, 99, 235, 0.09);
+            color: #1d4ed8;
+            font-size: 1.1em;
+            line-height: 1;
+            transition: transform 0.22s;
+        }
+
+        .faq-item.open .faq-q-plus {
+            transform: rotate(45deg);
+        }
+
+        .faq-a {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.28s ease;
+        }
+
+        .faq-a p {
+            padding: 0 20px 18px;
+            margin: 0;
+            font-size: 0.88em;
+            color: #475569;
+            line-height: 1.62;
         }
 
         /* ============================================================
@@ -2159,6 +2530,10 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
+            .how-steps {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
         }
 
         /* ============================================================
@@ -2311,6 +2686,27 @@
 
         .advantages-list .reveal:nth-child(4) {
             transition-delay: 240ms;
+        }
+
+        /* Stagger: how-steps */
+        .how-steps .reveal:nth-child(1) {
+            transition-delay: 0ms;
+        }
+
+        .how-steps .reveal:nth-child(2) {
+            transition-delay: 70ms;
+        }
+
+        .how-steps .reveal:nth-child(3) {
+            transition-delay: 140ms;
+        }
+
+        .how-steps .reveal:nth-child(4) {
+            transition-delay: 210ms;
+        }
+
+        .how-steps .reveal:nth-child(5) {
+            transition-delay: 280ms;
         }
 
         /* Stagger: updates */
@@ -2554,6 +2950,25 @@
                 padding: 18px 18px;
             }
 
+            /* Как проходит подготовка */
+            .how-steps {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .how-step {
+                padding: 18px 16px;
+                text-align: left;
+                display: flex;
+                align-items: center;
+                gap: 14px;
+            }
+
+            .how-step-num {
+                margin-bottom: 0;
+                flex-shrink: 0;
+            }
+
             /* Features */
             .features-grid {
                 grid-template-columns: 1fr;
@@ -2562,6 +2977,28 @@
 
             .feature-card {
                 padding: 16px 14px;
+            }
+
+            /* Лента ключевых слов */
+            .ribbon-group span {
+                font-size: 0.82em;
+                padding: 0 16px;
+            }
+
+            /* Отзывы — карточки чуть уже на маленьком экране */
+            .review-card {
+                width: 280px;
+                padding: 18px 18px 16px;
+            }
+
+            /* FAQ */
+            .faq-q {
+                padding: 15px 16px;
+                font-size: 0.9em;
+            }
+
+            .faq-a p {
+                padding: 0 16px 15px;
             }
 
             /* Updates */
@@ -2793,6 +3230,31 @@
 
         </section>
 
+        <!-- ЛЕНТА КЛЮЧЕВЫХ СЛОВ -->
+        <div class="ribbon-sec">
+            <div class="ribbon">
+                <!-- Список повторён по несколько раз внутри каждой из двух групп, чтобы
+                     суммарная ширина одной группы гарантированно превышала ширину любого
+                     монитора (иначе на широких экранах видно место склейки анимации) -->
+                {% set ribbon_items = [
+                    '27 номеров ЕГЭ', 'Теория по каждой теме', '2900+ задач в базе',
+                    'Полные варианты с таймером', 'Визуализатор Python-кода',
+                    'Отслеживание прогресса', 'Уроки с нуля'
+                ] %}
+                <div class="ribbon-track" aria-hidden="true">
+                    {% for group in range(2) %}
+                    <div class="ribbon-group">
+                        {% for repeat in range(4) %}
+                        {% for item in ribbon_items %}
+                        <span>{{ item }}</span><i></i>
+                        {% endfor %}
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
         <!-- С ЧЕГО НАЧАТЬ -->
         <section class="start-section">
             <div class="section-heading reveal">
@@ -2997,7 +3459,8 @@
                         <h3 class="iz-apply-title">Запишись на первое бесплатное занятие</h3>
                         <p class="iz-apply-sub">Разберём твой уровень, составим план подготовки и ответим на вопросы.
                         </p>
-                        <form class="iz-apply-form" method="POST" action="{{ url_for('register') }}">
+                        <form class="iz-apply-form" method="POST" action="{{ url_for('register') }}"
+                            onsubmit="return handleIzApplySubmit(this)">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                             <div class="iz-form-field">
@@ -3046,7 +3509,11 @@
                                     placeholder="@username" maxlength="64" required autocomplete="off">
                             </div>
 
-                            <button type="submit" class="iz-form-submit">Отправить заявку</button>
+                            <button type="submit" class="iz-form-submit" id="izFormSubmit">Отправить заявку</button>
+                            <div class="iz-form-trust">
+                                <span>🔒 Не передаём данные третьим лицам — только для связи с вами</span>
+                                <span>💬 Ответим в способе связи, который вы укажете</span>
+                            </div>
                         </form>
 
                         <div class="iz-apply-alt">
@@ -3125,6 +3592,42 @@
                                 подсказок, итоговый балл как на ЕГЭ.</div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- КАК ПРОХОДИТ ПОДГОТОВКА -->
+        <section class="how-section">
+            <div class="section-heading reveal">
+                <h2>Как проходит подготовка</h2>
+                <p>Один маршрут от первого урока до результата на экзамене.</p>
+            </div>
+            <div class="how-steps">
+                <div class="how-step reveal">
+                    <span class="how-step-num">1</span>
+                    <div class="how-step-title">Начальная подготовка</div>
+                    <div class="how-step-desc">Базовые понятия и алгоритмы с нуля, если раньше не изучал информатику
+                    </div>
+                </div>
+                <div class="how-step reveal">
+                    <span class="how-step-num">2</span>
+                    <div class="how-step-title">Теория</div>
+                    <div class="how-step-desc">Материал по каждому из 27 номеров ЕГЭ отдельно, без пробелов</div>
+                </div>
+                <div class="how-step reveal">
+                    <span class="how-step-num">3</span>
+                    <div class="how-step-title">Практика по номерам</div>
+                    <div class="how-step-desc">Тренируешься на задачах из базы по конкретному заданию с проверкой</div>
+                </div>
+                <div class="how-step reveal">
+                    <span class="how-step-num">4</span>
+                    <div class="how-step-title">Полные варианты</div>
+                    <div class="how-step-desc">Тренировочные варианты с разбором ошибок в обычном режиме</div>
+                </div>
+                <div class="how-step reveal">
+                    <span class="how-step-num">5</span>
+                    <div class="how-step-title">Экзамен</div>
+                    <div class="how-step-desc">Симуляция реального ЕГЭ — таймер, без подсказок, итоговый балл</div>
                 </div>
             </div>
         </section>
@@ -3252,6 +3755,119 @@
                 </div>
             </div>
         </div>
+
+        <!-- ОТЗЫВЫ -->
+        {% set site_reviews = [
+            {'avatar': 'blue', 'initial': 'А', 'name': 'Арсений', 'source': 'Авито', 'date': '28 августа',
+             'text': 'Было несколько занятий. На первом пробном всё понравилось, решил начать заниматься и готовиться к экзамену. В итоге вообще не пожалел и спустя 3 недели уже был виден результат, спасибо Артему, очень комфортно с ним заниматься'},
+            {'avatar': 'purple', 'initial': 'Ю', 'name': 'Юлия Сидякина', 'source': 'Авито', 'date': '24 августа',
+             'text': 'У меня уже было несколько занятий с Артемом, доступно и понятно объясняет, терпелив к глупым вопросам. Информация постепенно укладывается по полочкам и не забывается со временем. Нравится подход и заинтересованность'},
+            {'avatar': 'green', 'initial': 'Л', 'name': 'Людмила', 'source': 'Авито', 'date': '23 августа',
+             'text': 'Обратились к Артёму с целью подготовки к ЕГЭ по информатике, взяли пробное занятие, которое действительно оказалось бесплатным, а также интересным, поэтому решили заниматься на постоянной основе. На данный момент прошло уже 4 занятия. Ребёнок доволен, материал подаётся в доступной форме, если что-то непонятно, даются дополнительные пояснения. Важно отметить, что есть контакт с преподавателем, занятия интересные.'},
+            {'avatar': 'cyan', 'initial': 'А', 'name': 'Алёна', 'source': 'Instagram', 'date': None,
+             'text': 'Занятия супер, за 10 месяцев с нулевых знаний дотянули до 88 баллов, занятия проходят в дружелюбной атмосфере, репетитор очень грамотно разжевывает информацию, в целом занятия бомба клад, репетитор крутой чувак 👍💯'},
+            {'avatar': 'blue', 'initial': 'Я', 'name': 'Ярослав', 'source': 'Instagram', 'date': None,
+             'text': 'Очень рады, что нашли объявление Артёма на Авито в августе 2025 года — ни разу не пожалели! Лучший преподаватель для нашего ребёнка. Пробный экзамен был на 44 балла, а по итогам 2026 года сдали настоящий ЕГЭ на 94 балла и поступили на бюджет в нужный вуз. Спасибо огромное, побольше бы таких преподавателей!'},
+            {'avatar': 'purple', 'initial': 'Т', 'name': 'Тимур', 'source': 'Instagram', 'date': None,
+             'text': 'Начал готовиться к ЕГЭ по информатике практически с нуля. Артём всё объяснял понятно, помогал разобраться даже с самыми сложными темами и всегда уделял внимание ошибкам. Благодаря его подходу удалось хорошо сдать экзамен. Большое спасибо за поддержку и качественную подготовку!'},
+            {'avatar': 'green', 'initial': 'А', 'name': 'Аскольд', 'source': 'Instagram', 'date': None,
+             'text': 'Хотим выразить свою огромную благодарность Артёму от всей нашей семьи! Нашли его объявление в 2024 году — старшая сдала экзамен на 90 баллов, а до занятий с Артёмом пробный был на 52. Младший сын в этом году тоже решил сдавать информатику и за 21 занятие смог выйти на 84 балла! Настоящий, хороший, современный преподаватель и супер человек! Спасибо огромное!'}
+        ] %}
+        <section class="reviews-section">
+            <div class="section-heading reveal">
+                <h2>Что говорят ученики и родители</h2>
+                <p>Реальные отзывы с Авито и из Instagram — без купюр.</p>
+            </div>
+            <!-- Список повторён по несколько раз внутри каждой из двух групп — тот же приём,
+                 что и у ленты ключевых слов выше, чтобы на широких экранах не было видно
+                 места склейки анимации -->
+            <div class="reviews-belt">
+                <div class="reviews-track">
+                    {% for group in range(2) %}
+                    <div class="reviews-group">
+                        {% for repeat in range(2) %}
+                        {% for r in site_reviews %}
+                        <article class="review-card">
+                            <div class="review-head">
+                                <span class="review-avatar review-avatar-{{ r.avatar }}">{{ r.initial }}</span>
+                                <div>
+                                    <div class="review-name">{{ r.name }}</div>
+                                    <div class="review-meta"><span class="review-source">{{ r.source }}</span>{% if r.date %}<span>{{ r.date }}</span>{% endif %}</div>
+                                </div>
+                            </div>
+                            <div class="review-stars">★★★★★</div>
+                            <p class="review-text">{{ r.text }}</p>
+                        </article>
+                        {% endfor %}
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="reviews-more reveal">
+                <a href="https://www.instagram.com/ege_evolution" target="_blank">Больше отзывов в Instagram →</a>
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <section class="faq-section">
+            <div class="section-heading reveal">
+                <h2>Частые вопросы</h2>
+                <p>Если не нашли ответ здесь — напишите нам, ответим в удобном вам формате.</p>
+            </div>
+            <div class="faq-list reveal">
+                <div class="faq-item">
+                    <button class="faq-q" type="button" onclick="toggleFaq(this)">
+                        Как получить доступ к платформе?
+                        <span class="faq-q-plus">+</span>
+                    </button>
+                    <div class="faq-a">
+                        <p>Оставьте заявку в форме ниже — укажите телефон и удобный способ связи (Telegram, VK или
+                            MAX). Мы свяжемся с вами и откроем доступ к платформе.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-q" type="button" onclick="toggleFaq(this)">
+                        Можно начать с нуля, без базовых знаний информатики?
+                        <span class="faq-q-plus">+</span>
+                    </button>
+                    <div class="faq-a">
+                        <p>Да. Начальная подготовка ведёт с самых основ — установки Python, переменных и первых
+                            программ — и дальше подводит к теории по каждому из 27 номеров ЕГЭ.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-q" type="button" onclick="toggleFaq(this)">
+                        Как проверяются ответы на задачи?
+                        <span class="faq-q-plus">+</span>
+                    </button>
+                    <div class="faq-a">
+                        <p>Автоматически, сразу после отправки — вы сразу видите, верно решена задача или нет. По
+                            каждой теме сохраняются попытки и прогресс, их можно посмотреть в личной статистике.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-q" type="button" onclick="toggleFaq(this)">
+                        Чем экзаменационный режим отличается от обычного решения варианта?
+                        <span class="faq-q-plus">+</span>
+                    </button>
+                    <div class="faq-a">
+                        <p>В обычном режиме можно проверять каждый ответ по ходу решения. Экзаменационный режим — это
+                            симуляция настоящего ЕГЭ: таймер, без подсказок, итоговый балл выставляется в конце.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-q" type="button" onclick="toggleFaq(this)">
+                        Виден ли мой прогресс и над чем поработать?
+                        <span class="faq-q-plus">+</span>
+                    </button>
+                    <div class="faq-a">
+                        <p>Да — в личной статистике видно, сколько задач решено, сколько тем изучено и по каким
+                            номерам ЕГЭ результаты слабее, чтобы понимать, что подтянуть в первую очередь.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <!-- ЗАПИСЬ НА ЗАНЯТИЕ -->
         <section class="contact-cta-section">
@@ -3668,6 +4284,15 @@
             });
         }
 
+        // Защита от повторной отправки формы заявки — та же логика, что в register.html:
+        // блокируем кнопку сразу после клика, пока браузер не перейдёт на новую страницу
+        function handleIzApplySubmit(form) {
+            var btn = document.getElementById('izFormSubmit');
+            btn.disabled = true;
+            btn.textContent = 'Отправляем...';
+            return true;
+        }
+
         function updateIzContactField() {
             var type = document.querySelector('input[name="contact_type"]:checked').value;
             var label = document.getElementById('izContactValueLabel');
@@ -3681,6 +4306,25 @@
             } else {
                 label.textContent = 'Контакт в MAX';
                 input.placeholder = 'Ссылка или номер';
+            }
+        }
+
+        /* ================================================================
+           FAQ — аккордеон, один открытый вопрос за раз
+        ================================================================ */
+        function toggleFaq(btn) {
+            var item = btn.closest('.faq-item');
+            var answer = item.querySelector('.faq-a');
+            var wasOpen = item.classList.contains('open');
+
+            document.querySelectorAll('.faq-item.open').forEach(function (openItem) {
+                openItem.classList.remove('open');
+                openItem.querySelector('.faq-a').style.maxHeight = null;
+            });
+
+            if (!wasOpen) {
+                item.classList.add('open');
+                answer.style.maxHeight = answer.scrollHeight + 'px';
             }
         }
 
