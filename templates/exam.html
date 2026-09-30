@@ -794,7 +794,7 @@
 
             if (answer) {
                 answers[taskId] = answer;
-                localStorage.setItem(`variant_${variantNum}_answers`, JSON.stringify(answers));
+                localStorage.setItem(`variant_${variantNum}_renumber_2026_answers`, JSON.stringify(answers));
 
                 // Отмечаем как отвеченное
                 document.getElementById(`btn-task-${taskId}`).classList.add('answered');
@@ -811,7 +811,7 @@
 
             if (answer) {
                 answers[taskId] = answer;
-                localStorage.setItem(`variant_${variantNum}_answers`, JSON.stringify(answers));
+                localStorage.setItem(`variant_${variantNum}_renumber_2026_answers`, JSON.stringify(answers));
 
                 document.getElementById(`btn-task-${taskId}`).classList.add('answered');
                 updateProgress();
@@ -842,7 +842,7 @@
                 }
 
                 delete answers[taskId];
-                localStorage.setItem(`variant_${variantNum}_answers`, JSON.stringify(answers));
+                localStorage.setItem(`variant_${variantNum}_renumber_2026_answers`, JSON.stringify(answers));
                 document.getElementById(`btn-task-${taskId}`).classList.remove('answered');
                 updateProgress();
             }
@@ -919,8 +919,8 @@
                     .then(data => {
                         if (data.success) {
                             // Сохраняем локально для страницы результатов
-                            localStorage.setItem(`variant_${variantNum}_answers`, JSON.stringify(answers));
-                            localStorage.setItem(`variant_${variantNum}_time`, timeSpent);
+                            localStorage.setItem(`variant_${variantNum}_renumber_2026_answers`, JSON.stringify(answers));
+                            localStorage.setItem(`variant_${variantNum}_renumber_2026_time`, timeSpent);
                             window.location.href = data.redirect || `/results/${variantNum}`;
                         } else {
                             btn.disabled = false;
@@ -929,8 +929,8 @@
                     .catch(error => {
                         console.error('Ошибка:', error);
                         // Даже при ошибке переходим на страницу результатов
-                        localStorage.setItem(`variant_${variantNum}_answers`, JSON.stringify(answers));
-                        localStorage.setItem(`variant_${variantNum}_time`, timeSpent);
+                        localStorage.setItem(`variant_${variantNum}_renumber_2026_answers`, JSON.stringify(answers));
+                        localStorage.setItem(`variant_${variantNum}_renumber_2026_time`, timeSpent);
                         window.location.href = `/results/${variantNum}`;
                     });
             }

@@ -1,0 +1,59 @@
+/* Shared navigation for the homepage and learning pages. */
+.nh-nav { position: fixed; inset: 0 0 auto; z-index: 150; padding: 14px 24px; pointer-events: none; }
+.nh-nav-inner { max-width: 1440px; margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 9px 14px; border: 1px solid #13223b14; border-radius: 18px; background: #fafaf9ed; backdrop-filter: blur(18px); pointer-events: auto; box-shadow: 0 5px 24px #10234206; transition: background .2s, border-color .2s; }
+.nh-brand { font-size: 16px; font-weight: 700; letter-spacing: -.04em; text-decoration: none; white-space: nowrap; padding: 5px 8px; }
+.nh-brand { display: inline-flex; align-items: center; flex-shrink: 0; }
+.nh-brand-icon { display: block; width: 28px; height: 28px; object-fit: contain; margin-right: 8px; }
+.nh-brand span { color: #527ac8; }
+.nh-nav-center, .nh-nav-right { display: flex; align-items: center; gap: 18px; }
+.nh-menu { position: relative; }
+.nh-menu summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 16px; padding: 9px 14px; font-size: 12px; border: 1px solid #18284320; border-radius: 10px; }
+.nh-menu summary::-webkit-details-marker { display: none; }
+.nh-chevron { transition: transform .2s; }
+.nh-menu[open] .nh-chevron { transform: rotate(180deg); }
+.nh-menu-panel { position: absolute; top: calc(100% + 12px); left: 0; width: 294px; padding: 10px; border: 1px solid #dce3ee; border-radius: 15px; background: #fff; color: #17253d; box-shadow: 0 18px 48px #0b173426; }
+.nh-menu-panel a { display: flex; align-items: center; gap: 14px; text-decoration: none; font-size: 13px; padding: 12px 10px; border-radius: 8px; }
+.nh-menu-panel a:hover { background: #edf3fb; }
+.nh-menu-panel .nh-icon { display: block; width: 19px; height: 19px; flex-shrink: 0; color: #7289a8; }
+.nh-menu-panel .nh-menu-about { margin-top: 6px; border-top: 1px solid #e9edf4; border-radius: 0; font-size: 11px; color: #60718c; }
+.nh-nav-visualizer, .nh-nav-link { text-decoration: none; font-size: 12px; white-space: nowrap; }
+.nh-nav-link { border: 0; cursor: pointer; padding: 9px 0; background: none; color: inherit; font: 500 12px var(--sans, Inter, sans-serif); }
+.nh-logout { margin: 0; }
+.nh-cta-nav { font-size: 12px; font-weight: 600; padding: 10px 17px; border-radius: 10px; text-decoration: none; background: #14233e; color: white; white-space: nowrap; }
+.nh-menu-mobile { display: none; }
+
+.nh-nav, .nh-nav * { box-sizing: border-box; }
+.nh-nav { color: #14233d; font-family: Inter, -apple-system, sans-serif; line-height: 1.5; }
+.nh-nav a { color: inherit; }
+.nh-nav .nh-cta-nav { color: #fff; }
+.nh-nav a:focus-visible, .nh-nav button:focus-visible, .nh-nav summary:focus-visible { outline: 3px solid #5f91f3; outline-offset: 5px; }
+.nh-nav-spacer { height: 96px; }
+@media (max-width: 1000px) {
+    .nh-nav { padding: 10px 16px; }
+    .nh-nav-inner { gap: 14px; }
+    .nh-nav-center { gap: 10px; }
+    .nh-nav-visualizer { display: none; }
+}
+@media (max-width: 760px) {
+    .nh-nav-inner { padding: 9px 12px; border-radius: 14px; gap: 10px; }
+    .nh-brand { font-size: 14px; padding: 3px 0; }
+    .nh-brand-icon { width: 24px; height: 24px; margin-right: 6px; }
+    .nh-menu-desktop { display: none; }
+    .nh-menu-mobile { display: inline; }
+    .nh-nav-center { margin-left: auto; }
+    .nh-menu summary { padding: 7px 9px; gap: 10px; font-size: 11px; }
+    .nh-menu-panel { position: fixed; top: 69px; width: calc(100% - 32px); left: 16px; max-height: calc(100svh - 100px); overflow-y: auto; }
+    .nh-nav-right { gap: 13px; }
+    .nh-nav-link { font-size: 11px; padding: 4px 0; }
+    .nh-cta-nav { display: inline-flex; font-size: 10px; padding: 8px 10px; border-radius: 7px; }
+}
+@media (max-width: 480px) {
+    .nh-nav .nh-brand span { display: none; }
+}
+@media (max-width: 370px) {
+    .nh-nav { padding-inline: 10px; }
+    .nh-nav-right { gap: 10px; }
+    .nh-nav .nh-brand { font-size: 0; }
+    .nh-brand-icon { margin-right: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .nh-nav * { transition: none !important; } }

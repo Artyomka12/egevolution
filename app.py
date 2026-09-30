@@ -63,7 +63,7 @@ def handle_not_found(e):
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-APP_VERSION = "2.10.0"
+APP_VERSION = "2.12.0"
 
 
 @app.context_processor
@@ -84,6 +84,7 @@ UPLOAD_FOLDER = os.path.join(basedir, "static", "uploads", "avatars")
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
 ALLOWED_FILE_EXTENSIONS = {"xlsx", "xls", "csv", "txt", "zip", "db", "sqlite", "ods", "odt"}
 TASKS_FOLDER = os.path.join(basedir, "tasks")
+EGE_RENUMBER_ARCHIVE = os.path.join(basedir, ".local-data", "ege-renumber-2026.json")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 DIFFICULTY_INFO = {
@@ -534,8 +535,10 @@ def save_lesson_practice_file(file, lesson_id, practice_idx, name, description):
 def check_auth():
     allowed = [
         "start",
+        "new_home",
         "login",
         "register",
+        "application_sent",
         "static",
         "tasks_list",
         "tasks_view",
@@ -564,12 +567,30 @@ def check_auth():
 
     if not always_open and "user_id" not in session:
         flash("️ Пожалуйста, войдите в систему", "warning")
-        return redirect(url_for("login"))
+        next_url = request.full_path.rstrip("?") if request.method in ("GET", "HEAD") else url_for("profile")
+        return redirect(url_for("login", next=next_url))
 
 
 # === АВТОРИЗАЦИЯ ===
+def safe_login_destination(value):
+    """Accept only local paths; never redirect login to an external website."""
+    if not value or not value.startswith("/"):
+        return url_for("profile")
+    decoded = urllib.parse.unquote(value)
+    if (not decoded.startswith("/") or decoded.startswith("//")
+            or "\\" in decoded or any(ord(char) < 32 or ord(char) == 127 for char in decoded)):
+        return url_for("profile")
+    parsed = urllib.parse.urlsplit(decoded)
+    if parsed.scheme or parsed.netloc or parsed.path in ("/login", "/logout"):
+        return url_for("profile")
+    return value
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    next_url = safe_login_destination(request.form.get("next") if request.method == "POST" else request.args.get("next"))
+    if request.method == "GET" and "user_id" in session:
+        return redirect(next_url)
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
@@ -577,13 +598,14 @@ def login():
         user = db.execute(
             "SELECT * FROM users WHERE username = ?", (username,)
         ).fetchone()
+        db.close()
         if user and check_password_hash(user["password_hash"], password):
             session["user_id"] = user["id"]
             session["username"] = user["username"]
-            return redirect(url_for("start"))
+            return redirect(next_url)
         else:
             flash("❌ Неверный логин или пароль", "error")
-    return render_template("login.html")
+    return render_template("login.html", next_url=next_url)
 
 
 def notify_new_application(last_name, first_name, phone, contact_type, contact_value):
@@ -649,10 +671,14 @@ def register():
             daemon=True,
         ).start()
 
-        flash("✅ Заявка отправлена! Мы свяжемся с вами в ближайшее время.", "success")
-        return redirect(url_for("register"))
+        return redirect(url_for("application_sent"))
 
     return render_template("register.html")
+
+
+@app.route("/application-sent")
+def application_sent():
+    return render_template("application_sent.html")
 
 
 @app.route("/logout", methods=["POST"])
@@ -735,20 +761,37 @@ def load_homepage_progress(user_id):
     }
 
 
+def load_ege_renumber_archive():
+    """Local migration metadata must travel with users.db, not with public assets."""
+    if not os.path.exists(EGE_RENUMBER_ARCHIVE):
+        return {}
+    with open(EGE_RENUMBER_ARCHIVE, encoding="utf-8") as archive_file:
+        return json.load(archive_file)
+
+
 def load_task_number_stats(user_id):
     """Детальная статистика по каждому из 27 номеров заданий ЕГЭ:
     сколько всего отвечено (варианты + практика теории) и сколько правильно.
     Задания без ответа (user_answer IS NULL) не учитываются."""
     db = get_db()
 
+    answer_id_cutoff = load_ege_renumber_archive().get("answer_id_cutoff", 0)
     variant_rows = db.execute(
         """
-        SELECT task_id, COUNT(*) AS total, SUM(is_correct) AS correct
-        FROM user_task_answers
-        WHERE user_id = ? AND user_answer IS NOT NULL
-        GROUP BY task_id
+        WITH mapped_answers AS (
+            SELECT CASE WHEN id <= ? THEN
+                CASE task_id WHEN 10 THEN NULL WHEN 13 THEN 10
+                             WHEN 23 THEN 13 ELSE task_id END
+                ELSE task_id END AS current_task_num, is_correct
+            FROM user_task_answers
+            WHERE user_id = ? AND user_answer IS NOT NULL
+        )
+        SELECT current_task_num AS task_id, COUNT(*) AS total, SUM(is_correct) AS correct
+        FROM mapped_answers
+        WHERE current_task_num IS NOT NULL
+        GROUP BY current_task_num
         """,
-        (user_id,),
+        (answer_id_cutoff, user_id),
     ).fetchall()
 
     theory_rows = db.execute(
@@ -883,8 +926,9 @@ def get_attempt_details(user_id, attempt_id):
 
     db.close()
 
-    # 3. Загружаем правильные задания из JSON файла
-    tasks = load_tasks(attempt["variant_num"])
+    # Старые попытки должны показывать свои ответы, даже после переноса тем.
+    archived_tasks = load_ege_renumber_archive().get("attempts", {}).get(str(attempt_id))
+    tasks = archived_tasks if archived_tasks is not None else load_tasks(attempt["variant_num"])
 
     # 4. Объединяем данные
     detailed_tasks = []
@@ -908,7 +952,7 @@ def get_attempt_details(user_id, attempt_id):
             }
         )
 
-    return {"info": attempt, "tasks": detailed_tasks}
+    return {"info": attempt, "tasks": detailed_tasks, "archived": archived_tasks is not None}
 
 
 # === ТАБЛИЦА БАЛЛОВ ===
@@ -1317,10 +1361,7 @@ def check_theory_answer():
 # === МАРШРУТЫ ===
 @app.route("/")
 def start():
-    progress = None
-    if "user_id" in session:
-        progress = load_homepage_progress(session["user_id"])
-    return render_template("start.html", progress=progress)
+    return render_template("home.html")
 
 
 @app.route("/variants")
@@ -1847,6 +1888,7 @@ def view_attempt(attempt_id):
         "attempt_detail.html",  # Этот файл мы создадим позже
         info=attempt_data["info"],
         tasks=attempt_data["tasks"],
+        archived=attempt_data["archived"],
         variant_num=attempt_data["info"]["variant_num"],
     )
 
@@ -1882,6 +1924,7 @@ def admin_view_attempt(user_id, attempt_id):
         "attempt_detail.html",
         info=attempt_data["info"],
         tasks=attempt_data["tasks"],
+        archived=attempt_data["archived"],
         variant_num=attempt_data["info"]["variant_num"],
         target_user_id=user_id,  # Передаем ID пользователя для кнопки "Назад"
     )
@@ -2068,7 +2111,8 @@ def profile():
         session.clear()
         return redirect(url_for("login"))
     stats = load_user_stats(session["user_id"])
-    return render_template("profile.html", user=user, stats=stats)
+    progress = load_homepage_progress(session["user_id"])
+    return render_template("profile.html", user=user, stats=stats, progress=progress)
 
 
 @app.route("/profile/upload_avatar", methods=["POST"])
@@ -3640,6 +3684,12 @@ def check_lesson_access(user_id, lesson_id):
     if not result:
         return False
     return result["is_unlocked"] == 1
+
+
+@app.route("/new-home")
+def new_home():
+    """Keep bookmarks to the former preview working after the homepage launch."""
+    return redirect(url_for("start"), code=301)
 
 
 @app.route("/visualizer")

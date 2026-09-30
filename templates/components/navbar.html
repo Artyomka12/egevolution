@@ -1,81 +1,34 @@
-<nav class="navbar">
-    <div class="navbar-inner">
-
-        <!-- Левая часть: логотип -->
-        <a href="/" class="navbar-brand">
-            <img src="{{ url_for('static', filename='favicon.png') }}" alt="Логотип" class="navbar-logo">
-            <span class="navbar-site-title">ЕГЭволюция</span>
-        </a>
-
-        <!-- Центральная часть: навигационное меню -->
-        <div class="nav-center">
-            <div class="nav-dropdown-wrap" id="navDropdownWrap">
-                <button class="nav-dropdown-btn" id="navDropdownBtn" type="button" onclick="toggleNavDropdown()">
-                    <span class="nav-label-desktop">Разделы платформы</span>
-                    <span class="nav-label-mobile">Меню</span>
-                    <span class="nav-dropdown-chevron">▾</span>
-                </button>
-                <div class="nav-dropdown" id="navDropdown">
-                    <a href="/preparation" class="nav-dropdown-item">🚀 Начальная подготовка</a>
-                    <a href="/theory" class="nav-dropdown-item">📚 Теория по заданиям</a>
-                    <a href="/variants" class="nav-dropdown-item">📝 Решать варианты</a>
-                    <a href="/stats" class="nav-dropdown-item">📊 Статистика</a>
-                    <a href="/tasks" class="nav-dropdown-item">🎯 База заданий</a>
-                    <a href="/visualizer" class="nav-dropdown-item nav-dropdown-item-mobile-only">⚡ Визуализатор кода</a>
-                </div>
+{% from 'components/home_icons.html' import icon as nav_icon %}
+    <nav class="nh-nav" aria-label="Основная навигация">
+        <div class="nh-nav-inner">
+            <a href="{{ url_for('start') }}" class="nh-brand" aria-label="ЕГЭволюция — главная"><img class="nh-brand-icon" src="{{ url_for('static', filename='favicon.png') }}" width="28" height="28" alt="">ЕГЭ<span>волюция</span></a>
+            <div class="nh-nav-center">
+                <details class="nh-menu" id="platformMenu">
+                    <summary><span class="nh-menu-desktop">Разделы платформы</span><span class="nh-menu-mobile">Меню</span><span class="nh-chevron" aria-hidden="true">⌄</span></summary>
+                    <div class="nh-menu-panel">
+                        <a href="/preparation">{{ nav_icon('sprout') }}Начальная подготовка</a>
+                        <a href="/theory">{{ nav_icon('book') }}Теория по заданиям</a>
+                        <a href="/variants">{{ nav_icon('checklist') }}Решать варианты</a>
+                        <a href="/stats">{{ nav_icon('chart') }}Статистика</a>
+                        <a href="/tasks">{{ nav_icon('target') }}База заданий</a>
+                        <a href="/visualizer">{{ nav_icon('flow') }}Визуализатор кода</a>
+                        <a href="{{ url_for('start') }}#intro" class="nh-menu-about">О занятиях и платформе</a>
+                    </div>
+                </details>
+                <a href="/visualizer" class="nh-nav-visualizer">Визуализатор кода</a>
             </div>
-            <a href="/visualizer" class="nav-visualizer-btn">⚡ Визуализатор кода</a>
+            <div class="nh-nav-right">
+                {% if session.get('user_id') %}
+                <a href="/profile" class="nh-nav-link">Профиль</a>
+                <form method="POST" action="{{ url_for('logout') }}" class="nh-logout">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="nh-nav-link">Выйти</button>
+                </form>
+                {% else %}
+                <a href="/login" class="nh-nav-link">Войти</a>
+                <a href="/register" class="nh-cta-nav">Оставить заявку</a>
+                {% endif %}
+            </div>
         </div>
-
-        <!-- Правая часть: авторизация -->
-        <div class="navbar-auth">
-            {% if session.get('user_id') %}
-            <a href="/profile" class="nav-btn">👤 Профиль</a>
-            <form method="POST" action="{{ url_for('logout') }}" style="display:contents">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button type="submit" class="nav-btn nav-btn-logout" style="font:inherit;cursor:pointer">🚪 Выйти</button>
-            </form>
-            {% else %}
-            <a href="/login" class="nav-btn">🔐 Войти</a>
-            <a href="/register" class="nav-btn nav-btn-primary">📝 Оставить заявку</a>
-            {% endif %}
-        </div>
-
-    </div>
-</nav>
-
-<script>
-    /* ================================================================
-       NAVBAR DROPDOWN
-    ================================================================ */
-    function toggleNavDropdown() {
-        var dd  = document.getElementById('navDropdown');
-        var btn = document.getElementById('navDropdownBtn');
-        if (dd.classList.contains('open')) {
-            dd.classList.remove('open');
-            btn.classList.remove('active');
-        } else {
-            dd.classList.add('open');
-            btn.classList.add('active');
-        }
-    }
-
-    /* Закрыть при клике вне */
-    document.addEventListener('click', function (e) {
-        var wrap = document.getElementById('navDropdownWrap');
-        var dd   = document.getElementById('navDropdown');
-        var btn  = document.getElementById('navDropdownBtn');
-        if (wrap && !wrap.contains(e.target)) {
-            dd.classList.remove('open');
-            btn.classList.remove('active');
-        }
-    });
-
-    /* Закрыть при клике на пункт меню */
-    document.querySelectorAll('.nav-dropdown-item').forEach(function (item) {
-        item.addEventListener('click', function () {
-            document.getElementById('navDropdown').classList.remove('open');
-            document.getElementById('navDropdownBtn').classList.remove('active');
-        });
-    });
-</script>
+    </nav>
+{% if request.endpoint != "start" %}<div class="nh-nav-spacer" aria-hidden="true"></div>{% endif %}

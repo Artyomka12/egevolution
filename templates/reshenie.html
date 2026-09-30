@@ -302,8 +302,8 @@
                 });
 
                 if (response.ok) {
-                    localStorage.setItem(`variant_{{ variant_num }}_answers`, JSON.stringify(answers));
-                    localStorage.setItem(`variant_{{ variant_num }}_time`, timeSpent.toString());
+                    localStorage.setItem(`variant_{{ variant_num }}_renumber_2026_answers`, JSON.stringify(answers));
+                    localStorage.setItem(`variant_{{ variant_num }}_renumber_2026_time`, timeSpent.toString());
                     window.location.href = `/results/{{ variant_num }}`;
                 } else {
                     alert('Ошибка при сохранении результатов на сервере.');

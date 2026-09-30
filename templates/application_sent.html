@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Заявка отправлена | ЕГЭволюция{% endblock %}
+{% block extra_head %}
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/auth.css') }}?v={{ app_version }}">
+{% endblock %}
+{% block navbar %}{% endblock %}
+{% block flash %}{% endblock %}
+{% block footer %}{% endblock %}
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-logo" aria-hidden="true">✓</div>
+        <h1 class="auth-title">Заявка отправлена</h1>
+        <p class="auth-subtitle">Спасибо! Свяжемся с тобой выбранным способом и договоримся о бесплатном вводном занятии.</p>
+        <p class="auth-subtitle">После знакомства подтвердим доступ к платформе и объясним, как войти в аккаунт.</p>
+        <a class="btn btn-primary btn--full" href="{{ url_for('start') }}">На главную</a>
+        <p class="auth-footer-link"><a href="{{ url_for('preparation_lesson', lesson_id=1) }}">Пока можно попробовать первый урок →</a></p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{# Decorative icons: their meaning is already expressed by adjacent text. #}
+{% macro icon(name) -%}
+<svg class="nh-icon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+    {% if name == 'sprout' %}
+    <path d="M12 21v-8M12 16C5 16 3 12 3 7c6 0 9 3 9 9ZM12 13c0-6 3-10 9-10 0 6-3 10-9 10Z"/>
+    {% elif name == 'puzzle' %}
+    <path d="M9 3H4a1 1 0 0 0-1 1v5h2a3 3 0 1 1 0 6H3v5a1 1 0 0 0 1 1h5v-2a3 3 0 1 1 6 0v2h5a1 1 0 0 0 1-1v-5h-2a3 3 0 1 1 0-6h2V4a1 1 0 0 0-1-1h-5v2a3 3 0 1 1-6 0Z"/>
+    {% elif name == 'trophy' %}
+    <path d="M8 3h8v6a4 4 0 0 1-8 0ZM8 5H4v2a4 4 0 0 0 4 4M16 5h4v2a4 4 0 0 1-4 4M12 13v5M8 21v-1a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v1Z"/>
+    {% elif name == 'question' %}
+    <circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 4.2 1.8c-1 .7-1.7 1.1-1.7 2.7M12 17h.01"/>
+    {% elif name == 'book' %}
+    <path d="M12 5c-3-2-6-2-10-1v15c4-1 7-1 10 1 3-2 6-2 10-1V4c-4-1-7-1-10 1ZM12 5v15"/>
+    {% elif name == 'target' %}
+    <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>
+    {% elif name == 'chart' %}
+    <path d="M3 3v18h18M7 15l4-5 4 3 6-8M17 5h4v4"/>
+    {% elif name == 'flow' %}
+    <rect x="9" y="2" width="6" height="5" rx="1"/><rect x="2" y="17" width="7" height="5" rx="1"/><rect x="15" y="17" width="7" height="5" rx="1"/><path d="M12 7v5M5.5 17v-5h13v5"/>
+    {% elif name == 'checklist' %}
+    <rect x="4" y="3" width="16" height="18" rx="2"/><path d="m7 8 1 1 2-2M13 8h4m-10 6 1 1 2-2m3 1h4"/>
+    {% endif %}
+</svg>
+{%- endmacro %}

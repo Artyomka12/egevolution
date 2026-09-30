@@ -25,19 +25,19 @@
 
             <div class="form-field">
                 <label class="form-label" for="last_name">Фамилия</label>
-                <input class="form-input" type="text" id="last_name" name="last_name"
+                <input class="form-input" type="text" id="last_name" name="last_name" value="{{ request.form.get('last_name', '') }}"
                        placeholder="Твоя фамилия" maxlength="32" required autocomplete="off">
             </div>
 
             <div class="form-field">
                 <label class="form-label" for="first_name">Имя</label>
-                <input class="form-input" type="text" id="first_name" name="first_name"
+                <input class="form-input" type="text" id="first_name" name="first_name" value="{{ request.form.get('first_name', '') }}"
                        placeholder="Твоё имя" maxlength="32" required autocomplete="off">
             </div>
 
             <div class="form-field">
                 <label class="form-label" for="phone">Номер телефона</label>
-                <input class="form-input" type="tel" id="phone" name="phone"
+                <input class="form-input" type="tel" id="phone" name="phone" value="{{ request.form.get('phone', '') }}"
                        placeholder="+7 900 000-00-00" maxlength="20" required autocomplete="off">
             </div>
 
@@ -45,15 +45,15 @@
                 <label class="form-label">Удобный способ связи</label>
                 <div class="contact-type-options">
                     <label class="contact-type-option">
-                        <input type="radio" name="contact_type" value="telegram" checked onchange="updateContactField()">
+                        <input type="radio" name="contact_type" value="telegram" {% if request.form.get('contact_type') not in ('vk', 'max') %}checked{% endif %} onchange="updateContactField()">
                         Telegram
                     </label>
                     <label class="contact-type-option">
-                        <input type="radio" name="contact_type" value="vk" onchange="updateContactField()">
+                        <input type="radio" name="contact_type" value="vk" {% if request.form.get('contact_type') == 'vk' %}checked{% endif %} onchange="updateContactField()">
                         VK
                     </label>
                     <label class="contact-type-option">
-                        <input type="radio" name="contact_type" value="max" onchange="updateContactField()">
+                        <input type="radio" name="contact_type" value="max" {% if request.form.get('contact_type') == 'max' %}checked{% endif %} onchange="updateContactField()">
                         MAX
                     </label>
                 </div>
@@ -61,7 +61,7 @@
 
             <div class="form-field">
                 <label class="form-label" for="contact_value" id="contact_value_label">Username в Telegram</label>
-                <input class="form-input" type="text" id="contact_value" name="contact_value"
+                <input class="form-input" type="text" id="contact_value" name="contact_value" value="{{ request.form.get('contact_value', '') }}"
                        placeholder="@username" maxlength="64" required autocomplete="off">
             </div>
 
@@ -72,6 +72,7 @@
             </div>
         </form>
 
+        <p class="auth-footer-link"><a href="{{ url_for('start') }}">← На главную</a></p>
         <p class="auth-footer-link">Уже есть аккаунт? <a href="/login">Войти</a></p>
 
     </div>
@@ -102,5 +103,10 @@
             input.placeholder = 'Ссылка или номер';
         }
     }
+    updateContactField();
+    window.addEventListener('pageshow', function () {
+        var button = document.getElementById('registerSubmitBtn');
+        button.disabled = false; button.textContent = 'Отправить заявку';
+    });
 </script>
 {% endblock %}

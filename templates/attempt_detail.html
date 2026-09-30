@@ -26,6 +26,9 @@
         <span class="section-tag">Разбор попытки</span>
         <h1 class="section-title">Вариант {{ variant_num }}</h1>
         <p class="section-desc">Подробный разбор ответов и результатов</p>
+        {% if archived %}
+        <p class="section-desc">Попытка до перенумерации: номера и баллы сохранены на момент решения. Ссылки ведут к заданиям под новыми номерами.</p>
+        {% endif %}
     </div>
 
     <!-- Ключевые итоги -->

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+{% from 'components/home_icons.html' import icon %}
+{% from 'components/social_links.html' import social_links, telegram_url %}
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ЕГЭволюция — подготовка к ЕГЭ по информатике с Артёмом</title>
+    <meta name="description" content="Индивидуальные занятия по информатике с Артёмом и платформа для подготовки к ЕГЭ: теория, задачи, варианты и визуализатор Python. Первое занятие бесплатно.">
+    <link rel="canonical" href="https://egevolution.ru/">
+    {% include 'components/site_head.html' %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}?v={{ app_version }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='home/style.css') }}?v={{ app_version }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='home/hero.css') }}?v={{ app_version }}" />
+    <script src="{{ url_for('static', filename='home/hero.js') }}?v={{ app_version }}" defer></script>
+</head>
+
+<body>
+
+    <div class="nh-progress">
+        <div class="nh-progress-bar" id="nhProgressBar"></div>
+    </div>
+
+    {% include 'components/navbar.html' %}
+
+    <div id="top"></div>
+
+    <!-- ============================================================
+         1. HERO — единственная cinematic-сцена
+    ============================================================ -->
+    <section class="evo-journey" id="heroScene" aria-label="Знакомство с ЕГЭволюцией">
+        <div class="evo-viewport">
+            <div class="evo-atmosphere" aria-hidden="true">
+                <div class="evo-glow evo-glow--blue"></div>
+                <div class="evo-glow evo-glow--mint"></div>
+                <div class="evo-grid"></div>
+                <div class="evo-orbit evo-orbit--one"></div>
+                <div class="evo-orbit evo-orbit--two"></div>
+                <div class="evo-number-field" id="evoNumberField"></div>
+            </div>
+
+            <div class="evo-copy evo-copy--opening" data-evo-copy="0">
+                <div class="evo-eyebrow"><span></span> ЕГЭВОЛЮЦИЯ · ПОДГОТОВКА К ЕГЭ</div>
+                <h1>Большой мир<br><em>информатики.</em></h1>
+                <p>27 заданий. Сотни идей и алгоритмов.<br>Соберём их в понятную систему.</p>
+                <a class="evo-enter" href="#intro" id="evoEnter">Погрузиться <span aria-hidden="true">↓</span></a>
+                <span class="evo-opening-note">Теория · Видеоуроки · Практика · Python</span>
+            </div>
+
+            <div class="evo-copy evo-copy--explore" data-evo-copy="1" id="evoInside" aria-hidden="true">
+                <div class="evo-eyebrow">ВНУТРИ ТВОЕЙ ПОДГОТОВКИ</div>
+                <h2>Разбираешься. Практикуешься.<br><em>Двигаешься дальше.</em></h2>
+            </div>
+
+            <div class="evo-subjects" aria-hidden="true">
+                <div class="evo-subject" data-evo-group="0"><span>01</span><b>Теория</b><i>Понимать, как устроено</i></div>
+                <div class="evo-subject" data-evo-group="1"><span>02</span><b>Разбор заданий</b><i>Видеть логику решения</i></div>
+                <div class="evo-subject" data-evo-group="2"><span>03</span><b>Нарешивание</b><i>Превращать знания в навык</i></div>
+            </div>
+
+            <div class="evo-materials" aria-hidden="true">
+                <article class="evo-material evo-material--theory" data-evo-card="0" data-group="0">
+                    <div class="evo-material-inner">
+                        <div class="evo-card-label"><span>ЛОГИКА</span><span>∧</span></div>
+                        <h3>Всё начинается с условия</h3>
+                        <div class="evo-logic"><span>1</span><i>∧</i><span>1</span><i>=</i><strong>1</strong></div>
+                        <div class="evo-card-foot">Два истинных → истинно</div>
+                    </div>
+                </article>
+                <article class="evo-material evo-material--theory" data-evo-card="1" data-group="0">
+                    <div class="evo-material-inner">
+                        <div class="evo-card-label"><span>СИСТЕМЫ СЧИСЛЕНИЯ</span><span>₂</span></div>
+                        <h3>Другой язык чисел</h3>
+                        <div class="evo-binary">101100<span>₂</span><i>→</i>44<span>₁₀</span></div>
+                        <div class="evo-card-foot">32 + 8 + 4 = 44</div>
+                    </div>
+                </article>
+                <article class="evo-material evo-material--theory evo-material--video" data-evo-card="2" data-group="0">
+                    <div class="evo-material-inner">
+                        <div class="evo-card-label"><span>ВИДЕОРАЗБОР</span><span>▷</span></div>
+                        <h3>Объяснение по шагам</h3>
+                        <div class="evo-video-screen"><span class="evo-video-code">A → B<br>Логика без пробелов</span><span class="evo-play">▶</span><div class="evo-video-timeline"><i></i></div></div>
+                    </div>
+                </article>
+                <article class="evo-material evo-material--code" data-evo-card="3" data-group="1">
+                    <div class="evo-material-inner">
+                        <div class="evo-card-label"><span>ЦИКЛЫ</span><span>{ }</span></div>
+                        <h3>Несколько строк. Результат.</h3>
+                        <div class="evo-code"><span><i>1</i><b>for</b> i <b>in</b> range(3):</span><span class="evo-code-active"><i>2</i>&nbsp;&nbsp;print(i)</span></div>
+                        <div class="evo-card-foot">Вывод <strong>0 &nbsp; 1 &nbsp; 2</strong></div>
+                    </div>
+                </article>
+                <article class="evo-material evo-material--code" data-evo-card="4" data-group="1">
+                    <div class="evo-material-inner">
+                        <div class="evo-card-label"><span>ФУНКЦИИ</span><span>ƒ</span></div>
+                        <h3>Собери свой алгоритм</h3>
+                        <div class="evo-code"><span><i>1</i><b>def</b> square(x):</span><span><i>2</i>&nbsp;&nbsp;<b>return</b> x * x</span></div>
+                        <div class="evo-card-foot">Проверяем <strong>square(5) → 25</strong></div>
+                    </div>
+                </article>
+                <article class="evo-material evo-material--code" data-evo-card="5" data-group="1">
+                    <div class="evo-material-inner">
+                        <div class="evo-card-label"><span>ВИЗУАЛИЗАТОР</span><span>⌁</span></div>
+                        <h3>Увидеть каждый шаг</h3>
+                        <div class="evo-flow"><span>x = 4</span><i>→</i><span class="evo-flow-test">x &gt; 0</span><i>→</i><strong>Да</strong></div>
+                        <div class="evo-card-foot">Код становится понятным</div>
+                    </div>
+                </article>
+                <article class="evo-material evo-material--task" data-evo-card="6" data-group="2">
+                    <div class="evo-material-inner">
+                        <div class="evo-card-label"><span>ПОЛНЫЙ ВАРИАНТ</span><span>27</span></div>
+                        <h3>Собрать всё воедино</h3>
+                        <div class="evo-task-grid"><span>01</span><span>02</span><span>03</span><span>04</span><span>05</span><span>06</span><span>07</span><span>08</span><span>09</span><span>10</span><span>…</span><span>27</span></div>
+                        <div class="evo-card-foot">От первого задания до последнего</div>
+                    </div>
+                </article>
+                <article class="evo-material evo-material--task" data-evo-card="7" data-group="2">
+                    <div class="evo-material-inner">
+                        <div class="evo-card-label"><span>ПРОВЕРКА ОТВЕТА</span><span>✓</span></div>
+                        <h3>Решаешь. Проверяешь.</h3>
+                        <div class="evo-answer"><span>101100</span><b>✓</b></div>
+                        <div class="evo-card-foot evo-correct">Ответ верный. Двигаемся дальше!</div>
+                    </div>
+                </article>
+                <article class="evo-material evo-material--task" data-evo-card="8" data-group="2">
+                    <div class="evo-material-inner">
+                        <div class="evo-card-label"><span>ЭКЗАМЕНАЦИОННЫЙ РЕЖИМ</span><span>◷</span></div>
+                        <h3>Проверить себя</h3>
+                        <div class="evo-exam-clock">03<span>:</span>55<span>:</span>00</div>
+                        <div class="evo-card-foot">Таймер. Концентрация. Результат.</div>
+                    </div>
+                </article>
+            </div>
+
+            <div class="evo-fragments" aria-hidden="true">
+                <div class="evo-fragment"><small>СИСТЕМЫ СЧИСЛЕНИЯ</small><strong>110010 → 50</strong><span>Одна идея. Разные записи.</span></div>
+                <div class="evo-fragment"><small>ПРОГРАММИРОВАНИЕ</small><strong>def solve():</strong><span>Каждая строка имеет смысл.</span></div>
+                <div class="evo-fragment"><small>АЛГОРИТМЫ</small><strong>for i in range(n)</strong><span>Находить закономерности.</span></div>
+                <div class="evo-fragment"><small>ИНФОРМАЦИЯ</small><strong>2⁸ = 256</strong><span>От битов — к большим данным.</span></div>
+                <div class="evo-fragment"><small>ЛОГИКА</small><strong>if → else</strong><span>Выбирать верный путь.</span></div>
+                <div class="evo-fragment"><small>ЭКЗАМЕН</small><strong>01 ··· 27</strong><span>У каждой задачи есть решение.</span></div>
+            </div>
+            <div class="evo-depth-rings" aria-hidden="true"><i></i><i></i><i></i></div>
+
+            <div class="evo-finish" data-evo-copy="2" aria-hidden="true">
+                <div class="evo-eyebrow"><span></span> ТВОЯ ЦЕЛЬ НА ЕГЭ</div>
+                <h2><span>90</span><i>–</i><span>100</span></h2>
+                <div class="evo-score-caption">баллов по информатике</div>
+                <p>Большая цель складывается<br>из маленьких понятных шагов.</p>
+                <a href="{{ url_for('preparation') if session.get('user_id') else url_for('start') + '#quiz' }}" class="evo-start" tabindex="-1">Сделать первый шаг</a>
+                <a href="#intro" class="evo-finish-more" tabindex="-1">Как устроена подготовка ↓</a>
+            </div>
+
+            <div class="evo-bottom">
+                <div class="evo-scroll-cue"><span aria-hidden="true">↓</span> Листай — собирай свой путь</div>
+                <nav class="evo-chapters" aria-label="Этапы знакомства">
+                    <button type="button" data-evo-step="0" aria-current="step"><span>01</span><b>Масштаб</b><i></i></button>
+                    <button type="button" data-evo-step="1"><span>02</span><b>Внутри</b><i></i></button>
+                    <button type="button" data-evo-step="2"><span>03</span><b>Цель</b><i></i></button>
+                </nav>
+                <a href="#platform" class="evo-skip">К платформе</a>
+            </div>
+        </div>
+    </section>
+
+    <main class="nh-content" id="mainContent">
+        <section class="nh-section nh-intro" id="intro" aria-labelledby="introTitle">
+            <div class="nh-wrap">
+                <div class="nh-section-label"><span>01 / Занятия + платформа</span><span>ЕГЭ по информатике</span></div>
+                <div class="nh-intro-grid">
+                    <div class="nh-intro-copy reveal">
+                        <h2 id="introTitle">Разберёмся вместе.<br><em>Закрепишь сам.</em></h2>
+                        <p class="nh-lead">Индивидуальные занятия с Артёмом и учебная платформа для практики между встречами.</p>
+                        <p class="nh-body-copy">На занятиях разбираем темы и ошибки. После — теория, видеоразборы и задачи остаются под рукой. Ты решаешь, проверяешь себя и видишь, что уже получается.</p>
+                        <div class="nh-actions">
+                            <a href="/register" class="nh-btn">На вводное занятие</a>
+                            <span class="nh-action-note"><b>Первое занятие</b><strong>Бесплатно</strong></span>
+                        </div>
+                    </div>
+                    <aside class="nh-teacher reveal" aria-label="О преподавателе">
+                        <div class="nh-teacher-portrait">
+                            <img src="{{ url_for('static', filename='home/artem.jpg') }}" alt="Артём — преподаватель информатики" width="792" height="864" loading="lazy">
+                            <div class="nh-teacher-identity"><span class="nh-mono">Твой преподаватель</span><h3>Артём</h3><p class="nh-teacher-role">Преподаватель информатики</p></div>
+                        </div>
+                        <div class="nh-teacher-info">
+                            <p class="nh-teacher-bio">Студент <strong>НИУ МЭИ</strong>, 4-й курс направления <strong>«Бизнес-информатика»</strong>.</p>
+                            <p class="nh-teacher-copy">Помогаю разобраться в сложных темах, увидеть логику решения и подготовиться к ЕГЭ. Начнём с твоего уровня и цели.</p>
+                            <div class="nh-teacher-method"><span>Понять</span><i aria-hidden="true">→</i><span>Попробовать</span><i aria-hidden="true">→</i><span>Закрепить</span></div>
+                            <a href="{{ telegram_url }}" target="_blank" rel="noopener noreferrer" class="nh-teacher-link">Задать мне вопрос</a>
+                        </div>
+                    </aside>
+                </div>
+                <div class="nh-starting-points">
+                    <div><span class="nh-point-mark">{{ icon('sprout') }}</span><h3>Начинаешь с нуля</h3><p>Основы Python и первые задачи — шаг за шагом.</p></div>
+                    <div><span class="nh-point-mark">{{ icon('puzzle') }}</span><h3>Хочешь закрыть пробелы</h3><p>Разбираем темы, на которых теряются баллы.</p></div>
+                    <div><span class="nh-point-mark">{{ icon('trophy') }}</span><h3>Стремишься к высокому баллу</h3><p>Сложные номера, полные варианты и работа над ошибками.</p></div>
+                </div>
+            </div>
+        </section>
+
+        <div id="tryTaskSection" class="nh-legacy-anchor" aria-hidden="true"></div>
+        <section class="nh-section nh-quiz" id="quiz" aria-labelledby="quizTitle">
+            <div class="nh-wrap">
+                <div class="nh-section-label"><span>Попробуй прямо сейчас</span><span>Знакомство с подготовкой</span></div>
+                <div class="nh-quiz-layout">
+                    <div class="nh-quiz-intro"><span class="nh-quiz-symbol">{{ icon('question') }}</span><h2 id="quizTitle">Начнём<br> с небольшой<br> <em>проверки себя.</em></h2><p>Шесть коротких заданий, самооценка и один вопрос посложнее. После — маршрут подготовки и заявка на бесплатное занятие.</p><a href="#access" class="nh-text-link">Сразу к знакомству</a></div>
+                    <div class="nh-quiz-workspace" id="quizWorkspace">
+                        <div class="nh-quiz-progress"><span id="quizCaption" aria-live="polite">Вопрос 1 из 6</span><span id="quizStageNumber">01 / 09</span><progress id="quizProgress" value="1" max="9" aria-label="Этапы теста"></progress></div>
+                        <div class="nh-quiz-stage" id="quizQuestionStage">
+                            <fieldset class="nh-quiz-question"><legend id="quizQuestion" tabindex="-1">Сколько бит требуется для кодирования 256 различных символов?</legend><div class="nh-quiz-options" id="quizOptions">
+                                <label><input type="radio" name="quiz_answer" value="6"><span>6</span></label><label><input type="radio" name="quiz_answer" value="7"><span>7</span></label><label><input type="radio" name="quiz_answer" value="8"><span>8</span></label><label><input type="radio" name="quiz_answer" value="9"><span>9</span></label>
+                            </div></fieldset>
+                            <div id="quizFeedback" class="nh-quiz-feedback" role="status" hidden></div>
+                            <div class="nh-quiz-actions"><button type="button" class="nh-btn" id="quizCheck">Проверить ответ</button><button type="button" class="nh-btn" id="quizNext" hidden>Следующий вопрос →</button></div>
+                        </div>
+                        <div class="nh-quiz-stage" id="quizReadinessStage" hidden>
+                            <h3 tabindex="-1">Оцени свою готовность</h3>
+                            <fieldset class="nh-readiness-question"><legend>Изучили ли вы всю теорию?</legend><label><input type="radio" name="readiness1" value="1">Да</label><label><input type="radio" name="readiness1" value="0">Нет</label></fieldset>
+                            <fieldset class="nh-readiness-question"><legend>Решали ли вы полные варианты?</legend><label><input type="radio" name="readiness2" value="1">Да</label><label><input type="radio" name="readiness2" value="0">Нет</label></fieldset>
+                            <fieldset class="nh-readiness-question"><legend>Решаете ли задания без подсказок?</legend><label><input type="radio" name="readiness3" value="1">Да</label><label><input type="radio" name="readiness3" value="0">Нет</label></fieldset>
+                            <div id="quizReadinessResult" class="nh-quiz-feedback" role="status" hidden></div>
+                            <div class="nh-quiz-actions"><button type="button" class="nh-btn" id="quizReadinessCheck">Показать результат</button><button type="button" class="nh-btn" id="quizHard" hidden>К сложному вопросу →</button></div>
+                        </div>
+                        <div class="nh-quiz-stage" id="quizFinalStage" hidden>
+                            <h3 tabindex="-1">Твой маршрут подготовки</h3><p id="quizSummary" class="nh-quiz-summary"></p>
+                            <ol class="nh-quiz-route"><li>Начальная подготовка</li><li>Теория по номерам</li><li>Практика</li><li>Полные варианты</li><li>Экзаменационный режим</li></ol>
+                            <div class="nh-quiz-apply"><span class="nh-quiz-free">Первое занятие — бесплатно</span><h3>Обсудим твой следующий шаг?</h3><p>Оставь контакт — познакомимся и разберём, с чего начать подготовку.</p>
+                                <form id="quizApplyForm" class="nh-quiz-form" method="POST" action="{{ url_for('register') }}">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <div class="nh-quiz-form-row"><label for="quizLastName">Фамилия<input id="quizLastName" name="last_name" maxlength="32" required autocomplete="family-name" placeholder="Твоя фамилия"></label><label for="quizFirstName">Имя<input id="quizFirstName" name="first_name" maxlength="32" required autocomplete="given-name" placeholder="Твоё имя"></label></div>
+                                    <label for="quizPhone">Номер телефона<input id="quizPhone" name="phone" type="tel" maxlength="20" required autocomplete="tel" placeholder="+7 900 000-00-00"></label>
+                                    <fieldset class="nh-contact-options"><legend>Удобный способ связи</legend><label><input type="radio" name="contact_type" value="telegram" checked>Telegram</label><label><input type="radio" name="contact_type" value="vk">VK</label><label><input type="radio" name="contact_type" value="max">MAX</label></fieldset>
+                                    <label for="quizContact"><span id="quizContactLabel">Username в Telegram</span><input id="quizContact" name="contact_value" maxlength="64" required placeholder="@username" autocomplete="off"></label>
+                                    <button class="nh-btn" type="submit" id="quizSubmit">Отправить заявку</button><div class="nh-quiz-trust"><span>Не передаём данные третьим лицам — только для связи с тобой.</span><span>Ответим в выбранном способе связи.</span></div>
+                                </form>
+                            </div>
+                            <button class="nh-quiz-restart" type="button" id="quizRestart">Пройти тест ещё раз ↺</button>
+                        </div>
+                        <noscript><p>Для прохождения теста нужен JavaScript. <a href="/register">Оставить заявку на занятие</a> можно сразу.</p></noscript>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="nh-section nh-roadmap" id="roadmap" aria-labelledby="roadmapTitle">
+            <div class="nh-wrap">
+                <div class="nh-section-label"><span>02 / Процесс</span></div>
+                <div class="nh-heading-row reveal"><h2 id="roadmapTitle">У каждого занятия<br>есть продолжение.</h2><p>От понимания темы — к самостоятельному решению. Затем возвращаемся к тому, что пока не получилось.</p></div>
+                <ol class="nh-steps">
+                    <li><span class="nh-step-number">01</span><h3>Выбираем точку старта</h3><p>Обсуждаем твой уровень и цель. Определяем, с каких тем начать.</p></li>
+                    <li><span class="nh-step-number">02</span><h3>Разбираем вместе</h3><p>Изучаем тему на примерах, обсуждаем ход решения и непонятные места.</p></li>
+                    <li><span class="nh-step-number">03</span><h3>Закрепляешь на практике</h3><p>Решаешь задачи на платформе и сразу проверяешь ответы. Ошибки помогают понять, что повторить.</p></li>
+                    <li><span class="nh-step-number">04</span><h3>Собираешь всё в вариант</h3><p>Переходишь к полным вариантам. Тренируешь точность и распределение времени.</p></li>
+                </ol>
+            </div>
+        </section>
+
+        <section class="nh-section nh-platform" id="platform" aria-labelledby="platformTitle">
+            <div class="nh-wrap">
+                <div class="nh-section-label"><span>03 / Твоё рабочее пространство</span><span>ЕГЭволюция</span></div>
+                <div class="nh-heading-row reveal"><h2 id="platformTitle">Подготовка продолжается<br><em>между занятиями.</em></h2><p>Материалы, практика и история решений собраны в одном месте. Посмотри, как это устроено.</p></div>
+                <div class="nh-platform-tabs" role="tablist" aria-label="Возможности платформы">
+                    <button type="button" role="tab" id="tab-learn" aria-controls="panel-learn" aria-selected="true" tabindex="0">{{ icon('book') }}Изучать темы</button>
+                    <button type="button" role="tab" id="tab-practice" aria-controls="panel-practice" aria-selected="false" tabindex="-1">{{ icon('target') }}Практиковаться</button>
+                    <button type="button" role="tab" id="tab-progress" aria-controls="panel-progress" aria-selected="false" tabindex="-1">{{ icon('chart') }}Видеть прогресс</button>
+                    <button type="button" role="tab" id="tab-code" aria-controls="panel-code" aria-selected="false" tabindex="-1">{{ icon('flow') }}Визуализатор кода</button>
+                </div>
+                <div class="nh-platform-panels">
+                    <div class="nh-platform-panel" role="tabpanel" id="panel-learn" aria-labelledby="tab-learn" tabindex="0">
+                        <div class="nh-panel-copy"><span class="nh-panel-kicker">От основ к заданиям ЕГЭ</span><h3>Вернуться к теме.<br>Разобраться ещё раз.</h3><p>Уроки начальной подготовки, теория по каждому номеру и видеоразборы — чтобы повторить объяснение в своём темпе.</p><ul><li>Основы Python с нуля</li><li>Теория по 27 номерам ЕГЭ</li><li>Практика после изучения темы</li></ul><a href="/preparation/1" class="nh-text-link">Попробовать первый урок</a><small>Первый урок доступен без входа</small></div>
+                        <figure class="nh-screen"><button class="nh-screen-open" type="button" aria-label="Увеличить скриншот уроков"><img src="{{ url_for('static', filename='images/slideshow/slide-1.jpg') }}" alt="Уроки начальной подготовки: установка Python, переменные, условия и циклы" width="1920" height="1080" loading="lazy"><span>Рассмотреть экран</span></button><figcaption>Реальный интерфейс · Начальная подготовка</figcaption></figure>
+                    </div>
+                    <div class="nh-platform-panel" role="tabpanel" id="panel-practice" aria-labelledby="tab-practice" tabindex="0" hidden>
+                        <div class="nh-panel-copy"><span class="nh-panel-kicker">От одной задачи к полному варианту</span><h3>Проверить себя.<br>Найти свою ошибку.</h3><p>Тренируй отдельные номера или решай вариант целиком. В обычном режиме ответ можно проверить сразу, в экзаменационном — получить результат в конце.</p><ul><li>База задач по номерам ЕГЭ</li><li>Автоматическая проверка ответов</li><li>Экзаменационный режим с таймером</li></ul><a href="/tasks" class="nh-text-link">Открыть базу заданий</a><small>Варианты доступны после входа в аккаунт</small></div>
+                        <figure class="nh-screen"><button class="nh-screen-open" type="button" aria-label="Увеличить скриншот варианта"><img src="{{ url_for('static', filename='images/slideshow/slide-4.jpg') }}" alt="Решение варианта: условие задачи, поле ответа, проверка и таймер" width="1925" height="1083" loading="lazy"><span>Рассмотреть экран</span></button><figcaption>Реальный интерфейс · Решение варианта</figcaption></figure>
+                    </div>
+                    <div class="nh-platform-panel" role="tabpanel" id="panel-progress" aria-labelledby="tab-progress" tabindex="0" hidden>
+                        <div class="nh-panel-copy"><span class="nh-panel-kicker">Понятно, над чем работать дальше</span><h3>Заметить прогресс.<br>Увидеть пробелы.</h3><p>История решений и статистика по номерам показывают, что уже получается и какие задания стоит повторить.</p><ul><li>Верные и неверные ответы по темам</li><li>История решённых вариантов</li><li>Результаты в личном кабинете</li></ul><a href="/stats" class="nh-text-link">Моя статистика</a><small>Личная статистика доступна после входа</small></div>
+                        <figure class="nh-screen"><button class="nh-screen-open" type="button" aria-label="Увеличить скриншот статистики"><img src="{{ url_for('static', filename='images/slideshow/slide-5.jpg') }}" alt="Пример личной статистики: результаты по номерам и история решений" width="2048" height="1152" loading="lazy"><span>Рассмотреть экран</span></button><figcaption>Реальный интерфейс · Пример личного кабинета</figcaption></figure>
+                    </div>
+                    <div class="nh-platform-panel" role="tabpanel" id="panel-code" aria-labelledby="tab-code" tabindex="0" hidden>
+                        <div class="nh-panel-copy"><span class="nh-panel-kicker">Python — в движении</span><h3>Код становится<br>понятной картиной.</h3><p>Запусти свою программу и проследи, как она работает: от первой строки до результата. Визуализатор показывает выполнение кода и помогает разобраться в логике алгоритма.</p><ul><li>Анимированная блок-схема</li><li>Переменные и вывод на каждом шаге</li><li>Управление скоростью выполнения</li></ul><a href="/visualizer" class="nh-text-link">Открыть визуализатор</a><small>Полный инструмент доступен после входа</small></div>
+                        <figure class="nh-screen"><button class="nh-screen-open" type="button" aria-label="Увеличить скриншот визуализатора"><img src="{{ url_for('static', filename='images/slideshow/visualizer-6.jpg') }}" alt="Визуализатор Python: код сортировки, анимированная блок-схема и значения переменных" width="1844" height="1037" loading="lazy"><span>Рассмотреть экран</span></button><figcaption>Реальный интерфейс · Визуализатор Python-кода</figcaption></figure>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="nh-section nh-results" id="results" aria-labelledby="resultsTitle">
+            <div class="nh-wrap">
+                <div class="nh-section-label"><span>04 / Опыт учеников</span></div>
+                <div class="nh-results-grid">
+                    <div class="nh-results-copy reveal"><h2 id="resultsTitle">За баллами —<br>своя история.</h2><p>Ученики и родители рассказывают о занятиях, поддержке и результате подготовки.</p><div class="nh-result-story" id="reviewStory" aria-live="polite" aria-atomic="true"><div class="nh-result-score"><span>44</span><i aria-hidden="true">→</i><strong>94</strong></div><p class="nh-result-caption">Ярослав · Пробный → ЕГЭ</p></div></div>
+                    <div class="nh-reviews" aria-label="Отзывы учеников и родителей">
+                        <div class="nh-review-track" id="reviewTrack" tabindex="0" aria-label="Листайте отзывы">
+<article class="rev-card">
+                            <div class="rev-card-top">
+                                <span class="rev-avatar">Я</span>
+                                <div><div class="rev-name">Ярослав</div><div class="rev-meta">Instagram</div></div>
+                            </div>
+                            <div class="rev-stars">★★★★★</div>
+                            <p class="rev-text">Очень рады, что нашли объявление Артёма на Авито в августе 2025 года
+                                — ни разу не пожалели! Лучший преподаватель для нашего ребёнка. Пробный экзамен был на
+                                44 балла, а по итогам 2026 года сдали настоящий ЕГЭ на 94 балла и поступили на бюджет
+                                в нужный вуз. Спасибо огромное, побольше бы таких преподавателей!</p>
+                        </article>
+<article class="rev-card">
+                            <div class="rev-card-top">
+                                <span class="rev-avatar">А</span>
+                                <div><div class="rev-name">Арсений</div><div class="rev-meta">Авито · 28
+                                        августа</div></div>
+                            </div>
+                            <div class="rev-stars">★★★★★</div>
+                            <p class="rev-text">Было несколько занятий. На первом пробном всё понравилось, решил
+                                начать заниматься и готовиться к экзамену. В итоге вообще не пожалел и спустя 3
+                                недели уже был виден результат, спасибо Артему, очень комфортно с ним заниматься</p>
+                        </article>
+<article class="rev-card">
+                            <div class="rev-card-top">
+                                <span class="rev-avatar">Ю</span>
+                                <div><div class="rev-name">Юлия Сидякина</div><div class="rev-meta">Авито · 24
+                                        августа</div></div>
+                            </div>
+                            <div class="rev-stars">★★★★★</div>
+                            <p class="rev-text">У меня уже было несколько занятий с Артемом, доступно и понятно
+                                объясняет, терпелив к глупым вопросам. Информация постепенно укладывается по полочкам
+                                и не забывается со временем. Нравится подход и заинтересованность</p>
+                        </article>
+<article class="rev-card">
+                            <div class="rev-card-top">
+                                <span class="rev-avatar">Л</span>
+                                <div><div class="rev-name">Людмила</div><div class="rev-meta">Авито · 23
+                                        августа</div></div>
+                            </div>
+                            <div class="rev-stars">★★★★★</div>
+                            <p class="rev-text">Обратились к Артёму с целью подготовки к ЕГЭ по информатике, взяли
+                                пробное занятие, которое действительно оказалось бесплатным, а также интересным,
+                                поэтому решили заниматься на постоянной основе. На данный момент прошло уже 4
+                                занятия. Ребёнок доволен, материал подаётся в доступной форме, если что-то непонятно,
+                                даются дополнительные пояснения. Важно отметить, что есть контакт с преподавателем,
+                                занятия интересные.</p>
+                        </article>
+<article class="rev-card">
+                            <div class="rev-card-top">
+                                <span class="rev-avatar">А</span>
+                                <div><div class="rev-name">Алёна</div><div class="rev-meta">Instagram</div></div>
+                            </div>
+                            <div class="rev-stars">★★★★★</div>
+                            <p class="rev-text">Занятия супер, за 10 месяцев с нулевых знаний дотянули до 88 баллов,
+                                занятия проходят в дружелюбной атмосфере, репетитор очень грамотно разжевывает
+                                информацию, в целом занятия бомба клад, репетитор крутой чувак 👍💯</p>
+                        </article>
+<article class="rev-card">
+                            <div class="rev-card-top">
+                                <span class="rev-avatar">Т</span>
+                                <div><div class="rev-name">Тимур</div><div class="rev-meta">Instagram</div></div>
+                            </div>
+                            <div class="rev-stars">★★★★★</div>
+                            <p class="rev-text">Начал готовиться к ЕГЭ по информатике практически с нуля. Артём всё
+                                объяснял понятно, помогал разобраться даже с самыми сложными темами и всегда уделял
+                                внимание ошибкам. Благодаря его подходу удалось хорошо сдать экзамен. Большое спасибо
+                                за поддержку и качественную подготовку!</p>
+                        </article>
+<article class="rev-card">
+                            <div class="rev-card-top">
+                                <span class="rev-avatar">А</span>
+                                <div><div class="rev-name">Аскольд</div><div class="rev-meta">Instagram</div></div>
+                            </div>
+                            <div class="rev-stars">★★★★★</div>
+                            <p class="rev-text">Хотим выразить свою огромную благодарность Артёму от всей нашей
+                                семьи! Нашли его объявление в 2024 году — старшая сдала экзамен на 90 баллов, а до
+                                занятий с Артёмом пробный был на 52. Младший сын в этом году тоже решил сдавать
+                                информатику и за 21 занятие смог выйти на 84 балла! Настоящий, хороший, современный
+                                преподаватель и супер человек! Спасибо огромное!</p>
+                        </article>
+                        </div>
+                        <div class="nh-review-controls"><span>Отзывы с Авито и из Instagram</span><div><button type="button" id="reviewPrev" aria-label="Предыдущий отзыв">←</button><span id="reviewCount" aria-live="polite">1 / 7</span><button type="button" id="reviewNext" aria-label="Следующий отзыв">→</button></div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="nh-section nh-access" id="access" aria-labelledby="accessTitle">
+            <div class="nh-wrap">
+                <div class="nh-section-label"><span>05 / Начнём со знакомства</span><span>Индивидуальные занятия</span></div>
+                <div class="nh-access-grid">
+                    <div class="reveal"><div class="nh-free-label"><span>Первое вводное занятие</span><strong>Бесплатно</strong></div><h2 id="accessTitle">Твоя цель.<br>Наш первый шаг.</h2><p class="nh-lead">Познакомимся, обсудим твой уровень и покажу, как устроена подготовка.</p><div class="nh-actions"><a href="/register" class="nh-btn">Оставить заявку</a><a href="{{ telegram_url }}" target="_blank" rel="noopener noreferrer" class="nh-text-link">Написать Артёму</a></div><p class="nh-access-note">Расписание и стоимость дальнейших занятий обсудим при обращении.</p></div>
+                    <ol class="nh-access-steps"><li><span>01</span><div><h3>Оставь контакт</h3><p>Заполни короткую заявку или напиши напрямую в Telegram.</p></div></li><li><span>02</span><div><h3>Обсудим подготовку</h3><p>Расскажи о своей цели. Договоримся о вводном занятии и разберём твои вопросы.</p></div></li><li><span>03</span><div><h3>Получишь доступ</h3><p>После подтверждения заявки откроем аккаунт на платформе и поможем начать.</p></div></li></ol>
+                </div>
+            </div>
+        </section>
+
+        <section class="nh-section nh-faq" id="faq" aria-labelledby="faqTitle">
+            <div class="nh-wrap nh-faq-grid">
+                <div><div class="nh-section-label"><span>06 / Остались вопросы?</span></div><h2 id="faqTitle">Давай разберёмся.</h2><p>Можно просто <a href="{{ telegram_url }}" target="_blank" rel="noopener noreferrer">написать мне</a>.</p></div>
+                <div class="nh-faq-list">
+                    <details><summary>Можно начать с нуля?<span aria-hidden="true">+</span></summary><p>Да. На платформе есть начальная подготовка: установка Python, переменные, условия, циклы и первые программы. На вводном занятии обсудим, с чего начать именно тебе.</p></details>
+                    <details><summary>Сколько стоят занятия?<span aria-hidden="true">+</span></summary><p>Первое вводное занятие бесплатно. Стоимость и расписание дальнейших индивидуальных занятий уточни у Артёма в Telegram или оставь заявку — обсудим условия до начала подготовки.</p></details>
+                    <details><summary>Что можно посмотреть без регистрации?<span aria-hidden="true">+</span></summary><p>Можно открыть <a href="/tasks">базу заданий</a>, <a href="/preparation/1">первый урок</a> и <a href="/theory/1">теорию задания № 1</a>. Для остальных учебных материалов, вариантов и личной статистики понадобится аккаунт.</p></details>
+                    <details><summary>Как получить доступ к платформе?<span aria-hidden="true">+</span></summary><p>Оставь заявку, указав телефон и удобный способ связи: Telegram, VK или MAX. После подтверждения заявки мы свяжемся с тобой и выдадим доступ.</p></details>
+                    <details><summary>Как проверяются задачи и варианты?<span aria-hidden="true">+</span></summary><p>В тренировочном режиме ответ проверяется сразу после отправки. В экзаменационном режиме ты решаешь вариант с таймером, а итоговый результат получаешь в конце.</p></details>
+                    <details><summary>Я уже занимаюсь. Где мои задания?<span aria-hidden="true">+</span></summary><p>Войди в аккаунт через кнопку «Войти» вверху страницы. В меню «Разделы платформы» доступны теория, база заданий, варианты и статистика. На телефоне эта кнопка называется «Меню».</p></details>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="nh-footer">
+        <div class="nh-wrap">
+            <div class="nh-footer-top"><a href="/" class="nh-footer-brand">ЕГЭ<span>волюция</span></a><p>Понимание. Практика. Твой результат.</p><a href="/register" class="nh-text-link">Начать подготовку</a></div>
+            <div class="nh-footer-bottom"><span>© 2026 ЕГЭволюция</span><div>{{ social_links() }}<a href="#top">Наверх ↑</a></div></div>
+        </div>
+    </footer>
+    <dialog class="nh-screen-dialog" id="screenDialog" aria-label="Скриншот платформы"><form method="dialog"><button aria-label="Закрыть скриншот">Закрыть ×</button></form><div class="nh-screen-scroll"><img id="dialogImage" alt=""></div><p id="dialogCaption"></p></dialog>
+    <script src="{{ url_for('static', filename='js/navbar.js') }}?v={{ app_version }}" defer></script>
+    <script src="{{ url_for('static', filename='home/script.js') }}?v={{ app_version }}"></script>
+    <script src="{{ url_for('static', filename='home/quiz.js') }}?v={{ app_version }}"></script>
+</body>
+</html>

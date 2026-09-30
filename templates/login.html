@@ -22,6 +22,7 @@
 
         <form class="auth-form" method="POST">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="next" value="{{ next_url }}">
 
             <div class="form-field">
                 <label class="form-label" for="username">Логин</label>
@@ -38,6 +39,7 @@
             <button type="submit" class="btn btn-primary btn--full">Войти</button>
         </form>
 
+        <p class="auth-footer-link"><a href="{{ url_for('start') }}">← На главную</a></p>
         <p class="auth-footer-link">Нет доступа? <a href="/register">Оставить заявку</a></p>
 
     </div>

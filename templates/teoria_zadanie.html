@@ -43,7 +43,7 @@
         <div class="theory-content">
             {% for paragraph in theory.theory.description %}
             {% set stripped_paragraph = paragraph.strip() %}
-            {% if stripped_paragraph in ['<ul>', '</ul>', '<ol>', '</ol>'] or (stripped_paragraph.startswith('<li>') and stripped_paragraph.endswith('</li>')) %}
+            {% if stripped_paragraph in ['<ul>', '</ul>', '<ol>', '</ol>'] or (stripped_paragraph.startswith('<li>') and stripped_paragraph.endswith('</li>')) or (stripped_paragraph.startswith('<pre>') and stripped_paragraph.endswith('</pre>')) %}
             {{ paragraph | replace_markers }}
             {% else %}
             <p>{{ paragraph | replace_markers }}</p>

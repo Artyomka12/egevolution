@@ -394,7 +394,7 @@
         }};
         const variantNum = {{ variant_num }};
         // Читаем ответы из localStorage (они уже были отправлены на сервер из reshenie.html)
-        const savedAnswers = localStorage.getItem(`variant_${variantNum}_answers`);
+        const savedAnswers = localStorage.getItem(`variant_${variantNum}_renumber_2026_answers`);
         let totalPoints = 0;
         const resultsBody = document.getElementById('results-body');
 
@@ -532,8 +532,8 @@ ${isAnswered ? `<span style="color:#4ade80; font-weight:bold; margin-left:5px;">
         document.getElementById('secondary-score').textContent = secondaryScore;
 
         // Очищаем localStorage после показа результатов
-        localStorage.removeItem(`variant_${variantNum}_answers`);
-        localStorage.removeItem(`variant_${variantNum}_time`);
+        localStorage.removeItem(`variant_${variantNum}_renumber_2026_answers`);
+        localStorage.removeItem(`variant_${variantNum}_renumber_2026_time`);
 });
     </script>
 </body>

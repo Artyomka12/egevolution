@@ -19,7 +19,7 @@
     <div class="card profile-card reveal">
 
         <div class="avatar-wrapper">
-            <img src="{{ url_for('static', filename='uploads/avatars/' + user.avatar) }}"
+            <img src="{{ url_for('static', filename='uploads/avatars/' + user.avatar if user.avatar and user.avatar != 'default.png' else 'favicon.png') }}"
                  alt="Аватар" class="avatar-img" id="avatar-img">
         </div>
 
@@ -37,6 +37,12 @@
             </button>
         </form>
 
+    </div>
+
+    <!-- Сводка подготовки, перенесённая со старой главной -->
+    <div class="profile-stats profile-learning-progress reveal">
+        <div class="stat-card"><div class="stat-value">{{ progress.solved_tasks }}</div><div class="stat-label">Решено задач</div></div>
+        <div class="stat-card"><div class="stat-value">{{ progress.topics_studied }} / 27</div><div class="stat-label">Изучено тем</div></div>
     </div>
 
     <!-- Статистика -->
@@ -63,6 +69,8 @@
             <a href="/variants"    class="btn btn-secondary">📝 Варианты ЕГЭ</a>
             <a href="/theory"      class="btn btn-secondary">📚 Теория</a>
             <a href="/preparation" class="btn btn-secondary">🚀 Подготовка</a>
+            <a href="/tasks" class="btn btn-secondary">🎯 База заданий</a>
+            <a href="/visualizer" class="btn btn-secondary">⚡ Визуализатор кода</a>
             <a href="/stats"       class="btn btn-secondary">📊 Статистика</a>
         </div>
 

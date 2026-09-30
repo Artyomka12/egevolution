@@ -6,6 +6,9 @@
 
 # База данных
 users.db
+users.db-*
+.local-backups/
+.local-data/
 
 # Python
 __pycache__/
@@ -14,6 +17,11 @@ __pycache__/
 
 # Переменные окружения
 .env
+.env.save*
+
+# Server-specific Passenger configuration and restart files
+/passenger_wsgi.py
+/tmp/
 
 # Загруженные файлы
 static/uploads/*
