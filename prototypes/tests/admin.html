@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'none'; form-action 'none'; base-uri 'none'">
+<title>Управление тестами | Админ-панель ЕГЭволюции</title>
+<style>
+/* Основа: inline-стили admin_panel.html, admin_user_stats.html, constructor_gate.html. */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', sans-serif; background: #0a0a0f; color: #e0e0e0; min-height: 100vh; padding: 40px 20px; line-height: 1.5; }
+.container { max-width: 1000px; margin: 0 auto; }
+button { font-family: inherit; cursor: pointer; }
+.admin-nav { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 30px; }
+.admin-label { font-size: .85em; color: #999; }
+.header { margin-bottom: 32px; }
+.header h1 { font-size: 2.5em; line-height: 1.2; background: linear-gradient(135deg,#ef4444,#f59e0b); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.header p { color: #999; margin-top: 12px; font-size: .9em; }
+.btn-back { padding: 10px 20px; background: rgba(255,255,255,.05); color: #e0e0e0; border: 1px solid rgba(255,255,255,.1); border-radius: 8px; text-decoration: none; transition: .2s; font-size: .9em; }
+.btn-back:hover { background: rgba(255,255,255,.1); }
+.toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; }
+.btn-create { padding: 10px 18px; background: linear-gradient(135deg,#22c55e,#16a34a); color: white; border: 1px solid transparent; border-radius: 8px; font-size: .9em; font-weight: 600; }
+.btn-create:hover { filter: brightness(1.1); }
+.tabs { display: flex; gap: 6px; padding: 5px; border: 1px solid rgba(255,255,255,.08); border-radius: 10px; background: rgba(255,255,255,.03); }
+.tab { padding: 9px 16px; border: 1px solid transparent; border-radius: 7px; background: transparent; color: #aaa; font-size: .9em; }
+.tab[aria-selected=true] { background: rgba(168,85,247,.2); border-color: rgba(168,85,247,.3); color: #d8b4fe; }
+.table-panel { background: rgba(255,255,255,.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 20px; }
+table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+th,td { text-align: left; padding: 15px 10px; border-bottom: 1px solid rgba(255,255,255,.05); vertical-align: top; overflow-wrap: anywhere; }
+th { color: #a855f7; font-weight: 600; text-transform: uppercase; font-size: .75em; letter-spacing: .5px; }
+td { font-size: .88em; }
+tbody tr:hover { background: rgba(255,255,255,.02); }
+tbody tr:last-child td { border-bottom: 0; }
+.test-table th:nth-child(1) { width: 25%; }
+.test-table th:nth-child(2) { width: 10%; }
+.test-table th:nth-child(3) { width: 9%; }
+.test-table th:nth-child(4) { width: 14%; }
+.test-table th:nth-child(5) { width: 15%; }
+.test-table th:nth-child(6) { width: 27%; }
+.test-title { color: #fff; font-weight: 600; }
+.order-controls { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 12px; }
+.order-number { font-size: .8em; color: #888; margin-right: 2px; }
+.order-button { padding: 5px 7px; font-size: .78em; border: 1px solid rgba(255,255,255,.1); border-radius: 6px; background: rgba(255,255,255,.04); color: #bbb; }
+.order-button:hover:not(:disabled) { background: rgba(255,255,255,.1); }
+button:disabled { opacity: .35; cursor: default; }
+.actions { display: flex; flex-wrap: wrap; gap: 7px; }
+.action { border-radius: 6px; padding: 7px 9px; font-size: .84em; border: 1px solid rgba(168,85,247,.3); background: rgba(168,85,247,.2); color: #d8b4fe; }
+.action:hover { background: rgba(168,85,247,.32); }
+.action-neutral { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.1); color: #bbb; }
+.action-neutral:hover { background: rgba(255,255,255,.1); }
+.action-publish { background: rgba(34,197,94,.15); border-color: rgba(34,197,94,.3); color: #4ade80; }
+.action-publish:hover { background: rgba(34,197,94,.25); }
+.btn-delete { background: rgba(239,68,68,.2); color: #f87171; border: 1px solid rgba(239,68,68,.3); padding: 7px 9px; border-radius: 6px; font-size: .84em; }
+.btn-delete:hover { background: rgba(239,68,68,.4); }
+.badge { display: inline-block; padding: 4px 9px; border-radius: 12px; font-size: .8em; font-weight: 600; }
+.published { color: #4ade80; background: rgba(34,197,94,.15); }
+.hidden-status { color: #aaa; background: rgba(255,255,255,.07); }
+.pending-number { color: #fbbf24; font-weight: 600; }
+.review-table th:nth-child(1) { width: 20%; }
+.review-table th:nth-child(2) { width: 29%; }
+.review-table th:nth-child(3) { width: 20%; }
+.review-table th:nth-child(4) { width: 17%; }
+.review-table th:nth-child(5) { width: 14%; }
+.date { white-space: nowrap; color: #bbb; }
+.panel-hint { margin-bottom: 12px; font-size: .8em; color: #999; }
+.feedback { min-height: 24px; color: #c4b5fd; font-size: .85em; margin-top: 18px; overflow-wrap: anywhere; }
+.empty { padding: 26px 10px; color: #999; text-align: center; }
+dialog { width: min(520px,calc(100% - 32px)); max-height: calc(100dvh - 32px); margin: auto; padding: 30px; border: 1px solid rgba(255,255,255,.12); border-radius: 16px; background: #15151e; color: #e0e0e0; box-shadow: 0 20px 60px #0008; overflow-y: auto; }
+dialog::backdrop { background: #0009; backdrop-filter: blur(3px); }
+dialog h2 { font-size: 1.4em; color: white; margin: 0 24px 16px 0; overflow-wrap: anywhere; }
+dialog p { color: #bbb; line-height: 1.6; overflow-wrap: anywhere; }
+.close { position: absolute; top: 12px; right: 12px; width: 34px; height: 34px; border: 1px solid #ffffff15; border-radius: 8px; background: #ffffff08; color: #aaa; font-size: 22px; }
+.delete-warning { margin-top: 18px; padding: 14px; background: rgba(239,68,68,.12); border: 1px solid rgba(239,68,68,.2); border-radius: 8px; color: #fca5a5; font-size: .9em; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
+.modal-actions .btn-delete { font-size: .9em; padding: 10px 18px; }
+.demo-note { font-size: .8em; color: #888; margin-top: 16px; }
+:focus-visible { outline: 2px solid #c084fc; outline-offset: 4px; }
+[hidden] { display: none !important; }
+@media(max-width:800px) { body { padding: 28px 16px; } .header h1 { font-size: 2em; } .table-panel { padding: 14px; } th,td { padding: 14px 7px; } .actions { gap: 6px; } }
+@media(max-width:900px) {
+ body { padding: 22px 14px; } .admin-nav { align-items: flex-start; flex-direction: column; gap: 10px; margin-bottom: 24px; } .header h1 { font-size: 1.8em; }
+ .toolbar { align-items: stretch; flex-direction: column; } .tabs { order: 2; } .tab { flex: 1; } .btn-create { align-self: flex-start; }
+ .table-panel { padding: 16px; } table,tbody { display: block; }
+ thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+ tbody tr { display: block; padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,.1); }
+ tbody tr:last-child { border: 0; }
+ td,tbody tr:last-child td { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.1fr); gap: 12px; padding: 7px 0; border: 0; }
+ td::before { content: attr(data-label); color: #999; font-size: .86em; }
+ td:first-child,td.actions-cell { display: block; }
+ td:first-child::before,td.actions-cell::before { display: block; margin-bottom: 8px; }
+ td:first-child .test-title { font-size: 1.1em; }
+ .actions { gap: 8px; } .action,.btn-delete { padding: 9px 11px; }
+ .order-button { padding: 7px 10px; } .modal-actions { flex-wrap: wrap; } dialog { padding: 26px 22px; }
+}
+@media(prefers-reduced-motion:reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<main class="container">
+ <nav class="admin-nav" aria-label="Навигация администратора"><button class="btn-back" type="button" id="back-admin">← Вернуться в админ-панель</button><span class="admin-label">ЕГЭволюция · Администратор</span></nav>
+ <header class="header"><h1>Управление тестами</h1><p>Демонстрационный прототип. Все изменения действуют только до обновления страницы.</p></header>
+ <div class="toolbar"><div class="tabs" role="tablist" aria-label="Управление тестами"><button class="tab" type="button" role="tab" id="tab-all" aria-selected="true" aria-controls="panel-all">Все тесты</button><button class="tab" type="button" role="tab" id="tab-review" aria-selected="false" aria-controls="panel-review" tabindex="-1">На проверке</button></div><button class="btn-create" type="button" id="create-test">+ Создать тест</button></div>
+ <section class="table-panel" id="panel-all" role="tabpanel" aria-labelledby="tab-all"><p class="panel-hint">Порядок в каталоге можно изменить кнопками «Выше» и «Ниже».</p><table class="test-table" aria-label="Все тесты"><thead><tr><th scope="col">Название теста</th><th scope="col">Вопросов</th><th scope="col">Время</th><th scope="col">Прохождений</th><th scope="col">Публикация</th><th scope="col">Действия</th></tr></thead><tbody id="tests-body"></tbody></table><p class="empty" id="tests-empty" hidden>Тестов пока нет.</p></section>
+ <section class="table-panel" id="panel-review" role="tabpanel" aria-labelledby="tab-review" hidden><table class="review-table" aria-label="Попытки на ручной проверке"><thead><tr><th scope="col">Ученик</th><th scope="col">Название теста</th><th scope="col">Дата прохождения</th><th scope="col">Непроверенных вопросов</th><th scope="col">Действия</th></tr></thead><tbody id="review-body"></tbody></table><p class="empty" id="review-empty" hidden>Нет попыток, ожидающих проверки.</p></section>
+ <p class="feedback" id="feedback" role="status" aria-live="polite"></p>
+</main>
+<dialog id="info-dialog" aria-labelledby="info-title" aria-describedby="info-message"><button type="button" class="close" aria-label="Закрыть окно" autofocus>×</button><h2 id="info-title"></h2><p id="info-message"></p><div class="modal-actions"><button type="button" class="btn-back" id="info-ok">Понятно</button></div></dialog>
+<dialog id="delete-dialog" aria-labelledby="delete-title" aria-describedby="delete-description delete-warning"><button type="button" class="close" aria-label="Закрыть окно">×</button><h2 id="delete-title">Удалить тест?</h2><p id="delete-description"></p><div class="delete-warning" id="delete-warning">Будут удалены тест, все попытки и все результаты учеников по этому тесту. Восстановить их после удаления не получится.</div><p class="demo-note">В этом прототипе удаляются только вымышленные данные в памяти страницы.</p><div class="modal-actions"><button type="button" class="btn-back" id="cancel-delete" autofocus>Отмена</button><button type="button" class="btn-delete" id="confirm-delete">Удалить тест</button></div></dialog>
+<script>
+'use strict';
+let tests=[
+ {id:1,title:'Основы информатики и Python',questions:8,time:25,attempts:24,published:true},
+ {id:2,title:'Системы счисления',questions:12,time:20,attempts:18,published:true},
+ {id:3,title:'Логика и таблицы истинности',questions:10,time:25,attempts:9,published:false},
+ {id:4,title:'Кодирование текстовой, графической и звуковой информации',questions:15,time:30,attempts:0,published:false}
+];
+let reviews=[{id:1,testId:1,student:'Анна Миронова',date:'12.10.2026, 17:42',pending:2},{id:2,testId:1,student:'Михаил Орлов',date:'12.10.2026, 19:15',pending:1},{id:3,testId:3,student:'София Белова',date:'13.10.2026, 10:08',pending:3}];
+let nextId=5,deleteId=null;
+const $=id=>document.getElementById(id);
+const el=(tag,className,text)=>{const e=document.createElement(tag);if(className)e.className=className;if(text!==undefined)e.textContent=text;return e;};
+function button(text,className,action){const b=el('button',className,text);b.type='button';b.addEventListener('click',action);return b;}
+function cell(label,content,className=''){const td=el('td',className);td.dataset.label=label;if(content instanceof Node)td.append(content);else td.textContent=content;return td;}
+function announce(text){$('feedback').textContent=text;}
+function info(title,message){$('info-title').textContent=title;$('info-message').textContent=message;$('info-dialog').showModal();}
+function focusAction(id,action){document.querySelector(`[data-test-id="${id}"] [data-action="${action}"]`)?.focus();}
+function move(id,direction){const i=tests.findIndex(t=>t.id===id),j=i+direction;if(i<0||j<0||j>=tests.length)return;[tests[i],tests[j]]=[tests[j],tests[i]];render();focusAction(id,direction<0?'down':'up');announce(`Порядок изменён: «${tests[j].title}» — позиция ${j+1}.`);}
+function render(){
+ const body=$('tests-body');body.replaceChildren();
+ tests.forEach((test,index)=>{
+  const row=el('tr');row.dataset.testId=test.id;
+  const name=el('div');name.append(el('div','test-title',test.title));
+  const order=el('div','order-controls');order.append(el('span','order-number',`№${index+1}`));
+  const up=button('↑ Выше','order-button',()=>move(test.id,-1));up.disabled=index===0;up.dataset.action='up';up.setAttribute('aria-label',`Переместить «${test.title}» выше`);
+  const down=button('↓ Ниже','order-button',()=>move(test.id,1));down.disabled=index===tests.length-1;down.dataset.action='down';down.setAttribute('aria-label',`Переместить «${test.title}» ниже`);order.append(up,down);name.append(order);
+  const actions=el('div','actions');
+  const edit=button('Редактировать','action',()=>info('Редактор теста',`«${test.title}». Конструктор будет спроектирован отдельно. Здесь показан только переход к редактированию.`));edit.dataset.action='edit';
+  const copy=button('Создать копию','action action-neutral',()=>{const clone={...test,id:nextId++,title:test.title+' — копия',attempts:0,published:false};tests.splice(tests.findIndex(t=>t.id===test.id)+1,0,clone);render();focusAction(clone.id,'edit');announce(`Создана скрытая копия «${clone.title}» без результатов учеников.`);});
+  const publish=button(test.published?'Скрыть':'Опубликовать',test.published?'action action-neutral':'action action-publish',()=>{test.published=!test.published;render();focusAction(test.id,'publish');announce(`«${test.title}»: ${test.published?'опубликован':'скрыт'}.`);});publish.dataset.action='publish';
+  const remove=button('Удалить','btn-delete',()=>{deleteId=test.id;$('delete-description').textContent=`«${test.title}». Прохождений: ${test.attempts}.`;$('delete-dialog').showModal();});
+  actions.append(edit,copy,publish,remove);
+  row.append(cell('Название теста',name),cell('Вопросов',test.questions),cell('Время',test.time+' мин'),cell('Прохождений',test.attempts),cell('Публикация',el('span','badge '+(test.published?'published':'hidden-status'),test.published?'Опубликован':'Скрыт')),cell('Действия',actions,'actions-cell'));body.append(row);
+ });
+ $('tests-empty').hidden=tests.length!==0;
+ const reviewBody=$('review-body');reviewBody.replaceChildren();
+ reviews.forEach(review=>{const test=tests.find(t=>t.id===review.testId);if(!test)return;const row=el('tr');const check=button('Проверить','action',()=>info('Ручная проверка',`${review.student} · «${test.title}». Непроверенных вопросов: ${review.pending}. Интерфейс проверки будет спроектирован отдельно.`));row.append(cell('Ученик',review.student),cell('Название теста',test.title),cell('Дата прохождения',el('span','date',review.date)),cell('Непроверенных вопросов',el('span','pending-number',String(review.pending))),cell('Действия',check,'actions-cell'));reviewBody.append(row);});
+ $('review-empty').hidden=reviews.length!==0;
+}
+function selectTab(name){for(const item of ['all','review']){const active=item===name;$('tab-'+item).setAttribute('aria-selected',String(active));$('tab-'+item).tabIndex=active?0:-1;$('panel-'+item).hidden=!active;}}
+['all','review'].forEach(name=>{$('tab-'+name).addEventListener('click',()=>selectTab(name));$('tab-'+name).addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){e.preventDefault();const target=e.key==='Home'?'all':e.key==='End'?'review':name==='all'?'review':'all';selectTab(target);$('tab-'+target).focus();}});});
+$('create-test').addEventListener('click',()=>info('Создание теста','Конструктор тестов будет спроектирован отдельно. В этом прототипе новый тест не создаётся.'));
+$('back-admin').addEventListener('click',()=>info('Админ-панель','Это автономный прототип. Переход в рабочую админ-панель не выполняется.'));
+$('info-ok').addEventListener('click',()=>$('info-dialog').close());
+$('cancel-delete').addEventListener('click',()=>$('delete-dialog').close());
+$('confirm-delete').addEventListener('click',()=>{const test=tests.find(t=>t.id===deleteId);if(!test)return;tests=tests.filter(t=>t.id!==deleteId);reviews=reviews.filter(r=>r.testId!==deleteId);$('delete-dialog').close();render();$('create-test').focus();announce(`«${test.title}» и связанные демонстрационные результаты удалены.`);});
+document.querySelectorAll('dialog').forEach(dialog=>{dialog.querySelector('.close').addEventListener('click',()=>dialog.close());let outsideStart=false;const outside=e=>{const r=dialog.getBoundingClientRect();return e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom;};dialog.addEventListener('pointerdown',e=>{outsideStart=e.target===dialog&&outside(e);});dialog.addEventListener('click',e=>{if(outsideStart&&e.target===dialog&&outside(e))dialog.close();});dialog.addEventListener('close',()=>{if(dialog.id==='delete-dialog')deleteId=null;});});
+render();
+</script>
+</body>
+</html>
