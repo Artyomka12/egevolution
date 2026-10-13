@@ -33,3 +33,7 @@ static/uploads/*
 
 # Claude Code — личные настройки, не для команды
 .claude/settings.local.json
+
+# Temporary prototype testing files
+prototypes/**/.browser-profile/
+prototypes/**/.qa/
