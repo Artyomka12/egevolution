@@ -2,6 +2,7 @@
 from flask import Blueprint, g, jsonify, render_template, redirect, request, send_file
 
 from core.tests_http import configure_blueprint, json_body
+from core.production_worker import starts_enabled
 from . import media, service
 from .errors import TestsError
 
@@ -45,16 +46,16 @@ def register_student(app, database_factory):
     @bp.get("/api/tests")
     def catalog():
         catalog_available()
-        return jsonify(service.catalog(g.tests_db, actor(), starts_enabled=app.config["TESTS_STARTS_ENABLED"]))
+        return jsonify(service.catalog(g.tests_db, actor(), starts_enabled=starts_enabled(app)))
 
     @bp.get("/api/tests/<int:test_id>")
     def detail(test_id):
         catalog_available()
-        return jsonify(service.test_detail(g.tests_db, test_id, actor(), starts_enabled=app.config["TESTS_STARTS_ENABLED"]))
+        return jsonify(service.test_detail(g.tests_db, test_id, actor(), starts_enabled=starts_enabled(app)))
 
     @bp.post("/api/tests/<int:test_id>/attempts")
     def start(test_id):
-        data = service.start_attempt(g.tests_db, test_id, json_body(), actor(), starts_enabled=app.config["TESTS_STARTS_ENABLED"])
+        data = service.start_attempt(g.tests_db, test_id, json_body(), actor(), starts_enabled=starts_enabled(app))
         created = data.pop("_created")
         return jsonify(data), 201 if created else 200
 
