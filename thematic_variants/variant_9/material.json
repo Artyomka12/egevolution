@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "material": {
+    "id": 9,
+    "state": "published",
+    "current_version_id": 9,
+    "sort_order": 7,
+    "revision": 2,
+    "created_by": null,
+    "created_at": 1791932559123,
+    "updated_at": 1791932560293,
+    "deleted_at": null
+  },
+  "draft": {
+    "variant_id": 9,
+    "document_json": "{\"description\":\"Итоговый сложный тренинг: нестандартные модели, комбинаторика и многошаговый анализ. 20 задач: по две каждого номера ЕГЭ с 1 по 10.\",\"items\":[{\"source_hash\":\"58753c01ebd0b8a349322331664a327e9a5878119932ea58418b9a8ca9c67638\",\"source_task_id\":79,\"source_task_num\":1},{\"source_hash\":\"8116b7bc7579e440d1f189e1501faf360c333057ec5bb7fea2e228abda8673b7\",\"source_task_id\":84,\"source_task_num\":1},{\"source_hash\":\"b4c5c35704c75c5a19e9be711a4d88ab463ecc367ef33e930a2b5cc7c1aa8842\",\"source_task_id\":59,\"source_task_num\":2},{\"source_hash\":\"3624820e52fec130590f62dc12f33b8e87c2181a3cd4404fd0a72829cdbbcdf0\",\"source_task_id\":78,\"source_task_num\":2},{\"source_hash\":\"a490064ebc482258ad37ba8cd294c37d9a589ad8af30fe1d3d88161e69759edc\",\"source_task_id\":86,\"source_task_num\":3},{\"source_hash\":\"94cd3914bca0d7e34a95d8b26453b48da72986de259b415b128b3b05b13c88b9\",\"source_task_id\":87,\"source_task_num\":3},{\"source_hash\":\"69d63dd58e168c30e8fbc698efaf84cbed92ef1f397964fd21e639a1ed91484d\",\"source_task_id\":59,\"source_task_num\":4},{\"source_hash\":\"6fb09b50bc608bc481f644535e06858a064b346e968fda4e64aea6321a501cc8\",\"source_task_id\":83,\"source_task_num\":4},{\"source_hash\":\"9a003994bc846f0bcb16bb79fc5f8e73a16500e63dd227bebbfa6b85ef7f4f25\",\"source_task_id\":78,\"source_task_num\":5},{\"source_hash\":\"f935884e7efcecd7018731ba68fea88fb274af79023481e0f902ad53e08310c4\",\"source_task_id\":82,\"source_task_num\":5},{\"source_hash\":\"220a51979887711089c4d263427d689a685266391853f264fcd32d2b184afbd9\",\"source_task_id\":28,\"source_task_num\":6},{\"source_hash\":\"4898346d11578e4fffe94c0c78a56249fc2f16450a51768f25b7ac7c1fec560f\",\"source_task_id\":63,\"source_task_num\":6},{\"source_hash\":\"0d30f60cf36412231c2648f8cbd2ef6bff3eae736175f0e1100d8e09e23a7062\",\"source_task_id\":64,\"source_task_num\":7},{\"source_hash\":\"0fbae7edfb0ad85682adfcba108db606650883d9a26199d7e47f80d2c9daca50\",\"source_task_id\":108,\"source_task_num\":7},{\"source_hash\":\"6bb179b0b9254a38827a87ce659b695c380b3e51bdc59349f38002206b1cbd33\",\"source_task_id\":65,\"source_task_num\":8},{\"source_hash\":\"03d0d9733cdf42bbf2c8852602077c1941b4fe5193addf1b6b1cbe86a45f5b86\",\"source_task_id\":66,\"source_task_num\":8},{\"source_hash\":\"92ea29ff8afa3d9cab50ba780e4d7b75757cb066eb8f064580fd298bcd0b5504\",\"source_task_id\":55,\"source_task_num\":9},{\"source_hash\":\"439a8a6e98cba52ad5408e09e6e7c6d5fa58e3d7656cfdbde854ab70f24ed49c\",\"source_task_id\":61,\"source_task_num\":9},{\"source_hash\":\"cc8d602f445d0d72878596e8cfd7fd76c83b6f2e6961156bf6f7e5f7e0db8fe9\",\"source_task_id\":44,\"source_task_num\":10},{\"source_hash\":\"3907b300e0a6713e28efe98cfd3cf19f4f8a32c3e205795af4acbcc46e2b2ce4\",\"source_task_id\":91,\"source_task_num\":10}],\"title\":\"Тематический вариант №8\"}",
+    "revision": 2,
+    "based_on_version_id": 9,
+    "updated_by": null,
+    "updated_at": 1791932560293
+  },
+  "version_ids": [
+    9
+  ]
+}

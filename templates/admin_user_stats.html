@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Статистика пользователя | Админ-панель</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
     <style>
@@ -247,22 +248,27 @@
             color: #666;
         }
     </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/user-stats.css') }}">
+    <script defer src="{{ url_for('static', filename='js/admin/user-stats.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='js/admin/tests/user-stats.js') }}"></script>
 </head>
 
 <body>
     <div class="container">
         <div class="header">
             <a href="/admin" class="btn-back">← Назад к списку</a>
-            <h1>📊 Статистика пользователя</h1>
+            <h1>Статистика пользователя</h1>
             <div></div> <!-- Пустой блок для выравнивания -->
         </div>
         <div class="user-info-card">
-            <div style="display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 15px;">
+            <div class="user-stats-identity">
                 <!-- Аватарка -->
-                <img src="{{ url_for('static', filename='uploads/avatars/' + target_user.avatar) }}" alt="Аватар"
-                    style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #a855f7; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);">
+                <div class="user-stats-avatar" aria-hidden="true">
+                    <span>{{ (target_user.name or target_user.username)[:1]|upper }}</span>
+                    <img src="{{ url_for('static', filename='uploads/avatars/' + target_user.avatar) }}" alt="">
+                </div>
                 <!-- Информация -->
-                <div style="text-align: left;">
+                <div class="user-stats-identity-text">
                     <h2 style="font-size: 2em; margin: 0 0 5px 0;">{{ target_user.name or target_user.username }}</h2>
                     <p style="color: #888; font-size: 1.2em; margin: 0;">@{{ target_user.username }}</p>
                 </div>
@@ -284,8 +290,15 @@
                 <div class="stat-label">Средний балл</div>
             </div>
         </div>
+        <div class="user-stats-tabs" role="tablist" aria-label="Разделы статистики">
+            {% for title in ['Задания', 'История решений', 'Уроки', 'Теория', 'Тесты'] %}
+            <button class="user-stats-tab" type="button" role="tab" id="tab-{{ loop.index0 }}"
+                aria-controls="panel-{{ loop.index0 }}" aria-selected="{{ 'true' if loop.first else 'false' }}"
+                tabindex="{{ 0 if loop.first else -1 }}" data-tab="{{ loop.index0 }}">{{ title }}</button>
+            {% endfor %}
+        </div>
         <!-- Статистика по заданиям -->
-        <div class="history-table-container">
+        <div class="history-table-container" role="tabpanel" id="panel-0" aria-labelledby="tab-0">
             <h3 class="section-title">📊 Статистика по заданиям</h3>
             {% if has_task_stats %}
             <div class="task-chart-legend">
@@ -300,37 +313,12 @@
             {% endif %}
         </div>
         <!-- История решений (кликабельная) -->
-        <div class="history-table-container">
+        <div hidden class="history-table-container" role="tabpanel" id="panel-1" aria-labelledby="tab-1">
             <h3 class="section-title">📅 История решений</h3>
-            {% if stats.variants_history %}
-            <table class="history-table">
-                <thead>
-                    <tr>
-                        <th>Дата</th>
-                        <th>Вариант</th>
-                        <th>Результат</th>
-                        <th>Баллов</th>
-                        <th>Время</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for attempt in stats.variants_history %}
-                    <tr onclick="window.location.href='/admin/user/{{ target_user.id }}/attempt/{{ attempt.id }}'">
-                        <td>{{ attempt.date }}</td>
-                        <td>№{{ attempt.variant_num }}</td>
-                        <td>{{ attempt.score }} / {{ attempt.total_tasks }}</td>
-                        <td>{{ attempt.percentage }}</td>
-                        <td>{{ attempt.time_spent }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            {% else %}
-            <p style="text-align: center; color: #666;">У пользователя пока нет решённых вариантов.</p>
-            {% endif %}
+            {% include "components/_solution_history.html" %}
         </div>
         <!-- Прогресс по урокам -->
-        <div class="history-table-container">
+        <div hidden class="history-table-container" role="tabpanel" id="panel-2" aria-labelledby="tab-2">
             <h3 class="section-title">📚 Прогресс по урокам</h3>
             {% if lesson_stats %}
             <table>
@@ -388,7 +376,7 @@
             {% endif %}
         </div>
         <!-- Прогресс по теории -->
-        <div class="history-table-container">
+        <div hidden class="history-table-container" role="tabpanel" id="panel-3" aria-labelledby="tab-3">
             <h3 class="section-title">📖 Прогресс по теории</h3>
             {% if theory_stats %}
             <table>
@@ -446,6 +434,10 @@
             {% endif %}
         </div>
     </div>
+
+    <section hidden class="container history-table-container" role="tabpanel" id="panel-4" aria-labelledby="tab-4">
+        {% include 'admin/tests/_user_stats.html' %}
+    </section>
 
     {% if has_task_stats %}
     <script>

@@ -772,14 +772,28 @@ pre::before {
    17. SCROLL REVEAL
    ============================================================ */
 .reveal {
-    opacity: 0;
-    transform: translateY(22px);
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.reveal.reveal-pending {
     transition: opacity 0.45s ease-out, transform 0.45s ease-out;
 }
 
-.reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
+.reveal.reveal-pending:not(.visible) {
+    transition: none;
+    opacity: 0;
+    transform: translateY(22px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reveal,
+    .reveal.reveal-pending,
+    .reveal.reveal-pending:not(.visible) {
+        opacity: 1;
+        transform: translateY(0);
+        transition: none;
+    }
 }
 
 

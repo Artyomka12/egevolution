@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "material": {
+    "id": 4,
+    "state": "published",
+    "current_version_id": 4,
+    "sort_order": 2,
+    "revision": 2,
+    "created_by": null,
+    "created_at": 1791932554253,
+    "updated_at": 1791932555027,
+    "deleted_at": null
+  },
+  "draft": {
+    "variant_id": 4,
+    "document_json": "{\"description\":\"Переход к составным задачам: несколько условий и обработка данных. 20 задач: по две каждого номера ЕГЭ с 1 по 10.\",\"items\":[{\"source_hash\":\"a12bc34a72bbb8b557e3b702be9e4c1950e2d556c682f3aefd1f09c0f58ed041\",\"source_task_id\":8,\"source_task_num\":1},{\"source_hash\":\"16ba2ebbb59b8aafa5ddea3c61009ded43bafa33eddad51417a76b81aebf7648\",\"source_task_id\":13,\"source_task_num\":1},{\"source_hash\":\"5f88022283e4fff9d4728d38fdcf8a34c20aaf808ca7f25c5a041eec832553eb\",\"source_task_id\":4,\"source_task_num\":2},{\"source_hash\":\"f32d373d210a5e16de70e8d273681586096d1c28645a126d04a2d04fd3fbb2ee\",\"source_task_id\":7,\"source_task_num\":2},{\"source_hash\":\"1fe25359dbe9b1451890ababbdb2fcc25c46bd0887edd1e6fa7c115bc6cb29b3\",\"source_task_id\":2,\"source_task_num\":3},{\"source_hash\":\"bca5f2898b98f615b7ed1a9d9c2278a3a0eecbe802ae5f6e76940fff55ab1e8c\",\"source_task_id\":7,\"source_task_num\":3},{\"source_hash\":\"a4d891aaec53dab7941a74626510605ac89020de3ea78b843e28342271a455e7\",\"source_task_id\":1,\"source_task_num\":4},{\"source_hash\":\"85e19834aa4b4111ab7e24444a1c572d7c9510a80307c3dd18d5b860cfc0efb7\",\"source_task_id\":2,\"source_task_num\":4},{\"source_hash\":\"7cfe7730639eef6075092b53b9aec99ad60d692df6ad7c69b6f130a7ab2a13f0\",\"source_task_id\":5,\"source_task_num\":5},{\"source_hash\":\"4ec14f7796e87257396877f9d20d10841a864bbee6b859bacda8f884eb1dcf86\",\"source_task_id\":47,\"source_task_num\":5},{\"source_hash\":\"56951727b9539ce388c9ab7ad39299167f96756840eff6ba83b651e6b6bd69ba\",\"source_task_id\":19,\"source_task_num\":6},{\"source_hash\":\"c48ddc66b2780a6eeb5b555714d89f978f8bda2ba2c6902bc5fd445f56990614\",\"source_task_id\":24,\"source_task_num\":6},{\"source_hash\":\"8496ed5b5247360eb6bb401d812e9184be4ecaddda55c2dab605742b727bef77\",\"source_task_id\":4,\"source_task_num\":7},{\"source_hash\":\"259e1b1bfabfd3ef73657221e0380118718cc14ce1fa2b5788586dec2cfbf5aa\",\"source_task_id\":6,\"source_task_num\":7},{\"source_hash\":\"bee4c88619ee190eadee4e1f7d2c7ff6b22705c72cb461283ec5fb616c453612\",\"source_task_id\":3,\"source_task_num\":8},{\"source_hash\":\"10946412834e610af6fd4c2bc90cc9d854fbe1a208834f967cd5d8d3cd2d4279\",\"source_task_id\":6,\"source_task_num\":8},{\"source_hash\":\"a5bc0a0305ae0c004326501ecb32a26c255264640aa218756303fa55d442edc3\",\"source_task_id\":1,\"source_task_num\":9},{\"source_hash\":\"bc2a20c6878dccb4e4ea1b01e1a1a01ca6474b2979ebb0132e19a2b11ee0a345\",\"source_task_id\":4,\"source_task_num\":9},{\"source_hash\":\"eb4ad6bab7463d1e613acc013eeedd6b094021f55e591fcb3bb85397eaa81aca\",\"source_task_id\":8,\"source_task_num\":10},{\"source_hash\":\"41cf5d3df775f127bf2ef1389f6880cf2587cec07c236d43135d3920521d45ef\",\"source_task_id\":39,\"source_task_num\":10}],\"title\":\"Тематический вариант №3\"}",
+    "revision": 2,
+    "based_on_version_id": 4,
+    "updated_by": null,
+    "updated_at": 1791932555027
+  },
+  "version_ids": [
+    4
+  ]
+}

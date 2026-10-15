@@ -1,0 +1,6 @@
+{% extends "admin/thematic/_base.html" %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/admin/thematic/manage.js') }}" defer></script>{% endblock %}
+{% block content %}<header class="header"><h1>Тематические варианты</h1><p>Отдельный каталог. Порядок вариантов задаётся вручную.</p></header>
+<div class="action-bar"><p id="feedback" class="feedback" role="status">Загрузка…</p><a class="btn btn-primary" href="{{ url_for('thematic_admin.editor') }}">Создать вариант</a></div>
+<section class="card"><div class="section-head"><h2>Управление вариантами</h2></div><div id="catalog"></div></section>
+{% endblock %}

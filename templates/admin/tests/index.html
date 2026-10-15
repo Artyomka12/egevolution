@@ -1,0 +1,14 @@
+{% extends 'admin/tests/_base.html' %}
+{% block title %}Управление тестами{% endblock %}
+{% block content %}
+<main class="container">
+ <nav class="admin-nav" aria-label="Навигация администратора"><a class="btn-back" href="/admin" id="back-admin">← Вернуться в админ-панель</a><span class="admin-label">ЕГЭволюция · Администратор</span></nav>
+ <header class="header"><h1>Управление тестами</h1><p>Публикация, порядок тестов и проверка работ учеников.</p></header>
+ <div class="toolbar"><div class="tabs" role="tablist" aria-label="Управление тестами"><button class="tab" type="button" role="tab" id="tab-all" aria-selected="true" aria-controls="panel-all">Все тесты</button><button class="tab" type="button" role="tab" id="tab-review" aria-selected="false" aria-controls="panel-review" tabindex="-1">На проверке</button></div><a class="btn-create test-link" href="/admin/tests/new" id="create-test">+ Создать тест</a></div>
+ <section class="table-panel" id="panel-all" role="tabpanel" aria-labelledby="tab-all"><p class="panel-hint">Порядок в каталоге можно изменить кнопками «Выше» и «Ниже».</p><table class="test-table" aria-label="Все тесты"><thead><tr><th scope="col">Название теста</th><th scope="col">Вопросов</th><th scope="col">Время</th><th scope="col">Прохождений</th><th scope="col">Публикация</th><th scope="col">Действия</th></tr></thead><tbody id="tests-body"></tbody></table><p class="empty" id="tests-empty" hidden>Тестов пока нет.</p></section>
+ <section class="table-panel" id="panel-review" role="tabpanel" aria-labelledby="tab-review" hidden><table class="review-table" aria-label="Попытки на ручной проверке"><thead><tr><th scope="col">Ученик</th><th scope="col">Название теста</th><th scope="col">Дата прохождения</th><th scope="col">Непроверенных вопросов</th><th scope="col">Действия</th></tr></thead><tbody id="review-body"></tbody></table><p class="empty" id="review-empty" hidden>Нет попыток, ожидающих проверки.</p><button class="action" id="review-more" type="button" hidden>Показать ещё</button></section>
+ <p class="feedback" id="feedback" role="status" aria-live="polite"></p>
+</main>
+<dialog id="delete-dialog" aria-labelledby="delete-title" aria-describedby="delete-description delete-warning"><button type="button" class="close" aria-label="Закрыть окно">×</button><h2 id="delete-title">Удалить тест?</h2><p id="delete-description"></p><div class="delete-warning" id="delete-warning">Будут удалены тест, все попытки и все результаты учеников по этому тесту. Восстановить их после удаления не получится.</div><div class="modal-actions"><button type="button" class="btn-back" id="cancel-delete" autofocus>Отмена</button><button type="button" class="btn-delete" id="confirm-delete">Удалить тест</button></div></dialog>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/admin/tests/manage.js') }}" defer></script>{% endblock %}

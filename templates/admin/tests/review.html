@@ -1,0 +1,25 @@
+{% extends "admin/tests/_base.html" %}
+{% block title %}Проверка ответов{% endblock %}
+{% block content %}
+<main class="container tests-review" data-attempt-id="{{ attempt_id }}">
+  <nav class="admin-nav" aria-label="Навигация">
+    <a class="btn-back" href="{{ url_for('tests_admin.index') }}">← Вернуться к управлению тестами</a>
+    <span class="admin-label">ЕГЭволюция · Админ-панель</span>
+  </nav>
+  <header class="header"><h1>Проверка ответов</h1><p>Ответы и условия сохранены в версии этой попытки.</p></header>
+  <p id="review-feedback" class="feedback" role="status" aria-live="polite">Загрузка попытки…</p>
+  <button id="review-retry" class="action" type="button" hidden>Повторить сохранение</button>
+  <section id="review-summary" class="panel attempt-summary" aria-label="Информация о попытке" hidden>
+    <div><div id="review-student" class="student"></div><div id="review-test" class="test-name"></div><div id="review-meta" class="muted"></div></div>
+    <div class="result" aria-live="polite"><div id="review-result-label" class="muted"></div><strong id="review-result-value"></strong><div id="review-counts" class="muted"></div></div>
+  </section>
+  <div id="review-workspace" class="workspace" hidden>
+    <aside class="panel question-sidebar"><h2>Вопросы попытки</h2><ol id="review-question-list" class="question-list"></ol></aside>
+    <section class="panel review-question" aria-label="Проверка выбранного вопроса">
+      <div id="review-detail"></div>
+      <div class="next-row"><button class="action" id="review-next" type="button">Следующий непроверенный →</button><span id="review-next-hint" class="muted" aria-live="polite"></span></div>
+    </section>
+  </div>
+</main>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/admin/tests/review.js') }}" defer></script>{% endblock %}

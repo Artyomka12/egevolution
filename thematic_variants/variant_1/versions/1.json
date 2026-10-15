@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "version": {
+    "id": 1,
+    "variant_id": 1,
+    "version_no": 1,
+    "title": "Тестовый",
+    "description": "Пробный",
+    "question_count": 4,
+    "snapshot_schema_version": 1,
+    "grader_version": "ordinary-binary-v1",
+    "content_hash": "52026244d51b333eb59d84b8c86453799acee60cabbeeadbbd93758c4a9ba4e0",
+    "published_by": null,
+    "published_at": 1791930329416,
+    "sealed": 1
+  },
+  "tables": {
+    "thematic_version_items": [
+      {
+        "id": 1,
+        "version_id": 1,
+        "position": 1,
+        "source_task_num": 1,
+        "source_task_id": 1,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"На рисунке справа схема дорог <i>N</i>-ского района изображена в виде графа, в таблице содержатся сведения о протяжённости каждой из этих дорог (в километрах).\",\"Так как таблицу и схему рисовали независимо друг от друга, нумерация населённых пунктов в таблице никак не связана с буквенными обозначениями на графе. Определите, какова сумма протяжённостей дорог из пункта B в пункт H и из пункта A в пункт E.\",\"В ответе запишите целое число.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"26\"},\"materials\":[{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":0,\"size\":\"img-large\"},\"media_id\":1,\"position\":1,\"role\":\"condition\",\"sha256\":\"5a04b7bf2d73e65d2cdeca656e1236df95d18f620406f015a6188c5cce13084d\"}],\"snapshot_schema_version\":1,\"source_task_id\":1,\"source_task_num\":1,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "56b636de5121c93952c913ef9ddc536352573bc5e5d6fde0efcc72fa0c4653b2"
+      },
+      {
+        "id": 2,
+        "version_id": 1,
+        "position": 2,
+        "source_task_num": 1,
+        "source_task_id": 2,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"На рисунке схема дорог N-ского района изображена в виде графа, в таблице содержатся сведения о протяжённости каждой из этих дорог (в километрах).\",\"Так как таблицу и схему рисовали независимо друг от друга, нумерация населённых пунктов в таблице никак не связана с буквенными обозначениями на графе. Определите, какова протяжённость дороги из пункта В в пункт Д. В ответе запишите целое число – так, как оно указано в таблице.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"9\"},\"materials\":[{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":0,\"size\":\"img-large\"},\"media_id\":2,\"position\":1,\"role\":\"condition\",\"sha256\":\"25662e6f5a2fbaf9ecbada2f6f90d14e546d012b034174850f222b4a678957e5\"}],\"snapshot_schema_version\":1,\"source_task_id\":2,\"source_task_num\":1,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "1f7c1af93fa94b463008bddb7ce12bed6121d87e3d62c41f58a6b685190c03c0"
+      },
+      {
+        "id": 3,
+        "version_id": 1,
+        "position": 3,
+        "source_task_num": 2,
+        "source_task_id": 1,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"Миша заполнял таблицу истинности логической функции F = ¬ ((x → w) → (w ≡ z)) ∧ y, но успел заполнить лишь фрагмент из трёх различных её строк, даже не указав, какому столбцу таблицы соответствует каждая из переменных w, x, y, z.\",\"Определите, какому столбцу таблицы соответствует каждая из переменных w, x, y, z.\",\"В ответе напишите буквы w, x, y, z в том порядке, в котором идут соответствующие им столбцы (сначала буква, соответствующая первому столбцу; затем буква, соответствующая второму столбцу, и т.д.). Буквы в ответе пишите подряд, никаких разделителей между буквами ставить не нужно.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"zwyx\"},\"materials\":[{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":0,\"size\":\"img-large\"},\"media_id\":3,\"position\":1,\"role\":\"condition\",\"sha256\":\"eaae39c318a5ebfc879986e7c705616f910563cb4cdefb1a1cb09b3610da3601\"}],\"snapshot_schema_version\":1,\"source_task_id\":1,\"source_task_num\":2,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "0baf229fe3673fac6d519333dbbe04b31d4961253c0b7031346b1ea01ecbbd2f"
+      },
+      {
+        "id": 4,
+        "version_id": 1,
+        "position": 4,
+        "source_task_num": 4,
+        "source_task_id": 2,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"По каналу связи передаются сообщения, содержащие только буквы из набора: Д, И, К, О, Р, Н. Для передачи используется двоичный код, удовлетворяющий условию Фано. Кодовые слова для некоторых букв известны: Н – 00, К – 01. Для четырёх оставшихся букв Д, И, О и Р кодовые слова неизвестны. Какое количество двоичных знаков требуется для кодирования слова КОРИДОР, если известно, что оно закодировано минимально возможным количеством двоичных знаков?\",\"<i>Примечание.</i> Условие Фано означает, что никакое кодовое слово не является началом другого кодового слова. Это обеспечивает возможность однозначной расшифровки закодированных сообщений.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"20\"},\"materials\":[],\"snapshot_schema_version\":1,\"source_task_id\":2,\"source_task_num\":4,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "151808b22c5969a5d06033bf9a2bb54a52110f8d974b0aaa8be1152363a9fb66"
+      }
+    ],
+    "thematic_item_media": [
+      {
+        "item_id": 1,
+        "version_id": 1,
+        "media_id": 1,
+        "role": "condition",
+        "position": 1,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":0,\"size\":\"img-large\"}"
+      },
+      {
+        "item_id": 2,
+        "version_id": 1,
+        "media_id": 2,
+        "role": "condition",
+        "position": 1,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":0,\"size\":\"img-large\"}"
+      },
+      {
+        "item_id": 3,
+        "version_id": 1,
+        "media_id": 3,
+        "role": "condition",
+        "position": 1,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":0,\"size\":\"img-large\"}"
+      }
+    ]
+  }
+}

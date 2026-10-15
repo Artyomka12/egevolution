@@ -1,0 +1,10 @@
+{% if stats.solution_history %}
+<div class="table-scroll" style="overflow-x:auto;max-width:100%">
+<table class="data-table history-table"><thead><tr><th>Дата</th><th>Вариант</th><th>Результат</th><th>Баллы / %</th><th>Время</th></tr></thead><tbody>
+{% for attempt in stats.solution_history %}
+{% set link = attempt.admin_result_url if target_user is defined else attempt.result_url %}
+<tr class="row--clickable" onclick="window.location.href='{{ link }}'">
+<td>{{ attempt.date }}</td><td><a href="{{ link }}" style="color:inherit">{{ attempt.title }}</a><br><small>{{ attempt.type_label }}{% if attempt.kind == 'thematic' %} · версия {{ attempt.version_no }}{% endif %}</small></td>
+<td>{{ attempt.score }} / {{ attempt.total_tasks }}</td><td>{{ attempt.percentage }}{% if attempt.kind == 'thematic' %}%{% else %} ЕГЭ{% endif %}</td><td>{{ attempt.time_spent }}</td>
+</tr>{% endfor %}</tbody></table></div>
+{% else %}<p class="empty-state">Пока нет решённых вариантов</p>{% endif %}

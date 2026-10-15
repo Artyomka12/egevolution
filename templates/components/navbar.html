@@ -9,13 +9,13 @@
                         <a href="/preparation">{{ nav_icon('sprout') }}Начальная подготовка</a>
                         <a href="/theory">{{ nav_icon('book') }}Теория по заданиям</a>
                         <a href="/variants">{{ nav_icon('checklist') }}Решать варианты</a>
+                        <a href="/tests">{{ nav_icon('checklist') }}Тесты</a>
                         <a href="/stats">{{ nav_icon('chart') }}Статистика</a>
                         <a href="/tasks">{{ nav_icon('target') }}База заданий</a>
-                        <a href="/visualizer">{{ nav_icon('flow') }}Визуализатор кода</a>
                         <a href="{{ url_for('start') }}#intro" class="nh-menu-about">О занятиях и платформе</a>
                     </div>
                 </details>
-                <a href="/visualizer" class="nh-nav-visualizer">Визуализатор кода</a>
+                <a href="/visualizer" class="nh-nav-visualizer" aria-label="Визуализатор кода"><span class="nh-visualizer-full">Визуализатор кода</span><span class="nh-visualizer-short" aria-hidden="true">Код</span></a>
             </div>
             <div class="nh-nav-right">
                 {% if session.get('user_id') %}

@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark"><meta name="csrf-token" content="{{ csrf_token() }}">
+<title>Тематические варианты | ЕГЭволюция</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/thematic.css') }}">
+<script src="{{ url_for('static', filename='js/admin/thematic/common.js') }}" defer></script>
+{% block scripts %}{% endblock %}</head><body><main class="container">
+<nav class="topline" aria-label="Навигация"><a class="back" href="{{ url_for('thematic_admin.index') if request.endpoint == 'thematic_admin.editor' else '/admin' }}">← {{ 'К управлению тематическими вариантами' if request.endpoint == 'thematic_admin.editor' else 'В админ-панель' }}</a><span class="brand">ЕГЭволюция · Админ-панель</span></nav>
+{% block content %}{% endblock %}</main></body></html>

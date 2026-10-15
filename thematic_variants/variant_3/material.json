@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "material": {
+    "id": 3,
+    "state": "published",
+    "current_version_id": 3,
+    "sort_order": 1,
+    "revision": 2,
+    "created_by": null,
+    "created_at": 1791932553613,
+    "updated_at": 1791932554224,
+    "deleted_at": null
+  },
+  "draft": {
+    "variant_id": 3,
+    "document_json": "{\"description\":\"Закрепление основ: дополнительные действия и внимательная работа с условиями. 20 задач: по две каждого номера ЕГЭ с 1 по 10.\",\"items\":[{\"source_hash\":\"79a7b8dd42c3aab0cfd64c24b0e743454d7e98a156229a479f22cbbb7f50d630\",\"source_task_id\":1,\"source_task_num\":1},{\"source_hash\":\"94617311978e46e8f098e4ff0d790d0d835041de1e06b93205e5ad5a7db84a18\",\"source_task_id\":3,\"source_task_num\":1},{\"source_hash\":\"4e70dbf018da346a03b73346030e05e26538901cade0305fcfa64bf8cc0f3f7d\",\"source_task_id\":5,\"source_task_num\":2},{\"source_hash\":\"b9c32556009eebd8f54ea7d41ae86df4671e0d0aa835b470b0431b28eb2c7da3\",\"source_task_id\":6,\"source_task_num\":2},{\"source_hash\":\"772c02206dbc6718d9a869e3fda8b1b61faacf3ecf6278d2ec730ffac960a444\",\"source_task_id\":3,\"source_task_num\":3},{\"source_hash\":\"a4de8f7b67a8a744e8600a5d34e35a89065bfd00555da2e76579cfd6840e1ea5\",\"source_task_id\":5,\"source_task_num\":3},{\"source_hash\":\"c1b53444de2620bf926821a88c9b7125b1e9c62c0e976f872ed60bd918cb53d4\",\"source_task_id\":5,\"source_task_num\":4},{\"source_hash\":\"345c403c3fe08cdf9660d2307b0ea554c429a06ed6935fbfb34343aefd7fe422\",\"source_task_id\":11,\"source_task_num\":4},{\"source_hash\":\"7cb700cd0cb94e6ec0d124693dd33e6351ee5b4d2b37b6cc9a615e3392d01370\",\"source_task_id\":2,\"source_task_num\":5},{\"source_hash\":\"dea289f7901805bae6f9d2e43b2c388ab9f253dcd44f7cc40180509443042831\",\"source_task_id\":10,\"source_task_num\":5},{\"source_hash\":\"f6d1018f0fffeedf6b5f1d48c828a73eb78d2e664943163c96d188286ae75835\",\"source_task_id\":6,\"source_task_num\":6},{\"source_hash\":\"1ab290f92573cabc136930c1a8fb36f268273f2d21af1ba346050401a5ebb88e\",\"source_task_id\":1,\"source_task_num\":6},{\"source_hash\":\"d826b0a844bb9e43e5178e6a774903ca608eca5ed94397303b62121408e6a89e\",\"source_task_id\":3,\"source_task_num\":7},{\"source_hash\":\"42dfb3c4ada585a37287823e9eed19c2608fbbc3b8bea03a7967bafacbf304cf\",\"source_task_id\":5,\"source_task_num\":7},{\"source_hash\":\"09a68578949f878b40724f46c0192baabce3a0f50fd8c56207534988457e6862\",\"source_task_id\":22,\"source_task_num\":8},{\"source_hash\":\"938131fa361efd469748ec9f17773a1717d208e982a1629ffa9431d6815bbe07\",\"source_task_id\":20,\"source_task_num\":8},{\"source_hash\":\"f37f71d59ba106378933e8ac987a555b6eee0746567cfe84f3b8fbaf3c6edb85\",\"source_task_id\":3,\"source_task_num\":9},{\"source_hash\":\"f340b25c4287e01b5417194622de81358e7c6d39a53d165a5c987f83dd06b062\",\"source_task_id\":34,\"source_task_num\":9},{\"source_hash\":\"0b8d22324b9f3a3d7ba63456c64cdfb260d589e4e2793891b944f08a0efc3230\",\"source_task_id\":2,\"source_task_num\":10},{\"source_hash\":\"76de61f9bb7e65c635068e5c54f66c39bb5b5b8e5799d9c8f3e78395cef545a0\",\"source_task_id\":5,\"source_task_num\":10}],\"title\":\"Тематический вариант №2\"}",
+    "revision": 2,
+    "based_on_version_id": 3,
+    "updated_by": null,
+    "updated_at": 1791932554224
+  },
+  "version_ids": [
+    3
+  ]
+}

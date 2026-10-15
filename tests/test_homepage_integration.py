@@ -2,7 +2,7 @@
 Run: python -m unittest discover -s tests -v
 No production database writes, .env loading, or Telegram notifications.
 """
-from contextlib import ExitStack
+from contextlib import ExitStack, closing
 from pathlib import Path
 from html.parser import HTMLParser
 from urllib.parse import urlsplit, parse_qs
@@ -13,6 +13,7 @@ import os
 import sqlite3
 import sys
 import tempfile
+import shutil
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -35,6 +36,7 @@ class HomepageIntegration(TestCase):
     @classmethod
     def setUpClass(cls):
         cls.stack = ExitStack()
+        cls.addClassCleanup(cls.stack.close)
         cls.sandbox = cls.stack.enter_context(tempfile.TemporaryDirectory(prefix='ege-home-tests-'))
         cls.production_db = ROOT / 'users.db'
         cls.original_hash = hashlib.sha256(cls.production_db.read_bytes()).hexdigest() if cls.production_db.exists() else None
@@ -71,6 +73,24 @@ class HomepageIntegration(TestCase):
         db.execute('INSERT INTO user_theory_progress (user_id,task_num,practice_task_id,attempts,is_correct) VALUES (?,1,1,1,1)', (cls.student_id,))
         db.execute('INSERT INTO user_results (user_id,variant_num,score,secondary_score,total_tasks,date) VALUES (?,1,20,75,27,?)', (cls.student_id,'2026-09-24'))
         db.commit(); db.close()
+        # The shared navigation now links to Tests, whose schema is deliberately
+        # never initialized by an HTTP request. Migrate only this temporary fixture.
+        from scripts.migrate import migrate
+        backup_path = Path(cls.sandbox) / 'before-migrations.db'
+        with closing(sqlite3.connect(cls.database)) as source, closing(sqlite3.connect(backup_path)) as backup:
+            source.backup(backup)
+        legacy = Path(cls.sandbox)/'legacy-migrations'
+        legacy.mkdir()
+        for name in ('001_thematic.sql','002_tests.sql'):
+            shutil.copyfile(ROOT/'migrations'/name,legacy/name)
+        migrate(cls.database, apply=True, backup=backup_path, offline=True, directory=legacy)
+        from scripts.json_content_migration import build_candidate
+        destination = Path(cls.stack.enter_context(tempfile.TemporaryDirectory(prefix='ege-home-json-'))).resolve()/'candidate'
+        build_candidate(cls.database,destination)
+        cls.sandbox = str(destination)
+        cls.database = destination/'users.db'
+        cls.module.DATABASE_PATH = str(cls.database)
+        cls.stack.enter_context(mock.patch.dict(os.environ,{'EGEVOLUTION_CONTENT_ROOT':str(destination)}))
     @classmethod
     def tearDownClass(cls):
         for connection in cls.connections:

@@ -59,36 +59,7 @@
             <h2 class="history-title">📋 История решений</h2>
         </div>
 
-        {% if stats.variants_history %}
-        <div class="table-scroll">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Дата</th>
-                        <th>Вариант</th>
-                        <th>Результат</th>
-                        <th>Баллов</th>
-                        <th>Время</th>
-                        <th class="hide-mobile">👁️</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for attempt in stats.variants_history[:10] %}
-                    <tr class="row--clickable" onclick="window.location.href='/stats/attempt/{{ attempt.id }}'">
-                        <td>{{ attempt.date }}</td>
-                        <td>№{{ attempt.variant_num }}</td>
-                        <td>{{ attempt.score }} / {{ attempt.total_tasks }}</td>
-                        <td><span class="badge badge--green">{{ attempt.percentage }}</span></td>
-                        <td>{{ attempt.time_spent }}</td>
-                        <td class="hide-mobile" style="text-align:center">👁️</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        {% else %}
-        <div class="empty-state">Пока нет решённых вариантов</div>
-        {% endif %}
+        {% include "components/_solution_history.html" %}
 
     </div>
 

@@ -1,0 +1,31 @@
+{% extends 'admin/tests/_base.html' %}
+{% block title %}Конструктор теста{% endblock %}
+{% block content %}
+<main class="container editor-container" id="test-editor" data-test-id="{{ test_id or '' }}">
+ <nav class="admin-nav"><a href="/admin/tests" class="btn-back">← Вернуться к управлению тестами</a><span class="admin-label">ЕГЭволюция · Администратор</span></nav>
+ <header class="header editor-header"><div><h1>Конструктор теста</h1><p><span id="save-state">Загрузка черновика…</span></p></div></header>
+ <div class="save-bar" role="group" aria-label="Сохранение теста"><div class="header-actions"><button type="button" class="btn-back" id="save-draft">Сохранить черновик</button><button type="button" class="btn-primary" id="publish">Опубликовать</button></div></div>
+ <section class="panel settings" aria-labelledby="settings-title"><div class="settings-heading"><h2 id="settings-title">Настройки теста</h2><button type="button" class="btn-back settings-toggle" id="settings-toggle" aria-expanded="true" aria-controls="settings-content" aria-label="Свернуть настройки теста" title="Свернуть настройки теста"><span aria-hidden="true">⌃</span></button></div><div class="settings-collapse" id="settings-content"><div class="settings-content"><div class="settings-content-inner"><div class="settings-grid">
+  <div class="field span-all"><label for="test-title">Название *</label><input type="text" id="test-title" value="" required></div>
+  <div class="field span-all"><label for="test-description">Описание</label><textarea id="test-description" rows="2"></textarea></div>
+  <div class="field"><label for="time-limit">Ограничение времени, минут *</label><input type="number" id="time-limit" value="" min="1" step="1" required></div>
+  <div class="field"><label for="attempt-limit">Количество попыток *</label><div class="attempt-limit"><input type="number" id="attempt-limit" value="" min="1" step="1"><label class="check-label"><input type="checkbox" id="unlimited" checked>Без ограничений</label></div></div>
+  <label class="check-label span-all"><input type="checkbox" id="show-answers">Показывать правильные ответы после проверки</label>
+ </div><p class="editor-note">Каждый вопрос — 0 или 1 балл. Черновик допускает незавершённые вопросы; публикация проверяет их заполнение.</p></div></div></div></section>
+ <div class="notice" id="notice" role="status" tabindex="-1" hidden></div>
+ <div class="workspace">
+  <aside class="panel question-sidebar" aria-label="Список вопросов"><div class="sidebar-heading"><h2>Вопросы</h2><span class="badge hidden-status" id="question-count">0</span></div><ol class="question-list" id="question-list"></ol><button type="button" class="action add-question" id="add-question">+ Добавить вопрос</button></aside>
+  <section class="panel" aria-labelledby="editor-title"><div class="editor-top"><h2 id="editor-title">Вопрос 1</h2><span class="points-badge">Максимум 1 балл</span></div><p id="editor-empty" class="editor-empty" hidden>Добавьте вопрос, чтобы начать редактирование.</p><div class="editor-fields" id="editor-fields">
+   <div class="field"><label for="question-title">Краткое название *</label><input type="text" id="question-title"></div>
+   <div class="field"><label for="question-type">Тип вопроса</label><select id="question-type"><option value="single_choice">Один правильный ответ</option><option value="multiple_choice">Несколько правильных ответов</option><option value="free_text">Свободный ответ</option></select></div>
+   <div class="field"><label for="question-text">Текст условия *</label><textarea id="question-text" rows="4"></textarea></div>
+   <div class="field"><label for="question-image">Изображение к условию — необязательно</label><div class="image-area"><label class="field-label" for="image-alt">Описание нового изображения</label><input type="text" id="image-alt" placeholder="Краткое описание для доступности"><input type="file" id="question-image" accept="image/png,image/jpeg,image/gif"><p class="hint">Одно изображение: PNG, JPEG или GIF, до 5 МБ. Новый файл заменит предыдущее изображение.</p><img id="image-preview" class="image-preview" alt="Изображение в условии вопроса" hidden><button type="button" class="btn-delete" id="remove-image" hidden>Удалить изображение</button><p id="image-message" class="image-message" role="status"></p></div></div>
+   <div class="field"><label for="question-code">Код к условию — необязательно</label><textarea id="question-code" class="exact-answer" rows="3" spellcheck="false"></textarea></div>
+   <section class="answer-section" id="choice-section"><h3>Варианты ответа</h3><p class="hint" id="choice-hint"></p><div class="option-list" id="option-list"></div><button type="button" class="action" id="add-option">+ Добавить вариант</button></section>
+   <section class="answer-section" id="free-section" hidden><h3>Свободный ответ</h3><div class="two-fields"><div class="field"><label for="free-format">Поле ответа</label><select id="free-format"><option value="singleline">Однострочное</option><option value="multiline">Многострочное</option></select></div><div class="field"><label for="grading">Способ проверки</label><select id="grading"><option value="auto">Автоматическая</option><option value="manual">Ручная</option></select></div></div><div id="accepted-section"><p class="hint hint-spaced">Допустимые правильные строки. Сравнение строгое: регистр, начальные, конечные и внутренние пробелы имеют значение. Совпадение с любой строкой — 1 балл.</p><div class="option-list" id="accepted-list"></div><button type="button" class="action" id="add-accepted">+ Добавить правильную строку</button></div><p class="hint hint-spaced" id="manual-hint" hidden>Эталонные ответы не требуются. Преподаватель выставит 0 или 1 балл.</p></section>
+  </div></section>
+ </div>
+</main>
+<dialog id="delete-dialog" aria-labelledby="delete-title"><button type="button" class="close" aria-label="Закрыть окно">×</button><h2 id="delete-title">Удалить вопрос?</h2><p id="delete-description"></p><div class="modal-actions"><button type="button" class="btn-back" id="cancel-delete" autofocus>Отмена</button><button type="button" class="btn-delete" id="confirm-delete">Удалить</button></div></dialog>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/admin/tests/editor.js') }}" defer></script>{% endblock %}

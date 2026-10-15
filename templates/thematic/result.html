@@ -1,0 +1,13 @@
+{% extends "thematic/_base.html" %}
+{% block title %}Результат тематического варианта | ЕГЭволюция{% endblock %}
+{% block content %}<div class="page-wrap">
+<div class="toolbar"><div><h1>{{ result.title }} — результат</h1><p class="muted">Тематический вариант · версия {{ result.version_no }} · попытка №{{ result.attempt_no }} завершена</p></div><a href="/variants?kind=thematic" class="btn btn-secondary">К вариантам</a></div>
+<div class="summary-grid"><div class="card metric"><span>Правильных ответов</span><strong>{{ result.correct_count }} из {{ result.total_count }}</strong></div><div class="card metric"><span>Результат</span><strong>{{ result.percent|string|replace('.',',') }}%</strong></div><div class="card metric"><span>Затраченное время</span><strong>{{ result.duration }}</strong></div></div>
+<section class="card result-box"><h2>Результаты по заданиям</h2><p class="muted">Исходный порядок задач. Откройте условие для разбора ответа.</p>
+<table class="result-table"><thead><tr><th>Задача</th><th>Ваш ответ</th><th>Правильный ответ</th><th>Результат</th></tr></thead><tbody>
+{% for q in result.questions %}{% set label = {'correct':'Правильно','incorrect':'Неправильно','skipped':'Пропущено'}[q.status] %}
+<tr><td><strong>{{ q.position }}</strong><br><span class="muted">ЕГЭ №{{ q.source_task_num }}</span><br><button class="detail-toggle" aria-expanded="false" aria-controls="detail-{{ q.item_id }}">Условие</button></td><td class="answer-text">{{ answer_text(q.answer) }}</td><td class="answer-text">{{ answer_text(q.reference) }}</td><td><span class="status {{ 'good' if q.status == 'correct' else 'bad' if q.status == 'incorrect' else '' }}">{{ label }}</span></td></tr>
+<tr id="detail-{{ q.item_id }}" hidden><td colspan="4"><div class="detail-body"><h3>{{ q.title or 'Задание №' ~ q.source_task_num }}</h3>{% include 'thematic/_condition.html' %}<div class="answer-pair"><div><strong>Ответ ученика</strong><br>{{ answer_text(q.answer) }}</div><div><strong>Правильный ответ</strong><br>{{ answer_text(q.reference) }}</div></div><p>{{ label }} · {{ q.score }} из 1</p></div></td></tr>
+{% endfor %}</tbody></table></section>
+<div class="bottom-actions">{% if result.can_restart %}<a class="btn btn-primary" href="/thematic-variants/{{ result.variant_id }}/solve">Начать новое прохождение</a>{% elif not admin_view %}<p class="muted">Новое прохождение недоступно: вариант скрыт или удалён.</p>{% endif %}<a class="btn btn-secondary" href="/variants?kind=thematic">К списку вариантов</a></div></div>{% endblock %}
+{% block scripts %}<script src="{{ url_for('static',filename='js/thematic/result.js') }}" defer></script>{% endblock %}

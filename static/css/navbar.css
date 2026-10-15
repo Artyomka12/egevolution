@@ -11,11 +11,11 @@
 .nh-menu summary::-webkit-details-marker { display: none; }
 .nh-chevron { transition: transform .2s; }
 .nh-menu[open] .nh-chevron { transform: rotate(180deg); }
-.nh-menu-panel { position: absolute; top: calc(100% + 12px); left: 0; width: 294px; padding: 10px; border: 1px solid #dce3ee; border-radius: 15px; background: #fff; color: #17253d; box-shadow: 0 18px 48px #0b173426; }
+.nh-menu-panel { position: absolute; top: calc(100% + 12px); left: 50%; transform: translateX(-50%); width: 560px; max-width: calc(100vw - 32px); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 10px; border: 1px solid #dce3ee; border-radius: 15px; background: #fff; color: #17253d; box-shadow: 0 18px 48px #0b173426; }
 .nh-menu-panel a { display: flex; align-items: center; gap: 14px; text-decoration: none; font-size: 13px; padding: 12px 10px; border-radius: 8px; }
-.nh-menu-panel a:hover { background: #edf3fb; }
+.nh-menu-panel a:hover, .nh-menu-panel a:focus-visible { background: #edf3fb; }
 .nh-menu-panel .nh-icon { display: block; width: 19px; height: 19px; flex-shrink: 0; color: #7289a8; }
-.nh-menu-panel .nh-menu-about { margin-top: 6px; border-top: 1px solid #e9edf4; border-radius: 0; font-size: 11px; color: #60718c; }
+.nh-menu-panel .nh-menu-about { grid-column: 1 / -1; margin-top: 6px; border-top: 1px solid #e9edf4; border-radius: 0; font-size: 11px; color: #60718c; }
 .nh-nav-visualizer, .nh-nav-link { text-decoration: none; font-size: 12px; white-space: nowrap; }
 .nh-nav-link { border: 0; cursor: pointer; padding: 9px 0; background: none; color: inherit; font: 500 12px var(--sans, Inter, sans-serif); }
 .nh-logout { margin: 0; }
@@ -25,6 +25,14 @@
 .nh-nav, .nh-nav * { box-sizing: border-box; }
 .nh-nav { color: #14233d; font-family: Inter, -apple-system, sans-serif; line-height: 1.5; }
 .nh-nav a { color: inherit; }
+.nh-nav .nh-nav-visualizer { display: inline-flex; align-items: center; justify-content: center; padding: 8px 12px; border: 1px solid #b4d7f4; border-radius: 8px; background: #dcefff; color: #164b78; font-weight: 600; transition: background .18s, border-color .18s; }
+.nh-nav .nh-nav-visualizer:hover { background: #c8e5fc; border-color: #8abce4; }
+.nh-nav .nh-nav-visualizer:active { background: #b4daf6; border-color: #659dca; }
+.nh-nav .nh-nav-visualizer:focus-visible { outline: 3px solid #4b8bd9; outline-offset: 3px; }
+body.evo-in-scene .nh-nav .nh-nav-visualizer { background: #c1e4ff; border-color: #9bcdf1; color: #123e62; }
+body.evo-in-scene .nh-nav .nh-nav-visualizer:hover { background: #d8eeff; }
+body.evo-in-scene .nh-nav .nh-nav-visualizer:active { background: #a9d7fa; }
+.nh-visualizer-short { display: none; }
 .nh-nav .nh-cta-nav { color: #fff; }
 .nh-nav a:focus-visible, .nh-nav button:focus-visible, .nh-nav summary:focus-visible { outline: 3px solid #5f91f3; outline-offset: 5px; }
 .nh-nav-spacer { height: 96px; }
@@ -32,7 +40,9 @@
     .nh-nav { padding: 10px 16px; }
     .nh-nav-inner { gap: 14px; }
     .nh-nav-center { gap: 10px; }
-    .nh-nav-visualizer { display: none; }
+    .nh-visualizer-full { display: none; }
+    .nh-visualizer-short { display: inline; }
+    .nh-nav .nh-nav-visualizer { padding: 7px 9px; font-size: 11px; }
 }
 @media (max-width: 760px) {
     .nh-nav-inner { padding: 9px 12px; border-radius: 14px; gap: 10px; }
@@ -42,12 +52,13 @@
     .nh-menu-mobile { display: inline; }
     .nh-nav-center { margin-left: auto; }
     .nh-menu summary { padding: 7px 9px; gap: 10px; font-size: 11px; }
-    .nh-menu-panel { position: fixed; top: 69px; width: calc(100% - 32px); left: 16px; max-height: calc(100svh - 100px); overflow-y: auto; }
+    .nh-menu-panel { position: fixed; transform: none; top: 69px; width: calc(100% - 32px); left: 16px; max-height: calc(100svh - 100px); overflow-y: auto; }
     .nh-nav-right { gap: 13px; }
     .nh-nav-link { font-size: 11px; padding: 4px 0; }
     .nh-cta-nav { display: inline-flex; font-size: 10px; padding: 8px 10px; border-radius: 7px; }
 }
 @media (max-width: 480px) {
+    .nh-menu-panel { grid-template-columns: 1fr; }
     .nh-nav .nh-brand span { display: none; }
 }
 @media (max-width: 370px) {

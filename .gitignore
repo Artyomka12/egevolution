@@ -9,6 +9,8 @@ users.db
 users.db-*
 .local-backups/
 .local-data/
+data/thematic/media/
+data/tests/media/
 
 # Python
 __pycache__/
@@ -37,3 +39,12 @@ static/uploads/*
 # Temporary prototype testing files
 prototypes/**/.browser-profile/
 prototypes/**/.qa/
+
+# Private local runtime metadata and worker lock
+/data/ege-renumber-2026.json
+/.local-worker-*.lock
+
+# Private cross-file transaction journal and process lock (never curriculum).
+.content-runtime/
+thematic_variants/**/*.tmp
+tests_content/**/*.tmp

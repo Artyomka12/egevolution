@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "material": {
+    "id": 8,
+    "state": "published",
+    "current_version_id": 8,
+    "sort_order": 6,
+    "revision": 2,
+    "created_by": null,
+    "created_at": 1791932558255,
+    "updated_at": 1791932559078,
+    "deleted_at": null
+  },
+  "draft": {
+    "variant_id": 8,
+    "document_json": "{\"description\":\"Сложная практика: комбинированные ограничения и обратные задачи. 20 задач: по две каждого номера ЕГЭ с 1 по 10.\",\"items\":[{\"source_hash\":\"16b77f579168dadc992ff3fe1fa704395b5489a9328928726406dfe1faa547bb\",\"source_task_id\":67,\"source_task_num\":1},{\"source_hash\":\"f4203523b1fe9612b32a6c9b5d99068d54dea7fe2a123cc3a37f43cbe37505d2\",\"source_task_id\":86,\"source_task_num\":1},{\"source_hash\":\"1ae161ff8e087fa3f7b1e5c6120ebfc366314ada6124874993650ed8a175d9eb\",\"source_task_id\":87,\"source_task_num\":2},{\"source_hash\":\"afc9a2055f75f95de7197c175fb1ec2fc082bac84a7bcd0e37db9285aeb7bd85\",\"source_task_id\":77,\"source_task_num\":2},{\"source_hash\":\"00fca5a225dc7c15128e7b5e2904a9ef957b1860935fb1a7534c7c94a3bc58ca\",\"source_task_id\":1,\"source_task_num\":3},{\"source_hash\":\"47d750924c64e13a5ecff36ecc3304b8c41d0f33c4bb4f56533d6325b45771d1\",\"source_task_id\":71,\"source_task_num\":3},{\"source_hash\":\"023f9838dd56b87722a211df28aecca3c63e46464006e26b292c64901cfc0894\",\"source_task_id\":22,\"source_task_num\":4},{\"source_hash\":\"d1479a08818460e24cee66874f532d97d34d6dd48be9da51b465e562f74115a4\",\"source_task_id\":24,\"source_task_num\":4},{\"source_hash\":\"f567bf193ca84303431f3ade9603ffecf754e40b5926ab4eabe157b21e6c7734\",\"source_task_id\":41,\"source_task_num\":5},{\"source_hash\":\"47a233e4af443b769381cc9ece0d8b061df21a21989661ef70c384353e0d3f49\",\"source_task_id\":84,\"source_task_num\":5},{\"source_hash\":\"bd1465ee8c4cbb2fdb2fe2d65dca58bd2aeac2649a71a9e1823636c8942e1b92\",\"source_task_id\":30,\"source_task_num\":6},{\"source_hash\":\"a01b55c685fc6b78738b49d2e13622a1016a53446fe70fdf412839db6fcd6674\",\"source_task_id\":59,\"source_task_num\":6},{\"source_hash\":\"bed174f5173db8a0f8b1d6388572a1a53e9751d1040eb0ada630e5079539fe46\",\"source_task_id\":45,\"source_task_num\":7},{\"source_hash\":\"0480516096b9f3ee430f78971c3ab8402aea5675f9cdcab2977edbdfd564aab2\",\"source_task_id\":97,\"source_task_num\":7},{\"source_hash\":\"1685308c7176581cea9b54de075b7eceb7a853f8beb8ae4b8376a100f6d090b8\",\"source_task_id\":45,\"source_task_num\":8},{\"source_hash\":\"db4771ed313c6305bc76c0760eb32107b1ad9795f0ba0ca38d2192e8c79bc26d\",\"source_task_id\":76,\"source_task_num\":8},{\"source_hash\":\"50339841714e4fc356461a88092af2169a904cdcd3317a1330267e0faa9e3ccd\",\"source_task_id\":31,\"source_task_num\":9},{\"source_hash\":\"5672be5f3b8dec7923bcb18a3c3702c539306b65aba7a6c00a35b714f2155f73\",\"source_task_id\":29,\"source_task_num\":9},{\"source_hash\":\"05c47832f4409e5a21986714f3adb21c65c82f7bfbc756b1b145430d7d0ee4ef\",\"source_task_id\":86,\"source_task_num\":10},{\"source_hash\":\"04559815cd439cc491a4bb58a7f230418160b41a7a78d5bf4a3dab43a3207680\",\"source_task_id\":87,\"source_task_num\":10}],\"title\":\"Тематический вариант №7\"}",
+    "revision": 2,
+    "based_on_version_id": 8,
+    "updated_by": null,
+    "updated_at": 1791932559078
+  },
+  "version_ids": [
+    8
+  ]
+}

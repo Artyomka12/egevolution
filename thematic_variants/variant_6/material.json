@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "material": {
+    "id": 6,
+    "state": "published",
+    "current_version_id": 6,
+    "sort_order": 4,
+    "revision": 2,
+    "created_by": null,
+    "created_at": 1791932556264,
+    "updated_at": 1791932557125,
+    "deleted_at": null
+  },
+  "draft": {
+    "variant_id": 6,
+    "document_json": "{\"description\":\"Углублённая тренировка: поиск оптимума, ограничения и связи между данными. 20 задач: по две каждого номера ЕГЭ с 1 по 10.\",\"items\":[{\"source_hash\":\"f841e89b2c6d649868d967f158c680792c7b9930a4f3a054dae05fd563a8f38b\",\"source_task_id\":40,\"source_task_num\":1},{\"source_hash\":\"530b73d310c3bb749aa63d57723b4ffd75ff97df5d73730b02ebc20be2fcd69a\",\"source_task_id\":58,\"source_task_num\":1},{\"source_hash\":\"fb6edfde81d726278d223382744b9376ef9998f57d3f2a6ca70f489c6cc83bcf\",\"source_task_id\":57,\"source_task_num\":2},{\"source_hash\":\"13c339252a915113e8f1a7a8fddd3fa84d1c65634beb6e211c73b67f474dd350\",\"source_task_id\":67,\"source_task_num\":2},{\"source_hash\":\"bc22ad59da445c932a003c2c29aa4e72eadee2cea606f087ef8a593b992d3c57\",\"source_task_id\":43,\"source_task_num\":3},{\"source_hash\":\"2ac91ba928413a533229dea6d3440b66159536737102af42f8c13d4a5045c850\",\"source_task_id\":58,\"source_task_num\":3},{\"source_hash\":\"ce57dc58c64b2294d93030ac6eef41e9c64cdea3395c0fc7a3292a4256c56ea1\",\"source_task_id\":6,\"source_task_num\":4},{\"source_hash\":\"ed762efaba96cea42c3993a729f8566ee2529297bb2c0ad5b349ccf034c32858\",\"source_task_id\":7,\"source_task_num\":4},{\"source_hash\":\"9d292401a48d0f1811ba2473b7e4fc8a1f2659b002a186aca477cdfd07c3bc8c\",\"source_task_id\":6,\"source_task_num\":5},{\"source_hash\":\"e312ec541b47309494526cd82f4c026acc7593b251607bfdcfa4842144cf3ea2\",\"source_task_id\":39,\"source_task_num\":5},{\"source_hash\":\"946cab93633a74d0227ad7a5a8199ccc1ef48a303f554dad891ff12a48759d31\",\"source_task_id\":5,\"source_task_num\":6},{\"source_hash\":\"a9b5fca79c6004e264ff16a8e8fee64233ae3e979f07ae6061a6b60052273b3d\",\"source_task_id\":35,\"source_task_num\":6},{\"source_hash\":\"874c00725d35766bd32a4934276b208377ee59073bcd7c4093b18eaa501d6276\",\"source_task_id\":42,\"source_task_num\":7},{\"source_hash\":\"915c3c4b3815a6069b0e07dc2509a703a8b2a38a7b6ee6b08e3b63e3b0c9a2fb\",\"source_task_id\":31,\"source_task_num\":7},{\"source_hash\":\"f9e1eec33a183db9a62dabcb4846847bf5e34023796ebaa107208fae141776ef\",\"source_task_id\":12,\"source_task_num\":8},{\"source_hash\":\"cef7d79c1a06a4ad7861d32a3606f24c963784fb83eb7166bf900177ff2dc242\",\"source_task_id\":15,\"source_task_num\":8},{\"source_hash\":\"c6f5f1a126c14d44229843244d3f8954a5d85f1cc5be24e590c77c2eb6fc4cf7\",\"source_task_id\":5,\"source_task_num\":9},{\"source_hash\":\"c0c5cfdd5a8f49e47751950471e6848390c39fc05ea4a8d00c73ffb01a686b62\",\"source_task_id\":38,\"source_task_num\":9},{\"source_hash\":\"db136cfcc79a9e25129089298727e75dd4e161bda21a2c48ccaa9c4d56e9d3ff\",\"source_task_id\":32,\"source_task_num\":10},{\"source_hash\":\"6008fe7fecf71c1f1602c1a1cb1a6de5d970e51a8c295b2b4b7d6193a37657c0\",\"source_task_id\":47,\"source_task_num\":10}],\"title\":\"Тематический вариант №5\"}",
+    "revision": 2,
+    "based_on_version_id": 6,
+    "updated_by": null,
+    "updated_at": 1791932557125
+  },
+  "version_ids": [
+    6
+  ]
+}

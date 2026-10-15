@@ -1,0 +1,15 @@
+<div id="tests-user-stats" data-user-id="{{ target_user.id }}" data-student-name="{{ target_user.name or target_user.username }}">
+  <h3 class="section-title">Статистика по тестам</h3>
+  <p id="tests-stats-feedback" class="uts-feedback" role="status" aria-live="polite"></p>
+  <button id="tests-stats-reload" class="uts-action" type="button" hidden>Повторить загрузку</button>
+  <table class="uts-test-table">
+    <thead><tr><th>Название теста</th><th>Попытки</th><th>Лучший результат</th><th>Лучший процент</th><th>Подробности</th></tr></thead>
+    <tbody id="tests-stats-rows"></tbody>
+  </table>
+  <p id="tests-stats-empty" class="uts-empty" hidden>Пока нет опубликованных тестов.</p>
+  <dialog id="tests-stats-dialog" aria-labelledby="tests-stats-dialog-title">
+    <div class="uts-dialog-top"><h2 id="tests-stats-dialog-title"></h2><button class="uts-close" type="button" aria-label="Закрыть">×</button></div>
+    <div id="tests-stats-dialog-body"></div>
+    <p id="tests-stats-dialog-feedback" class="uts-feedback" role="status" aria-live="polite"></p>
+  </dialog>
+</div>

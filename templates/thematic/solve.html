@@ -1,0 +1,11 @@
+{% extends "thematic/_base.html" %}
+{% block title %}Тематический вариант — решение | ЕГЭволюция{% endblock %}
+{% block content %}
+<div class="page-wrap" id="thematic-root" data-variant-id="{{ variant_id }}">
+<div class="toolbar"><div><h1 id="title">Тематический вариант</h1><p class="muted" id="version">Обычный режим · без ограничения времени</p></div><a href="/variants?kind=thematic" class="btn btn-secondary">К вариантам</a></div>
+<div id="blocked" class="card blocked" hidden><h2 id="blocked-title">Вариант временно скрыт</h2><p id="blocked-text">Преподаватель приостановил доступ. Сохранённые ответы останутся на месте. После возобновления вы продолжите эту же версию. Период блокировки не учитывается во времени.</p></div>
+<p id="page-status" role="status">Загрузка попытки…</p><button id="retry" class="btn btn-secondary" hidden>Повторить запрос</button>
+<div class="workspace" id="workspace" hidden><section id="tasks" aria-label="Задания варианта"></section><aside class="card side"><div class="timer-label">⏱️ Прошло времени</div><div class="elapsed" id="elapsed">00:00:00</div><button id="finish" class="btn btn-primary">Завершить</button><div class="numbers" id="numbers" aria-label="Навигация по заданиям"></div><p class="muted" id="progress"></p><p class="save" id="global-save" role="status"></p></aside></div>
+<dialog id="confirm"><button class="dialog-close" data-close aria-label="Закрыть">×</button><h2>Завершить вариант?</h2><p id="finish-note"></p><p>Все последние ответы будут проверены заново, включая изменённые и ещё не проверенные.</p><div class="dialog-actions"><button class="btn btn-secondary" data-close>Продолжить решение</button><button class="btn btn-primary" id="submit">Завершить вариант</button></div></dialog>
+</div>{% endblock %}
+{% block scripts %}<script src="{{ url_for('static',filename='js/thematic/common.js') }}" defer></script><script src="{{ url_for('static',filename='js/thematic/save-queue.js') }}" defer></script><script src="{{ url_for('static',filename='js/thematic/solve.js') }}" defer></script>{% endblock %}

@@ -1,0 +1,367 @@
+{
+  "schema_version": 1,
+  "version": {
+    "id": 7,
+    "variant_id": 7,
+    "version_no": 1,
+    "title": "Тематический вариант №6",
+    "description": "Повышенная сложность: нестандартные условия, геометрия и многокритериальный выбор. 20 задач: по две каждого номера ЕГЭ с 1 по 10.",
+    "question_count": 20,
+    "snapshot_schema_version": 1,
+    "grader_version": "ordinary-binary-v1",
+    "content_hash": "0d3921ff795224902096e9c41b4187058b97aa450c5d54cbd2a84a9dff39d222",
+    "published_by": null,
+    "published_at": 1791932558212,
+    "sealed": 1
+  },
+  "tables": {
+    "thematic_version_items": [
+      {
+        "id": 105,
+        "version_id": 7,
+        "position": 1,
+        "source_task_num": 1,
+        "source_task_id": 29,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"На рисунке схема дорог Н-ского района изображена в виде графа, в таблице содержатся сведения о протяжённости каждой из этих дорог (в километрах).\",\"Так как таблицу и схему рисовали независимо друг от друга, то нумерация населённых пунктов в таблице никак не связана с буквенными обозначениями на графе. Определите длину кратчайшего пути из пункта А в пункт Е, если передвигаться можно только по указанным дорогам. В ответе запишите целое число – длину пути в километрах.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"78\"},\"materials\":[{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":0,\"size\":\"img-large\"},\"media_id\":51,\"position\":1,\"role\":\"condition\",\"sha256\":\"9e27ca65a0f7d84c499645711d405708399d16e52877d8970f0725617ae38232\"}],\"snapshot_schema_version\":1,\"source_task_id\":29,\"source_task_num\":1,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "96883555b0678765e8f0fa2a06e7e2d256ba5f0cffae27c777d130a7f33f1f48"
+      },
+      {
+        "id": 106,
+        "version_id": 7,
+        "position": 2,
+        "source_task_num": 1,
+        "source_task_id": 60,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"На рисунке справа схема дорог Н-ского района изображена в виде графа, в таблице содержатся сведения о длинах этих дорог (в километрах). Так как таблицу и схему рисовали независимо друг от друга, то нумерация населённых пунктов в таблице никак не связана с буквенными обозначениями на графе. В таблице в левом столбце указаны номера пунктов, откуда совершается движение, в первой строке – куда. Определите длину кратчайшего пути между пунктами Г и З. Передвигаться можно только по указанным дорогам.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"11\"},\"materials\":[{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":0,\"size\":\"img-large\"},\"media_id\":52,\"position\":1,\"role\":\"condition\",\"sha256\":\"e52b781fad631e7f7da4f4dfb45780d0da2e324cbcd4368581d5a3c8ab5efe00\"}],\"snapshot_schema_version\":1,\"source_task_id\":60,\"source_task_num\":1,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "b4549df1584ff3ba7deb6db1027e4e1d880482eb738840d1c50f5ed150228d9f"
+      },
+      {
+        "id": 107,
+        "version_id": 7,
+        "position": 3,
+        "source_task_num": 2,
+        "source_task_id": 76,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"Логическая функция F задаётся выражением: (¬ y → (z ≡ w)) ∧ ((z → x) ≡ w)\",\"Дан частично заполненный фрагмент, содержащий неповторяющиеся строки таблицы истинности функции F. Определите, какому столбцу таблицы истинности соответствует каждая из переменных w, x, y, z.\",\"В ответе напишите буквы w, x, y, z в том порядке, в котором идут соответствующие им столбцы (сначала буква, соответствующая первому столбцу; затем буква, соответствующая второму столбцу, и т. д.). Буквы в ответе пишите подряд, никаких разделителей между буквами ставить не нужно.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"zwyx\"},\"materials\":[{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":0,\"size\":\"img-large\"},\"media_id\":53,\"position\":1,\"role\":\"condition\",\"sha256\":\"0881f3784e396b42efbd170cc102ae3678e6c41552315c9d2bdec4b6f8e31649\"}],\"snapshot_schema_version\":1,\"source_task_id\":76,\"source_task_num\":2,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "b4a62a71b86ea7ee368a9d143397aa9ee6f13a0bde6496cb37d200fa752fd966"
+      },
+      {
+        "id": 108,
+        "version_id": 7,
+        "position": 4,
+        "source_task_num": 2,
+        "source_task_id": 80,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"Логическая функция F задаётся выражением: (x ≡ ¬y) → ((x ∧ w) ≡ (z ∧ ¬w)).\",\"Дан частично заполненный фрагмент, содержащий неповторяющиеся строки таблицы истинности функции F.\",\"Определите, какому столбцу таблицы истинности соответствует каждая из переменных w, x, y, z.\",\"В ответе напишите буквы w, x, y, z в том порядке, в котором идут соответствующие им столбцы (сначала буква, соответствующая первому столбцу; затем буква, соответствующая второму столбцу, и т. д.). Буквы в ответе пишите подряд, никаких разделителей между буквами ставить не нужно.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"wzyx\"},\"materials\":[{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":0,\"size\":\"img-large\"},\"media_id\":54,\"position\":1,\"role\":\"condition\",\"sha256\":\"34830bd1d174f4c213732947bb9a2a37b6d97fbe0eb8a00b80532ee0d994f702\"}],\"snapshot_schema_version\":1,\"source_task_id\":80,\"source_task_num\":2,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "03840e6af58a22b8eed7e2bcd8efcfecc925b8ccdd30e2d5833525083ad11b31"
+      },
+      {
+        "id": 109,
+        "version_id": 7,
+        "position": 5,
+        "source_task_num": 3,
+        "source_task_id": 31,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"В файле приведён фрагмент базы данных «Автосервисы Екатеринбурга» о поставках автозапчастей в автосервисы районов города. База данных состоит из трёх таблиц.\",\"Таблица «Движение запчастей» содержит записи о поставках деталей в автосервисы с 01.09.2023 по 30.11.2023, а также информацию о проданных запчастях. Поле Тип операции содержит значение Поступление или Продажа, а в соответствующее поле Количество, шт внесена информация о том, сколько запчастей поступило в автосервис или было продано в течение дня. Заголовок таблицы имеет следующий вид.\",\"Таблица «Запчасти» содержит информацию об основных характеристиках каждой запчасти. Заголовок таблицы имеет следующий вид.\",\"Таблица «Автосервисы» содержит информацию о местонахождении сервисов. Заголовок таблицы имеет следующий вид.\",\"На рисунке приведена схема указанной базы данных.\",\"Используя информацию из приведённой базы данных, определите в автосервисах какого района выручили наибольшую сумму с продажи запчастей для двигателя на автомобили с объёмом двигателя 1,6 литра за период с 1.09.2023 по 30.11.2023.\",\"В ответе запишите найденную наибольшую сумму выручки.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"3965808853\"},\"materials\":[{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":1,\"size\":\"img-large\"},\"media_id\":55,\"position\":1,\"role\":\"condition\",\"sha256\":\"20ce4566f566afdbd86bb63b8463a1049ccef072e7fdff2ca2a32c2c67ba8a9c\"},{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":2,\"size\":\"img-large\"},\"media_id\":56,\"position\":2,\"role\":\"condition\",\"sha256\":\"2e5cca28255fc4beacc4b731b3d04286e8e59a8bae97f9ad629cd3656256f041\"},{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":3,\"size\":\"img-large\"},\"media_id\":57,\"position\":3,\"role\":\"condition\",\"sha256\":\"61f2400425aba12a09ea06eeaf1fe74a607e199057d4541705e3fee650d3f0f6\"},{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":4,\"size\":\"img-large\"},\"media_id\":58,\"position\":4,\"role\":\"condition\",\"sha256\":\"567a3e792da2fc5722a104ad07273957acbd4e7bcdd26f86e95f9ac9d9e4a40f\"},{\"alt_text\":\"\",\"display_metadata\":{\"description\":\"\",\"name\":\"Файл базы данных\"},\"media_id\":59,\"position\":1,\"role\":\"attachment\",\"sha256\":\"889935bca40d5afc138b34d29c9a3004a76575d6ecf38767d18859a0a7870dbc\"}],\"snapshot_schema_version\":1,\"source_task_id\":31,\"source_task_num\":3,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "13b807abb5a53b840c86fec6ac0083982379d0ae2a3808ccbb0e8b1e7606afe3"
+      },
+      {
+        "id": 110,
+        "version_id": 7,
+        "position": 6,
+        "source_task_num": 3,
+        "source_task_id": 42,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"В файле приведён фрагмент базы данных «Продукты» о поставках товаров в магазины районов города. База данных состоит из трёх таблиц.\",\"Таблица «Движение товаров» содержит записи о поставках товаров в магазины в течение первой декады июня 2021 г., а также информацию о проданных товарах. Поле Тип операции содержит значение Поступление или Продажа, а в соответствующее поле Количество упаковок, шт. занесена информация о том, сколько упаковок товара поступило в магазин или было продано в течение дня. Заголовок таблицы имеет следующий вид.\",\"Таблица «Товар» содержит информацию об основных характеристиках каждого товара. Заголовок таблицы имеет следующий вид.\",\"Таблица «Магазин» содержит информацию о местонахождении магазинов. Заголовок таблицы имеет следующий вид.\",\"На рисунке приведена схема указанной базы данных.\",\"Используя информацию из приведённой базы данных, определите, масса творога какого наименования изменилась максимально за обозначенный в базе данных период в магазинах Октябрьского района? В ответе приведите наибольшее изменение массы. В ответе укажите одно число – целую часть полученного значения.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"112\"},\"materials\":[{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":1,\"size\":\"img-large\"},\"media_id\":7,\"position\":1,\"role\":\"condition\",\"sha256\":\"3525a74abaa514808631d6c61b687f09a343db85616e40fd8dc078c6c6043bd7\"},{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":2,\"size\":\"img-large\"},\"media_id\":8,\"position\":2,\"role\":\"condition\",\"sha256\":\"2e60012d964ec242509143201f31d3c748e0436acce65969064fc5f7903c9d1a\"},{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":3,\"size\":\"img-large\"},\"media_id\":9,\"position\":3,\"role\":\"condition\",\"sha256\":\"3a640884291eaeb93996c74831335b5f84d381e20aea3ce5edaf65a792c955f2\"},{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":4,\"size\":\"img-large\"},\"media_id\":10,\"position\":4,\"role\":\"condition\",\"sha256\":\"d1ba6e29172fbbcfaa94cac7ea8f74647be74267272184167eb65dc8448bbb61\"},{\"alt_text\":\"\",\"display_metadata\":{\"description\":\"\",\"name\":\"Файл базы данных\"},\"media_id\":46,\"position\":1,\"role\":\"attachment\",\"sha256\":\"75beb4f53d52b3cd2e0370d3e3a7978d57bd0cf5419aa5f673328fff853374b9\"}],\"snapshot_schema_version\":1,\"source_task_id\":42,\"source_task_num\":3,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "b4bba3abae0d73409c2a52c8ba2b7f1fbc8bc9f6b5b47054caa4100eb2a00c7f"
+      },
+      {
+        "id": 111,
+        "version_id": 7,
+        "position": 7,
+        "source_task_num": 4,
+        "source_task_id": 18,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"Рождественский эльф по каналу связи передает Санта-Клаусу зашифрованное сообщение, содержащее только шесть букв: А, Д, И, М, Н, Р. Для передачи используется неравномерный двоичный код, удовлетворяющий условию Фано. Для букв Д, Р и И используются кодовые слова 0, 11, 101 соответственно.\",\"Какое количество двоичных знаков потребуется для кодирования слова МАНДАРИН, если известно, что оно закодировано минимально возможным количеством двоичных знаков?\",\"<i>Примечание</i>. Условие Фано означает, что никакое кодовое слово не является началом другого кодового слова. Это обеспечивает возможность однозначной расшифровки закодированных сообщений.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"29\"},\"materials\":[],\"snapshot_schema_version\":1,\"source_task_id\":18,\"source_task_num\":4,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "697391dc1649b8aded64ebb9dbfaaead1cfc3d80ff679667e24ab25a999121cb"
+      },
+      {
+        "id": 112,
+        "version_id": 7,
+        "position": 8,
+        "source_task_num": 4,
+        "source_task_id": 20,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"По каналу связи передаются сообщения из букв слова ГОРЕСТЬ. Для передачи используется двоичный код, удовлетворяющий условию Фано. Это условие обеспечивает возможность однозначной расшифровки закодированных сообщений. Для букв С, Е, Т, Ь используются кодовые слова 1, 0110, 01110, 011111, соответственно. Какое количество двоичных знаков потребуется для кодирования слова ГОРСТЬ, если известно, что оно закодировано минимально возможным количеством двоичных знаков?\",\"Примечание: под условием Фано понимается такой метод кодирования, при котором ни одно кодовое слово не является началом другого кодового слова. Такой способ кодирования позволяет получить однозначно декодируемый код.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"21\"},\"materials\":[],\"snapshot_schema_version\":1,\"source_task_id\":20,\"source_task_num\":4,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "8379f422651bab8dbb15a6db0b0b16c7c8dbd5b03db00973a1552f0ed0d6d86c"
+      },
+      {
+        "id": 113,
+        "version_id": 7,
+        "position": 9,
+        "source_task_num": 5,
+        "source_task_id": 28,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"Автомат принимает на вход число и преобразует его по следующему алгоритму.\",\"1) Число переводится в троичную систему счисления,\",\"2) Полученное число преобразуется по следующему алгоритму:\",\"a. Если число четное, то слева дописывается 2, справа значение младшего разряда, увеличенного в 2 раза (в троичной системе счисления),\",\"b. Если число нечетное, то справа дописывается 2, слева удвоенное значение старшего разряда (в троичной системе счисления),\",\"3) Полученное троичное число переводится в десятичную систему счисления и выводится на экран.\",\"Укажите минимальное значение большее 100, которое может являться результатом работы автомата.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"131\"},\"materials\":[],\"snapshot_schema_version\":1,\"source_task_id\":28,\"source_task_num\":5,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "7b60e4c03476d80eb84aae0181e6878c53b85c4833edca6d21aa2b7028256e73"
+      },
+      {
+        "id": 114,
+        "version_id": 7,
+        "position": 10,
+        "source_task_num": 5,
+        "source_task_id": 44,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"На вход алгоритма подаётся натуральное число N. Алгоритм строит по нему новое число R следующим образом.\",\"1. Строится двоичная запись числа N.\",\"2. К этой записи дописываются разряды по следующему правилу. Если число кратно 5, то слева дописывается 1, справа две последние цифры (младшие разряды). Иначе слева дописывается двоичное представления остатка от деления числа на 5.\",\"Например, для числа 13 двоичная запись 1101 преобразуется в запись 111101, для числа 10 двоичная запись 1010 преобразуется в 1101010.\",\"Полученная таким образом запись является двоичной записью искомого числа R.\",\"Укажите максимальное число R, не превышающее 223, которое может являться результатом работы данного алгоритма. В ответе это число запишите в десятичной системе счисления.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"219\"},\"materials\":[],\"snapshot_schema_version\":1,\"source_task_id\":44,\"source_task_num\":5,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "400e7c2e1a7d7a11464e448f18a6ae9794012a078b7d011bfab7855d3ef590aa"
+      },
+      {
+        "id": 115,
+        "version_id": 7,
+        "position": 11,
+        "source_task_num": 6,
+        "source_task_id": 40,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"Исполнитель Черепаха действует на плоскости с декартовой системой координат. В начальный момент Черепаха находится в точке (-3, -4), её голова направлена вдоль положительного направления оси ординат, хвост опущен. При опущенном хвосте Черепаха оставляет на поле след в виде линии. В каждый конкретный момент известно положение исполнителя и направление его движения.\",\"У исполнителя существует 6 команд: <b>Поднять хвост</b>, означающая переход к перемещению без рисования; <b>Опустить хвост</b>, означающая переход в режим рисования; <b>Вперёд n</b> (где n – целое число), вызывающая передвижение Черепахи на n единиц в том направлении, куда указывает её голова; <b>Назад n</b> (где n – целое число), вызывающая передвижение в противоположном голове направлении; <b>Направо m</b> (где m – целое число), вызывающая изменение направления движения на m градусов по часовой стрелке, <b>Налево m</b> (где m – целое число), вызывающая изменение направления движения на m градусов против часовой стрелки.\",\"Запись <b>Повтори k [Команда1 Команда2 … КомандаS]</b> означает, что последовательность из S команд повторится k раз.\",\"Черепахе был дан для исполнения следующий алгоритм:\",\"<b>Направо 30</b>\",\"<b>Повтори 10 [Вперед 14 Направо 120]</b>\",\"Определите, сколько точек с целочисленными отрицательными координатами будут находиться внутри полученного контура. Точки на линиях не считать.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"4\"},\"materials\":[],\"snapshot_schema_version\":1,\"source_task_id\":40,\"source_task_num\":6,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "8ef55f9c3f99d6193ef5f0e6e719f27e97147a91428354e3ac2cc6f05a9a3dec"
+      },
+      {
+        "id": 116,
+        "version_id": 7,
+        "position": 12,
+        "source_task_num": 6,
+        "source_task_id": 43,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"Исполнитель Черепаха действует на плоскости с декартовой системой координат. В начальный момент Черепаха находится в начале координат, её голова направлена вдоль положительного направления оси ординат, хвост опущен. При опущенном хвосте Черепаха оставляет на поле след в виде линии. В каждый конкретный момент известно положение исполнителя и направление его движения.\",\"У исполнителя существует 6 команд: <b>Поднять хвост</b>, означающая переход к перемещению без рисования; <b>Опустить хвост,</b> означающая переход в режим рисования; <b>Вперёд n </b>(где n  –  целое число), вызывающая передвижение Черепахи на n единиц в том направлении, куда указывает её голова;<b> Назад </b>n (где n  –  целое число), вызывающая передвижение в противоположном голове направлении; <b>Направо m</b> (где m  –  целое число), вызывающая изменение направления движения на m градусов по часовой стрелке, <b>Налево m</b> (где m  –  целое число), вызывающая изменение направления движения на m градусов против часовой стрелки.\",\"Запись <i>Повтори k [Команда1 Команда2 … КомандаS]</i> означает, что последовательность из S команд повторится k раз\",\"Черепахе был дан для исполнения следующий алгоритм:\",\"<b>Налево 15</b>\",\"<b>Повтори 7 [Налево 30 Вперед 10 Налево 60]</b>\",\"Определите, сколько точек с целочисленными координатами будут находиться внутри полученного контура. Точки на линии учитывать не следует.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"98\"},\"materials\":[],\"snapshot_schema_version\":1,\"source_task_id\":43,\"source_task_num\":6,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "d0dbebb9f2b3b2036d84e476579c79842edf74ec4318b1afea4301522bbc2683"
+      },
+      {
+        "id": 117,
+        "version_id": 7,
+        "position": 13,
+        "source_task_num": 7,
+        "source_task_id": 60,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"Спутник каждую секунду делает снимок 19.5 на 7.8 километра. Размер пикселя на местности 0.65х0.65 метра. Цвет пикселя выбирается из палитры в 256 цветов. Оцените объем памяти (в МБ) для хранения одного изображения. Сжатие не производится. Ответ округлите до большего целого числа.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"344\"},\"materials\":[],\"snapshot_schema_version\":1,\"source_task_id\":60,\"source_task_num\":7,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "3396a561cd82996af7d2d36d0c09719cd17129e974adfb86fd2af603225f199b"
+      },
+      {
+        "id": 118,
+        "version_id": 7,
+        "position": 14,
+        "source_task_num": 7,
+        "source_task_id": 47,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"Для хранения сжатого растрового изображения выделено 3 Мбайт. Для каждого пикселя записывается информация о его цвете и уровне прозрачности. Как информация о цвете, так и информация об уровне прозрачности записываются с помощью одинакового количества бит для каждой части. После кодирования информации о каждом пикселе изображение сжимается. Сжатое изображение меньше исходного на 20%. Определите, какое максимальное количество уровней прозрачности может быть у изображения размером 1080х920, если известно, что используется цветовая палитра, содержащая 1 миллион цветов.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"2048\"},\"materials\":[],\"snapshot_schema_version\":1,\"source_task_id\":47,\"source_task_num\":7,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "7fa51f2d4d083f40ea8ac2d75970d7cec8a1373a89acf884613fd3fd85f07fb4"
+      },
+      {
+        "id": 119,
+        "version_id": 7,
+        "position": 15,
+        "source_task_num": 8,
+        "source_task_id": 28,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"Определите количество семизначных чисел, записанных в девятеричной системе счисления, которые не начинаются с нечетных цифр, оканчиваются на цифры, не делящиеся на 3 без остатка, а также содержат в своей записи хотя бы одну цифру 6.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"827352\"},\"materials\":[],\"snapshot_schema_version\":1,\"source_task_id\":28,\"source_task_num\":8,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "7171c4a4a1f566a66d139133af610509e57492e1a651d38bae021321449e3e66"
+      },
+      {
+        "id": 120,
+        "version_id": 7,
+        "position": 16,
+        "source_task_num": 8,
+        "source_task_id": 48,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"Сколько существует 7-разрядных чисел в двенадцатеричной системе счисления, в которых цифры кратные и некратные трём чередуются?\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"360448\"},\"materials\":[],\"snapshot_schema_version\":1,\"source_task_id\":48,\"source_task_num\":8,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "e3dbf16034bcc4050464e8bdc83f1088f2ee7b4f1844ef2e957ea2966d53ef79"
+      },
+      {
+        "id": 121,
+        "version_id": 7,
+        "position": 17,
+        "source_task_num": 9,
+        "source_task_id": 32,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"​​​​Откройте файл электронной таблицы, содержащей в каждой строке шесть натуральных чисел. Определите сумму чисел в строке таблицы с наименьшим номером, для которой выполнены все условия:\",\"— в строке есть два числа, которые повторяются дважды, остальные два числа различны;\",\"— максимальное число строки не повторяется;\",\"— произведение максимального и минимального чисел строки больше суммы оставшихся четырёх чисел.\",\"В ответе запишите только число.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"138\"},\"materials\":[{\"alt_text\":\"\",\"display_metadata\":{\"description\":\"\",\"name\":\"9.xlsx\"},\"media_id\":60,\"position\":1,\"role\":\"attachment\",\"sha256\":\"784cfaa23cfe56c9a086554ab130a4caf09cf718286d7dc4bcb0fac5775db4fe\"}],\"snapshot_schema_version\":1,\"source_task_id\":32,\"source_task_num\":9,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "f8560631fae1dee3fde1a5178102c1f7a2cc92ec30402e2eb55e79a8e07c365c"
+      },
+      {
+        "id": 122,
+        "version_id": 7,
+        "position": 18,
+        "source_task_num": 9,
+        "source_task_id": 39,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"Откройте файл электронной таблицы, содержащей в каждой строке семь натуральных чисел. Определите сумму всех чисел в строке таблицы с наименьшим номером, для чисел которой выполнены оба условия:\",\"— в строке есть два числа, каждое из которых повторяется дважды, остальные три числа различны;\",\"— максимальное число строки не повторяется.\",\"В ответе запишите только число.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"261\"},\"materials\":[{\"alt_text\":\"\",\"display_metadata\":{\"description\":\"\",\"name\":\"9.xls\"},\"media_id\":61,\"position\":1,\"role\":\"attachment\",\"sha256\":\"1ef86fdcae74e12a9f83b189c580bf7ef33a26500dddf72bd6871960894dde49\"}],\"snapshot_schema_version\":1,\"source_task_id\":39,\"source_task_num\":9,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "845c3466631d22ee677eab19535c7b6905f3c48f4735e6e436c759de41b4175a"
+      },
+      {
+        "id": 123,
+        "version_id": 7,
+        "position": 19,
+        "source_task_num": 10,
+        "source_task_id": 33,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"В терминологии сетей TCP/IP маской сети называют двоичное число, которое показывает, какая часть IP-адреса узла сети относится к адресу сети, а какая – к адресу узла в этой сети. Адрес сети получается в результате применения поразрядной конъюнкции к заданному адресу узла и маске сети.\",\"Сеть, в которой содержится узел с IP-адресом 116.242.A.26, задана маской сети 255.255.255.224, где A - некоторое допустимое для записи IP-адреса число. Определите максимальное значение A, для которого для всех IP-адресов этой сети в двоичной записи IP-адреса суммарное количество единиц в левых двух байтах не меньше суммарного количества единиц в правых двух байтах.\",\"В ответе укажите только число.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"240\"},\"materials\":[],\"snapshot_schema_version\":1,\"source_task_id\":33,\"source_task_num\":10,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "08d7e2c588adb470e6169d5b9db652b10ed3c1adeb8c65b75ef5f8065b543303"
+      },
+      {
+        "id": 124,
+        "version_id": 7,
+        "position": 20,
+        "source_task_num": 10,
+        "source_task_id": 36,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"В терминологии сетей TCP/IP маской сети называют двоичное число, которое показывает, какая часть IP-адреса узла сети относится к адресу сети, а какая – к адресу узла в этой сети. Адрес сети получается в результате применения поразрядной конъюнкции к заданному адресу узла и маске сети.\",\"Адрес сети равен 183.192.A.0, где А — некоторое допустимое для записи адреса сети число, а маска сети 255.255.252.0.\",\"Определите минимальное значение А, для которого для всех IP-адресов этой сети в двоичной записи IP-адреса суммарное количество единиц в правых двух байтах больше трёх.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"60\"},\"materials\":[],\"snapshot_schema_version\":1,\"source_task_id\":36,\"source_task_num\":10,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "2b8ef078b47e4294a001fd5d0ae572390e98e698f1fc5a1127ff0e33b85098d7"
+      }
+    ],
+    "thematic_item_media": [
+      {
+        "item_id": 105,
+        "version_id": 7,
+        "media_id": 51,
+        "role": "condition",
+        "position": 1,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":0,\"size\":\"img-large\"}"
+      },
+      {
+        "item_id": 106,
+        "version_id": 7,
+        "media_id": 52,
+        "role": "condition",
+        "position": 1,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":0,\"size\":\"img-large\"}"
+      },
+      {
+        "item_id": 107,
+        "version_id": 7,
+        "media_id": 53,
+        "role": "condition",
+        "position": 1,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":0,\"size\":\"img-large\"}"
+      },
+      {
+        "item_id": 108,
+        "version_id": 7,
+        "media_id": 54,
+        "role": "condition",
+        "position": 1,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":0,\"size\":\"img-large\"}"
+      },
+      {
+        "item_id": 109,
+        "version_id": 7,
+        "media_id": 55,
+        "role": "condition",
+        "position": 1,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":1,\"size\":\"img-large\"}"
+      },
+      {
+        "item_id": 109,
+        "version_id": 7,
+        "media_id": 56,
+        "role": "condition",
+        "position": 2,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":2,\"size\":\"img-large\"}"
+      },
+      {
+        "item_id": 109,
+        "version_id": 7,
+        "media_id": 57,
+        "role": "condition",
+        "position": 3,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":3,\"size\":\"img-large\"}"
+      },
+      {
+        "item_id": 109,
+        "version_id": 7,
+        "media_id": 58,
+        "role": "condition",
+        "position": 4,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":4,\"size\":\"img-large\"}"
+      },
+      {
+        "item_id": 109,
+        "version_id": 7,
+        "media_id": 59,
+        "role": "attachment",
+        "position": 1,
+        "alt_text": "",
+        "display_metadata_json": "{\"description\":\"\",\"name\":\"Файл базы данных\"}"
+      },
+      {
+        "item_id": 110,
+        "version_id": 7,
+        "media_id": 7,
+        "role": "condition",
+        "position": 1,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":1,\"size\":\"img-large\"}"
+      },
+      {
+        "item_id": 110,
+        "version_id": 7,
+        "media_id": 8,
+        "role": "condition",
+        "position": 2,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":2,\"size\":\"img-large\"}"
+      },
+      {
+        "item_id": 110,
+        "version_id": 7,
+        "media_id": 9,
+        "role": "condition",
+        "position": 3,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":3,\"size\":\"img-large\"}"
+      },
+      {
+        "item_id": 110,
+        "version_id": 7,
+        "media_id": 10,
+        "role": "condition",
+        "position": 4,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":4,\"size\":\"img-large\"}"
+      },
+      {
+        "item_id": 110,
+        "version_id": 7,
+        "media_id": 46,
+        "role": "attachment",
+        "position": 1,
+        "alt_text": "",
+        "display_metadata_json": "{\"description\":\"\",\"name\":\"Файл базы данных\"}"
+      },
+      {
+        "item_id": 121,
+        "version_id": 7,
+        "media_id": 60,
+        "role": "attachment",
+        "position": 1,
+        "alt_text": "",
+        "display_metadata_json": "{\"description\":\"\",\"name\":\"9.xlsx\"}"
+      },
+      {
+        "item_id": 122,
+        "version_id": 7,
+        "media_id": 61,
+        "role": "attachment",
+        "position": 1,
+        "alt_text": "",
+        "display_metadata_json": "{\"description\":\"\",\"name\":\"9.xls\"}"
+      }
+    ]
+  }
+}

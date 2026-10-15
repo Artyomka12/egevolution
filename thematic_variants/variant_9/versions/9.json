@@ -1,0 +1,376 @@
+{
+  "schema_version": 1,
+  "version": {
+    "id": 9,
+    "variant_id": 9,
+    "version_no": 1,
+    "title": "Тематический вариант №8",
+    "description": "Итоговый сложный тренинг: нестандартные модели, комбинаторика и многошаговый анализ. 20 задач: по две каждого номера ЕГЭ с 1 по 10.",
+    "question_count": 20,
+    "snapshot_schema_version": 1,
+    "grader_version": "ordinary-binary-v1",
+    "content_hash": "6b973b691e00b3b94eba1b94bdaf38ca31fb1e6344007f475666b31d27eab9e3",
+    "published_by": null,
+    "published_at": 1791932560293,
+    "sealed": 1
+  },
+  "tables": {
+    "thematic_version_items": [
+      {
+        "id": 145,
+        "version_id": 9,
+        "position": 1,
+        "source_task_num": 1,
+        "source_task_id": 79,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"На рисунке схема дорог изображена в виде графа, в таблице содержатся сведения о длине этих дорог в километрах. Так как таблицу и схему рисовали независимо друг от друга, нумерация населённых пунктов в таблице никак не связана с буквенными обозначениями на графе. Кроме того, при построении графа одну дорогу случайно пропустили. Определите длину этой пропущенной дороги. В ответе запишите целое число – длину дороги в километрах.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"19\"},\"materials\":[{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":0,\"size\":\"img-large\"},\"media_id\":69,\"position\":1,\"role\":\"condition\",\"sha256\":\"1ae20b33d131334e5e9ce1c56434432c0f9b4919be6b71b9978453e3d5b779ea\"}],\"snapshot_schema_version\":1,\"source_task_id\":79,\"source_task_num\":1,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "c79a79eb0fffd5e8da3ea3386f9170139c61d669c41c77eed6cac82a0200c4b1"
+      },
+      {
+        "id": 146,
+        "version_id": 9,
+        "position": 2,
+        "source_task_num": 1,
+        "source_task_id": 84,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"Почтальон Печкин получил срочное распоряжение – доставить письмо Деду Морозу. По приезде в Великий Устюг, Почтальону выдали спутниковую карту города, и таблицу, в которой содержатся сведения о длинах дорог, обозначенных на карте (в метрах). Так как таблицу и схему рисовали независимо друг от друга, то нумерация пунктов в таблице никак не связана с буквенными обозначениями на карте. В ряд пунктов из-за ремонтных работ добраться нельзя – эти пункты отмечены на карте красным и в таблицу не внесены. Почтальону Печкину необходимо добраться из пункта З в пункт В, в котором находится Резиденция Деда Мороза. Он может оставить в пункте З свой велосипед и дойти до Резиденции пешком, либо в случае, если длина пути составляет больше 180 метров Печкин может доехать на велосипеде, причём на нём он преодолевает путь в три раза быстрее, чем если бы шёл пешком. Определите длину наиболее оптимального для Печкина пути, если известно, что длина дороги ДГ меньше длины дороги ДВ.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"188\"},\"materials\":[{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":0,\"size\":\"img-large\"},\"media_id\":70,\"position\":1,\"role\":\"condition\",\"sha256\":\"f48faf7e119242fdc2cf3f4efd96e5ca576e70032db4bf33a1445cc23788fe6c\"}],\"snapshot_schema_version\":1,\"source_task_id\":84,\"source_task_num\":1,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "32843404b5f78616701c2ba22ddf6e386491dd49e45f297df1b03bdea1cca210"
+      },
+      {
+        "id": 147,
+        "version_id": 9,
+        "position": 3,
+        "source_task_num": 2,
+        "source_task_id": 59,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"Логическая функция <i>F</i> задаётся выражением (p_3 → p_1) → (p_4 ∨ ¬ p_2). На рисунке приведён частично заполненный фрагмент таблицы истинности функции <i>F</i>, содержащий <b>неповторяющиеся строки</b>. Определите, какой столбец в таблице каждой переменной в выражении.\",\"В ответе напишите буквы x, y, z, w в том порядке, который соответствует переменным p_1, p_2, p_3 и p_4 в выражении. Буквы в ответе пишите подряд, никаких разделителей между буквами ставить не нужно.\",\"<i>Пример</i>. Функция задана выражением ¬ p_2 ∨ p_1, зависящим от двух переменных, а фрагмент таблицы имеет следующий вид.\",\"В этом случае p_1 соответствует переменная y, а p_2 – переменная x. В ответе следует написать yx.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"ywxz\"},\"materials\":[{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":0,\"size\":\"img-large\"},\"media_id\":71,\"position\":1,\"role\":\"condition\",\"sha256\":\"e38c04ae55df525852a114b75bcd420977e361d31fd57595bd5da2be9830ff24\"}],\"snapshot_schema_version\":1,\"source_task_id\":59,\"source_task_num\":2,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "2df833dc49fac9168b6d0775c49dddb17cbb58811a3cbf3cf692f60f54fcc310"
+      },
+      {
+        "id": 148,
+        "version_id": 9,
+        "position": 4,
+        "source_task_num": 2,
+        "source_task_id": 78,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"Миша заполнял таблицу истинности функции (w ∨ y) ∧ (x → ¬ z) ∧ ¬ w, но успел заполнить лишь фрагмент из трёх <b>различных</b> её строк, даже не указав, какому столбцу таблицы соответствует каждая из переменных w, x, y, z.\",\"Определите, сколько существует различных способов расстановки переменных w, x, y, z, подходящих для данной таблицы истинности?\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"4\"},\"materials\":[{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":0,\"size\":\"img-large\"},\"media_id\":72,\"position\":1,\"role\":\"condition\",\"sha256\":\"dff368d40effc5cfe3ebcddddf780cc064be17b57d416572cf541e0ccb2f6682\"}],\"snapshot_schema_version\":1,\"source_task_id\":78,\"source_task_num\":2,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "23309c275cc6cd00c17fbba19773eb20a4b0b9023622a98ced6035ff1b77811b"
+      },
+      {
+        "id": 149,
+        "version_id": 9,
+        "position": 5,
+        "source_task_num": 3,
+        "source_task_id": 86,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"С горем пополам Дед Мороз открыл конверт. В нём лежит несколько файлов. Один из них — это список детей, которым полагаются подарки на Новый год. Он состоит из нескольких страниц.\",\"На 1 странице «Дети» содержится информация, о детях которым полагаются (или нет) подарки – присвоенный им ID, их имя, возраст и количество баллов, начисленных на начало года.\",\"Существует следующая система начисления баллов: за каждую пакость снимается какое-то количество баллов – сколько баллов снимается за каждую пакость указано на 2 странице «Пакости»;\",\"за совершённое доброе дело, наоборот, начисляются баллы, что подробно отражено на 4 странице «Добрые дела».\",\"На 3 и 5 страницах содержатся данные о совершённых пакостях и добрых делах соответственно.\",\"Дети, на счету которых к концу года будет положительное количество баллов заслужили подарок, а те дети, на счету которых больше 80 баллов, заслуживают Мега-подарок. Помогите Деду Морозу посчитать процентное отношения числа Мега-подарков к общему количеству подарков, которые придётся подарить детям. В ответ запишите только целую часть получившегося числа.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"25\"},\"materials\":[{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":0,\"size\":\"img-large\"},\"media_id\":73,\"position\":1,\"role\":\"condition\",\"sha256\":\"533ba27f2d2b67f573902143f5c092837fc262472df353b395cdae6c3179154d\"},{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":1,\"size\":\"img-large\"},\"media_id\":74,\"position\":2,\"role\":\"condition\",\"sha256\":\"3a4f26c2621742481e0239fe29a7a413d4c3a5d2e9ae1e7c714d68fc472b7b8c\"},{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":2,\"size\":\"img-large\"},\"media_id\":75,\"position\":3,\"role\":\"condition\",\"sha256\":\"8a5b8fc1ad132d3fb4852f76e9af827ca5b831654c8a466e0e23be4c6535e599\"},{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":3,\"size\":\"img-large\"},\"media_id\":76,\"position\":4,\"role\":\"condition\",\"sha256\":\"bb29ec379aa30b3789184eefc97902bf3cdbb51107d0dc57c27dc0970b9b78fa\"},{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":4,\"size\":\"img-large\"},\"media_id\":77,\"position\":5,\"role\":\"condition\",\"sha256\":\"7c21b45ab45756923469026bf28d4a5613343588aba89f3079af13886da4025b\"},{\"alt_text\":\"\",\"display_metadata\":{\"description\":\"\",\"name\":\"Файл базы данных\"},\"media_id\":78,\"position\":1,\"role\":\"attachment\",\"sha256\":\"b970381d733859287b17fbb6ada91262ceaf8970463d273d5c250e4cf8e8d337\"}],\"snapshot_schema_version\":1,\"source_task_id\":86,\"source_task_num\":3,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "adf6a245aafea79a55fa1ea769775b9b18575a228124cacb6312560dfe4443f3"
+      },
+      {
+        "id": 150,
+        "version_id": 9,
+        "position": 6,
+        "source_task_num": 3,
+        "source_task_id": 87,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"В файле приведён фрагмент базы данных «Грешники», содержащий информацию о ряде посетителей ада. К каждому грешнику привязан свой ID. Таблица «Грешники» содержит информацию об имени грешника и ID греха, совершённого им.\",\"Таблица «Грехи» содержит информацию о наименовании грехов. Каждый грех имеет свой персональный ID.\",\"В таблице «Перемещения» содержится информация об ID пункта, посещённого грешником и дате посещения этого пункта.\",\"В таблице «Пункты» содержится информация о наименовании пунктов. Каждый пункт имеет свой персональный ID.\",\"На рисунке приведена схема базы данных:\",\"Используя информацию из приведённой базы данных, определите, сколько дней прошло между первым и последним посещением пункта (дни посещения при этом не учитывайте), который является самым часто посещаемым среди грешников, совершивших грех Гордыня.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"28\"},\"materials\":[{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":1,\"size\":\"img-large\"},\"media_id\":79,\"position\":1,\"role\":\"condition\",\"sha256\":\"e69ebce7b3a0d35a8bfa376ba48a24c6a4ef31f7da96e2cbc7f784d4c4ae79fb\"},{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":2,\"size\":\"img-large\"},\"media_id\":80,\"position\":2,\"role\":\"condition\",\"sha256\":\"80b513fe61d88452a8c4fdfb1f6159c11c5762f237a93ffc6f7a8f60d611348c\"},{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":3,\"size\":\"img-large\"},\"media_id\":81,\"position\":3,\"role\":\"condition\",\"sha256\":\"527feb6df0b47c1a9b730bf5df032831c584a52f1687965d5c36ee25afd4a77f\"},{\"alt_text\":\"\",\"display_metadata\":{\"after_paragraph\":4,\"size\":\"img-large\"},\"media_id\":82,\"position\":4,\"role\":\"condition\",\"sha256\":\"027b67fc642a031819c9a4ec8c60ae40224eb36a8af4e5a3dc4ca0961413618f\"},{\"alt_text\":\"\",\"display_metadata\":{\"description\":\"\",\"name\":\"Файл базы данных\"},\"media_id\":83,\"position\":1,\"role\":\"attachment\",\"sha256\":\"9b035e31e6591b4c0421f46a622b8b40b9988471820eff8aaa8cd82a18cd3b25\"}],\"snapshot_schema_version\":1,\"source_task_id\":87,\"source_task_num\":3,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "2cff7161b91d74facc253485398d6d8518ad24e7528a40f6c9a87090c102c399"
+      },
+      {
+        "id": 151,
+        "version_id": 9,
+        "position": 7,
+        "source_task_num": 4,
+        "source_task_id": 59,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"По каналу связи передаются шифрованные сообщения, содержащие строчные и прописные буквы латинского алфавита. Для передачи используется неравномерный двоичный код. Каким минимальным количеством бит можно закодировать слово AbraCadabra при условии, что для всех символов выполняется условие Фано?\",\"<i>Примечание</i>. Условие Фано означает, что никакое кодовое слово не является началом другого кодового слова. Это обеспечивает возможность однозначной расшифровки закодированных сообщений.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"28\"},\"materials\":[],\"snapshot_schema_version\":1,\"source_task_id\":59,\"source_task_num\":4,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "f8cf1f1ccebc434a3d7cd149eaaf02d83062f00d64f3ba7fc74e8bdd4413f01f"
+      },
+      {
+        "id": 152,
+        "version_id": 9,
+        "position": 8,
+        "source_task_num": 4,
+        "source_task_id": 83,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"Для кодирования букв А, Б, В, Г, Д, Е, Ж, З, И, использован неравномерный троичный код, удовлетворяющий условию Фано. Для буквы А используется кодовое слово 0; для буквы Б используется кодовое слово 10; для буквы В используется кодовое слово 11; для буквы Г используется кодовое слово 21; для буквы Д используется кодовое слово 22. Какова минимальная общая длина кодовых слов для букв Е, Ж, З, И?\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"11\"},\"materials\":[],\"snapshot_schema_version\":1,\"source_task_id\":83,\"source_task_num\":4,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "3c92cc1a68ae68e2040f5e733235575be271fd3615a497927e2eaab29dec73b8"
+      },
+      {
+        "id": 153,
+        "version_id": 9,
+        "position": 9,
+        "source_task_num": 5,
+        "source_task_id": 78,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"Автомат обрабатывает натуральное девятиразрядное число <i>N</i> по следующему алгоритму:\",\"1.      Находится сумма разрядов числа N.\",\"2.      Полученное число переводится в двоичную систему счисления.\",\"3.      К записи, полученной на предыдущем этапе, дописываются разряды по следующему правилу:\",\"a.       Если количество единиц четное дописывается единица слева и два нуля справа,\",\"b.      Если количество единиц нечетное дописывается 10 слева и 1 справа.\",\"4.      Результат переводится в десятичную систему и выводится на экран.\",\"<i>Пример</i>. Дано число <i>N</i> = 123456789. Алгоритм работает следующим образом:\",\"1.      Сумма разрядов 45\",\"2.      Двоичная запись 101101.\",\"3.      Единиц четное количество, следовательно, получаем 1+101101+00\",\"4.      На экран выводится число 436.\",\"Сколько существует чисел <i>N</i> таких, что в результате работы автомата будет выведено число 21?\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"9\"},\"materials\":[],\"snapshot_schema_version\":1,\"source_task_id\":78,\"source_task_num\":5,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "e891c6e2228e44b3dcc606fd0f7a632840ba543eeceaa1d9442240f7f33cf0ec"
+      },
+      {
+        "id": 154,
+        "version_id": 9,
+        "position": 10,
+        "source_task_num": 5,
+        "source_task_id": 82,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"На вход алгоритму Галиб-001 подаётся натуральное число N. Алгоритм строит по нему новое число R следующим образом:\",\"1) Строится девятиричная запись числа N.\",\"2) Подсчитывается количество пятёрок и семёрок в полученной записи. Если их количество одинаково, в конец записи добавляется её последняя цифра. В противном случае в конец записи добавляется цифра, которая встречается чаще. Если таких цифр несколько, выбирается наибольшая по значению.\",\"3) Шаг 2 повторяется ещё четыре раза.\",\"4) Результат переводится в шестнадцатиричную систему счисления.\",\"При каком наибольшем исходном числе N < 10000 в результате работы алгоритма получится число, которое содержит в себе сочетание BAC?\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"9918\"},\"materials\":[],\"snapshot_schema_version\":1,\"source_task_id\":82,\"source_task_num\":5,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "dedcfae8d58c2783c67a23bc3ce621315b87e33300620240b3ae52ecf4319875"
+      },
+      {
+        "id": 155,
+        "version_id": 9,
+        "position": 11,
+        "source_task_num": 6,
+        "source_task_id": 28,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"Исполнитель Черепаха действует на плоскости с декартовой системой координат. В начальный момент Черепаха находится в начале координат, её голова направлена вдоль положительного направления оси ординат, хвост опущен. При опущенном хвосте Черепаха оставляет на поле след в виде линии. В каждый конкретный момент известно положение исполнителя и направление его движения. У исполнителя существует 5 команд<b>: Поднять хвост</b><i><b>, </b></i>означающая переход к перемещению без рисования; <b>Опустить хвост</b><i><b>, </b></i>означающая переход в режим рисования; <b>Вперёд </b><i><b>n</b></i> (где <i>n </i> –  целое число), вызывающая передвижение Черепахи на <i>n</i> единиц в том направлении, куда указывает её голова; <b>Назад </b><i><b>n</b></i> (где <i>n </i> –  целое число), вызывающая передвижение в противоположном голове направлении; <b>Направо </b><i><b>m</b></i> (где <i>m </i> –  целое число), вызывающая изменение направления движения на <i>m</i> градусов по часовой стрелке, <b>Налево </b><i><b>m</b></i> (где <i>m </i> –  целое число), вызывающая изменение направления движения на <i>m</i> градусов против часовой стрелки.\",\"Запись <b>Повтори </b><i><b>k</b></i><b> [Команда1 Команда2 … Команда</b><i><b>S</b></i><b>]</b> означает, что последовательность из <i>S</i> команд повторится <i>k</i> раз.\",\"Черепахе был дан для исполнения следующий алгоритм:\",\"Направо 45\",\"Повтори 10 раз [ Направо 45  Вперед 203  Направо 45 ]\",\"Поднять хвост\",\"Назад 40\",\"Направо 45\",\"Опустить хвост\",\"Повтори 5 раз [ Вперед 20 Налево 90 ]\",\"Определите, сколько точек с целочисленными координатами будут находиться внутри объединения фигур, ограниченных заданными алгоритмом линиями, не включая точки на линиях.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"41204\"},\"materials\":[],\"snapshot_schema_version\":1,\"source_task_id\":28,\"source_task_num\":6,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "779bbd45b8f5f92723fae79d560ff47e50f936d11164ad58b632e4779b2e76fa"
+      },
+      {
+        "id": 156,
+        "version_id": 9,
+        "position": 12,
+        "source_task_num": 6,
+        "source_task_id": 63,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"Исполнитель Панда действует в трёхмерном пространстве с декартовой системой координат. В начальный момент Панда находится в начале координат, её голова направлена вдоль положительного направления оси ординат. Панда оставляет на поле след в виде линии. В каждый конкретный момент известно положение исполнителя и направление его движения. У исполнителя существует три команды: <b>Вперёд n</b> (где n – целое число), вызывающая передвижение Панды на n единиц в том направлении, куда указывает её голова, <b>Направо m</b> (где m – целое число), вызывающая изменение направления движения на m градусов по часовой стрелке, и <b>Наверх t</b> (где t – целое число), вызывающая передвижение Панды на t единиц по оси аппликат.\",\"Запись\",\"<b>Повтори k [Команда1 Команда2 … КомандаS]</b>\",\"означает, что последовательность из S команд повторится k раз. Панде был дан для исполнения следующий алгоритм:\",\"<b>Вперёд 5 </b>\",\"<b>Повтори 3 [Вперед 4 Направо 90 Наверх 2] Вперед 4 Направо 90 Повтори 3 [Наверх -2] Повтори 2 [Вперед 4 Направо 90 Наверх 2]</b>\",\"Определите, на каком количестве точек с целочисленными координатами будут оставлены следы в результате выполнения данного алгоритма.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"33\"},\"materials\":[],\"snapshot_schema_version\":1,\"source_task_id\":63,\"source_task_num\":6,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "28995656ca8fd5b24cde8fc4efb3b5ca0c55d2dfc7a028630794193e80bbc800"
+      },
+      {
+        "id": 157,
+        "version_id": 9,
+        "position": 13,
+        "source_task_num": 7,
+        "source_task_id": 64,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"Алексей написал генератор серии картинок в разрешении 4к (3840 x 2160) на 16 млн цветов, которые сохраняются без сжатия на 1TБ SSD для дальнейшего сжатия в видеопоток 60 FPS (Гц). Известно, что память TLC SSD не переживет 1000 циклов полной перезаписи. Посчитайте суммарное время всех сгенерируемых фрагментов видео за ожидаемое время жизни SSD. Ответ дайте в часах. Округляйте в меньшую сторону. (1TБ у производителей неравен 1 Тебибайту, а равен 10<sup>12</sup> байт)\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"186\"},\"materials\":[],\"snapshot_schema_version\":1,\"source_task_id\":64,\"source_task_num\":7,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "c9a7bc37437850679d178a8447f8ff3ec9c8fe31e77a6912770bf36962198093"
+      },
+      {
+        "id": 158,
+        "version_id": 9,
+        "position": 14,
+        "source_task_num": 7,
+        "source_task_id": 108,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"Файлы изображений передают по каналу связи со средней скоростью 2<sup>24 </sup>бит/сек. Известно, что процесс приема разбит на сеансы – 10 секунд передачи затем 2 секундная задержка. Если файл не успел полностью загрузиться за один сеанс, то его загрузка начинается заново во время следующего сеанса. Передаются растровые изображения разрешением 1600х1200 в цветовой палитре, содержащей 2000 цветов. Известно, что каждый пиксель кодируется с помощью одинакового и минимально возможного количества бит, все коды пикселей записываются последовательно один за другим без разделителей.\",\"Сколько изображений можно передать за 40 секунд, если все изображения передаются один за другим без заголовков файла?\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"24\"},\"materials\":[],\"snapshot_schema_version\":1,\"source_task_id\":108,\"source_task_num\":7,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "eb208ff9060598bed432cfabed1bb4385491210ddde31820b5eac6c65f497369"
+      },
+      {
+        "id": 159,
+        "version_id": 9,
+        "position": 15,
+        "source_task_num": 8,
+        "source_task_id": 65,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"Определите количество шестизначных чисел, записанных в системе счисления с основанием 42, в записи которых только одна цифра 6, при этом никакая нечётная цифра не стоит рядом с цифрой 6.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"218530000\"},\"materials\":[],\"snapshot_schema_version\":1,\"source_task_id\":65,\"source_task_num\":8,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "297dcbf079510e7a15d7dd6230dbded62174af495e1e373c84a94cc4c982cfa4"
+      },
+      {
+        "id": 160,
+        "version_id": 9,
+        "position": 16,
+        "source_task_num": 8,
+        "source_task_id": 66,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"Ученые хотят дать название своему новому изобретению, которое должно состоять из 10 различных строчных латинских букв, при этом в названии должно быть не менее двух гласных букв. Необходимо найти количество вариантов всевозможных названий.\",\"Примечание: в латинском алфавите 26 букв, из которых 5 - гласные.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"12662222227200\"},\"materials\":[],\"snapshot_schema_version\":1,\"source_task_id\":66,\"source_task_num\":8,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "1881cf72d4ea802f36c407f6b4205849e40c8709a73d5b5494c8d66101aaca54"
+      },
+      {
+        "id": 161,
+        "version_id": 9,
+        "position": 17,
+        "source_task_num": 9,
+        "source_task_id": 55,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"Откройте файл электронной таблицы, содержащей в каждой строке шесть натуральных чисел. Определите количество строк таблицы, для которых выполняются все условия:\",\"- в строке три числа повторяются ровно два раза;\",\"- эти три числа образуют стороны прямоугольного треугольника.\",\"В ответе запишите одно число.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"148\"},\"materials\":[{\"alt_text\":\"\",\"display_metadata\":{\"description\":\"\",\"name\":\"9.csv\"},\"media_id\":84,\"position\":1,\"role\":\"attachment\",\"sha256\":\"3e75e3022652af64e19913a12875d3cf4b4ad95993e9c57e8f30d480ddd47e0d\"}],\"snapshot_schema_version\":1,\"source_task_id\":55,\"source_task_num\":9,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "527b693bacefbf572cd7c4bc9473d4cb4afd5d9300bc51ade26c101fa07cd8cd"
+      },
+      {
+        "id": 162,
+        "version_id": 9,
+        "position": 18,
+        "source_task_num": 9,
+        "source_task_id": 61,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"Откройте файл электронной таблицы, содержащей в каждой строке шесть натуральных чисел. Определите количество строк таблицы, содержащих числа, для которых выполнены оба условия:\",\"– в строке только одно число повторяется ровно два раза, остальные числа различны;\",\"– шесть чисел можно разбить на две тройки с равными суммами.\",\"В ответе запишите только число — количество подходящих строк.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"127\"},\"materials\":[{\"alt_text\":\"\",\"display_metadata\":{\"description\":\"\",\"name\":\"9.xls\"},\"media_id\":85,\"position\":1,\"role\":\"attachment\",\"sha256\":\"5add829518782aecff828784646db7fad4c97b7b3bf283869bebe36e53289a87\"}],\"snapshot_schema_version\":1,\"source_task_id\":61,\"source_task_num\":9,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "05ae278ef6578824390367b6231cb6e49ad9d1bc11916ba0369479383f7926c0"
+      },
+      {
+        "id": 163,
+        "version_id": 9,
+        "position": 19,
+        "source_task_num": 10,
+        "source_task_id": 44,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"В терминологии сетей ТСР/IР маской сети называют двоичное число, которое показывает, какая часть IP-адреса узла сети относится к адресу сети, а какая - к адресу узла в этой сети. Адрес сети получается в результате применения поразрядной конъюнкции к заданному адресу узла и его маске. Широковещательным адресом называется специализированный адрес, в котором на месте нулей в маске стоят единицы. Адрес сети и широковещательный адрес не могут быть использованы для адресации сетевых устройств.\",\"Сеть задана IP-адресом одного из входящих в неё узлов 46.29.170.214 и сетевой маской 255.255.128.0.\",\"Найдите в данной сети наибольший IP-адрес, который может быть назначен компьютеру, при условии, что значение одного из октетов IP-адреса является суммой его остальных октетов. В ответе укажите найденный IP-адрес без разделителей.\",\"Например, если бы найденный адрес был равен 69.22.3.44, то в ответе следовало бы записать: 6922344\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"4629255180\"},\"materials\":[],\"snapshot_schema_version\":1,\"source_task_id\":44,\"source_task_num\":10,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "49d2479a4a153711eae8290856e428730d809290d521ca5dd0fbab45dae1f080"
+      },
+      {
+        "id": 164,
+        "version_id": 9,
+        "position": 20,
+        "source_task_num": 10,
+        "source_task_id": 91,
+        "task_type": "scalar",
+        "snapshot_json": "{\"description\":[\"В терминологии сетей TCP/IP маской сети называют двоичное число, которое показывает, какая часть IP-адреса узла сети относится к адресу сети, а какая – к адресу узла в этой сети. Адрес сети получается в результате применения поразрядной конъюнкции к заданному адресу узла и маске сети.\",\"Сеть, в которой содержится узел с IP-адресом 203.111.195.0, задана маской сети 255.255.240.0. Сколько в этой сети IP-адресов, в двоичной записи которых количество нулей кратно трём, а также содержатся три подряд идущие единицы и три подряд идущих нуля одновременно?\",\"В ответе укажите только число.\"],\"grader_version\":\"ordinary-binary-v1\",\"grading\":{\"correct_answer\":\"1043\"},\"materials\":[],\"snapshot_schema_version\":1,\"source_task_id\":91,\"source_task_num\":10,\"task_type\":\"scalar\",\"title\":\"\"}",
+        "snapshot_hash": "eac9312d51dd5b7bd9d0d151697c2a193d4aa0e219b78abb2c77d2dd10b84dfe"
+      }
+    ],
+    "thematic_item_media": [
+      {
+        "item_id": 145,
+        "version_id": 9,
+        "media_id": 69,
+        "role": "condition",
+        "position": 1,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":0,\"size\":\"img-large\"}"
+      },
+      {
+        "item_id": 146,
+        "version_id": 9,
+        "media_id": 70,
+        "role": "condition",
+        "position": 1,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":0,\"size\":\"img-large\"}"
+      },
+      {
+        "item_id": 147,
+        "version_id": 9,
+        "media_id": 71,
+        "role": "condition",
+        "position": 1,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":0,\"size\":\"img-large\"}"
+      },
+      {
+        "item_id": 148,
+        "version_id": 9,
+        "media_id": 72,
+        "role": "condition",
+        "position": 1,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":0,\"size\":\"img-large\"}"
+      },
+      {
+        "item_id": 149,
+        "version_id": 9,
+        "media_id": 73,
+        "role": "condition",
+        "position": 1,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":0,\"size\":\"img-large\"}"
+      },
+      {
+        "item_id": 149,
+        "version_id": 9,
+        "media_id": 74,
+        "role": "condition",
+        "position": 2,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":1,\"size\":\"img-large\"}"
+      },
+      {
+        "item_id": 149,
+        "version_id": 9,
+        "media_id": 75,
+        "role": "condition",
+        "position": 3,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":2,\"size\":\"img-large\"}"
+      },
+      {
+        "item_id": 149,
+        "version_id": 9,
+        "media_id": 76,
+        "role": "condition",
+        "position": 4,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":3,\"size\":\"img-large\"}"
+      },
+      {
+        "item_id": 149,
+        "version_id": 9,
+        "media_id": 77,
+        "role": "condition",
+        "position": 5,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":4,\"size\":\"img-large\"}"
+      },
+      {
+        "item_id": 149,
+        "version_id": 9,
+        "media_id": 78,
+        "role": "attachment",
+        "position": 1,
+        "alt_text": "",
+        "display_metadata_json": "{\"description\":\"\",\"name\":\"Файл базы данных\"}"
+      },
+      {
+        "item_id": 150,
+        "version_id": 9,
+        "media_id": 79,
+        "role": "condition",
+        "position": 1,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":1,\"size\":\"img-large\"}"
+      },
+      {
+        "item_id": 150,
+        "version_id": 9,
+        "media_id": 80,
+        "role": "condition",
+        "position": 2,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":2,\"size\":\"img-large\"}"
+      },
+      {
+        "item_id": 150,
+        "version_id": 9,
+        "media_id": 81,
+        "role": "condition",
+        "position": 3,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":3,\"size\":\"img-large\"}"
+      },
+      {
+        "item_id": 150,
+        "version_id": 9,
+        "media_id": 82,
+        "role": "condition",
+        "position": 4,
+        "alt_text": "",
+        "display_metadata_json": "{\"after_paragraph\":4,\"size\":\"img-large\"}"
+      },
+      {
+        "item_id": 150,
+        "version_id": 9,
+        "media_id": 83,
+        "role": "attachment",
+        "position": 1,
+        "alt_text": "",
+        "display_metadata_json": "{\"description\":\"\",\"name\":\"Файл базы данных\"}"
+      },
+      {
+        "item_id": 161,
+        "version_id": 9,
+        "media_id": 84,
+        "role": "attachment",
+        "position": 1,
+        "alt_text": "",
+        "display_metadata_json": "{\"description\":\"\",\"name\":\"9.csv\"}"
+      },
+      {
+        "item_id": 162,
+        "version_id": 9,
+        "media_id": 85,
+        "role": "attachment",
+        "position": 1,
+        "alt_text": "",
+        "display_metadata_json": "{\"description\":\"\",\"name\":\"9.xls\"}"
+      }
+    ]
+  }
+}

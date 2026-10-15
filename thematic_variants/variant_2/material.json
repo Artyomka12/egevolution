@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "material": {
+    "id": 2,
+    "state": "published",
+    "current_version_id": 2637731888012500,
+    "sort_order": 0,
+    "revision": 3,
+    "created_by": null,
+    "created_at": 1791932552970,
+    "updated_at": 1792057327736,
+    "deleted_at": null
+  },
+  "draft": {
+    "variant_id": 2,
+    "document_json": "{\"description\":\"Базовая тренировка: прямые вычисления и знакомые алгоритмы. 20 задач: по две каждого номера ЕГЭ с 1 по 10.\",\"items\":[{\"source_hash\":\"e5fa03cd7d7744d3b8d52f72c923d3ef2fd47176e7f5d0ef35f4c61cc1968900\",\"source_task_id\":2,\"source_task_num\":1},{\"source_hash\":\"b007efc09bc6d2fe6d0f546b875e099feb5277e602af59e88d47d84510e4108b\",\"source_task_id\":4,\"source_task_num\":1},{\"source_hash\":\"d739cd98652cb87598bd74b8c4f8d1fa8a08b7a88df2d2dd222699c15b527bbd\",\"source_task_id\":3,\"source_task_num\":2},{\"source_hash\":\"a863e7edaa3cf7ac41d5cf84222c84f121e029b7b6997ece50ac2acb390585ec\",\"source_task_id\":8,\"source_task_num\":2},{\"source_hash\":\"6455f30861f0caea546ced61bb14274ee30f16be42d86a7488cc08df352b6d94\",\"source_task_id\":6,\"source_task_num\":3},{\"source_hash\":\"a11a95829072a84b2e7b8a67d7e99258498d9e4e0533832b60c28f3c241f1c80\",\"source_task_id\":4,\"source_task_num\":3},{\"source_hash\":\"07cce1356a9c72dab6a0494f1aaa9b5804a955a67d08ed18c701bc964730e2de\",\"source_task_id\":8,\"source_task_num\":4},{\"source_hash\":\"bdee3c2294d8e7889b35a9b0d9093014b6732e91763c829234c6650778f3aebc\",\"source_task_id\":14,\"source_task_num\":4},{\"source_hash\":\"a1e025c337b608a4e3581350ef95e86381444fe60e13281ac68076fed4fbdb28\",\"source_task_id\":1,\"source_task_num\":5},{\"source_hash\":\"b5b798cc603ecac48174d5d4dbb8b1710f4b707db090cf8030d43369220ae6c4\",\"source_task_id\":11,\"source_task_num\":5},{\"source_hash\":\"fba913fb676730f979e1fd0f8468bf244495245e0ec4e698da5c2f41bfcfd607\",\"source_task_id\":2,\"source_task_num\":6},{\"source_hash\":\"2fb5c810d54fee2e83e323bf796e844c4a5303b25f1200e7595b03d2d8df3aa1\",\"source_task_id\":3,\"source_task_num\":6},{\"source_hash\":\"5376fbffa89594fd973b85dfbe7ace40c6375b43b9ed0af0794f2f5a33dd7b66\",\"source_task_id\":1,\"source_task_num\":7},{\"source_hash\":\"a149ea33bc552e6df3209743af19f07c4131eb5c6f7419f114fb2648ea3ebe46\",\"source_task_id\":2,\"source_task_num\":7},{\"source_hash\":\"1e4cb709a920d4bec7eb9e20462db251dbb4791e97cecab70a8429c5dd2f46b0\",\"source_task_id\":17,\"source_task_num\":8},{\"source_hash\":\"b03f47d486a3be9aba34bf406b2fab72c6b777d6e8dbef54b977b0c10e3edefa\",\"source_task_id\":24,\"source_task_num\":8},{\"source_hash\":\"9dc0b1103bb8889bac88092f3a4834e3c1cfe114afa813b349dac5720fda9008\",\"source_task_id\":6,\"source_task_num\":9},{\"source_hash\":\"a2c1e0b4d70b3eaa4c50c25ccad4a86b3585c4e275b11db7dda665898f981536\",\"source_task_id\":2,\"source_task_num\":9},{\"source_hash\":\"626736a1e0ccb91675f61cd228a39c42000fc06567ec60f3e718935dd476d311\",\"source_task_id\":1,\"source_task_num\":10},{\"source_hash\":\"cc115f13d28cdd99b637b793fbff33d1c9eb50b1338f68c4d791dd9cbfa34a0f\",\"source_task_id\":3,\"source_task_num\":10}],\"title\":\"№1\"}",
+    "revision": 4,
+    "based_on_version_id": 2637731888012500,
+    "updated_by": null,
+    "updated_at": 1792057327736
+  },
+  "version_ids": [
+    2,
+    2637731888012500
+  ]
+}

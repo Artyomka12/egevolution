@@ -16,7 +16,7 @@ import sqlite3
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
-ARCHIVE = Path('.local-data/ege-renumber-2026.json')
+ARCHIVE = Path('data/ege-renumber-2026.json')
 
 
 def read_json(path):

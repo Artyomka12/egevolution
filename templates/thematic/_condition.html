@@ -1,0 +1,9 @@
+<div class="task-description">
+{% for paragraph in q.description_html %}{% set pindex = loop.index0 %}
+<div class="condition-paragraph">{{ paragraph|safe }}</div>
+{% for media in q.materials if media.role != 'attachment' and media.after_paragraph == pindex %}<img class="task-image" src="{{ media.url }}" alt="{{ media.alt_text }}" loading="lazy">{% endfor %}
+{% endfor %}
+{% for media in q.materials %}
+{% if media.role == 'attachment' %}<div class="file-download"><a class="file-link" href="{{ media.url }}">Скачать вложение {{ loop.index }}</a></div>
+{% elif media.after_paragraph is not number or media.after_paragraph < 0 or media.after_paragraph >= q.description_html|length %}<img class="task-image" src="{{ media.url }}" alt="{{ media.alt_text }}" loading="lazy">{% endif %}
+{% endfor %}</div>

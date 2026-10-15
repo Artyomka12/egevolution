@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "material": {
+    "id": 7,
+    "state": "published",
+    "current_version_id": 7,
+    "sort_order": 5,
+    "revision": 2,
+    "created_by": null,
+    "created_at": 1791932557168,
+    "updated_at": 1791932558212,
+    "deleted_at": null
+  },
+  "draft": {
+    "variant_id": 7,
+    "document_json": "{\"description\":\"Повышенная сложность: нестандартные условия, геометрия и многокритериальный выбор. 20 задач: по две каждого номера ЕГЭ с 1 по 10.\",\"items\":[{\"source_hash\":\"a32b858ac0aefb6a49287b692f92f33fb2e154a878100ae32711172f8b108f8b\",\"source_task_id\":29,\"source_task_num\":1},{\"source_hash\":\"0a20e97107940fb96305ac61578821268526aa29a18e7c5c99fec7f9506cedeb\",\"source_task_id\":60,\"source_task_num\":1},{\"source_hash\":\"913cb36e40473c1ef0310cb19423b3109795c4cc9e648153fd4e4de85d6d3d02\",\"source_task_id\":76,\"source_task_num\":2},{\"source_hash\":\"a994a3e43313ce0de54317aeec57beacbd92a3ecccd9591704daf47104669ff3\",\"source_task_id\":80,\"source_task_num\":2},{\"source_hash\":\"daa9ce14db1dc9d2d83fe874631f5f313d552c91ae31d04d8f2b2a62d94d2ae7\",\"source_task_id\":31,\"source_task_num\":3},{\"source_hash\":\"298e6d182666255d185d64fd939273d50c89a3fcbf252390c4c0236f7686fcd7\",\"source_task_id\":42,\"source_task_num\":3},{\"source_hash\":\"aec74babfc16df55488cef66e5068bfbefe001eedb698f29b9be18ffdb0a12cb\",\"source_task_id\":18,\"source_task_num\":4},{\"source_hash\":\"3b721ab2487414bd65ad8d20fc31f3b80012e406036547040307f921dc03102d\",\"source_task_id\":20,\"source_task_num\":4},{\"source_hash\":\"e5aa586b8198df72f0d385d0213680989dde67be77d72274ac3735e764b2f9a2\",\"source_task_id\":28,\"source_task_num\":5},{\"source_hash\":\"220d887e8fddb5d54cce2802923ee1e54a5cb28dbbdcda2e6c21f721b93cea17\",\"source_task_id\":44,\"source_task_num\":5},{\"source_hash\":\"0cd73b47d61228e87bd68917c7d2eda84d388e967772ec2ba6948f2df9fdda73\",\"source_task_id\":40,\"source_task_num\":6},{\"source_hash\":\"cae627f31b36225e7511818a90d338d18e7a97eda3d21913958985eb274fece0\",\"source_task_id\":43,\"source_task_num\":6},{\"source_hash\":\"93a14147267e07dd2e3c97514f0617bd99af99172ff4c081b21f467e3c6067ff\",\"source_task_id\":60,\"source_task_num\":7},{\"source_hash\":\"d2cbc112d1da71679b9ec0b6385348868b4b22c266fb0fc1d95517e9f11045fb\",\"source_task_id\":47,\"source_task_num\":7},{\"source_hash\":\"b36861afb314e268b630cee2298df0da67c2c49b7583531df5d396dae57fec28\",\"source_task_id\":28,\"source_task_num\":8},{\"source_hash\":\"4f369d82eafed031fa892dfea7bf372e922bfaf268f7e9ccb5511c15acd25a18\",\"source_task_id\":48,\"source_task_num\":8},{\"source_hash\":\"263c1a6bc88891534e149565c02e5fb96017059dda797364cdf038fd3a566cf4\",\"source_task_id\":32,\"source_task_num\":9},{\"source_hash\":\"cec47845d08720f7bd0189afb208cc33845610a122e0f6c563365e5d52f49a6e\",\"source_task_id\":39,\"source_task_num\":9},{\"source_hash\":\"2b3924f71e23626be73dcde87a368272facfebbc892a8fdeb076f7e2bf165eed\",\"source_task_id\":33,\"source_task_num\":10},{\"source_hash\":\"d7987e786693def86593a710bb67602e09dbaf3ef85154bd319a93ab50b6f0fe\",\"source_task_id\":36,\"source_task_num\":10}],\"title\":\"Тематический вариант №6\"}",
+    "revision": 2,
+    "based_on_version_id": 7,
+    "updated_by": null,
+    "updated_at": 1791932558212
+  },
+  "version_ids": [
+    7
+  ]
+}

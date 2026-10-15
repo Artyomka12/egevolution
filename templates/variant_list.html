@@ -10,12 +10,22 @@
 <div class="page-wrap">
 
     <div class="section-heading reveal">
-        <span class="section-tag">Варианты ЕГЭ</span>
+        <div class="variant-catalog-tabs" role="tablist" aria-label="Тип вариантов">
+            <button type="button" id="full-variants-tab" role="tab"
+                    aria-controls="full-variants-panel" aria-selected="true" tabindex="0">
+                Полноценные варианты
+            </button>
+            <button type="button" id="thematic-variants-tab" role="tab"
+                    aria-controls="thematic-variants-panel" aria-selected="false" tabindex="-1">
+                Тематические варианты
+            </button>
+        </div>
         <h1 class="section-title">Выберите вариант</h1>
         <p class="section-desc">Решайте тренировочные варианты в обычном режиме или в условиях реального экзамена</p>
     </div>
 
-    <div class="catalog-grid">
+    <div id="full-variants-panel" class="catalog-grid variant-catalog-panel"
+         role="tabpanel" aria-labelledby="full-variants-tab" tabindex="0">
         {% for variant in variants %}
         <a href="/choose-mode/{{ variant.num }}" class="variant-card card reveal">
             <div class="variant-icon">📋</div>
@@ -26,5 +36,59 @@
         {% endfor %}
     </div>
 
+    <div id="thematic-variants-panel" class="variant-catalog-panel"
+         role="tabpanel" aria-labelledby="thematic-variants-tab" tabindex="0" hidden>
+        {% if thematic_variants %}<div class="catalog-grid">
+        {% for v in thematic_variants %}<a class="variant-card card" href="{{ v.url }}">
+            <span class="variant-icon">📋</span>
+            <h2 class="variant-title">{{ v.title }}</h2>
+            <p class="variant-desc">{{ v.description }}</p>
+            <span class="badge badge--blue">{{ v.question_count }} заданий</span>
+            <span class="thematic-status {{ 'active' if v.active else 'good' if v.best else '' }}">{{ v.status }}</span>
+            {% if v.best %}<div class="thematic-best">Лучший результат: <strong>{{ v.best.score }} из {{ v.best.total }}</strong> · {{ v.best.percent }}%</div>{% endif %}
+            {% if v.active %}<div class="thematic-best">Текущий прогресс: <strong>{{ v.active.answered }} из {{ v.active.total }}</strong>{% if v.active.version_no != v.version_no %} · версия {{ v.active.version_no }}{% endif %}</div><progress class="thematic-progress" value="{{ v.active.answered }}" max="{{ v.active.total }}" aria-label="Прогресс попытки"></progress>{% endif %}
+        </a>{% endfor %}</div>{% else %}<div class="variant-catalog-empty">
+            <p>Тематических вариантов пока нет</p>
+        </div>{% endif %}
+    </div>
+
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+    'use strict';
+
+    const tablist = document.querySelector('.variant-catalog-tabs');
+    const tabs = Array.from(tablist.querySelectorAll('[role="tab"]'));
+
+    function selectTab(selected) {
+        document.querySelector('.section-desc').textContent = selected.id === 'thematic-variants-tab' ? 'Закрепляйте темы в обычном режиме: без ограничения времени и шкалы ЕГЭ.' : 'Решайте тренировочные варианты в обычном режиме или в условиях реального экзамена';
+        tabs.forEach(function (tab) {
+            const active = tab === selected;
+            tab.setAttribute('aria-selected', String(active));
+            tab.tabIndex = active ? 0 : -1;
+            document.getElementById(tab.getAttribute('aria-controls')).hidden = !active;
+        });
+    }
+
+    tabs.forEach(function (tab, index) {
+        tab.addEventListener('click', function () { selectTab(tab); });
+        tab.addEventListener('keydown', function (event) {
+            let next;
+            if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+            else if (event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+            else if (event.key === 'Home') next = 0;
+            else if (event.key === 'End') next = tabs.length - 1;
+            else return;
+
+            event.preventDefault();
+            selectTab(tabs[next]);
+            tabs[next].focus();
+        });
+    });
+    if (new URLSearchParams(location.search).get('kind') === 'thematic' || location.hash === '#thematic') selectTab(tabs[1]);
+})();
+</script>
 {% endblock %}

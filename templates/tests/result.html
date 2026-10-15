@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Результат теста | ЕГЭволюция{% endblock %}
+{% block extra_head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/tests.css') }}?v={{ app_version }}">{% endblock %}
+{% block flash %}{% endblock %}{% block footer %}{% endblock %}
+{% block content %}
+<div class="tests-surface" id="tests-result" data-attempt-id="{{ attempt_id }}"><div class="page-wrap result-page">
+ <p id="page-status" role="status" aria-live="polite"></p><button type="button" id="retry" class="btn btn-secondary" hidden>Повторить загрузку</button>
+ <div id="result-content"><header class="result-heading"><p class="result-eyebrow">Тесты / Результат последней попытки</p><h1>{{ result.title }}</h1><span id="verification-status" class="result-status"></span></header>
+ <section class="summary-card card" aria-label="Сводка результата" aria-live="polite"><div><p class="summary-label" id="score-label"></p><p class="summary-score" id="total-score"></p><p class="summary-note" id="score-note"></p></div><div><p class="summary-label">Проверка вопросов</p><p class="summary-value" id="review-progress"></p><p class="summary-note" id="review-note"></p></div><div><p class="summary-label">Затраченное время</p><p class="summary-value" id="elapsed"></p><p class="summary-note" id="attempt-note"></p></div></section>
+ <div class="table-heading"><div><h2>Ответы по вопросам</h2><p>Нажмите на строку, чтобы посмотреть подробности.</p></div></div><div class="table-card card"><table class="results-table" aria-label="Результаты всех вопросов"><thead><tr><th scope="col">№</th><th scope="col">Ответ ученика</th><th scope="col">Статус</th><th scope="col">Баллы</th></tr></thead><tbody id="result-rows"></tbody></table></div></div>
+ <div class="page-actions"><a href="/tests" class="btn btn-secondary">← К списку тестов</a></div>
+ </div><script type="application/json" id="tests-bootstrap">{{ result|tojson }}</script></div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/tests/attempt.js') }}?v={{ app_version }}" defer></script><script src="{{ url_for('static', filename='js/tests/result.js') }}?v={{ app_version }}" defer></script>{% endblock %}

@@ -26,8 +26,20 @@ from flask_wtf.csrf import CSRFProtect, CSRFError
 
 from validator import validate
 from tracer import trace_code
+from database_config import local_check_enabled, resolve_database_path
 
 load_dotenv()
+
+LOCAL_CHECK = local_check_enabled()
+# Validate before init_db() or any filesystem initialization.
+LOCAL_DEVELOPMENT = __name__ == "__main__" and os.name == "nt" and not LOCAL_CHECK
+if LOCAL_DEVELOPMENT:
+    from core.local_runtime import default_database, validate_database
+    DATABASE_PATH = resolve_database_path(default=default_database())
+    # Fail before init_db(), uploads or any other write. Never migrate on startup.
+    validate_database(DATABASE_PATH)
+else:
+    DATABASE_PATH = resolve_database_path()
 
 # Проверяем наличие всех обязательных переменных окружения
 _REQUIRED_ENV = ["SECRET_KEY", "SITE_PASSWORD", "ADMIN_USERNAME", "ADMIN_PASSWORD"]
@@ -47,8 +59,38 @@ app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
 csrf = CSRFProtect(app)
 
 
+@app.before_request
+def protect_local_content():
+    # The database copy does not isolate shared JSON, images or uploaded files.
+    if LOCAL_CHECK and request.method not in {"GET", "HEAD", "OPTIONS"} and request.endpoint in {
+        "upload_avatar", "save_theory_api", "save_lesson_api", "admin_task_add",
+        "admin_task_edit", "admin_task_delete", "api_save_variant_from_base",
+    }:
+        return jsonify({"error": "Content changes are disabled during local checks"}), 403
+
+
+@app.after_request
+def protect_local_browser(response):
+    if LOCAL_CHECK:
+        # Block analytics, remote fonts/media and external form submissions.
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; script-src 'self' 'unsafe-inline'; "
+            "style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; "
+            "font-src 'self' data:; connect-src 'self'; media-src 'self' blob:; "
+            "frame-src 'none'; object-src 'none'; form-action 'self'; base-uri 'self'"
+        )
+    return response
+
+
 @app.errorhandler(CSRFError)
 def handle_csrf_error(e):
+    if request.path.startswith(("/api/tests", "/api/admin/tests")) or (
+        request.path.startswith("/api/admin/users/") and "/tests" in request.path
+    ):
+        from core.tests_http import error_response
+        if type(session.get("user_id")) is not int or session["user_id"] <= 0:
+            return error_response("AUTH_REQUIRED", "Требуется вход.", 401)
+        return error_response("CSRF_FAILED", "Обновите страницу и повторите действие.", 400)
     if request.is_json:
         return jsonify({"error": "CSRF validation failed", "message": e.description}), 400
     return render_template("csrf_error.html", reason=e.description), 400
@@ -84,8 +126,9 @@ UPLOAD_FOLDER = os.path.join(basedir, "static", "uploads", "avatars")
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
 ALLOWED_FILE_EXTENSIONS = {"xlsx", "xls", "csv", "txt", "zip", "db", "sqlite", "ods", "odt"}
 TASKS_FOLDER = os.path.join(basedir, "tasks")
-EGE_RENUMBER_ARCHIVE = os.path.join(basedir, ".local-data", "ege-renumber-2026.json")
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+EGE_RENUMBER_ARCHIVE = os.path.join(basedir, "data", "ege-renumber-2026.json")
+if not LOCAL_CHECK:
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 DIFFICULTY_INFO = {
     "easy": {"label": "Лёгкое", "emoji": "🟢", "color": "#4ade80"},
@@ -209,8 +252,16 @@ def replace_markers(text):
 
 # === БАЗА ДАННЫХ ===
 def get_db():
-    db = sqlite3.connect(os.path.join(os.path.dirname(__file__), "users.db"))
+    # Revalidate local paths (including hard links) before each connection.
+    if LOCAL_CHECK:
+        if resolve_database_path() != DATABASE_PATH:
+            raise RuntimeError("Database path changed after application initialization")
+        db = sqlite3.connect(DATABASE_PATH.as_uri() + "?mode=rw", uri=True)
+    else:
+        db = sqlite3.connect(str(DATABASE_PATH))
     db.row_factory = sqlite3.Row
+    # Enforce account references even for legacy writes racing account deletion.
+    db.execute("PRAGMA foreign_keys=ON")
     return db
 
 
@@ -374,9 +425,10 @@ def init_db():
                 (admin_username, hashed_pw, "Администратор"),
             )
             db.commit()
-            print(
-                f"✅ Администратор создан! Логин: {admin_username}, Пароль: {admin_password}"
-            )
+            if not LOCAL_CHECK and not LOCAL_DEVELOPMENT:
+                print(
+                    f"✅ Администратор создан! Логин: {admin_username}, Пароль: {admin_password}"
+                )
         except sqlite3.IntegrityError:
             pass  # Если вдруг ошибка уникальности, игнорируем
 
@@ -533,6 +585,23 @@ def save_lesson_practice_file(file, lesson_id, practice_idx, name, description):
 # === ЗАЩИТА МАРШРУТОВ ===
 @app.before_request
 def check_auth():
+    # The separate admin module checks the current database role itself and
+    # returns JSON 401/403 for its API. Global CSRF protection still applies.
+    if request.blueprint in {"thematic_admin", "thematic_student", "tests_admin", "tests_student"} or request.endpoint == "api_tasks_list":
+        return None
+    # A signed cookie may outlive its account. New sections validate their
+    # identity separately; legacy routes must not accept a deleted session.
+    if "user_id" in session and request.endpoint != "static":
+        db = get_db()
+        try:
+            exists = db.execute("SELECT 1 FROM users WHERE id=?", (session["user_id"],)).fetchone()
+        finally:
+            db.close()
+        if exists is None:
+            session.clear()
+            if request.is_json or request.path.startswith("/api/"):
+                return jsonify({"success": False, "error": "Unauthorized"}), 401
+            return redirect(url_for("login"))
     allowed = [
         "start",
         "new_home",
@@ -610,7 +679,7 @@ def login():
 
 def notify_new_application(last_name, first_name, phone, contact_type, contact_value):
     """Отправляет уведомление о новой заявке в Telegram (если бот настроен в .env)."""
-    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+    if LOCAL_CHECK or LOCAL_DEVELOPMENT or not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
         return
 
     contact_label = {"telegram": "Telegram", "vk": "VK", "max": "MAX"}.get(
@@ -665,11 +734,12 @@ def register():
         db.close()
 
         # Уведомление в Telegram не должно задерживать ответ пользователю — отправляем в фоне
-        threading.Thread(
-            target=notify_new_application,
-            args=(last_name, first_name, phone, contact_type, contact_value),
-            daemon=True,
-        ).start()
+        if not LOCAL_CHECK:
+            threading.Thread(
+                target=notify_new_application,
+                args=(last_name, first_name, phone, contact_type, contact_value),
+                daemon=True,
+            ).start()
 
         return redirect(url_for("application_sent"))
 
@@ -720,6 +790,8 @@ def load_user_stats(user_id):
                 }
             )
 
+    from core.history import merged_history
+    stats['solution_history'] = merged_history(db, user_id, stats['variants_history'])
     db.close()
     return stats
 
@@ -1367,7 +1439,13 @@ def start():
 @app.route("/variants")
 def variant_list():
     variants = get_available_variants()
-    return render_template("variant_list.html", variants=variants)
+    from features.thematic.student_views import catalog
+    db = get_db()
+    try:
+        thematic = catalog(db, session['user_id'])
+    finally:
+        db.close()
+    return render_template("variant_list.html", variants=variants, thematic_variants=thematic)
 
 
 @app.route("/solve")
@@ -2954,6 +3032,18 @@ def api_tasks_list(task_num):
     if "user_id" not in session:
         return jsonify({"error": "Unauthorized"}), 401
 
+    db = get_db()
+    try:
+        user = db.execute(
+            "SELECT is_admin FROM users WHERE id = ?", (session["user_id"],)
+        ).fetchone()
+    finally:
+        db.close()
+    if user is None:
+        return jsonify({"error": "Unauthorized"}), 401
+    if user["is_admin"] != 1:
+        return jsonify({"error": "Forbidden"}), 403
+
     difficulty = request.args.get("difficulty", "")
     tasks = get_available_tasks(task_num)
 
@@ -3213,35 +3303,51 @@ def admin_create_user():
 
 @app.route("/admin/delete_user/<int:user_id>", methods=["POST"])
 def delete_user(user_id):
-    """Удаление пользователя (только для админа)"""
+    """Delete student history atomically; preserve the existing admin policy."""
     if "user_id" not in session:
         return redirect(url_for("login"))
 
+    from core.user_deletion import delete_user_data_in_transaction
+
     db = get_db()
-    current_user = db.execute(
-        "SELECT * FROM users WHERE id = ?", (session["user_id"],)
-    ).fetchone()
-
-    if not current_user or current_user["is_admin"] != 1:
-        return "Access Denied", 403
-
-    # Не даем админу удалить самого себя
-    if user_id == session["user_id"]:
-        flash("❌ Нельзя удалить самого себя", "error")
-    else:
-        # Удаляем все данные пользователя: сначала дочерние таблицы, затем users
-        db.execute("DELETE FROM user_task_answers WHERE user_id = ?", (user_id,))
-        db.execute("DELETE FROM user_results WHERE user_id = ?", (user_id,))
-        db.execute("DELETE FROM user_lesson_progress WHERE user_id = ?", (user_id,))
-        db.execute("DELETE FROM user_theory_progress WHERE user_id = ?", (user_id,))
-        db.execute("DELETE FROM user_lesson_access WHERE user_id = ?", (user_id,))
-        db.execute("DELETE FROM user_theory_access WHERE user_id = ?", (user_id,))
-        db.execute("DELETE FROM users WHERE id = ?", (user_id,))
+    try:
+        # get_db() is also used by legacy routes; enable FK on this connection
+        # BEFORE beginning the transaction. Never disable FK to bypass history.
+        db.execute("PRAGMA foreign_keys=ON")
+        if db.execute("PRAGMA foreign_keys").fetchone()[0] != 1:
+            raise sqlite3.IntegrityError("Foreign keys required for account deletion")
+        db.execute("BEGIN IMMEDIATE")
+        # Recheck authority and target after obtaining the same write lock used
+        # by autosave, submit, grading and the deadline worker.
+        current_user = db.execute("SELECT is_admin FROM users WHERE id=?", (session["user_id"],)).fetchone()
+        if not current_user or current_user["is_admin"] != 1:
+            return "Access Denied", 403
+        if user_id == session["user_id"]:
+            flash("❌ Нельзя удалить самого себя", "error")
+            return redirect(url_for("admin_panel"))
+        target = db.execute("SELECT is_admin FROM users WHERE id=?", (user_id,)).fetchone()
+        if target is None:
+            return "Пользователь не найден.", 404
+        # This change enables student deletion, not deletion of test authors
+        # who are still administrators. Keep their previous protective policy.
+        if target["is_admin"] == 1 and db.execute(
+                "SELECT 1 FROM sqlite_master WHERE type='table' AND name='test_attempts'").fetchone():
+            from features.tests.repository import user_has_test_references
+            if user_has_test_references(db, user_id):
+                return "Удаление пользователя, связанного с тестами, временно недоступно.", 409
+        delete_user_data_in_transaction(db, user_id)
+        db.commit()
         flash("✅ Пользователь удален", "success")
-
-    db.commit()
-    db.close()
-    return redirect(url_for("admin_panel"))
+        return redirect(url_for("admin_panel"))
+    except sqlite3.Error:
+        db.rollback()
+        app.logger.exception("Account deletion failed; transaction rolled back")
+        return "Не удалось удалить пользователя. Изменения отменены.", 500
+    finally:
+        # Includes authorization/404 exits and unexpected Python exceptions.
+        if db.in_transaction:
+            db.rollback()
+        db.close()
 
 
 def get_user_lesson_stats(user_id):
@@ -3729,5 +3835,32 @@ def api_visualizer_trace():
     return jsonify(result)
 
 
+from features.thematic.routes_admin import register_admin as register_thematic_admin
+
+CONTENT_ROOT = os.path.abspath(os.environ.get("EGEVOLUTION_CONTENT_ROOT") or os.path.dirname(DATABASE_PATH))
+register_thematic_admin(app, get_db, TASKS_FOLDER, os.path.join(CONTENT_ROOT, "thematic_variants", "media"))
+
+from features.thematic.routes_student import register_student as register_thematic_student
+
+register_thematic_student(app, get_db)
+
+from features.tests.routes_admin import register_admin as register_tests_admin
+
+app.config.setdefault("TESTS_MEDIA_ROOT", os.path.join(CONTENT_ROOT, "tests_content", "media"))
+app.config.setdefault("TESTS_ADMIN_WRITES_ENABLED", True)
+app.config.setdefault("TESTS_CATALOG_ENABLED", True)
+# Opening starts is an explicit operational action after a worker is running.
+app.config.setdefault("TESTS_STARTS_ENABLED", False)
+register_tests_admin(app, get_db, app.config["TESTS_MEDIA_ROOT"])
+
+from features.tests.routes_student import register_student as register_tests_student
+
+register_tests_student(app, get_db)
+
+
 if __name__ == "__main__":
-    app.run(debug=os.environ.get("FLASK_DEBUG", "0") == "1")
+    if LOCAL_DEVELOPMENT:
+        from core.local_runtime import run_local
+        run_local(app, DATABASE_PATH)
+    else:
+        app.run(debug=os.environ.get("FLASK_DEBUG", "0") == "1")

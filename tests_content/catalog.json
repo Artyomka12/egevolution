@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "domain": "tests",
+  "counters": {},
+  "catalog_state": {
+    "singleton_id": 1,
+    "revision": 1
+  },
+  "material_ids": [],
+  "media": []
+}

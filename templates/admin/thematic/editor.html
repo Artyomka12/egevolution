@@ -1,0 +1,15 @@
+{% extends "admin/thematic/_base.html" %}{% block content %}<div id="editor-root" data-variant-id="{{ variant_id }}"><header class="header"><h1>Конструктор тематического варианта</h1><p>Любое количество задач. Разные задачи одного номера ЕГЭ можно добавлять вместе.</p></header>
+<section class="card settings" aria-labelledby="settings-title">
+<div class="section-head"><h2 id="settings-title">Настройки варианта</h2><span id="status" class="badge green">Черновик</span></div>
+<div class="settings-grid"><div class="field"><label for="variant-title">Название тематического варианта</label><input id="variant-title"  maxlength="200"></div><div class="field"><label for="variant-description">Описание</label><textarea id="variant-description" rows="2" maxlength="4000"></textarea></div></div>
+<p class="version-note" id="version-note">Изменения черновика не влияют на действующую версию до повторной публикации.</p>
+</section>
+<div class="action-bar" id="action-bar"><div class="feedback" id="feedback" role="status" aria-live="polite">Загрузка конструктора…</div><div class="action-buttons"><button class="btn" id="save">Сохранить черновик</button><button class="btn btn-primary" id="publish">Опубликовать</button></div></div>
+<div class="workspace">
+<section class="card" aria-labelledby="bank-title"><div class="section-head"><h2 id="bank-title">Банк задач</h2><span class="muted">Банк заданий ЕГЭ</span></div><p class="muted">Выберите номер задания ЕГЭ</p><div class="numbers" id="numbers" role="group" aria-label="Номер задания ЕГЭ"></div><div class="bank-heading"><h3 id="topic-title"></h3><p class="muted" id="bank-count"></p></div><div id="bank"></div></section>
+<aside class="card selected-panel" aria-labelledby="selected-title"><div class="section-head"><h2 id="selected-title">Задачи варианта</h2><span class="badge" id="selected-count"></span></div><p class="muted">Порядок в списке — порядок при решении. Нажмите на название, чтобы открыть условие.</p><ol class="selected-list" id="selected"></ol><p class="selected-foot">Одна исходная задача добавляется только один раз. Ограничения в 20 или 27 задач нет.</p></aside>
+</div>
+
+<dialog id="task-dialog" aria-labelledby="task-dialog-title"><div class="dialog-head"><h2 id="task-dialog-title"></h2><button class="close" aria-label="Закрыть условие" data-close>×</button></div><div id="task-dialog-body"></div></dialog>
+<dialog id="publish-dialog" aria-labelledby="publish-title"><div class="dialog-head"><h2 id="publish-title">Опубликовать изменения?</h2><button class="close" aria-label="Закрыть подтверждение" data-close>×</button></div><p id="publish-summary" class="publish-summary"></p><p class="publish-note">Будет создана неизменяемая версия задач и материалов. Пока вы не подтвердите публикацию, действующая версия останется прежней.</p><div class="dialog-actions"><button class="btn" data-close>Отмена</button><button class="btn btn-primary" id="confirm-publish">Опубликовать</button></div></dialog>
+</div>{% endblock %}{% block scripts %}<script src="{{ url_for('static', filename='js/admin/thematic/editor.js') }}" defer></script>{% endblock %}

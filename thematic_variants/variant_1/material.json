@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "material": {
+    "id": 1,
+    "state": "deleted",
+    "current_version_id": null,
+    "sort_order": 0,
+    "revision": 3,
+    "created_by": null,
+    "created_at": 1791930329164,
+    "updated_at": 1791931696756,
+    "deleted_at": 1791931696756
+  },
+  "draft": null,
+  "version_ids": [
+    1
+  ]
+}

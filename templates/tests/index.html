@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Тесты | ЕГЭволюция{% endblock %}
+{% block extra_head %}<meta name="csrf-token" content="{{ csrf_token() }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/pages/tests.css') }}?v={{ app_version }}">{% endblock %}
+{% block flash %}{% endblock %}{% block footer %}{% endblock %}
+{% block content %}
+<div class="tests-surface" id="tests-catalog">
+ <div class="page-wrap tests-page">
+  <div class="section-heading"><span class="section-tag">Тесты</span><h1 class="section-title">Проверь свои знания</h1><p class="section-desc">Закрепляй темы по информатике, проверяй себя<br class="desktop-break"> и возвращайся к заданиям, которые требуют практики.</p></div>
+  <p id="page-status" role="status" aria-live="polite">Загрузка тестов…</p><button id="retry" class="btn btn-secondary" type="button" hidden>Повторить загрузку</button>
+  <div class="catalog-grid tests-grid" id="test-grid"></div>
+ </div>
+ <dialog id="test-dialog" aria-labelledby="modal-title" aria-describedby="modal-description" class="tests-dialog">
+  <button type="button" class="modal-close" aria-label="Закрыть окно" autofocus>×</button><span id="modal-status" class="status"></span><h2 id="modal-title"></h2><p id="modal-description" class="modal-description"></p>
+  <dl class="modal-facts"><div><dt>Количество вопросов</dt><dd id="modal-questions"></dd></div><div><dt>Время на попытку</dt><dd id="modal-time"></dd></div><div><dt>Доступные попытки</dt><dd id="modal-attempts"></dd></div></dl>
+  <button type="button" class="btn btn-primary btn--full" id="modal-action"></button><a id="latest-result" class="btn btn-secondary btn--full" hidden>Результат последней попытки</a><p id="modal-message" role="status" class="modal-note"></p>
+ </dialog>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/tests/attempt.js') }}?v={{ app_version }}" defer></script><script src="{{ url_for('static', filename='js/tests/catalog.js') }}?v={{ app_version }}" defer></script>{% endblock %}
