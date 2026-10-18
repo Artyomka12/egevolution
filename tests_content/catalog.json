@@ -4,8 +4,10 @@
   "counters": {},
   "catalog_state": {
     "singleton_id": 1,
-    "revision": 1
+    "revision": 2
   },
-  "material_ids": [],
+  "material_ids": [
+    611958516266134
+  ],
   "media": []
 }

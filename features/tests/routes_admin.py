@@ -1,5 +1,6 @@
 """Tests administration routes; lifecycle writes belong to the service layer."""
 from flask import Blueprint, g, jsonify, render_template, request, send_file
+from flask_wtf.csrf import generate_csrf
 
 from core.tests_http import configure_blueprint, json_body
 from . import media, service
@@ -14,6 +15,14 @@ def register_admin(app, database_factory, media_root):
 
     def actor():
         return g.tests_user["id"]
+
+    @bp.get("/api/admin/tests/csrf")
+    def refresh_csrf():
+        # The blueprint checks the current DB account and admin role first.
+        # Custom header prevents cross-origin simple requests; no CORS is enabled.
+        if request.headers.get("X-CSRF-Refresh") != "1":
+            raise TestsError("BAD_REQUEST", 400, "Ожидается запрос редактора.")
+        return jsonify(csrf_token=generate_csrf(), user_id=actor())
 
     def pagination():
         values = {}

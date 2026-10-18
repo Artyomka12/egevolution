@@ -1,0 +1,707 @@
+{
+  "schema_version": 1,
+  "version": {
+    "sealed": 1,
+    "published_by": null,
+    "schema_version": 1,
+    "test_id": 611958516266134,
+    "version_no": 2,
+    "title": "Поехали!",
+    "description": "Посмотрим, на что вы способны)",
+    "time_limit_seconds": 1800,
+    "attempt_limit": 1,
+    "show_correct_answers": 0,
+    "question_count": 25,
+    "content_hash": "8dd720b7ef6a928e94676d7eca7ac6973cc874d8120309146045f2e18e8a85a4",
+    "published_at": 1792356149441,
+    "id": 4384689890600735
+  },
+  "tables": {
+    "test_version_questions": [
+      {
+        "code_text": null,
+        "free_input_mode": null,
+        "media_id": null,
+        "max_points": 1,
+        "version_id": 4384689890600735,
+        "position": 1,
+        "title": "1",
+        "prompt_text": "Можно ли одним print() вывести сразу информацию всех типов данных?",
+        "question_type": "single_choice",
+        "grading_mode": "auto",
+        "id": 2504487472137625
+      },
+      {
+        "code_text": "{1, 2, 5}",
+        "free_input_mode": "singleline",
+        "media_id": null,
+        "max_points": 1,
+        "version_id": 4384689890600735,
+        "position": 2,
+        "title": "2",
+        "prompt_text": "Определи тип данных для значения:",
+        "question_type": "free_text",
+        "grading_mode": "auto",
+        "id": 2728280189980708
+      },
+      {
+        "code_text": null,
+        "free_input_mode": null,
+        "media_id": null,
+        "max_points": 1,
+        "version_id": 4384689890600735,
+        "position": 3,
+        "title": "3",
+        "prompt_text": "Что может содержать имя переменной?",
+        "question_type": "multiple_choice",
+        "grading_mode": "auto",
+        "id": 4127217215662450
+      },
+      {
+        "code_text": "t = input()\nif t >= 18:\n    print(\"Студент\")\nelse:\n    print(\"Школьник\")",
+        "free_input_mode": "singleline",
+        "media_id": null,
+        "max_points": 1,
+        "version_id": 4384689890600735,
+        "position": 4,
+        "title": "4",
+        "prompt_text": "Что выведет программа, если ввести 20",
+        "question_type": "free_text",
+        "grading_mode": "manual",
+        "id": 2313281985113086
+      },
+      {
+        "code_text": "a = 12\nb = 5\nc = a % b\nprint(c > 1)",
+        "free_input_mode": "singleline",
+        "media_id": null,
+        "max_points": 1,
+        "version_id": 4384689890600735,
+        "position": 5,
+        "title": "5",
+        "prompt_text": "Что выведет на экран следующий код?",
+        "question_type": "free_text",
+        "grading_mode": "auto",
+        "id": 2779545451837887
+      },
+      {
+        "code_text": null,
+        "free_input_mode": null,
+        "media_id": null,
+        "max_points": 1,
+        "version_id": 4384689890600735,
+        "position": 6,
+        "title": "6",
+        "prompt_text": "Какой тип данных отвечает за строки?",
+        "question_type": "single_choice",
+        "grading_mode": "auto",
+        "id": 1543675329149121
+      },
+      {
+        "code_text": "s = \"Python\"\nprint(s[::2])",
+        "free_input_mode": "singleline",
+        "media_id": null,
+        "max_points": 1,
+        "version_id": 4384689890600735,
+        "position": 7,
+        "title": "7",
+        "prompt_text": "Что вернёт программа?",
+        "question_type": "free_text",
+        "grading_mode": "auto",
+        "id": 2221980382220798
+      },
+      {
+        "code_text": null,
+        "free_input_mode": null,
+        "media_id": null,
+        "max_points": 1,
+        "version_id": 4384689890600735,
+        "position": 8,
+        "title": "8",
+        "prompt_text": "Что можно делать со строкой?",
+        "question_type": "multiple_choice",
+        "grading_mode": "auto",
+        "id": 2438119433570473
+      },
+      {
+        "code_text": null,
+        "free_input_mode": "multiline",
+        "media_id": null,
+        "max_points": 1,
+        "version_id": 4384689890600735,
+        "position": 9,
+        "title": "9",
+        "prompt_text": "Напиши 4 функции работы со строкой",
+        "question_type": "free_text",
+        "grading_mode": "manual",
+        "id": 3716135334928622
+      },
+      {
+        "code_text": null,
+        "free_input_mode": null,
+        "media_id": null,
+        "max_points": 1,
+        "version_id": 4384689890600735,
+        "position": 10,
+        "title": "10",
+        "prompt_text": "Сколько параметров можно указать в функции replace()?",
+        "question_type": "multiple_choice",
+        "grading_mode": "auto",
+        "id": 3081159413503722
+      },
+      {
+        "code_text": null,
+        "free_input_mode": null,
+        "media_id": null,
+        "max_points": 1,
+        "version_id": 4384689890600735,
+        "position": 11,
+        "title": "11",
+        "prompt_text": "После каких конструкций можно написать условие?",
+        "question_type": "multiple_choice",
+        "grading_mode": "auto",
+        "id": 771375417021077
+      },
+      {
+        "code_text": "score = 74\nif score >= 90:\n    print(\"Отлично\")\nelif score >= 70:\n    print(Хорошо)\nelse:\n    print(\"Нужно доучить\")",
+        "free_input_mode": "singleline",
+        "media_id": null,
+        "max_points": 1,
+        "version_id": 4384689890600735,
+        "position": 12,
+        "title": "12",
+        "prompt_text": "Что выведется на экран",
+        "question_type": "free_text",
+        "grading_mode": "manual",
+        "id": 1448360262973763
+      },
+      {
+        "code_text": "age = 14\nif age >= 14 and age <= 18:\n    print(\"Подросток\")\nelse:\n    print(\"Не подросток\")",
+        "free_input_mode": "singleline",
+        "media_id": null,
+        "max_points": 1,
+        "version_id": 4384689890600735,
+        "position": 13,
+        "title": "13",
+        "prompt_text": "Что выведется на экран",
+        "question_type": "free_text",
+        "grading_mode": "auto",
+        "id": 1258178283223664
+      },
+      {
+        "code_text": null,
+        "free_input_mode": null,
+        "media_id": null,
+        "max_points": 1,
+        "version_id": 4384689890600735,
+        "position": 14,
+        "title": "14",
+        "prompt_text": "Сколько elif можно написать?",
+        "question_type": "multiple_choice",
+        "grading_mode": "auto",
+        "id": 44574318278563
+      },
+      {
+        "code_text": null,
+        "free_input_mode": "singleline",
+        "media_id": null,
+        "max_points": 1,
+        "version_id": 4384689890600735,
+        "position": 15,
+        "title": "15",
+        "prompt_text": "Как называется цикл while?",
+        "question_type": "free_text",
+        "grading_mode": "manual",
+        "id": 1315412822401632
+      },
+      {
+        "code_text": null,
+        "free_input_mode": "singleline",
+        "media_id": null,
+        "max_points": 1,
+        "version_id": 4384689890600735,
+        "position": 16,
+        "title": "16",
+        "prompt_text": "Как называется цикл for?",
+        "question_type": "free_text",
+        "grading_mode": "manual",
+        "id": 2328560804433079
+      },
+      {
+        "code_text": null,
+        "free_input_mode": null,
+        "media_id": null,
+        "max_points": 1,
+        "version_id": 4384689890600735,
+        "position": 17,
+        "title": "17",
+        "prompt_text": "Сколько параметров может быть в range()?",
+        "question_type": "multiple_choice",
+        "grading_mode": "auto",
+        "id": 351262023967477
+      },
+      {
+        "code_text": null,
+        "free_input_mode": "singleline",
+        "media_id": null,
+        "max_points": 1,
+        "version_id": 4384689890600735,
+        "position": 18,
+        "title": "18",
+        "prompt_text": "Функция, которая досрочно прерывает цикл целиком",
+        "question_type": "free_text",
+        "grading_mode": "auto",
+        "id": 1762399395158812
+      },
+      {
+        "code_text": null,
+        "free_input_mode": "singleline",
+        "media_id": null,
+        "max_points": 1,
+        "version_id": 4384689890600735,
+        "position": 19,
+        "title": "19",
+        "prompt_text": "Как найти индекс последнего элемента в массиве A?\nНадо написать программу",
+        "question_type": "free_text",
+        "grading_mode": "manual",
+        "id": 371080480023330
+      },
+      {
+        "code_text": "for i in range(13):\n    if i%3 == 0:\n        continue\n    print(i)",
+        "free_input_mode": "singleline",
+        "media_id": null,
+        "max_points": 1,
+        "version_id": 4384689890600735,
+        "position": 20,
+        "title": "20",
+        "prompt_text": "Сколько чисел выведется на экран?",
+        "question_type": "free_text",
+        "grading_mode": "auto",
+        "id": 2581336919672220
+      },
+      {
+        "code_text": null,
+        "free_input_mode": "singleline",
+        "media_id": null,
+        "max_points": 1,
+        "version_id": 4384689890600735,
+        "position": 21,
+        "title": "21",
+        "prompt_text": "С помощью какой функции можно найти количество элементов в массиве?",
+        "question_type": "free_text",
+        "grading_mode": "manual",
+        "id": 3422981665921726
+      },
+      {
+        "code_text": null,
+        "free_input_mode": "multiline",
+        "media_id": null,
+        "max_points": 1,
+        "version_id": 4384689890600735,
+        "position": 22,
+        "title": "22",
+        "prompt_text": "2 основных свойства множества?",
+        "question_type": "free_text",
+        "grading_mode": "manual",
+        "id": 4074412933650874
+      },
+      {
+        "code_text": null,
+        "free_input_mode": null,
+        "media_id": null,
+        "max_points": 1,
+        "version_id": 4384689890600735,
+        "position": 23,
+        "title": "23",
+        "prompt_text": "Используя какой оператор можно проверить, есть ли элемент в массиве?",
+        "question_type": "single_choice",
+        "grading_mode": "auto",
+        "id": 946052824644407
+      },
+      {
+        "code_text": "A = [5, 12, 7, 20]\ntotal = 0\nfor x in A:\n    total += x\nprint(total)",
+        "free_input_mode": "singleline",
+        "media_id": null,
+        "max_points": 1,
+        "version_id": 4384689890600735,
+        "position": 24,
+        "title": "24",
+        "prompt_text": "Что выведете на экран код?",
+        "question_type": "free_text",
+        "grading_mode": "auto",
+        "id": 2251772424983509
+      },
+      {
+        "code_text": "list(set([12, 1, 12, 33, 3, 3, 54, 33]))",
+        "free_input_mode": "singleline",
+        "media_id": null,
+        "max_points": 1,
+        "version_id": 4384689890600735,
+        "position": 25,
+        "title": "25",
+        "prompt_text": "Сколько элементов будет в этом списке?",
+        "question_type": "free_text",
+        "grading_mode": "auto",
+        "id": 1856088743076450
+      }
+    ],
+    "test_question_options": [
+      {
+        "question_id": 2504487472137625,
+        "position": 1,
+        "text": "Да",
+        "is_correct": 1,
+        "id": 1964372929443066
+      },
+      {
+        "question_id": 2504487472137625,
+        "position": 2,
+        "text": "Только некоторые",
+        "is_correct": 0,
+        "id": 3595286027928430
+      },
+      {
+        "question_id": 2504487472137625,
+        "position": 3,
+        "text": "Нет",
+        "is_correct": 0,
+        "id": 2587170754723883
+      },
+      {
+        "question_id": 4127217215662450,
+        "position": 1,
+        "text": "Латинские заглавные буквы",
+        "is_correct": 1,
+        "id": 2555470842241076
+      },
+      {
+        "question_id": 4127217215662450,
+        "position": 2,
+        "text": "Точка",
+        "is_correct": 0,
+        "id": 306229683808539
+      },
+      {
+        "question_id": 4127217215662450,
+        "position": 3,
+        "text": "Цифры",
+        "is_correct": 1,
+        "id": 1361097874419185
+      },
+      {
+        "question_id": 4127217215662450,
+        "position": 4,
+        "text": "Русские заглавные буквы",
+        "is_correct": 0,
+        "id": 2545887047015658
+      },
+      {
+        "question_id": 4127217215662450,
+        "position": 5,
+        "text": "Дефис",
+        "is_correct": 0,
+        "id": 1445472100632493
+      },
+      {
+        "question_id": 4127217215662450,
+        "position": 6,
+        "text": "Нижнее подчёркивание",
+        "is_correct": 1,
+        "id": 1418402247360773
+      },
+      {
+        "question_id": 4127217215662450,
+        "position": 7,
+        "text": "Латинские строчные буквы",
+        "is_correct": 1,
+        "id": 2951911069962621
+      },
+      {
+        "question_id": 4127217215662450,
+        "position": 8,
+        "text": "Русские строчные буквы",
+        "is_correct": 0,
+        "id": 3440990988653000
+      },
+      {
+        "question_id": 1543675329149121,
+        "position": 1,
+        "text": "string",
+        "is_correct": 1,
+        "id": 4241933839234654
+      },
+      {
+        "question_id": 1543675329149121,
+        "position": 2,
+        "text": "integer",
+        "is_correct": 0,
+        "id": 4174862137665834
+      },
+      {
+        "question_id": 1543675329149121,
+        "position": 3,
+        "text": "float",
+        "is_correct": 0,
+        "id": 4382935515921224
+      },
+      {
+        "question_id": 1543675329149121,
+        "position": 4,
+        "text": "bool",
+        "is_correct": 0,
+        "id": 3807515430280696
+      },
+      {
+        "question_id": 2438119433570473,
+        "position": 1,
+        "text": "Умножать на число",
+        "is_correct": 1,
+        "id": 2292533556330677
+      },
+      {
+        "question_id": 2438119433570473,
+        "position": 2,
+        "text": "Делить на число",
+        "is_correct": 0,
+        "id": 612753377776178
+      },
+      {
+        "question_id": 2438119433570473,
+        "position": 3,
+        "text": "Складывать со строкой",
+        "is_correct": 1,
+        "id": 360675017618603
+      },
+      {
+        "question_id": 2438119433570473,
+        "position": 4,
+        "text": "Складывать с числом",
+        "is_correct": 0,
+        "id": 2303199581228017
+      },
+      {
+        "question_id": 2438119433570473,
+        "position": 5,
+        "text": "Делить на строку",
+        "is_correct": 0,
+        "id": 1409567592941416
+      },
+      {
+        "question_id": 2438119433570473,
+        "position": 6,
+        "text": "Обрезать",
+        "is_correct": 1,
+        "id": 2873483069924783
+      },
+      {
+        "question_id": 2438119433570473,
+        "position": 7,
+        "text": "Умножать на строку",
+        "is_correct": 0,
+        "id": 27787621440099
+      },
+      {
+        "question_id": 3081159413503722,
+        "position": 1,
+        "text": "0",
+        "is_correct": 0,
+        "id": 2156649387116923
+      },
+      {
+        "question_id": 3081159413503722,
+        "position": 2,
+        "text": "1",
+        "is_correct": 0,
+        "id": 2860335213185428
+      },
+      {
+        "question_id": 3081159413503722,
+        "position": 3,
+        "text": "2",
+        "is_correct": 1,
+        "id": 2962119574840011
+      },
+      {
+        "question_id": 3081159413503722,
+        "position": 4,
+        "text": "3",
+        "is_correct": 1,
+        "id": 1658566462722600
+      },
+      {
+        "question_id": 3081159413503722,
+        "position": 5,
+        "text": "4",
+        "is_correct": 0,
+        "id": 2311030238363577
+      },
+      {
+        "question_id": 771375417021077,
+        "position": 1,
+        "text": "if",
+        "is_correct": 1,
+        "id": 2570816512751237
+      },
+      {
+        "question_id": 771375417021077,
+        "position": 2,
+        "text": "else",
+        "is_correct": 0,
+        "id": 2963518810877256
+      },
+      {
+        "question_id": 771375417021077,
+        "position": 3,
+        "text": "elif",
+        "is_correct": 1,
+        "id": 3271259983712541
+      },
+      {
+        "question_id": 44574318278563,
+        "position": 1,
+        "text": "0",
+        "is_correct": 0,
+        "id": 4302619248277767
+      },
+      {
+        "question_id": 44574318278563,
+        "position": 2,
+        "text": "1",
+        "is_correct": 0,
+        "id": 2453961895092937
+      },
+      {
+        "question_id": 44574318278563,
+        "position": 3,
+        "text": "2",
+        "is_correct": 0,
+        "id": 1448059496320229
+      },
+      {
+        "question_id": 44574318278563,
+        "position": 4,
+        "text": "Сколько угодно",
+        "is_correct": 1,
+        "id": 3810966587756665
+      },
+      {
+        "question_id": 351262023967477,
+        "position": 1,
+        "text": "0",
+        "is_correct": 0,
+        "id": 3949048061555095
+      },
+      {
+        "question_id": 351262023967477,
+        "position": 2,
+        "text": "1",
+        "is_correct": 1,
+        "id": 2788376256380964
+      },
+      {
+        "question_id": 351262023967477,
+        "position": 3,
+        "text": "2",
+        "is_correct": 1,
+        "id": 1958530959453702
+      },
+      {
+        "question_id": 351262023967477,
+        "position": 4,
+        "text": "3",
+        "is_correct": 1,
+        "id": 2910553162208950
+      },
+      {
+        "question_id": 946052824644407,
+        "position": 1,
+        "text": "if",
+        "is_correct": 0,
+        "id": 1798468903767152
+      },
+      {
+        "question_id": 946052824644407,
+        "position": 2,
+        "text": "for",
+        "is_correct": 0,
+        "id": 2842286450879314
+      },
+      {
+        "question_id": 946052824644407,
+        "position": 3,
+        "text": "in",
+        "is_correct": 1,
+        "id": 467891163831428
+      },
+      {
+        "question_id": 946052824644407,
+        "position": 4,
+        "text": "have",
+        "is_correct": 0,
+        "id": 3624917051421874
+      },
+      {
+        "question_id": 946052824644407,
+        "position": 5,
+        "text": "is",
+        "is_correct": 0,
+        "id": 1093518466699985
+      }
+    ],
+    "test_accepted_answers": [
+      {
+        "question_id": 2728280189980708,
+        "position": 1,
+        "value": "set",
+        "id": 2093975633588074
+      },
+      {
+        "question_id": 2728280189980708,
+        "position": 2,
+        "value": "Set",
+        "id": 3348921049737463
+      },
+      {
+        "question_id": 2779545451837887,
+        "position": 1,
+        "value": "True",
+        "id": 673914103138441
+      },
+      {
+        "question_id": 2221980382220798,
+        "position": 1,
+        "value": "Pto",
+        "id": 3819814150484854
+      },
+      {
+        "question_id": 1258178283223664,
+        "position": 1,
+        "value": "Подросток",
+        "id": 3123735393199287
+      },
+      {
+        "question_id": 1762399395158812,
+        "position": 1,
+        "value": "break",
+        "id": 3993890569178727
+      },
+      {
+        "question_id": 2581336919672220,
+        "position": 1,
+        "value": "8",
+        "id": 2656283331867920
+      },
+      {
+        "question_id": 2251772424983509,
+        "position": 1,
+        "value": "44",
+        "id": 1837821461109501
+      },
+      {
+        "question_id": 1856088743076450,
+        "position": 1,
+        "value": "5",
+        "id": 2554569588408436
+      }
+    ]
+  }
+}

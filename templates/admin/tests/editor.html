@@ -1,7 +1,7 @@
 {% extends 'admin/tests/_base.html' %}
 {% block title %}Конструктор теста{% endblock %}
 {% block content %}
-<main class="container editor-container" id="test-editor" data-test-id="{{ test_id or '' }}">
+<main class="container editor-container" id="test-editor" data-test-id="{{ test_id or '' }}" data-user-id="{{ g.tests_user.id }}">
  <nav class="admin-nav"><a href="/admin/tests" class="btn-back">← Вернуться к управлению тестами</a><span class="admin-label">ЕГЭволюция · Администратор</span></nav>
  <header class="header editor-header"><div><h1>Конструктор теста</h1><p><span id="save-state">Загрузка черновика…</span></p></div></header>
  <div class="save-bar" role="group" aria-label="Сохранение теста"><div class="header-actions"><button type="button" class="btn-back" id="save-draft">Сохранить черновик</button><button type="button" class="btn-primary" id="publish">Опубликовать</button></div></div>

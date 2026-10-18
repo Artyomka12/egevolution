@@ -17,7 +17,10 @@ function requester(name, fetch, runTimeout = false) {
   const sandbox = {fetch, AbortController, FormData, console, crypto: {randomUUID: () => 'synthetic-' + (++sequence)},
     setTimeout: (callback, delay) => delay >= 5000 && !runTimeout ? 0 : setTimeout(callback, 0), clearTimeout};
   const api = vm.runInNewContext(`(() => {
-    const csrf = 'synthetic-csrf';
+    let csrf = 'synthetic-csrf';
+    const root = {dataset: {userId: '1'}};
+    const meta = {content: csrf};
+    const document = {querySelector: () => meta};
     const requestKeys = new Map();
     const pendingKeys = new Map();
     const key = () => crypto.randomUUID();
@@ -120,4 +123,103 @@ test('editor: an explicit retry after unreadable success retains original mutati
   failing = false;
   await client.call();
   assert.equal(new Set(requests.map(body => body.request_key)).size, 1);
+});
+
+const csrfFailure = () => ({ok: false, status: 400, json: async () => ({
+  error: {code: 'CSRF_FAILED', message: 'Synthetic expired token'}, csrf_reason: 'expired'
+})});
+const freshCSRF = (user = 1) => ({ok: true, status: 200,
+  json: async () => ({csrf_token: 'fresh-synthetic-csrf', user_id: user})});
+
+test('editor renews CSRF without changing 25 questions, request body or idempotency key', async () => {
+  const requests = [], refreshes = [];
+  const client = requester('editor', async (url, options) => {
+    if (url === '/api/admin/tests/csrf') { refreshes.push(options); return freshCSRF(); }
+    requests.push({body: options.body, headers: {...options.headers}});
+    return requests.length === 1 ? csrfFailure() : success();
+  });
+  const payload = {document: {title: 'Synthetic 25', questions: Array.from({length: 25}, (_, i) => ({
+    title: String(i), code_text: 'print("exact")\n', accepted_answers: ['  Exact\nanswer']
+  }))}};
+  const original = JSON.stringify(payload);
+  await client.api('/synthetic-mutation', 'PUT', payload);
+  assert.equal(JSON.stringify(payload), original);
+  assert.equal(requests.length, 2); assert.equal(refreshes.length, 1);
+  assert.equal(requests[0].body, requests[1].body);
+  assert.equal(requests[0].headers['X-CSRFToken'], 'synthetic-csrf');
+  assert.equal(requests[1].headers['X-CSRFToken'], 'fresh-synthetic-csrf');
+  assert.equal(refreshes[0].method, 'GET');
+  assert.equal(refreshes[0].credentials, 'same-origin');
+  assert.equal(refreshes[0].cache, 'no-store');
+  assert.equal(refreshes[0].headers['X-CSRF-Refresh'], '1');
+});
+
+test('editor keeps the original key through unknown commit, CSRF renewal and replay', async () => {
+  const bodies = [];
+  const client = requester('editor', async (url, options) => {
+    if (url === '/api/admin/tests/csrf') return freshCSRF();
+    bodies.push(options.body);
+    if (bodies.length === 1) throw new Error('lost response after commit');
+    return bodies.length === 2 ? csrfFailure() : success();
+  });
+  await client.call();
+  assert.equal(bodies.length, 3);
+  assert.equal(new Set(bodies).size, 1);
+});
+
+test('editor stops after one CSRF renewal if rejection persists', async () => {
+  let writes = 0, renewals = 0;
+  const client = requester('editor', async url => {
+    if (url === '/api/admin/tests/csrf') { renewals++; return freshCSRF(); }
+    writes++; return csrfFailure();
+  });
+  await assert.rejects(client.call(), error => error.code === 'CSRF_FAILED');
+  assert.equal(writes, 2); assert.equal(renewals, 1);
+});
+
+test('editor does not retry a draft under a different administrator account', async () => {
+  let writes = 0;
+  const client = requester('editor', async url => {
+    if (url === '/api/admin/tests/csrf') return freshCSRF(7);
+    writes++; return csrfFailure();
+  });
+  await assert.rejects(client.call());
+  assert.equal(writes, 1);
+});
+
+test('editor keeps unsaved operation key when session renewal requires login', async () => {
+  let loggedIn = false;
+  const bodies = [];
+  const client = requester('editor', async (url, options) => {
+    if (url === '/api/admin/tests/csrf') return {ok: false, status: 401,
+      json: async () => ({error: {code: 'AUTH_REQUIRED', message: 'Login required'}})};
+    bodies.push(options.body); return loggedIn ? success() : csrfFailure();
+  });
+  await assert.rejects(client.call(), error => error.code === 'AUTH_REQUIRED');
+  loggedIn = true; await client.call();
+  assert.equal(bodies.length, 2); assert.equal(bodies[0], bodies[1]);
+});
+
+test('editor renewal rejects malformed fresh-token responses without replaying mutation', async () => {
+  let writes = 0, renewals = 0;
+  const client = requester('editor', async url => {
+    if (url === '/api/admin/tests/csrf') { renewals++; return success(); }
+    writes++; return csrfFailure();
+  });
+  await assert.rejects(client.call());
+  assert.equal(writes, 1); assert.equal(renewals, 3);
+});
+
+test('editor upload preserves FormData across CSRF renewal', async () => {
+  const bodies = [];
+  const client = requester('editor', async (url, options) => {
+    if (url === '/api/admin/tests/csrf') return freshCSRF();
+    bodies.push(options.body);
+    return bodies.length === 1 ? csrfFailure() : {ok: true, status: 201,
+      json: async () => ({media_id: 5, url: '/synthetic-media', alt_text: '', width: 2, height: 2})};
+  });
+  const form = new FormData(); form.append('request_key', 'same-upload');
+  form.append('file', new Blob(['synthetic']), 'fixture.png');
+  await client.api('/api/admin/tests/1/media', 'POST', form);
+  assert.equal(bodies.length, 2); assert.equal(bodies[0], form); assert.equal(bodies[1], form);
 });

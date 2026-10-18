@@ -7,7 +7,7 @@
     if (text !== undefined) node.textContent = text; return node;
   };
   const labels = {single_choice: 'Один правильный ответ', multiple_choice: 'Несколько правильных ответов', free_text: 'Свободный ответ'};
-  const csrf = document.querySelector('meta[name="csrf-token"]').content;
+  let csrf = document.querySelector('meta[name="csrf-token"]').content;
   const root = $('test-editor'), requestKeys = new Map(), images = new Map();
   let testId = root.dataset.testId ? Number(root.dataset.testId) : null;
   let revision = null, selected = null, deleting = null, changed = false, busy = false;
@@ -34,6 +34,8 @@
   }
   async function api(url, method = 'GET', payload) {
     const options = {method, credentials: 'same-origin', cache: 'no-store', headers: {'X-CSRFToken': csrf}};
+    if (url === '/api/admin/tests/csrf') options.headers['X-CSRF-Refresh'] = '1';
+    let csrfRenewed = false;
     let operation;
     const multipart = typeof FormData !== 'undefined' && payload instanceof FormData;
     if (multipart) options.body = payload;
@@ -47,6 +49,8 @@
     const positive = value => Number.isInteger(value) && value > 0;
     const valid = data => {
       if (!object(data)) return false;
+      if (url === '/api/admin/tests/csrf') return positive(data.user_id) &&
+        typeof data.csrf_token === 'string' && data.csrf_token.length > 0;
       if (/\/media$/.test(url)) return positive(data.media_id) && typeof data.url === 'string' &&
         typeof data.alt_text === 'string' && positive(data.width) && positive(data.height);
       if (/\/publish$/.test(url)) return positive(data.test_id) && positive(data.version_id) &&
@@ -87,6 +91,20 @@
         throw new Error('Результат операции не подтверждён. Изменения остаются на странице. Повторите сохранение.');
       } finally { clearTimeout(timer); }
       if (response.status === 503 && attempt < 2) { await new Promise(resolve => setTimeout(resolve, 500 * (attempt + 1))); continue; }
+      if (response.status === 400 && data.error?.code === 'CSRF_FAILED' &&
+          !csrfRenewed && !['GET', 'HEAD', 'OPTIONS'].includes(method)) {
+        // CSRF rejected this mutation before the route ran. Keep its exact body
+        // and request key, including multipart uploads and unconfirmed retries.
+        csrfRenewed = true;
+        const fresh = await api('/api/admin/tests/csrf');
+        if (fresh.user_id !== Number(root.dataset.userId)) {
+          throw new Error('Учётная запись изменилась. Ваш ввод остаётся на странице. Вернитесь в исходную учётную запись перед сохранением.');
+        }
+        csrf = fresh.csrf_token;
+        document.querySelector('meta[name="csrf-token"]').content = csrf;
+        options.headers['X-CSRFToken'] = csrf;
+        continue;
+      }
       if (!response.ok) {
         if (response.status < 500) requestKeys.delete(operation);
         const error = new Error(data.error?.message || 'Не удалось выполнить операцию.');

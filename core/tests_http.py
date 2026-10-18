@@ -44,7 +44,16 @@ def configure_blueprint(bp, app, database_factory, *, admin=False):
         ident = session.get("user_id")
         if type(ident) is not int or ident <= 0:
             return error_response("AUTH_REQUIRED", "Требуется вход.", 401)
-        return error_response("CSRF_FAILED", "Обновите страницу и повторите запрос.", 400)
+        # Return a bounded diagnostic, never the token, cookie or raw request.
+        reason = {
+            "The CSRF token has expired.": "expired",
+            "The CSRF token is missing.": "missing",
+            "The CSRF session token is missing.": "session_missing",
+            "The CSRF token is invalid.": "invalid",
+            "The CSRF tokens do not match.": "mismatch",
+        }.get(error.description, "invalid")
+        return error_response("CSRF_FAILED", "Не удалось подтвердить защиту запроса. Ваш ввод остаётся на странице. Повторите сохранение.",
+                              400, details={"csrf_reason": reason})
 
     @bp.before_request
     def authorize():
